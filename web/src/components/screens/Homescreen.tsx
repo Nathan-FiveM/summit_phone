@@ -1,6 +1,6 @@
 import { Transition } from "@mantine/core";
 import { useInterval } from "@mantine/hooks";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function HomeScreen() {
 
