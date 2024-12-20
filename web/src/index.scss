@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Funnel+Sans:ital,wght@0,300..800;1,300..800&family=Saira:ital,wght@0,100..900;1,100..900&display=swap');
+@font-face {
+  font-family: 'SFPro';
+  src: url(../fonts/SFPRODISPLAYREGULAR.woff2);
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'SFPro';
+  src: url(../fonts/SFPRODISPLAYMEDIUM.woff2);
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: 'SFPro';
+  src: url(../fonts/SFPRODISPLAYBOLD.woff2);
+  font-weight: 600;
+}
+
+:root {
+  font-family: 'SFPro', sans-serif;
+  font-weight: 600 !important;
+  color: rgba(255, 255, 255, 0.87);
+  overflow: hidden !important;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-image: url(../images/bg.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-color: #53535300 !important;
+  margin: 0;
+  display: flex;
+  justify-content: end;
+  align-items: end;
+  min-width: 320px;
+  min-height: 100vh;
+}

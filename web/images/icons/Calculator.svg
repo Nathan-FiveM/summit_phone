@@ -1,0 +1,34 @@
+<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Calculator ICON">
+<g clip-path="url(#clip0_45_311)">
+<rect width="60" height="60" rx="13.28" fill="#19191B"/>
+<g id="Group 15">
+<g id="Group 11">
+<rect id="Rectangle 3" x="-0.303223" y="-1.56241" width="30.1514" height="31.0937" fill="#E6E4E2"/>
+<path id="Line 2" d="M6.29248 13.9845H22.7815" stroke="#797675" stroke-width="3" stroke-linecap="round"/>
+<circle id="Ellipse 10" cx="14.7722" cy="7.86003" r="1.41335" fill="#9E9B9A"/>
+<circle id="Ellipse 11" cx="14.7722" cy="20.109" r="1.41335" fill="#A19E9A"/>
+</g>
+<g id="Group 12">
+<rect id="Rectangle 3_2" x="29.8486" y="-1.56241" width="30.1514" height="31.0937" fill="#E0D9D9"/>
+<path id="Line 4" d="M49.8696 9.00009L39.2706 19.5991" stroke="#958F8C" stroke-width="3" stroke-linecap="round"/>
+<path id="Line 3" d="M39 9.28403L50.1392 19.3138" stroke="#6C6564" stroke-width="3" stroke-linecap="round"/>
+</g>
+<g id="Group 13">
+<rect id="Rectangle 3_3" x="-0.303223" y="29.5313" width="30.1514" height="31.0937" fill="#E0D9D9"/>
+<path id="Line 3_2" d="M7.23438 45.0781H22.3101" stroke="#6C6564" stroke-width="3" stroke-linecap="round"/>
+</g>
+<g id="Group 14">
+<rect id="Rectangle 3_4" x="29.8486" y="29.5313" width="30.1514" height="31.0937" fill="#FF8C3C"/>
+<path id="Line 3_3" d="M37.3862 48.3759H52.4619" stroke="#6C6564" stroke-width="3" stroke-linecap="round"/>
+<path id="Line 4_2" d="M37.3862 42.2514H52.4619" stroke="#6C6564" stroke-width="3" stroke-linecap="round"/>
+</g>
+</g>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_45_311">
+<rect width="60" height="60" rx="13.28" fill="white"/>
+</clipPath>
+</defs>
+</svg>

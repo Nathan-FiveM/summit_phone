@@ -1,0 +1,38 @@
+{
+  "name": "core",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "-----BUILD-----": "",
+    "build": "concurrently \"pnpm:build:*\"",
+    "build:client": "node --es-module-specifier-resolution=node scripts/client",
+    "build:server": "node --es-module-specifier-resolution=node scripts/server",
+    "build:web": "cd web && pnpm build",
+    "-----DEV-----": "",
+    "dev": "concurrently \"pnpm:dev:client\" \"pnpm:dev:server\" \"pnpm:dev:web\" \"pnpm:tsc\" -c \"green.bold,cyan.bold\"",
+    "dev:client": "node --es-module-specifier-resolution=node scripts/client -dev",
+    "dev:server": "node --es-module-specifier-resolution=node scripts/server -dev",
+    "dev:web": "cd web && pnpm dev",
+    "-----TSC-----": "",
+    "tsc": "concurrently \"pnpm:tsc:*\" -c \"green.bold,cyan.bold\"",
+    "tsc:client": "cd game/client && npx tsc -w",
+    "tsc:server": "cd game/server && npx tsc -w"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@citizenfx/client": "latest",
+    "@citizenfx/server": "latest",
+    "@types/node": "^22.2.0",
+    "concurrently": "^8.2.2",
+    "esbuild": "^0.23.0",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "cron": "^3.2.1"
+  },
+  "packageManager": "pnpm@9.15.0+sha512.76e2379760a4328ec4415815bcd6628dee727af3779aaa4c914e3944156c4299921a89f976381ee107d41f12cfa4b66681ca9c718f0668fa0831ed4c6d8ba56c"
+}

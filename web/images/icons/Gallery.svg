@@ -1,0 +1,22 @@
+<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Gallery ICON">
+<rect width="60" height="60" rx="13.28" fill="url(#paint0_linear_127_71)"/>
+<g id="Group 8602">
+<rect id="Rectangle 1489" x="50.5171" y="41.1872" width="13.75" height="20.8214" rx="6.875" transform="rotate(135 50.5171 41.1872)" fill="#DE8E9F" fill-opacity="0.8"/>
+<rect id="Rectangle 1486" x="23.3215" y="8" width="13.75" height="20.8214" rx="6.875" fill="#23A6F4" fill-opacity="0.8"/>
+<rect id="Rectangle 1492" width="13.75" height="20.8214" rx="6.875" transform="matrix(-0.707107 0.707107 0.707107 0.707107 19.687 9.9642)" fill="#1CE6ED" fill-opacity="0.8"/>
+<rect id="Rectangle 1488" x="52" y="23.3213" width="13.75" height="20.8214" rx="6.875" transform="rotate(90 52 23.3213)" fill="#8972E0" fill-opacity="0.8"/>
+<rect id="Rectangle 1494" width="13.75" height="20.8214" rx="6.875" transform="matrix(0.707107 0.707107 0.707107 -0.707107 9.96411 41.1872)" fill="#B9CBA1" fill-opacity="0.8"/>
+<rect id="Rectangle 1487" x="40.7942" y="9.9642" width="13.75" height="20.8214" rx="6.875" transform="rotate(45 40.7942 9.9642)" fill="#516AF6" fill-opacity="0.8"/>
+<rect id="Rectangle 1484" x="23.3215" y="31.1787" width="13.75" height="20.8214" rx="6.875" fill="#F1A98A" fill-opacity="0.8"/>
+<rect id="Rectangle 1493" width="13.75" height="20.8214" rx="6.875" transform="matrix(0 1 1 0 8 23.3213)" fill="#7CD4B5" fill-opacity="0.8"/>
+<circle id="Ellipse 20" cx="30.393" cy="30" r="2.35714" fill="#D9D9D9"/>
+</g>
+</g>
+<defs>
+<linearGradient id="paint0_linear_127_71" x1="30" y1="0" x2="30" y2="60" gradientUnits="userSpaceOnUse">
+<stop stop-color="#313131"/>
+<stop offset="1" stop-color="#141514"/>
+</linearGradient>
+</defs>
+</svg>
