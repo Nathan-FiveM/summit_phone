@@ -12,27 +12,18 @@ import phoneBg from "../images/phoneBG.jpg";
 import HomeScreen from './components/screens/Homescreen';
 import Lockscreen from './components/screens/Lockscreen';
 import Startup from './components/screens/Startup';
-import { Button } from '@mantine/core';
-import ControlCenters from './components/screens/ControlCenters';
 
 debugData([
   {
-    action: 'phone:setVisible',
+    action: 'setVisible',
     data: true,
   }
-])
-
-debugData([
-  {
-    action: 'phone:sendTime',
-    data: '12:00',
-  }
-])
+]);
 
 export default function App() {
-  const { visible, primaryColor, dynamicNoti, setVisible, setDynamicNoti } = usePhone();
+  const { visible, primaryColor, setTime, setVisible } = usePhone();
 
-  useNuiEvent('phone:setVisible', (data: boolean) => {
+  useNuiEvent('setVisible', (data: boolean) => {
     setVisible(data);
   });
 
@@ -47,6 +38,7 @@ export default function App() {
       transition: 'all 1s ease',
       backgroundImage: `url(${primaryColor === 'blue' ? blueFrame : primaryColor === 'gold' ? goldFrame : primaryColor === 'green' ? greenFrame : primaryColor === 'purple' ? purpleFrame : primaryColor === 'red' ? redFrame : ''})`,
       backgroundRepeat: 'no-repeat',
+
       backgroundSize: 'contain',
     }}>
       <div className="innerFrame" style={{

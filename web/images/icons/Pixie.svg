@@ -1,32 +1,26 @@
 <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g id="Pixie ICON">
 <rect width="60" height="60" rx="13.28" fill="url(#paint0_linear_130_268)"/>
-<g id="Group 8608">
-<path id="Rectangle 1530" d="M12 17C12 14.2386 14.2386 12 17 12H43C45.7614 12 48 14.2386 48 17V24.2727H12V17Z" fill="black"/>
-<path id="Rectangle 1531" d="M12 24.2727H48V43C48 45.7614 45.7614 48 43 48H17C14.2386 48 12 45.7614 12 43V24.2727Z" fill="#D9D9D9"/>
-<g id="Group 8607">
-<g id="Ellipse 33" filter="url(#filter0_d_130_268)">
+<path d="M12 17C12 14.2386 14.2386 12 17 12H43C45.7614 12 48 14.2386 48 17V24.2727H12V17Z" fill="black"/>
+<path d="M12 24.2727H48V43C48 45.7614 45.7614 48 43 48H17C14.2386 48 12 45.7614 12 43V24.2727Z" fill="#D9D9D9"/>
+<g filter="url(#filter0_d_130_268)">
 <path d="M43.2188 17.6915C42.2033 17.8603 41.9869 18.0853 41.8666 19.4915C41.6624 18.0853 41.446 17.8603 40.4062 17.6353C41.446 17.5228 41.6624 17.2978 41.8125 16.1165C41.9869 17.2978 42.2033 17.5228 43.2188 17.6915Z" fill="white"/>
 </g>
-<g id="Ellipse 34" filter="url(#filter1_df_130_268)">
+<g filter="url(#filter1_df_130_268)">
 <path d="M43.5 17.4103C42.4845 17.579 42.2682 17.804 42.1478 19.2103C41.9436 17.804 41.7273 17.579 40.6875 17.354C41.7273 17.2415 41.9436 17.0165 42.0938 15.8353C42.2682 17.0165 42.4845 17.2415 43.5 17.4103Z" fill="white"/>
 </g>
-<g id="Ellipse 38" filter="url(#filter2_df_130_268)">
+<g filter="url(#filter2_df_130_268)">
 <path d="M44.3438 18.254C43.3283 18.4228 43.1119 18.6478 42.9916 20.054C42.7874 18.6478 42.571 18.4228 41.5312 18.1978C42.571 18.0853 42.7874 17.8603 42.9375 16.679C43.1119 17.8603 43.3283 18.0853 44.3438 18.254Z" fill="white" fill-opacity="0.56" shape-rendering="crispEdges"/>
 </g>
-<g id="Ellipse 37" filter="url(#filter3_df_130_268)">
+<g filter="url(#filter3_df_130_268)">
 <path d="M43.5 16.8478C42.4845 17.0165 42.2682 17.2415 42.1478 18.6478C41.9436 17.2415 41.7273 17.0165 40.6875 16.7915C41.7273 16.679 41.9436 16.454 42.0938 15.2728C42.2682 16.454 42.4845 16.679 43.5 16.8478Z" fill="white" fill-opacity="0.56" shape-rendering="crispEdges"/>
 </g>
-<g id="Ellipse 36" filter="url(#filter4_df_130_268)">
+<g filter="url(#filter4_df_130_268)">
 <path d="M42.9375 18.8165C41.8205 18.9853 41.5825 19.2103 41.4501 20.6165C41.2255 19.2103 40.9875 18.9853 39.8438 18.7603C40.9875 18.6478 41.2255 18.4228 41.3906 17.2415C41.5825 18.4228 41.8205 18.6478 42.9375 18.8165Z" fill="white" fill-opacity="0.56" shape-rendering="crispEdges"/>
 </g>
-<g id="Ellipse 35" filter="url(#filter5_df_130_268)">
+<g filter="url(#filter5_df_130_268)">
 <path d="M41.8125 17.4103C40.797 17.579 40.5807 17.804 40.4603 19.2103C40.2561 17.804 40.0398 17.579 39 17.354C40.0398 17.2415 40.2561 17.0165 40.4062 15.8353C40.5807 17.0165 40.797 17.2415 41.8125 17.4103Z" fill="white" fill-opacity="0.56" shape-rendering="crispEdges"/>
 </g>
-</g>
-<circle id="Ellipse 32" cx="30.8181" cy="30" r="10.25" fill="black" stroke="url(#paint1_linear_130_268)" stroke-width="2.5"/>
-</g>
-</g>
+<circle cx="30.8181" cy="30" r="10.25" fill="black" stroke="url(#paint1_linear_130_268)" stroke-width="2.5"/>
 <defs>
 <filter id="filter0_d_130_268" x="34.4062" y="10.1165" width="14.8125" height="15.375" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
 <feFlood flood-opacity="0" result="BackgroundImageFix"/>

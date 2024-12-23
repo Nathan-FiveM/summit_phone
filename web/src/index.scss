@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Funnel+Sans:ital,wght@0,300..800;1,300..800&family=Saira:ital,wght@0,100..900;1,100..900&display=swap');
+
 @font-face {
   font-family: 'SFPro';
   src: url(../fonts/SFPRODISPLAYREGULAR.woff2);
@@ -26,13 +27,14 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: #53535300 !important;
 }
 
 body {
-  background-image: url(../images/bg.png);
+  // background-image: url(../images/bg.png);
   background-repeat: no-repeat;
   background-size: contain;
-  background-color: #53535300 !important;
+  background: #53535300 !important;
   margin: 0;
   display: flex;
   justify-content: end;

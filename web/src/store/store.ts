@@ -10,6 +10,12 @@ type State = {
         timeout?: number;
     };
     showwelcomeScreen: boolean;
+    relayoutMode: boolean;
+    time: {
+        h: number;
+        m: number;
+        s: number;
+    };
 };
 
 type Actions = {
@@ -21,6 +27,12 @@ type Actions = {
         timeout?: number;
     }) => void;
     setShowWelcomeScreen: (showwelcomeScreen: boolean) => void;
+    setRelayoutMode: (relayoutMode: boolean) => void;
+    setTime: (time: {
+        h: number;
+        m: number;
+        s: number;
+    }) => void;
 };
 
 export const usePhone = create<State & Actions>()(
@@ -30,9 +42,15 @@ export const usePhone = create<State & Actions>()(
         dynamicNoti: {
             show: false,
             type: '',
-            timeout : 1000,
+            timeout: 1000,
         },
         showwelcomeScreen: false,
+        relayoutMode: false,
+        time: {
+            h: 12,
+            m: 0,
+            s: 0,
+        },
         setVisible: (visible: boolean) => set((state) => {
             state.visible = visible;
         }),
@@ -48,6 +66,16 @@ export const usePhone = create<State & Actions>()(
         }),
         setShowWelcomeScreen: (showwelcomeScreen: boolean) => set((state) => {
             state.showwelcomeScreen = showwelcomeScreen;
+        }),
+        setRelayoutMode: (relayoutMode: boolean) => set((state) => {
+            state.relayoutMode = relayoutMode;
+        }),
+        setTime: (time: {
+            h: number;
+            m: number;
+            s: number;
+        }) => set((state) => {
+            state.time = time;
         }),
     }))
 );

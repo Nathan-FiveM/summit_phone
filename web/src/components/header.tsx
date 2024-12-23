@@ -12,7 +12,7 @@ export default function Header() {
         setDynamicNoti({ show: false, type: '' });
     }, dynamicNoti.timeout || 1000);
 
-    useNuiEvent('phone:sendTime', (data: string) => {
+    useNuiEvent('sendTime', (data: string) => {
         setTime(data);
     });
 
