@@ -114,14 +114,14 @@ export default function ClockWidget() {
                 <path style={{
                     transform: `translate(0px, 0px) rotate(${secondsrotate}deg)`,
                     transformOrigin: '50% 50%'
-                }} fill-rule="evenodd" clip-rule="evenodd" d="M79.25 93H80.75V82.9055C82.0439 82.5725 83 81.3979 83 80C83 78.6021 82.0439 77.4275 80.75 77.0945V4H79.25V77.0945C77.9561 77.4275 77 78.6021 77 80C77 81.3979 77.9561 82.5725 79.25 82.9055V93ZM80 78.5C80.8284 78.5 81.5 79.1716 81.5 80C81.5 80.8284 80.8284 81.5 80 81.5C79.1716 81.5 78.5 80.8284 78.5 80C78.5 79.1716 79.1716 78.5 80 78.5Z" fill="#FF9600" />
+                }} fillRule="evenodd" clipRule="evenodd" d="M79.25 93H80.75V82.9055C82.0439 82.5725 83 81.3979 83 80C83 78.6021 82.0439 77.4275 80.75 77.0945V4H79.25V77.0945C77.9561 77.4275 77 78.6021 77 80C77 81.3979 77.9561 82.5725 79.25 82.9055V93ZM80 78.5C80.8284 78.5 81.5 79.1716 81.5 80C81.5 80.8284 80.8284 81.5 80 81.5C79.1716 81.5 78.5 80.8284 78.5 80C78.5 79.1716 79.1716 78.5 80 78.5Z" fill="#FF9600" />
                 <path style={{
                     transform: `translate(0px, 0px) rotate(${secondsrotate}deg)`,
                     transformOrigin: '50% 50%'
                 }} d="M81.5 80C81.5 79.1716 80.8284 78.5 80 78.5C79.1716 78.5 78.5 79.1716 78.5 80C78.5 80.8284 79.1716 81.5 80 81.5C80.8284 81.5 81.5 80.8284 81.5 80Z" fill="white" />
                 <defs>
-                    <filter id="filter0_dd_525_18" x="73.3076" y="4.39807" width="13" height="82.996" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-                        <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                    <filter id="filter0_dd_525_18" x="73.3076" y="4.39807" width="13" height="82.996" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+                        <feFlood floodOpacity="0" result="BackgroundImageFix" />
                         <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
                         <feOffset dy="0.5" />
                         <feGaussianBlur stdDeviation="0.75" />
@@ -134,8 +134,8 @@ export default function ClockWidget() {
                         <feBlend mode="normal" in2="effect1_dropShadow_525_18" result="effect2_dropShadow_525_18" />
                         <feBlend mode="normal" in="SourceGraphic" in2="effect2_dropShadow_525_18" result="shape" />
                     </filter>
-                    <filter id="filter1_dd_525_18" x="73.4932" y="34.3623" width="13" height="52.9985" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-                        <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                    <filter id="filter1_dd_525_18" x="73.4932" y="34.3623" width="13" height="52.9985" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+                        <feFlood floodOpacity="0" result="BackgroundImageFix" />
                         <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
                         <feOffset dy="0.5" />
                         <feGaussianBlur stdDeviation="0.75" />

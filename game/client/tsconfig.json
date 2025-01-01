@@ -3,5 +3,5 @@
   "compilerOptions": {
     "types": ["@citizenfx/client"]
   },
-  "include": ["./**/*.ts", "./**/*.d.ts"]
+  "include": ["./**/*.ts", "./**/*.d.ts", "../shared/**/*.ts", "../shared/**/*.d.ts"]
 }

@@ -1,12 +1,15 @@
 import { NUI } from "./classes/NUI";
 
-RegisterCommand('phoneopen', () => {
+setImmediate(() => {
+});
+
+/* RegisterCommand('phoneopen', () => {
     NUI.openUI();
 }, false);
 RegisterCommand('phoneclose', () => {
     NUI.closeUI();
 }, false);
-
+ */
 /* let tick: any;
 
 RegisterCommand('gfetTime', () => {
