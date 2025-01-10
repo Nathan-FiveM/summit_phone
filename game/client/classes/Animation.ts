@@ -8,7 +8,7 @@ class AnimClass {
 
     constructor() {
         this.isAnimating = false;
-        this.prop = `prop_aphone`;
+        this.prop = `prop_aphone_blue`;
         this.attachedProp = false;
     };
 
@@ -22,7 +22,8 @@ class AnimClass {
         this.attachedProp = true;
     };
 
-    public async StatAnimation() {
+    public async StatAnimation(phoneItem: string) {
+        this.prop = phoneItem;
         this.isAnimating = true;
         this.AttachProp();
         this.DoAnimation('cellphone_text_in');

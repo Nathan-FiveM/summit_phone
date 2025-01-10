@@ -1,13 +1,21 @@
 import { Animation } from "./Animation";
+import { Utils } from "./Utils";
 
 
 export class NU {
     private timetick: any;
     private controlsLoop: any;
+    public shouldNotOpen: boolean = false;
+    public disableControls = false;
+
+    public disableSelectedControls = false;
 
     public async init() {
         RegisterCommand('phoneopen', () => {
-            this.openUI();
+            const phoneItem = Utils.GetPhoneItem();
+            if (Utils.phoneList.includes(phoneItem)) {
+                this.openUI(`prop_aphone_${phoneItem.split('_')[0]}`);
+            }
         }, false);
         RegisterCommand('phoneclose', () => {
             this.closeUI();
@@ -15,16 +23,18 @@ export class NU {
         RegisterKeyMapping('phoneopen', 'Open Phone', 'keyboard', 'M');
     };
 
-    public async openUI() {
+    public async openUI(phoneItem: string) {
+        if (this.shouldNotOpen) return;
         const state = LocalPlayer.state;
         state.set('onPhone', true, true);
         SetCursorLocation(0.89, 0.6);
         this.startTimeLoop();
+        this.startDisableControlsLoop();
         this.sendReactMessage('setVisible', true);
         this.sendReactMessage("setCursor", true);
         SetNuiFocus(true, true);
-        SetNuiFocusKeepInput(true)
-        Animation.StatAnimation();
+        SetNuiFocusKeepInput(true);
+        Animation.StatAnimation(phoneItem);
     };
 
     public closeUI() {
@@ -32,7 +42,9 @@ export class NU {
         this.sendReactMessage("setCursor", false);
         SetNuiFocus(false, false);
         this.stopTimeLoop();
+        this.stopDisableControlsLoop();
         Animation.EndAnimation();
+        Utils.phonesArray = "";
         setTimeout(() => {
             const state = LocalPlayer.state;
             state.set('onPhone', false, true);
@@ -60,38 +72,55 @@ export class NU {
         clearTick(this.timetick);
     };
 
-    private DisableControls() {
-        DisableControlAction(0, 1, true)
-        DisableControlAction(0, 2, true)
-        DisableControlAction(0, 3, true)
-        DisableControlAction(0, 4, true)
-        DisableControlAction(0, 5, true)
-        DisableControlAction(0, 6, true)
-        DisableControlAction(0, 263, true)
-        DisableControlAction(0, 264, true)
-        DisableControlAction(0, 257, true)
-        DisableControlAction(0, 140, true)
-        DisableControlAction(0, 141, true)
-        DisableControlAction(0, 142, true)
-        DisableControlAction(0, 143, true)
-        DisableControlAction(0, 177, true)
-        DisableControlAction(0, 200, true)
-        DisableControlAction(0, 202, true)
-        DisableControlAction(0, 322, true)
-        DisableControlAction(0, 245, true)
-        DisableControlAction(0, 261, true)
-        DisableControlAction(0, 262, true)
-        DisablePlayerFiring(PlayerPedId(), true)
-    };
-
     public startDisableControlsLoop() {
+
+        SetPauseMenuActive(false);
+
         this.controlsLoop = setTick(() => {
-            this.DisableControls();
-        });
+            DisableControlAction(0, 1, true);
+            DisableControlAction(0, 2, true);
+            DisableControlAction(0, 24, true);
+            DisableControlAction(0, 257, true);
+            DisableControlAction(0, 25, true);
+            DisableControlAction(0, 263, true);
+            DisableControlAction(0, 140, true);
+            DisableControlAction(0, 141, true);
+            DisableControlAction(0, 142, true);
+            DisableControlAction(0, 143, true);
+
+            DisableControlAction(2, 199, true);
+            DisableControlAction(2, 200, true);
+
+            DisableControlAction(0, 44, true);
+            DisableControlAction(0, 45, true);
+
+            DisableControlAction(0, 75, true);
+
+            DisableControlAction(0, 81, true);
+            DisableControlAction(0, 82, true);
+            DisableControlAction(0, 83, true);
+            DisableControlAction(0, 84, true);
+            DisableControlAction(0, 85, true);
+            DisableControlAction(0, 332, true);
+            DisableControlAction(0, 333, true);
+
+            DisablePlayerFiring(PlayerId(), true);
+
+            if (this.disableControls) {
+                DisableAllControlActions(2);
+                EnableControlAction(0, 249, true);
+            }
+
+            if (this.disableSelectedControls) {
+                SetUserRadioControlEnabled(!this.disableSelectedControls)
+            }
+        })
     };
 
     public stopDisableControlsLoop() {
-        clearTick(this.controlsLoop);
+        setTimeout(() => {
+            clearTick(this.controlsLoop);
+        }, 250)
     };
 }
 

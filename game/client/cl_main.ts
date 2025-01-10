@@ -1,6 +1,7 @@
 import "./cl_nuicallback";
+import "./cl_exports";
 import { NUI } from "./classes/NUI";
-
+export const FrameWork = exports['qb-core'].GetCoreObject();
 setImmediate(() => {
     NUI.init();
 });
