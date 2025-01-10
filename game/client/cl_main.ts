@@ -1,6 +1,8 @@
+import "./cl_nuicallback";
 import { NUI } from "./classes/NUI";
 
 setImmediate(() => {
+    NUI.init();
 });
 
 /* RegisterCommand('phoneopen', () => {

@@ -12,6 +12,10 @@ import phoneBg from "../images/phoneBG.jpg";
 import HomeScreen from './components/screens/Homescreen';
 import Lockscreen from './components/screens/Lockscreen';
 import Startup from './components/screens/Startup';
+import { useEffect } from 'react';
+import { isEnvBrowser } from './hooks/misc';
+import { fetchNui } from './hooks/fetchNui';
+import ControlCenters from './components/screens/ControlCenters';
 
 debugData([
   {
@@ -26,6 +30,21 @@ export default function App() {
   useNuiEvent('setVisible', (data: boolean) => {
     setVisible(data);
   });
+
+  useEffect(() => {
+    if (!visible) return;
+
+    const keyHandler = (e: KeyboardEvent) => {
+      if (["Escape"].includes(e.code)) {
+        if (!isEnvBrowser()) fetchNui("hideFrame");
+        else setVisible(!visible);
+      }
+    };
+
+    window.addEventListener("keydown", keyHandler);
+
+    return () => window.removeEventListener("keydown", keyHandler);
+  }, [visible]);
 
   return (
     <div style={{
@@ -50,12 +69,14 @@ export default function App() {
           <Header />
         </div>
         <div className="contentFrame">
+          <ControlCenters />
           <HomeScreen />
           <Lockscreen />
           <Startup />
-          {/* <ControlCenters /> */}
         </div>
-        <div className="backButton" />
+        <div className="backButton" onClick={() => {
+          fetchNui("hideFrame");
+        }} />
       </div>
     </div>
   )
