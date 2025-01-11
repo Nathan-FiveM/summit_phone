@@ -25,10 +25,14 @@ debugData([
 ]);
 
 export default function App() {
-  const { visible, primaryColor, setTime, setVisible } = usePhone();
+  const { visible, primaryColor, setTime, setVisible, setPrimaryColor } = usePhone();
 
-  useNuiEvent('setVisible', (data: boolean) => {
-    setVisible(data);
+  useNuiEvent('setVisible', (data: {
+    show: boolean;
+    color: string;
+  }) => {
+    setVisible(data.show);
+    setPrimaryColor(data.color);
   });
 
   useEffect(() => {

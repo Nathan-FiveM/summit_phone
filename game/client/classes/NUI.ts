@@ -13,6 +13,7 @@ export class NU {
     public async init() {
         RegisterCommand('phoneopen', () => {
             const phoneItem = Utils.GetPhoneItem();
+            console.log(phoneItem);
             if (Utils.phoneList.includes(phoneItem)) {
                 this.openUI(`prop_aphone_${phoneItem.split('_')[0]}`);
             }
@@ -30,16 +31,16 @@ export class NU {
         SetCursorLocation(0.89, 0.6);
         this.startTimeLoop();
         this.startDisableControlsLoop();
-        this.sendReactMessage('setVisible', true);
-        this.sendReactMessage("setCursor", true);
+        this.sendReactMessage('setVisible', { show: true, color: Utils.GetPhoneItem().split('_')[0] });
+        this.sendReactMessage("setCursor", { show: true, color: Utils.GetPhoneItem().split('_')[0] });
         SetNuiFocus(true, true);
         SetNuiFocusKeepInput(true);
         Animation.StatAnimation(phoneItem);
     };
 
     public closeUI() {
-        this.sendReactMessage('setVisible', false);
-        this.sendReactMessage("setCursor", false);
+        this.sendReactMessage('setVisible', { show: false, color: Utils.GetPhoneItem().split('_')[0] });
+        this.sendReactMessage("setCursor", { show: false, color: Utils.GetPhoneItem().split('_')[0] });
         SetNuiFocus(false, false);
         this.stopTimeLoop();
         this.stopDisableControlsLoop();
