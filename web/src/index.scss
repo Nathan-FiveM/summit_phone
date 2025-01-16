@@ -31,7 +31,6 @@
 }
 
 body {
-  // background-image: url(../images/bg.png);
   background-repeat: no-repeat;
   background-size: contain;
   background: #53535300 !important;
@@ -41,4 +40,5 @@ body {
   align-items: end;
   min-width: 320px;
   min-height: 100vh;
+  filter: blur(0px);
 }

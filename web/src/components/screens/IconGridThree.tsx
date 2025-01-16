@@ -180,15 +180,6 @@ const IconGridThree = () => {
                         onClick={() => { }}
                     />
                 ))}
-                <div style={{
-                    height: '100%',
-                    width: '100%',
-                    filter: 'blur(0.35vw)',
-                    backgroundColor: 'rgba(255, 255, 255, 0.15)',
-                    position: 'absolute',
-                    top: '0',
-                    zIndex: 0,
-                }} />
             </div>
         </div>
 

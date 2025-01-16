@@ -12,14 +12,14 @@
   "dependencies": {
     "@mantine/core": "^7.15.1",
     "@mantine/hooks": "^7.15.1",
-    "axios": "^1.7.7",
+    "@types/react-transition-group": "^4.4.12",
     "dayjs": "^1.11.13",
     "immer": "^10.1.1",
     "react": "latest",
-    "react-beautiful-dnd": "^13.1.1",
     "react-dnd": "^16.0.1",
     "react-dnd-touch-backend": "^16.0.1",
     "react-dom": "latest",
+    "react-transition-group": "^4.4.5",
     "sass": "^1.80.6",
     "swiper": "^11.1.15",
     "zustand": "^5.0.2"

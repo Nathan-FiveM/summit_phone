@@ -20,7 +20,10 @@ import ControlCenters from './components/screens/ControlCenters';
 debugData([
   {
     action: 'setVisible',
-    data: true,
+    data: {
+      show: true,
+      color: 'red',
+    },
   }
 ]);
 

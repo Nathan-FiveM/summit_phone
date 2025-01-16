@@ -16,7 +16,24 @@ import phoneIcon from '../../images/icons/Phone.svg?url';
 import messageIcon from "../../images/icons/Message.svg?url";
 import settingsIcon from "../../images/icons/Settings.svg?url";
 import servicesIcon from "../../images/icons/Services.svg?url";
-import { link } from "fs";
+
+import notiAppStore from "../../images/notiIcons/AppStore.svg?url";
+import notiBluePages from "../../images/notiIcons/BluePages.svg?url";
+import notiCalender from "../../images/notiIcons/Calender.svg?url";
+import notiCamera from "../../images/notiIcons/Camera.svg?url";
+import notiDarkChat from "../../images/notiIcons/Darkchat.svg?url";
+import notiGallery from "../../images/notiIcons/Gallery.svg?url";
+import notiGarages from "../../images/notiIcons/Garages.svg?url";
+import notiGroups from "../../images/notiIcons/Groups.svg?url";
+import notiHouse from "../../images/notiIcons/House.svg?url";
+import notiMail from "../../images/notiIcons/Mail.svg?url";
+import notiMessage from "../../images/notiIcons/Message.svg?url";
+import notiPhone from "../../images/notiIcons/Phone.svg?url";
+import notiPigieon from "../../images/notiIcons/Pigeon.svg?url";
+import notiPixie from "../../images/notiIcons/Pixie.svg?url";
+import notiServices from "../../images/notiIcons/Services.svg?url";
+import notiSettings from "../../images/notiIcons/Settings.svg?url";
+import notiWallet from "../../images/notiIcons/Wallet.svg?url";
 
 export const icons = [
     {
@@ -179,4 +196,45 @@ export function addIconById(id: number, icon: string, name: string, iconsTable: 
     updatedIcons[index].icon = icon;
     updatedIcons[index].name = name;
     return updatedIcons;
+}
+
+export const notiIcons = (icon: string) => {
+    switch (icon) {
+        case 'appstore':
+            return notiAppStore;
+        case 'bluepages':
+            return notiBluePages;
+        case 'calender':
+            return notiCalender;
+        case 'camera':
+            return notiCamera;
+        case 'darkchat':
+            return notiDarkChat;
+        case 'gallery':
+            return notiGallery;
+        case 'garages':
+            return notiGarages;
+        case 'groups':
+            return notiGroups;
+        case 'house':
+            return notiHouse;
+        case 'mail':
+            return notiMail;
+        case 'message':
+            return notiMessage;
+        case 'phone':
+            return notiPhone;
+        case 'pigeon':
+            return notiPigieon;
+        case 'pixie':
+            return notiPixie;
+        case 'services':
+            return notiServices;
+        case 'settings':
+            return notiSettings;
+        case 'wallet':
+            return notiWallet;
+        default:
+            return "";
+    }
 }
