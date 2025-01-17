@@ -42,7 +42,7 @@ const DraggableIcon: React.FC<DraggableIconProps> = ({ icon, slotId, index, link
 
     const [timerId, setTimerId] = useState<NodeJS.Timeout | null>(null);
 
-    const handleMouseDown = (e: React.MouseEvent) => {
+    const handleMouseDown = () => {
         if (relayoutMode) return; // Avoid interference with drag mode
 
         const id = setTimeout(() => {
@@ -180,7 +180,7 @@ const IconGridTwo = () => {
                         index={index}
                         link={slot.link}
                         moveIcon={moveIcon}
-                        onClick={(icon) => { }}
+                        onClick={() => { }}
                     />
                 ))}
             </div>

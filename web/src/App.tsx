@@ -16,6 +16,7 @@ import { useEffect } from 'react';
 import { isEnvBrowser } from './hooks/misc';
 import { fetchNui } from './hooks/fetchNui';
 import ControlCenters from './components/screens/ControlCenters';
+import Phone from './components/apps/phone/phone';
 
 debugData([
   {
@@ -28,7 +29,7 @@ debugData([
 ]);
 
 export default function App() {
-  const { visible, primaryColor, setTime, setVisible, setPrimaryColor } = usePhone();
+  const { visible, primaryColor, setVisible, setPrimaryColor } = usePhone();
 
   useNuiEvent('setVisible', (data: {
     show: boolean;
@@ -80,6 +81,7 @@ export default function App() {
           <HomeScreen />
           <Lockscreen />
           <Startup />
+          {/* <Phone /> */}
         </div>
         <div className="backButton" onClick={() => {
           fetchNui("hideFrame");

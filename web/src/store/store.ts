@@ -16,6 +16,7 @@ type State = {
         m: number;
         s: number;
     };
+    isLock : boolean;
 };
 
 type Actions = {
@@ -33,6 +34,7 @@ type Actions = {
         m: number;
         s: number;
     }) => void;
+    setIsLock: (isLock: boolean) => void;
 };
 
 export const usePhone = create<State & Actions>()(
@@ -51,6 +53,7 @@ export const usePhone = create<State & Actions>()(
             m: 0,
             s: 0,
         },
+        isLock: false,
         setVisible: (visible: boolean) => set((state) => {
             state.visible = visible;
         }),
@@ -76,6 +79,9 @@ export const usePhone = create<State & Actions>()(
             s: number;
         }) => set((state) => {
             state.time = time;
+        }),
+        setIsLock: (isLock: boolean) => set((state) => {
+            state.isLock = isLock;
         }),
     }))
 );

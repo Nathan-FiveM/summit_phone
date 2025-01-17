@@ -1,5 +1,6 @@
 #root {
   padding: 1vw;
+  user-select: none;
 }
 
 .innerFrame {
@@ -12,6 +13,7 @@
   align-items: center;
   color: white;
   position: relative;
+
 
   .headerFrame {
     position: absolute;
@@ -33,6 +35,7 @@
       justify-content: center;
       align-items: center;
       gap: 7.864583333333333vw;
+      z-index: 52;
 
       .timeText {
         width: 2vw;
@@ -133,13 +136,40 @@
       width: 100%;
       height: 100%;
       z-index: 50;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      user-select: none;
+
+      .bottomButton {
+        width: 13.229166666666666vw;
+        height: 2.1066145833333336vw;
+        flex-shrink: 0;
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+        top: 20.7vw;
+
+        .button1 {
+          width: 2.03125vw;
+          height: 2.03125vw;
+          display: inline-flex;
+          justify-content: center;
+          align-items: center;
+          gap: 0.5208333333333334vw;
+          border-radius: 10vw;
+          background: rgba(70, 70, 70, 0.66);
+          backdrop-filter: blur(0.10416666666666667vw);
+          cursor: pointer;
+        }
+      }
     }
 
     .startup {
       position: absolute;
       width: 100%;
       height: 100%;
-      z-index: 51;
+      z-index: 61;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -583,7 +613,103 @@
   color: #fff;
 }
 
+.dialpadV2 {
+  display: flex;
+  width: 12.1875vw;
+  height: 16.197916666666668vw;
+  justify-content: center;
+  align-items: flex-start;
+  align-content: flex-start;
+  gap: 1.09375vw;
+  flex-shrink: 0;
+  flex-wrap: wrap;
 
+  .dialpadV2button {
+    display: flex;
+    width: 3.125vw;
+    height: 3.125vw;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: rgba(144, 144, 144, 0.40);
+    cursor: pointer;
+
+    .text1 {
+      display: flex;
+      width: 0.3645833333333333vw;
+      height: 2.1875vw;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      flex-shrink: 0;
+      color: #FFF;
+
+      font-family: "SFPro";
+      font-size: 1.3020833333333333vw;
+      font-weight: 500;
+      line-height: normal;
+    }
+
+    .text2 {
+      color: #FFF;
+      text-align: center;
+      font-family: "SFPro";
+      font-size: 0.5208333333333334vw;
+      font-style: normal;
+      font-weight: 500;
+      line-height: normal;
+      letter-spacing: 0.13541666666666666vw;
+      margin-left: 0.3vw;
+      margin-top: -0.24vw;
+    }
+  }
+
+  .dialpadV2button1 {
+    display: flex;
+    width: 3.125vw;
+    height: 3.125vw;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5208333333333334vw;
+    flex-shrink: 0;
+    border-radius: 5.208333333333334vw;
+    background: rgba(144, 144, 144, 0.40);
+
+    .text3 {
+      display: flex;
+      width: 1vw;
+      height: 3.125vw;
+      flex-direction: column;
+      justify-content: center;
+      flex-shrink: 0;
+      color: #FFF;
+      text-align: center;
+      font-family: "SFPro";
+      font-size: 1.3020833333333333vw;
+      font-weight: 500;
+      line-height: normal;
+    }
+  }
+}
+
+.emeButtons {
+  width: 11.927083333333334vw;
+  height: 0.9375vw;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+
+  .text1 {
+    color: #FFF;
+    text-align: center;
+    font-family: "SFPro";
+    font-size: 0.78125vw;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+  }
+}
 
 .testHoverWithButton {
   transition: all 0.3s ease;
@@ -612,7 +738,7 @@
 }
 
 .clickButton {
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 
   &:hover {
     transform: scale(1.1);
@@ -624,7 +750,7 @@
 }
 
 .clickanimation {
-  transition: all 0.3s ease;
+  /* transition: all 0.2s ease; */
   cursor: pointer;
 
   &:active {
@@ -633,7 +759,7 @@
 }
 
 .clickanimationXl {
-  transition: all 0.3s ease;
+  /* transition: all 0.0s ease; */
   cursor: pointer;
 
   &:active {
@@ -683,24 +809,46 @@
 
 
 
-.item-enter {
+.swipeinleft-enter {
   opacity: 0;
-  transform: translateX(-100%); /* Start off-screen to the left */
+  transform: translateX(-100%);
 }
 
-.item-enter-active {
+.swipeinleft-enter-active {
   opacity: 1;
-  transform: translateX(0); /* Move to its original position */
+  transform: translateX(0);
   transition: transform 250ms ease-in, opacity 250ms ease-in;
 }
 
-.item-exit {
+.swipeinleft-exit {
   opacity: 1;
-  transform: translateX(0); /* Start from its original position */
+  transform: translateX(0);
 }
 
-.item-exit-active {
+.swipeinleft-exit-active {
   opacity: 0;
-  transform: translateX(100%); /* Move off-screen to the right */
+  transform: translateX(100%);
   transition: transform 250ms ease-in, opacity 250ms ease-in;
+}
+
+.enterandexitfromtop-enter {
+  opacity: 0;
+  transform: translateY(-100%);
+}
+
+.enterandexitfromtop-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: transform 450ms, opacity 450ms;
+}
+
+.enterandexitfromtop-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.enterandexitfromtop-exit-active {
+  opacity: 0;
+  transform: translateY(-100%);
+  transition: transform 450ms, opacity 450ms;
 }

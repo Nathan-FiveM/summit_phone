@@ -8,10 +8,7 @@ import { clamp, useLocalStorage, useMove } from '@mantine/hooks';
 import dayjs from 'dayjs';
 import useNotiQueue from '../../hooks/useNotiQueue';
 import { notiIcons } from '../../utils/icons';
-import {
-    CSSTransition,
-    TransitionGroup,
-} from 'react-transition-group';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 export default function ControlCenters() {
     const [index, setIndex] = useState(0);
@@ -19,9 +16,11 @@ export default function ControlCenters() {
 
     const ref = useRef(null);
     const refB1 = useRef(null);
+
     const handleMouseDown = () => {
         ref.current.swiper.allowTouchMove = true
     }
+
     const handleMouseUp = () => {
         ref.current.swiper.allowTouchMove = false
     }
@@ -29,6 +28,7 @@ export default function ControlCenters() {
     const handleMouseLeave = () => {
         ref.current.swiper.allowTouchMove = false
     }
+
     const handleSlideChange = (swipe: { realIndex: SetStateAction<number>; }) => {
         setIndex(swipe.realIndex)
         if (swipe.realIndex === 1) {
@@ -40,27 +40,14 @@ export default function ControlCenters() {
         }
     }
 
-    const handleMouseDownB1 = () => {
-        refB1.current.swiper.allowTouchMove = true
-    }
-    const handleMouseUpB1 = () => {
-        refB1.current.swiper.allowTouchMove = false
-    }
-
-    const handleMouseLeaveB1 = () => {
-        refB1.current.swiper.allowTouchMove = false
-    }
     const handleSlideChangeB1 = (swipe: { realIndex: SetStateAction<number>; }) => {
         setIndex(swipe.realIndex)
         if (swipe.realIndex === 1) {
-            refB1.current.swiper.allowTouchMove = true
             refB1.current.style.backdropFilter = "blur(0vw)"
         } else if (swipe.realIndex === 0) {
-            refB1.current.swiper.allowTouchMove = false
             refB1.current.style.backdropFilter = "blur(0.35vw)"
         }
     }
-
 
     const [time, setTime] = useState("12:00");
     useNuiEvent('sendTime', (data: string) => {
@@ -89,7 +76,7 @@ export default function ControlCenters() {
             <Swiper
                 grabCursor={true}
                 style={{
-                    width: "100%", height: "100%", position: "absolute", pointerEvents: "none", zIndex: 50, right: 0
+                    width: "100%", height: "100%", position: "absolute", pointerEvents: "none", zIndex: 52, right: 0
                 }}
                 direction={"vertical"}
                 initialSlide={1}
@@ -376,7 +363,7 @@ export default function ControlCenters() {
             <Swiper
                 grabCursor={true}
                 style={{
-                    width: "100%", height: "100%", position: "absolute", pointerEvents: "none", zIndex: 50, left: 0, userSelect: "none",
+                    width: "100%", height: "100%", position: "absolute", pointerEvents: "none", zIndex: 52, left: 0, userSelect: "none",
                 }}
                 direction={"vertical"}
                 initialSlide={1}
@@ -395,7 +382,7 @@ export default function ControlCenters() {
                         alignItems: "center",
                         position: "absolute",
                         pointerEvents: "all",
-                        backgroundColor: "rgba(0, 0, 0, 0.5)",
+                        backgroundColor: "rgba(0, 0, 0, 0.5)"
                     }}>
                         <div style={{
                             display: 'flex',
@@ -424,6 +411,7 @@ export default function ControlCenters() {
                                 </defs>
                             </svg>
                         </div>
+
                         <div style={{
                             fontWeight: "500",
                             marginTop: "0.3vw",
@@ -441,7 +429,7 @@ export default function ControlCenters() {
                             position: 'absolute',
                             top: '24%',
                             right: '7%',
-                        }} onClick={()=>{
+                        }} onClick={() => {
                             notiQueue.removeAll();
                         }} className='clickanimationXl' width="0.8333333333333334vw" height="0.8333333333333334vw" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd" d="M8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16ZM5.2838 4.42288C5.07552 4.2146 4.73783 4.2146 4.52955 4.42288C4.32127 4.63116 4.32127 4.96884 4.52955 5.17712L7.35242 8L4.52954 10.8229C4.32126 11.0312 4.32126 11.3688 4.52954 11.5771C4.73782 11.7854 5.07551 11.7854 5.28379 11.5771L8.10667 8.75425L10.9295 11.5771C11.1378 11.7854 11.4755 11.7854 11.6838 11.5771C11.8921 11.3688 11.8921 11.0312 11.6838 10.8229L8.86091 8L11.6838 5.17712C11.8921 4.96884 11.8921 4.63116 11.6838 4.42288C11.4755 4.2146 11.1378 4.2146 10.9295 4.42288L8.10667 7.24575L5.2838 4.42288Z" fill="#B5B5B5" />
@@ -457,7 +445,7 @@ export default function ControlCenters() {
                                             key={index}
                                             nodeRef={noti.nodeRef}
                                             timeout={500}
-                                            classNames="item"
+                                            classNames="swipeinleft"
                                         >
                                             <div ref={noti.nodeRef} className="notiRegisterar" key={index}>
                                                 <Image src={notiIcons(noti.app.toLowerCase())} w={'1.71875vw'} h={'1.71875vw'} alt={noti.app} />
@@ -471,36 +459,12 @@ export default function ControlCenters() {
                                                 </div>
                                             </div>
                                         </CSSTransition>
-
                                     )
                                 })}
                             </TransitionGroup>
 
                         </div>
-                        <div style={{
-                            backgroundColor: "rgba(0, 0, 0, 0.0)",
-                            width: "100%",
-                            borderRadius: "1vw",
-                            height: "5%",
-                            pointerEvents: "all",
-                            position: "absolute",
-                            bottom: "0vw",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                        }}
-                            onMouseDown={handleMouseDownB1}
-                            onMouseUp={handleMouseUpB1}
-                            onMouseLeave={handleMouseLeaveB1}
-                        >
-                            <div style={{
-                                backgroundColor: "rgba(255, 255, 255, 1)",
-                                width: "50%",
-                                height: "13%",
-                                borderRadius: "1vw",
-                                marginTop: "4%",
-                            }} />
-                        </div>
+
                     </div>
                 </SwiperSlide>
                 <SwiperSlide>
@@ -511,7 +475,7 @@ export default function ControlCenters() {
                         height: "1.6vw",
                         pointerEvents: "all",
                     }} onMouseEnter={() => {
-                        refB1.current.swiper.allowTouchMove = true;
+                        /*  refB1.current.swiper.allowTouchMove = true; */
                     }}>
 
                     </div>
