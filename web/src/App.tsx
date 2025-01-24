@@ -12,11 +12,11 @@ import phoneBg from "../images/phoneBG.jpg";
 import HomeScreen from './components/screens/Homescreen';
 import Lockscreen from './components/screens/Lockscreen';
 import Startup from './components/screens/Startup';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { isEnvBrowser } from './hooks/misc';
 import { fetchNui } from './hooks/fetchNui';
 import ControlCenters from './components/screens/ControlCenters';
-import Phone from './components/apps/phone/phone';
+import Phone from './components/apps/phone/Phone';
 import { PhoneSettings } from '../../types/types';
 
 debugData([
