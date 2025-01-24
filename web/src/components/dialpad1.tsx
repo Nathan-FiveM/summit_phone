@@ -1,7 +1,9 @@
-export default function Dialpad(props: { onDial: (digit: string) => void }) {
+export default function Dialpad(props: { onDial: (digit: string) => void, mt?: string }) {
 
     return (
-        <div className="dialpad1">
+        <div className="dialpad1" style={{
+            marginTop: props.mt && props.mt,
+        }}>
             <div className="button clickanimation" onClick={() => props.onDial('1')}>
                 <div className="text">1</div>
             </div>

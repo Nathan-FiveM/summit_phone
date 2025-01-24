@@ -1,9 +1,9 @@
-import { Image, Transition } from "@mantine/core";
+import { Image } from "@mantine/core";
 import lockscreenBg from "../../../images/lockscreenBg.png";
 import lockIcon from "../../../images/lockIcon.svg?url";
 import unLockIcon from "../../../images/unlockIcon.svg?url";
 import dayjs from "dayjs";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CSSTransition } from "react-transition-group";
 import { Swiper, SwiperSlide } from 'swiper/react';
 //@ts-ignore
@@ -11,9 +11,10 @@ import 'swiper/css';
 import CircleFillers from "../circlefillers";
 import DialpadV2 from "../dialpad2";
 import { usePhone } from "../../store/store";
+import { fetchNui } from "../../hooks/fetchNui";
 
 export default function Lockscreen() {
-    const { isLock, setIsLock } = usePhone();
+    const { phoneSettings, setPhoneSettings } = usePhone();
     const nodeRef = useRef(null);
     const refB1 = useRef(null);
     const [activeSlide, setActiveSlide] = useState(0);
@@ -28,14 +29,33 @@ export default function Lockscreen() {
     }
     const [passcode, setPasscode] = useState("");
 
+    useEffect(() => {
+        if (passcode) {
+            if (passcode.length === phoneSettings.lockPin.length) {
+                if (passcode === phoneSettings.lockPin) {
+                    const dataX = {
+                        ...phoneSettings,
+                        isLock: false
+                    }
+                    setPhoneSettings(dataX);
+                    fetchNui('unLockorLockPhone', false);
+                    setPasscode("");
+                    setActiveSlide(0);
+                } else {
+                    setPasscode("");
+                }
+            }
+        }
+    }, [passcode]);
+
     return (
-        <CSSTransition nodeRef={nodeRef} in={isLock} timeout={450} classNames="enterandexitfromtop" unmountOnExit mountOnEnter>
+        <CSSTransition nodeRef={nodeRef} in={phoneSettings.isLock} timeout={450} classNames="enterandexitfromtop" unmountOnExit mountOnEnter>
             <div style={{
-                backgroundImage: `url(${lockscreenBg})`,
+                backgroundImage: `url(/images/lockscreenBG.png)`,
                 backgroundSize: 'cover',
                 backgroundRepeat: 'no-repeat',
             }} ref={nodeRef} className="lockscreen">
-                <Image src={isLock ? lockIcon : unLockIcon} alt="lock" w={'0.7697916666666667vw'} h={'1.09375vw'} mt={'2vw'} />
+                <Image src={phoneSettings.isLock ? lockIcon : unLockIcon} alt="lock" w={'0.7697916666666667vw'} h={'1.09375vw'} mt={'2.3vw'} />
                 <div style={{
                     marginTop: "0.3vw",
                     fontWeight: 500,
@@ -121,20 +141,18 @@ export default function Lockscreen() {
                             flexDirection: "column",
                             alignItems: "center",
                         }}>
-                            <Image src={isLock ? lockIcon : unLockIcon} alt="lock" w={'0.7697916666666667vw'} h={'1.09375vw'} mt={'2vw'} />
+                            <Image src={phoneSettings.isLock ? lockIcon : unLockIcon} alt="lock" w={'0.7697916666666667vw'} h={'1.09375vw'} mt={'2.3vw'} />
                             <div className="passcodeText" style={{
                                 marginTop: '2vw'
                             }}>Enter Passcode</div>
-                            <CircleFillers mt="0.3vw" type={5} length={passcode.length} error={false} />
+                            <CircleFillers mt="0.3vw" type={phoneSettings.lockPin.length} length={passcode.length} error={false} />
                             <DialpadV2 onClick={(number: string) => {
                                 setPasscode(passcode + number);
                             }} mt="1.5vw" />
                             <div className="emeButtons" style={{
                                 marginTop: "6.5vw",
                             }}>
-                                <div className="text1 clickanimation" onClick={() => {
-                                    /* refB1.current.swiper.slideTo(0); */
-                                }}>Emergency</div>
+                                <div className="text1 clickanimation" >Emergency</div>
                                 <div className="text1 clickanimation" onClick={() => setPasscode("")}>Cancel</div>
                             </div>
                         </div>

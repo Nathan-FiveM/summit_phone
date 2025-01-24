@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
+import { PhoneSettings } from '../../../types/types';
 
 type State = {
     visible: boolean;
@@ -8,15 +9,16 @@ type State = {
         show: boolean;
         type: string;
         timeout?: number;
+        content?: any;
     };
-    showwelcomeScreen: boolean;
     relayoutMode: boolean;
     time: {
         h: number;
         m: number;
         s: number;
     };
-    isLock : boolean;
+    phoneSettings: PhoneSettings;
+    location: string;
 };
 
 type Actions = {
@@ -26,15 +28,16 @@ type Actions = {
         show: boolean;
         type: string;
         timeout?: number;
+        content?: any;
     }) => void;
-    setShowWelcomeScreen: (showwelcomeScreen: boolean) => void;
     setRelayoutMode: (relayoutMode: boolean) => void;
     setTime: (time: {
         h: number;
         m: number;
         s: number;
     }) => void;
-    setIsLock: (isLock: boolean) => void;
+    setPhoneSettings: (phoneSettings: PhoneSettings) => void;
+    setLocation: (location: string) => void;
 };
 
 export const usePhone = create<State & Actions>()(
@@ -45,15 +48,35 @@ export const usePhone = create<State & Actions>()(
             show: false,
             type: '',
             timeout: 1000,
+            content: null,
         },
-        showwelcomeScreen: false,
         relayoutMode: false,
         time: {
             h: 12,
             m: 0,
             s: 0,
         },
-        isLock: false,
+        phoneSettings: {
+            id: '',
+            background: {
+                current: '/images/lockscreenBG.png',
+                wallpapers: [],
+            },
+            ringtone: {
+                current: 'default',
+                ringtones: [],
+            },
+            showStartupScreen: false,
+            showNotifications: true,
+            isLock: true,
+            lockPin: '',
+            usePin: false,
+            useFaceId: false,
+            faceIdIdentifier: '',
+            smrtId: '',
+            smrtPassword: '',
+        },
+        location: '',
         setVisible: (visible: boolean) => set((state) => {
             state.visible = visible;
         }),
@@ -67,9 +90,6 @@ export const usePhone = create<State & Actions>()(
         }) => set((state) => {
             state.dynamicNoti = dynamic;
         }),
-        setShowWelcomeScreen: (showwelcomeScreen: boolean) => set((state) => {
-            state.showwelcomeScreen = showwelcomeScreen;
-        }),
         setRelayoutMode: (relayoutMode: boolean) => set((state) => {
             state.relayoutMode = relayoutMode;
         }),
@@ -80,8 +100,11 @@ export const usePhone = create<State & Actions>()(
         }) => set((state) => {
             state.time = time;
         }),
-        setIsLock: (isLock: boolean) => set((state) => {
-            state.isLock = isLock;
+        setPhoneSettings: (phoneSettings: PhoneSettings) => set((state) => {
+            state.phoneSettings = phoneSettings;
+        }),
+        setLocation: (location: string) => set((state) => {
+            state.location = location;
         }),
     }))
 );

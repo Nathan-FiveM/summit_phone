@@ -1,8 +1,7 @@
 import { Button, Image, TextInput, Transition } from "@mantine/core";
-import phoneImage from "../../../images/startupBg.png";
 import smrtLogo from "../../../images/smrtphone_light.png";
 import { useEffect, useState } from "react";
-import { useTimeout } from "@mantine/hooks";
+import { useDebouncedCallback, useTimeout } from "@mantine/hooks";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import hello1 from '../../../images/hellos/1.svg?url';
 import hello2 from '../../../images/hellos/2.svg?url';
@@ -25,9 +24,10 @@ import { countryList } from "../../utils/countrylist";
 import { usePhone } from "../../store/store";
 import CircleFillers from "../circlefillers";
 import Dialpad from "../dialpad1";
+import { fetchNui } from "../../hooks/fetchNui";
 
 export default function Startup() {
-    const { showwelcomeScreen, setDynamicNoti, setShowWelcomeScreen } = usePhone();
+    const { visible, phoneSettings, setDynamicNoti, setPhoneSettings } = usePhone();
     const [logoScreen, setLogoScreen] = useState(true);
     const [showsetUpPage, setShowSetupPage] = useState(false);
     const [selectedCountry, setSelectedCountry] = useState('');
@@ -41,6 +41,8 @@ export default function Startup() {
     const [welcomeScreen, setWelcomeScreen] = useState(false);
     const [signUp, setSignUp] = useState(false);
 
+
+
     const [pin, setPin] = useState('');
     const [confirmPin, setConfirmPin] = useState('');
     const [error, setError] = useState(false);
@@ -50,7 +52,7 @@ export default function Startup() {
     const [confirmPassword, setConfirmPassword] = useState('');
 
     const { start, clear } = useTimeout(() => {
-        setLogoScreen(false)
+        setLogoScreen(false);
     }, 5000);
 
     const [confirmedPin, setConfirmedPin] = useState('');
@@ -85,6 +87,12 @@ export default function Startup() {
     useEffect(() => {
         if (confirmPin.length === 6) {
             if (confirmPin === pin) {
+                const dataX = {
+                    ...phoneSettings,
+                    usePin: true,
+                    lockPin: confirmPin
+                }
+                setPhoneSettings(dataX);
                 setDynamicNoti({
                     show: true,
                     type: 'success',
@@ -110,13 +118,62 @@ export default function Startup() {
     }, [confirmPin.length]);
 
     useEffect(() => {
-        start()
+        if (visible) {
+            start();
+        }
         return () => clear() // cleanup
-    }, []);
+    }, [visible]);
+
+    const [emailError, setEmailError] = useState(false);
+
+    const handleSearchEmail = useDebouncedCallback(async (email: string) => {
+        const res: string = await fetchNui('searchEmail', `${email}@smrt.com`);
+        const parsedRes = JSON.parse(res);
+        if (parsedRes.length === 0) {
+            setEmailError(false);
+        } else {
+            setEmailError(true);
+        }
+        return parsedRes;
+    }, 500);
+    const handleValidateEmail = useDebouncedCallback(async (email: string) => {
+        const res: string = await fetchNui('searchEmail', `${email}@smrt.com`);
+        const parsedRes = JSON.parse(res);
+        if (parsedRes.length > 0) {
+            setEmailError(false);
+        } else {
+            setEmailError(true);
+        }
+        return parsedRes;
+    }, 500);
+    const [passwordError, setPasswordError] = useState(false);
+
+    const handleRestStatesToOriginal = () => {
+        setLogoScreen(true);
+        setShowSetupPage(false);
+        setSelectedCountry('');
+        setShowSecondLoadingPage(false);
+        setShowDataandPrivacy(false);
+        setShowFaceId(false);
+        setShowSuccessFacePage(false);
+        setShowPinPage(false);
+        setShowConfirmPinPage(false);
+        setSmrtAccountPage(false);
+        setWelcomeScreen(false);
+        setSignUp(false);
+        setPin('');
+        setConfirmPin('');
+        setError(false);
+        setEmail('');
+        setPassword('');
+        setConfirmPassword('');
+        setEmailError(false);
+        setPasswordError(false);
+    }
 
     return (
         <Transition
-            mounted={showwelcomeScreen}
+            mounted={phoneSettings.showStartupScreen}
             transition="fade"
             duration={400}
             timingFunction="ease"
@@ -132,7 +189,7 @@ export default function Startup() {
                         ...styles, width: '100%', height: '100%',
                         display: 'flex', justifyContent: 'center', alignItems: 'center',
                         position: 'absolute', backgroundColor: 'black'
-                    }} ><Image src={smrtLogo} w={150} h={60} className="opacityAnimation" /></div>}
+                    }}><Image src={smrtLogo} w={150} h={60} className="opacityAnimation" /></div>}
                 </Transition>
                 <Transition
                     mounted={!logoScreen && !showsetUpPage}
@@ -331,7 +388,7 @@ export default function Startup() {
                                 <svg style={{
                                     position: 'absolute',
                                     bottom: '3.1vw',
-                                }} xmlns="http://www.w3.org/2000/svg" width="1.3541666666666667vw" height="1.09375vw" viewBox="0 0 26 21" fill="none">
+                                }} xmlns="http://www.w3.org/2000/svg" width="1.9541666666666667vw" height="1.69375vw" viewBox="0 0 26 21" fill="none">
                                     <path d="M4.24495 7.97223H4.93519L5.65993 8.14479L6.1431 8.35186L6.55724 8.62795L6.93687 9.00758L7.21296 9.49075L7.48906 10.181L7.76515 10.9748L8.24832 12.2862L8.55892 12.9764L8.90404 13.5631L9.21465 13.9428L9.55976 14.2879L10.0084 14.5985L10.7332 14.9781L11.3889 15.2197L12.0791 15.3923L12.1827 15.4958L12.2517 15.9445L12.2862 16.6692H13.1835L13.4251 16.8072L13.5286 17.0488V18.3258L13.08 18.3948L12.1481 18.3258L11.1128 18.1532L10.388 17.9806L9.62879 17.7046L8.93855 17.3939L8.42088 17.1179L8.17929 17.0833L8.07576 17.4285L7.97222 20.0859L7.9032 20.3274L7.66162 20.3965L7.24748 20.431L5.52189 20.4655H1.82912L0.931818 20.431L0.448653 20.362L0.103535 20.1894L0 20.0168V18.3948L0.103535 16.8763L0.276094 15.2197L0.483165 13.8047L0.724747 12.6313L1.00084 11.6995L1.31145 10.8022L1.62205 10.112L1.96717 9.52526L2.27778 9.11112L2.58838 8.766L2.96801 8.48991L3.48569 8.21381L3.96886 8.04125L4.24495 7.97223Z" fill="#047DFE" />
                                     <path d="M20.7415 8.11029H21.4663L21.984 8.24834L22.3291 8.38638L22.8122 8.69699L23.1574 9.0076L23.537 9.38723L23.9511 10.0084L24.3653 10.8022L24.6759 11.665L24.952 12.5968L25.1936 13.7012L25.4006 15.0126L25.5732 16.5657L25.6767 17.9807L25.7457 19.7408V20.0514L25.7112 20.362L25.5387 20.431L25.1245 20.4655L23.9166 20.5H21.0867L19.6717 20.4655L18.0151 20.3965L17.808 20.3275L17.739 18.2222L17.7045 17.601L17.601 17.2559L17.5665 17.1524L17.3249 17.1869L16.4276 17.6701L15.7373 17.9461L15.0816 18.1532L13.8392 18.4638L13.5631 18.4983L13.5286 18.3948L12.9074 18.4293V18.3948L13.5286 18.3258L13.4941 17.0488L13.3905 16.8073L13.1835 16.7037L12.2862 16.6692L12.2516 16.6002L12.1826 15.4958L12.6313 15.5303H13.5286L14.2533 15.3923L14.909 15.1507L15.4612 14.8746L15.8754 14.633L16.4621 14.1499L16.7382 13.8392L17.0488 13.3906L17.3594 12.8384L17.601 12.2862L18.4293 9.80137L18.7053 9.3182L18.9814 8.97309L19.292 8.66248L19.7752 8.38638L20.4309 8.17931L20.7415 8.11029Z" fill="#99C6FD" />
                                     <path d="M5.24576 0H5.86697L6.35014 0.0690236L6.93684 0.241582L7.48903 0.517677L7.86866 0.793771L8.07573 0.96633V1.03535L8.21378 1.10438L8.59341 1.62205L8.90401 2.27778L9.04206 2.76094L9.11108 3.2096V3.7963L8.97304 4.48653L8.76596 5.00421L8.48987 5.48737L8.07573 6.00505L7.79963 6.24663L7.42 6.52273L6.90233 6.76431L6.10856 6.97138L5.69442 7.0404L5.24576 7.00589L4.55553 6.83333L4.03785 6.62626L3.55469 6.35017L3.24408 6.10859L2.89896 5.76347L2.58836 5.31481L2.31226 4.79714L2.1397 4.21044L2.07068 3.76178V3.24411L2.17421 2.65741L2.34677 2.10522L2.58836 1.62205L2.89896 1.20791L3.24408 0.828283L3.72724 0.483165L4.21041 0.241582L4.7626 0.0690236L5.24576 0Z" fill="#047DFE" />
@@ -351,7 +408,7 @@ export default function Startup() {
                             {(styles) => <div style={{
                                 ...styles, width: '100%', height: '100%',
                                 display: 'flex', flexDirection: 'column', justifyContent: 'start', alignItems: 'center',
-                                position: 'absolute', top: '3.4265625000000006vw'
+                                position: 'absolute', top: '3.0265625000000006vw'
                             }}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="3.7056367432150314vw" height="2.9749478079331944vw" viewBox="0 0 71 57" fill="none">
                                     <path d="M11.6995 21.9723H13.6019L15.5993 22.4479L16.931 23.0186L18.0724 23.7795L19.1187 24.8258L19.8796 26.1575L20.6406 28.0598L21.4015 30.2475L22.7332 33.862L23.5892 35.7644L24.5404 37.3814L25.3965 38.4277L26.3476 39.3789L27.5842 40.2349L29.5817 41.2812L31.3889 41.947L33.2912 42.4226L33.5766 42.708L33.7668 43.9445L33.862 45.942H36.335L37.0008 46.3225L37.2862 46.9883V50.5076L36.0497 50.6979L33.4815 50.5076L30.6279 50.0321L28.6305 49.5565L26.5379 48.7955L24.6355 47.9395L23.2088 47.1785L22.5429 47.0834L22.2576 48.0346L21.9722 55.3587L21.782 56.0245L21.1162 56.2147L19.9747 56.3098L15.2189 56.4049H5.04125L2.56818 56.3098L1.23653 56.1196L0.285354 55.644L0 55.1684V50.6979L0.285354 46.5127L0.760943 41.947L1.33165 38.0472L1.99747 34.8132L2.75842 32.245L3.61448 29.772L4.47054 27.8696L5.42172 26.2526L6.27778 25.1112L7.13384 24.16L8.18014 23.3991L9.6069 22.6381L10.9386 22.1625L11.6995 21.9723Z" fill="#047DFE" />
@@ -369,13 +426,24 @@ export default function Startup() {
                                     <br />
                                     SMRT believes privacy is a fundamental human right, so every SMRT product is designed to minimize the collection and use of your data, use on-device processing whenever possible, and provide transparency and control over your information. Your data on this device is also encrypted and will be permanently removed if you reset to factory settings.
                                 </div>
-                                <Button className="startupContinue" onClick={() => {
+                                <Button className="startupContinue" style={{
+                                    marginTop: '4.7vw',
+                                    padding: '0',
+                                    width: '12.5vw',
+                                    height: '1.5vw',
+                                    fontFamily: 'SFPro',
+                                    letterSpacing: '0.03vw',
+                                    fontSize: '0.75vw',
+                                }} onClick={() => {
                                     setShowFaceId(true);
                                     setShowDataandPrivacy(false);
                                 }}>
                                     Continue
                                 </Button>
-                                <Button variant="transparent" className="learnMore" onClick={() => {
+                                <Button mt={'0.3vw'} w={'12.5vw'} style={{
+                                    fontFamily: 'SFPro',
+                                    letterSpacing: '0.01vw',
+                                }} h={'1.5vw'} variant="transparent" className="learnMore" onClick={() => {
 
                                 }}>Learn More</Button>
                             </div>}
@@ -389,19 +457,31 @@ export default function Startup() {
                             {(styles) => <div style={{
                                 ...styles, width: '100%', height: '100%',
                                 display: 'flex', flexDirection: 'column', justifyContent: 'start', alignItems: 'center',
-                                position: 'absolute', top: '3.4265625000000006vw'
+                                position: 'absolute', top: '3.0vw'
                             }}>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="2.8705636743215033vw" height="2.8705636743215033vw" viewBox="0 0 55 55" fill="none">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="3.6vw" height="3.6vw" viewBox="0 0 55 55" fill="none">
                                     <path d="M16.1667 2H15.6C10.8395 2 8.45932 2 6.64109 2.92644C5.0417 3.74137 3.74137 5.0417 2.92644 6.64109C2 8.45932 2 10.8395 2 15.6V16.1667M16.1667 53H15.6C10.8395 53 8.45932 53 6.64109 52.0735C5.0417 51.2586 3.74137 49.9584 2.92644 48.359C2 46.5406 2 44.1606 2 39.4V38.8333M53 16.1667V15.6C53 10.8395 53 8.45932 52.0735 6.64109C51.2586 5.0417 49.9584 3.74137 48.359 2.92644C46.5406 2 44.1606 2 39.4 2H38.8333M53 38.8333V39.4C53 44.1606 53 46.5406 52.0735 48.359C51.2586 49.9584 49.9584 51.2586 48.359 52.0735C46.5406 53 44.1606 53 39.4 53H38.8333M14.75 16.1667V20.4167M40.25 16.1667V20.4167M24.6667 29.2003C26.9333 29.2003 28.9167 27.2169 28.9167 24.9503V16.1667M36.5672 36.5667C31.4672 41.6667 23.2506 41.6667 18.1506 36.5667" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
                                 </svg>
                                 <div className="faceIdtext">Face ID</div>
                                 <div className="faceidDesc">SMRT Phone can recognize the unique, three-dimensional features of your face to unlock automatically, use Apple Pay, make purchases, or subscribe to services from Apple.</div>
 
                                 <Button className="startupContinue" style={{
-                                    marginTop: '15.91858037578288vw'
+                                    marginTop: '17.5vw',
+                                    padding: '0',
+                                    width: '12.5vw',
+                                    height: '1.5vw',
+                                    fontFamily: 'SFPro',
+                                    letterSpacing: '0.03vw',
+                                    fontSize: '0.75vw',
                                 }} onClick={() => {
                                     setShowFaceId(false);
                                     setShowSuccessFacePage(true);
+                                    const dataX = {
+                                        ...phoneSettings,
+                                        useFaceId: true,
+                                        faceIdIdentifier: phoneSettings.id
+                                    }
+                                    setPhoneSettings(dataX);
                                     setTimeout(() => {
                                         setShowSuccessFacePage(false);
                                         setShowPinPage(true);
@@ -414,9 +494,18 @@ export default function Startup() {
                                 }}>
                                     Continue
                                 </Button>
-                                <Button variant="transparent" className="learnMore" onClick={() => {
+                                <Button mt={'0.3vw'} w={'12.5vw'} style={{
+                                    fontFamily: 'SFPro',
+                                    letterSpacing: '0.01vw',
+                                }} h={'1.5vw'} variant="transparent" className="learnMore" onClick={() => {
                                     setShowFaceId(false);
                                     setShowPinPage(true);
+                                    const dataX = {
+                                        ...phoneSettings,
+                                        useFaceId: false,
+                                        faceIdIdentifier: phoneSettings.id
+                                    }
+                                    setPhoneSettings(dataX);
                                 }}>Set Up Later</Button>
                             </div>}
                         </Transition>
@@ -428,7 +517,7 @@ export default function Startup() {
                         >
                             {(styles) => <div style={{
                                 ...styles, width: '100%', height: '100%',
-                                display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', fontSize: '0.7828810020876826vw'
+                                display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', fontSize: '0.9828810020876826vw'
                             }}>
                                 Face ID is Now Set Up
                             </div>}
@@ -441,7 +530,7 @@ export default function Startup() {
                         >
                             {(styles) => <div style={{
                                 ...styles, width: '100%', height: '100%',
-                                display: 'flex', flexDirection: 'column', justifyContent: 'start', alignItems: 'center', position: 'absolute', top: '5.197395833333333vw'
+                                display: 'flex', flexDirection: 'column', justifyContent: 'start', alignItems: 'center', position: 'absolute', top: '3.5vw'
                             }}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="2.65625vw" height="3.59375vw" viewBox="0 0 51 69" fill="none">
                                     <path d="M2.79126 46.8238C2.79126 37.411 2.79126 32.7046 4.81222 29.7803C6.83318 26.8561 10.0859 26.8561 16.5912 26.8561H34.9912C41.4965 26.8561 44.7492 26.8561 46.7702 29.7803C48.7912 32.7046 48.7912 37.411 48.7912 46.8238C48.7912 56.2365 48.7912 60.9429 46.7702 63.8672C44.7492 66.7915 41.4965 66.7915 34.9912 66.7915H16.5912C10.0859 66.7915 6.83318 66.7915 4.81222 63.8672C2.79126 60.9429 2.79126 56.2365 2.79126 46.8238Z" stroke="white" strokeWidth="4" />
@@ -450,7 +539,7 @@ export default function Startup() {
                                 <div className="pinPageTitle1">Create an SMRT Phone Passcode</div>
                                 <div className="pinPageTitle2">Face ID provides convenient and secure access by recognizing your face.</div>
                                 <div className="pinPageTitle3">Occasionally your passcode will be required for validation.</div>
-                                <CircleFillers mt="1.5625vw" type={6} length={pin.length} error={false} />
+                                <CircleFillers mt="2.5625vw" type={6} length={pin.length} error={false} />
                                 <Dialpad onDial={(number: string) => {
                                     if (pin.length < 6 && number !== 'back') {
                                         setPin(pin + number);
@@ -468,7 +557,7 @@ export default function Startup() {
                         >
                             {(styles) => <div style={{
                                 ...styles, width: '100%', height: '100%',
-                                display: 'flex', flexDirection: 'column', justifyContent: 'start', alignItems: 'center', position: 'absolute', top: '5.197395833333333vw'
+                                display: 'flex', flexDirection: 'column', justifyContent: 'start', alignItems: 'center', position: 'absolute', top: '3.5vw'
                             }}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="2.65625vw" height="3.59375vw" viewBox="0 0 51 69" fill="none">
                                     <path d="M2.79126 46.8238C2.79126 37.411 2.79126 32.7046 4.81222 29.7803C6.83318 26.8561 10.0859 26.8561 16.5912 26.8561H34.9912C41.4965 26.8561 44.7492 26.8561 46.7702 29.7803C48.7912 32.7046 48.7912 37.411 48.7912 46.8238C48.7912 56.2365 48.7912 60.9429 46.7702 63.8672C44.7492 66.7915 41.4965 66.7915 34.9912 66.7915H16.5912C10.0859 66.7915 6.83318 66.7915 4.81222 63.8672C2.79126 60.9429 2.79126 56.2365 2.79126 46.8238Z" stroke="white" strokeWidth="4" />
@@ -476,8 +565,8 @@ export default function Startup() {
                                 </svg>
                                 <div className="pinPageTitle1">Create an SMRT Phone Passcode</div>
                                 <div className="pinPageTitle2">Re-enter your passcode.</div>
-                                <CircleFillers mt="5.567226890756302vw" type={6} length={confirmPin.length} error={error} />
-                                <Dialpad onDial={(number: string) => {
+                                <CircleFillers mt="4.567226890756302vw" type={6} length={confirmPin.length} error={error} />
+                                <Dialpad mt="6.2vw" onDial={(number: string) => {
                                     if (confirmPin.length < 6 && number !== 'back') {
                                         setConfirmPin(confirmPin + number);
                                     } else if (number === 'back') {
@@ -496,24 +585,37 @@ export default function Startup() {
                                 ...styles, width: '100%', height: '100%',
                                 display: 'flex', flexDirection: 'column', justifyContent: 'start', alignItems: 'center', position: 'absolute', top: '3.4265625000000006vw'
                             }}>
-                                <Image src={smrtLogoSvg} alt="SMRT Logo" w="3.5714285714285716vw" h="3.621848739495798vw" />
+                                <Image src={smrtLogoSvg} alt="SMRT Logo" w="4.2vw" h="4.2vw" />
                                 <div className="smrtAccount">SMRT Account</div>
                                 <div className="smrDescription">Sign in with an email or phone  or phone number  to use SMRT Cloud, the SMRT Store, and other SMRT services.</div>
-                                <TextInput onChange={(e) => {
-                                    setEmail(e.target.value);
+                                <TextInput onFocus={() => {
+                                    fetchNui('disableControls', true);
+                                }} onBlur={() => {
+                                    fetchNui('disableControls', false);
+                                }} rightSection={
+                                    <div>
+                                        @smrt.com
+                                    </div>
+                                } value={email} error={emailError} onChange={async (e) => {
+                                    if (signUp) {
+                                        setEmail(e.target.value);
+                                        handleSearchEmail(e.target.value);
+                                    } else {
+                                        setEmail(e.target.value);
+                                        const res = handleValidateEmail(e.target.value);
+                                    }
                                 }} placeholder="Email" className="inputForEmail" styles={{
                                     input: {
                                         fontFamily: 'SFPro',
                                         color: 'white',
-                                        width: '14.233193277310924vw',
+                                        width: '13.5vw',
                                         background: 'rgba(255, 255, 255, 0.0)',
                                         border: 'none',
                                     },
-
                                 }} style={{
                                     marginTop: '1.9432773109243697vw',
                                     display: 'flex',
-                                    width: '14.233193277310924vw',
+                                    width: '15.5vw',
                                     height: '1.9432773109243697vw',
                                     alignItems: 'center',
                                     gap: '0.5252100840336135vw',
@@ -522,29 +624,37 @@ export default function Startup() {
                                 }} />
                                 <TextInput onChange={(e) => {
                                     setPassword(e.target.value);
-                                }} placeholder="Password" type="password" className="inputForEmail" styles={{
+                                }} onFocus={() => {
+                                    fetchNui('disableControls', true);
+                                }} onBlur={() => {
+                                    fetchNui('disableControls', false);
+                                }} value={password} error={passwordError} placeholder="Password" type="password" className="inputForEmail" styles={{
                                     input: {
                                         fontFamily: 'SFPro',
-                                        color: 'white',
-                                        width: '14.233193277310924vw',
+                                        width: '15.5vw',
                                         background: 'rgba(255, 255, 255, 0.0)',
                                         border: 'none',
+                                        color: 'white',
                                     },
                                 }} style={{
                                     marginTop: '0.6827731092436975vw',
                                     display: 'flex',
-                                    width: '14.233193277310924vw',
+                                    width: '15.5vw',
                                     height: '1.9432773109243697vw',
                                     alignItems: 'center',
                                     gap: '0.5252100840336135vw',
                                     borderRadius: '0.26260504201680673vw',
                                     background: 'rgba(255, 255, 255, 0.30)',
                                 }} />
-                                {signUp && <TextInput placeholder="Confirm Password" type="password" className="inputForEmail" styles={{
+                                {signUp && <TextInput onFocus={() => {
+                                    fetchNui('disableControls', true);
+                                }} onBlur={() => {
+                                    fetchNui('disableControls', false);
+                                }} value={confirmPassword} placeholder="Confirm Password" type="password" className="inputForEmail" styles={{
                                     input: {
                                         fontFamily: 'SFPro',
                                         color: 'white',
-                                        width: '14.233193277310924vw',
+                                        width: '15.5vw',
                                         background: 'rgba(255, 255, 255, 0.0)',
                                         border: 'none',
                                     },
@@ -553,7 +663,7 @@ export default function Startup() {
                                 }} style={{
                                     marginTop: '0.6827731092436975vw',
                                     display: 'flex',
-                                    width: '14.233193277310924vw',
+                                    width: '15.5vw',
                                     height: '1.9432773109243697vw',
                                     alignItems: 'center',
                                     gap: '0.5252100840336135vw',
@@ -561,24 +671,55 @@ export default function Startup() {
                                     background: 'rgba(255, 255, 255, 0.30)',
                                 }} />}
                                 <Button style={{
-                                    display: 'flex',
-                                    width: '12.079831932773109vw',
-                                    padding: '0.36764705882352944vw 0px 0.36764705882352944vw 0px',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    borderRadius: '0.21008403361344538vw',
+                                    padding: '0',
+                                    width: '14.5vw',
+                                    height: '1.7vw',
+                                    fontFamily: 'SFPro',
+                                    letterSpacing: '0.03vw',
+                                    fontSize: '0.75vw',
                                     background: '#1F53D8',
                                     marginTop: '1.2605042016806722vw'
-                                }} onClick={() => {
+                                }} onClick={async () => {
+                                    if (email.length < 4 && password.length < 4 && email.includes('@')) return;
+                                    if (signUp && password !== confirmPassword) return;
+                                    if (emailError) return;
+                                    if (!signUp) {
+                                        const res: boolean = await fetchNui('loginMailAccount', JSON.stringify({
+                                            email: `${email}@smrt.com`,
+                                            password: password
+                                        }));
+                                        setPasswordError(!res);
+                                        if (!res) return;
+                                    }
+                                    const dataX = {
+                                        ...phoneSettings,
+                                        smrtId: `${email}@smrt.com`,
+                                        smrtPassword: signUp ? confirmPassword : password
+                                    }
+                                    setPhoneSettings(dataX);
                                     setSmrtAccountPage(false);
                                     setWelcomeScreen(true);
+                                    if (signUp) {
+                                        fetchNui('registerNewMailAccount', JSON.stringify({
+                                            email: `${email}@smrt.com`,
+                                            password: confirmPassword
+                                        }));
+                                    }
                                 }}>
                                     Continue
                                 </Button>
-                                <Button variant="transparent" onClick={() => {
+                                <Button mt={'0.3vw'} w={'14.5vw'} style={{
+                                    fontFamily: 'SFPro',
+                                    letterSpacing: '0.01vw',
+                                }} h={'1.5vw'} variant="transparent" onClick={() => {
                                     setSignUp(!signUp);
+                                    if (!signUp) {
+                                        handleSearchEmail(email);
+                                    } else {
+                                        handleValidateEmail(email);
+                                    }
                                 }}>{!signUp ? 'Sign Up' : 'Login'}</Button>
-                                <svg style={{ marginTop: signUp ? '4vw' : '5.3125vw' }} xmlns="http://www.w3.org/2000/svg" width="1.3541666666666667vw" height="1.09375vw" viewBox="0 0 26 21" fill="none">
+                                <svg style={{ marginTop: signUp ? '3.4vw' : '6vw' }} xmlns="http://www.w3.org/2000/svg" width="1.3541666666666667vw" height="1.09375vw" viewBox="0 0 26 21" fill="none">
                                     <path d="M4.24495 7.97223H4.93519L5.65993 8.14479L6.1431 8.35186L6.55724 8.62795L6.93687 9.00758L7.21296 9.49075L7.48906 10.181L7.76515 10.9748L8.24832 12.2862L8.55892 12.9764L8.90404 13.5631L9.21465 13.9428L9.55976 14.2879L10.0084 14.5985L10.7332 14.9781L11.3889 15.2197L12.0791 15.3923L12.1827 15.4958L12.2517 15.9445L12.2862 16.6692H13.1835L13.4251 16.8072L13.5286 17.0488V18.3258L13.08 18.3948L12.1481 18.3258L11.1128 18.1532L10.388 17.9806L9.62879 17.7046L8.93855 17.3939L8.42088 17.1179L8.17929 17.0833L8.07576 17.4285L7.97222 20.0859L7.9032 20.3274L7.66162 20.3965L7.24748 20.431L5.52189 20.4655H1.82912L0.931818 20.431L0.448653 20.362L0.103535 20.1894L0 20.0168V18.3948L0.103535 16.8763L0.276094 15.2197L0.483165 13.8047L0.724747 12.6313L1.00084 11.6995L1.31145 10.8022L1.62205 10.112L1.96717 9.52526L2.27778 9.11112L2.58838 8.766L2.96801 8.48991L3.48569 8.21381L3.96886 8.04125L4.24495 7.97223Z" fill="#047DFE" />
                                     <path d="M20.7415 8.11029H21.4663L21.984 8.24834L22.3291 8.38638L22.8122 8.69699L23.1574 9.0076L23.537 9.38723L23.9511 10.0084L24.3653 10.8022L24.6759 11.665L24.952 12.5968L25.1936 13.7012L25.4006 15.0126L25.5732 16.5657L25.6767 17.9807L25.7457 19.7408V20.0514L25.7112 20.362L25.5387 20.431L25.1245 20.4655L23.9166 20.5H21.0867L19.6717 20.4655L18.0151 20.3965L17.808 20.3275L17.739 18.2222L17.7045 17.601L17.601 17.2559L17.5665 17.1524L17.3249 17.1869L16.4276 17.6701L15.7373 17.9461L15.0816 18.1532L13.8392 18.4638L13.5631 18.4983L13.5286 18.3948L12.9074 18.4293V18.3948L13.5286 18.3258L13.4941 17.0488L13.3905 16.8073L13.1835 16.7037L12.2862 16.6692L12.2516 16.6002L12.1826 15.4958L12.6313 15.5303H13.5286L14.2533 15.3923L14.909 15.1507L15.4612 14.8746L15.8754 14.633L16.4621 14.1499L16.7382 13.8392L17.0488 13.3906L17.3594 12.8384L17.601 12.2862L18.4293 9.80137L18.7053 9.3182L18.9814 8.97309L19.292 8.66248L19.7752 8.38638L20.4309 8.17931L20.7415 8.11029Z" fill="#99C6FD" />
                                     <path d="M5.24588 0H5.8671L6.35026 0.0690236L6.93696 0.241582L7.48915 0.517677L7.86878 0.793771L8.07585 0.96633V1.03535L8.2139 1.10438L8.59353 1.62205L8.90413 2.27778L9.04218 2.76094L9.1112 3.2096V3.7963L8.97316 4.48653L8.76609 5.00421L8.48999 5.48737L8.07585 6.00505L7.79976 6.24663L7.42013 6.52273L6.90245 6.76431L6.10868 6.97138L5.69454 7.0404L5.24588 7.00589L4.55565 6.83333L4.03797 6.62626L3.55481 6.35017L3.2442 6.10859L2.89908 5.76347L2.58848 5.31481L2.31238 4.79714L2.13982 4.21044L2.0708 3.76178V3.24411L2.17434 2.65741L2.3469 2.10522L2.58848 1.62205L2.89908 1.20791L3.2442 0.828283L3.72737 0.483165L4.21053 0.241582L4.76272 0.0690236L5.24588 0Z" fill="#047DFE" />
@@ -603,13 +744,13 @@ export default function Startup() {
                                     color: "#FFF",
                                     textAlign: "center",
                                     fontFamily: "SFPro",
-                                    fontSize: "1.0416666666666667vw",
+                                    fontSize: "1.2vw",
                                     fontStyle: "normal",
                                     fontWeight: 700,
                                     lineHeight: "119.414%",
                                 }}>Welcome to SMRT Phone</div>
                                 <div className="swipeUp" style={{
-                                    marginTop: '14.479166666666666vw',
+                                    marginTop: '15.2vw',
                                     color: "#FFF",
                                     textAlign: "center",
                                     fontSize: "0.78125vw",
@@ -617,15 +758,21 @@ export default function Startup() {
                                     fontWeight: 500,
                                     lineHeight: "119.414%",
                                 }}>Click to get started</div>
-                                
-                                <div onClick={()=>{
-                                    setShowWelcomeScreen(false);
+
+                                <div onClick={() => {
+                                    const dataX = {
+                                        ...phoneSettings,
+                                        showStartupScreen: false,
+                                    }
+                                    setPhoneSettings(dataX);
+                                    fetchNui('setSettings', JSON.stringify(dataX));
                                     setWelcomeScreen(false);
+                                    handleRestStatesToOriginal();
                                 }} className="dash" style={{
                                     width: '8.854166666666666vw',
                                     height: '0.2604166666666667vw',
                                     flexShrink: 0,
-                                    marginTop: '0.3125vw',
+                                    marginTop: '0.5125vw',
                                     borderRadius: '0.3645833333333333vw',
                                     background: '#D9D9D9',
                                     cursor: 'pointer',

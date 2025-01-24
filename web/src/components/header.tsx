@@ -9,7 +9,7 @@ export default function Header() {
     const [time, setTime] = useState('')
 
     const { start, clear } = useTimeout(() => {
-        setDynamicNoti({ show: false, type: '' });
+        setDynamicNoti({ show: false, type: '', timeout: 0, content: dynamicNoti.content });
     }, dynamicNoti.timeout || 1000);
 
     useNuiEvent('sendTime', (data: string) => {
@@ -34,7 +34,7 @@ export default function Header() {
                 <div className="timeText">
                     {time}
                 </div>
-                <svg width="3.4375vw" height="0.625vw" viewBox="0 0 66 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="5.4375vw" height="0.625vw" viewBox="0 0 66 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g clipPath="url(#clip0_410_305)">
                         <path d="M11.2778 3.66645C11.2778 3.2369 11.626 2.88867 12.0556 2.88867H12.8334C13.263 2.88867 13.6112 3.23689 13.6112 3.66645V9.8887C13.6112 10.3183 13.263 10.6665 12.8334 10.6665H12.0556C11.626 10.6665 11.2778 10.3183 11.2778 9.8887V3.66645Z" fill="white" />
                         <path d="M15.1666 2.11079C15.1666 1.68123 15.5148 1.33301 15.9444 1.33301H16.7222C17.1517 1.33301 17.5 1.68123 17.5 2.11079V9.88859C17.5 10.3182 17.1517 10.6664 16.7222 10.6664H15.9444C15.5148 10.6664 15.1666 10.3182 15.1666 9.88859V2.11079Z" fill="white" />
@@ -52,8 +52,8 @@ export default function Header() {
                 </svg>
             </div>
 
-            <svg style={{ position: 'relative', zIndex: 100, transition: 'all 0.5s ease' }} width={dynamicNoti.show && dynamicNoti.type === 'error' ? "8vw" : "4.322916666666667vw"} height={dynamicNoti.show && dynamicNoti.type === 'success' ? '7.6vw' : '1.25vw'} viewBox="0 0 83 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect className={dynamicNoti.show && dynamicNoti.type === 'error' ? 'vibrateAnimation' : ''} width="83" height={dynamicNoti.show && dynamicNoti.type === 'success' ? "83" : '24'} rx={dynamicNoti.show && dynamicNoti.type === 'success' ? "20" : "12"} fill="black" style={{ transition: 'all 0.5s ease' }} />
+            <svg style={{ position: 'relative', zIndex: 100, transition: 'all 0.5s ease' }} width={dynamicNoti.show && dynamicNoti.type === 'error' ? "10vw" : "4.522916666666666vw"} height={dynamicNoti.show && dynamicNoti.type === 'success' ? '7.8vw' : '1.25vw'} viewBox="0 0 87 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect className={dynamicNoti.show && dynamicNoti.type === 'error' ? 'vibrateAnimation' : ''} width="87" height={dynamicNoti.show && dynamicNoti.type === 'success' ? "87" : '24'} rx={dynamicNoti.show && dynamicNoti.type === 'success' ? "20" : "12"} fill="black" style={{ transition: 'all 0.5s ease' }} />
                 <path d="M69 17C71.7614 17 74 14.7614 74 12C74 9.23858 71.7614 7 69 7C66.2386 7 64 9.23858 64 12C64 14.7614 66.2386 17 69 17Z" fill="#252527" />
                 <circle cx="68.9969" cy="11.9996" r="4.70274" fill="black" stroke="black" strokeWidth="0.392568" />
                 <g filter="url(#filter0_f_415_330)">
@@ -68,7 +68,7 @@ export default function Header() {
                 <g filter="url(#filter3_f_415_330)">
                     <path d="M69.1425 12.3719C68.6526 13.0845 68.4559 13.0586 68.3631 12.9287C68.3074 13.04 68.2406 13.1291 68.1961 13.2627C68.1404 13.4297 68.3631 13.5967 68.5301 13.6524C68.6971 13.7081 69.4765 13.4297 69.6435 13.3184C69.8105 13.207 70.2559 12.873 70.3116 12.6503C70.3673 12.4276 70.4229 11.3699 70.4229 11.2585C70.4229 11.1472 70.4786 11.0358 70.4229 10.8688C70.3784 10.7352 70.1446 10.7761 70.0332 10.8132C69.9961 10.9059 69.8996 11.1249 69.8105 11.2585C69.6992 11.4255 69.7549 11.4812 69.1425 12.3719Z" fill="#494067" />
                 </g>
-                <foreignObject x="0" y="0" width="83" height="83">
+                <foreignObject x="0" y="0" width="87" height="87">
                     <Transition
                         mounted={dynamicNoti.show && dynamicNoti.type === 'success'}
                         transition="scale"
@@ -76,10 +76,10 @@ export default function Header() {
                         timingFunction="ease"
                     >
                         {(styles) => <div style={{ ...styles, display: 'flex', justifyContent: 'center', height: '83px', alignItems: 'center' }}>
-                            <svg width="46" height="46" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            {dynamicNoti.content ? dynamicNoti.content : <svg width="46" height="46" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M25.18 48.36C37.9819 48.36 48.36 37.9819 48.36 25.18C48.36 12.378 37.9819 2 25.18 2C12.378 2 2 12.378 2 25.18C2 37.9819 12.378 48.36 25.18 48.36Z" stroke="#00D03E" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                 <path d="M39.0391 16.9573L18.8115 37.1849L12.3943 30.7677" stroke="#00D03E" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
+                            </svg>}
                         </div>}
                     </Transition>
                 </foreignObject>
@@ -106,7 +106,7 @@ export default function Header() {
                     </filter>
                 </defs>
             </svg>
-            
+
         </div >
     )
 }

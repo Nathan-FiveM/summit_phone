@@ -14,7 +14,7 @@ class Util {
         }, true);
 
         RegisterCommand('transferContacts', async (source: any, args: any) => {
-            // if (source === 0) return LOGGER('This command can only be executed in-game.');
+            if (source === 0) return LOGGER('This command can only be executed in-game.');
             await Utils.TransferContacts();
         }, true);
     }

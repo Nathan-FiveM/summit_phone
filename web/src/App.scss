@@ -4,10 +4,11 @@
 }
 
 .innerFrame {
-  width: 15.757291666666666vw;
-  height: 34.12500000000001vw;
+  width: 16.757291666666666vw;
+  height: 36.12500000000001vw;
   margin-top: 0.55vw;
-  border-radius: 2.2916666666666665vw;
+  margin-left: 0.64vw;
+  border-radius: 2.48vw;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -17,7 +18,7 @@
 
   .headerFrame {
     position: absolute;
-    width: 15.729166666666666vw;
+    width: 16.757291666666666vw;
     height: 2.34375vw;
     flex-shrink: 0;
     display: flex;
@@ -53,7 +54,7 @@
   .contentFrame {
     width: 100%;
     height: 100%;
-    border-radius: 2.2395833333333335vw;
+    border-radius: 2.48vw;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -89,12 +90,12 @@
         justify-content: center;
 
         .fourApps {
-          width: 5.78125vw;
+          width: 5.98125vw;
           display: flex;
           height: 7.604166666666667vw;
           align-items: flex-start;
           align-content: flex-start;
-          gap: 1.09375vw 0.5729166666666666vw;
+          gap: 1.3vw 0.5729166666666666vw;
           flex-shrink: 0;
           flex-wrap: wrap;
           margin-left: 0.6770833333333334vw;
@@ -104,11 +105,11 @@
       .secondRow {
         position: relative;
         display: flex;
-        width: 13.645833333333334vw;
-        height: 11.927083333333334vw;
+        width: 14.245833333333334vw;
+        height: 12.927083333333334vw;
         align-items: flex-start;
         align-content: flex-start;
-        gap: 1.0729166666666667vw;
+        gap: 1.277vw;
         flex-wrap: wrap;
         margin-top: 1.3020833333333333vw;
         transition: all 0.3s ease;
@@ -116,11 +117,11 @@
 
       .thirdRow {
         display: flex;
-        width: 13.541666666666666vw;
+        width: 14.6vw;
         height: 3.4895833333333335vw;
         padding: 0.5208333333333334vw;
         align-items: center;
-        gap: 0.5208333333333334vw;
+        gap: 1.0729166666666667vw;
         flex-shrink: 0;
         border-radius: 0.625vw;
         position: relative;
@@ -142,13 +143,13 @@
       user-select: none;
 
       .bottomButton {
-        width: 13.229166666666666vw;
+        width: 14.229166666666666vw;
         height: 2.1066145833333336vw;
         flex-shrink: 0;
         display: flex;
         justify-content: space-between;
         position: relative;
-        top: 20.7vw;
+        top: 22.2vw;
 
         .button1 {
           width: 2.03125vw;
@@ -178,6 +179,7 @@
       background-position: center;
       background-repeat: no-repeat;
 
+
       .title1 {
         width: 13vw;
         color: #FFF;
@@ -191,7 +193,7 @@
       }
 
       .usabox {
-        width: 14.21875vw;
+        width: 15.21875vw;
         height: 2.3958333333333335vw;
         flex-shrink: 0;
         border-radius: 0.2604166666666667vw;
@@ -202,13 +204,14 @@
         align-items: center;
 
         .text {
-          width: 3.59375vw;
-          height: 0.625vw;
+          width: 5vw;
+          letter-spacing: 0.02vw;
+          height: 0.825vw;
           flex-shrink: 0;
           color: #FFF;
           text-align: center;
           font-family: "SFPro";
-          font-size: 0.5729166666666666vw;
+          font-size: 0.74vw;
           font-style: normal;
           font-weight: 600;
           line-height: 119.414%;
@@ -232,8 +235,8 @@
 
       .otherCountry {
         display: flex;
-        width: 14.21875vw;
-        height: 16.302083333333332vw;
+        width: 15.21875vw;
+        height: 18.4vw;
         flex-direction: column;
         align-items: flex-start;
         flex-shrink: 0;
@@ -247,11 +250,12 @@
 
         .text {
 
-          height: 0.625vw;
+          letter-spacing: 0.02vw;
+          height: 0.825vw;
           flex-shrink: 0;
           color: #FFF;
           font-family: "SFPro";
-          font-size: 0.5729166666666666vw;
+          font-size: 0.74vw;
           font-style: normal;
           font-weight: 600;
           line-height: 119.414%;
@@ -259,13 +263,13 @@
       }
 
       .mayTake {
-        width: 11.25vw;
+        width: 14vw;
         height: 1.9791666666666667vw;
         flex-shrink: 0;
         color: #FFF;
         text-align: center;
         font-family: "SFPro";
-        font-size: 0.6770833333333334vw;
+        font-size: 0.8vw;
         font-style: normal;
         font-weight: 600;
         line-height: 119.414%;
@@ -274,11 +278,11 @@
       .unnderText {
         position: absolute;
         bottom: 1.6677083333333336vw;
-        width: 14.375vw;
+        width: 16vw;
         color: #FFF;
         text-align: center;
         font-family: "SFPro";
-        font-size: 0.5208333333333334vw;
+        font-size: 0.55vw;
         font-style: normal;
         font-weight: 600;
         line-height: 119.414%;
@@ -297,13 +301,13 @@
       }
 
       .inoftext {
-        width: 13.413361169102297vw;
+        width: 15.413361169102297vw;
         height: 17.849686847599166vw;
         flex-shrink: 0;
         color: #FFF;
         text-align: center;
         font-family: "SFPro";
-        font-size: 0.7828810020876826vw;
+        font-size: 0.8828810020876826vw;
         font-style: normal;
         font-weight: 500;
         line-height: 119.414%;
@@ -312,9 +316,8 @@
 
       .startupContinue {
         display: flex;
-        margin-top: 1.6701461377870563vw;
-        width: 12.004175365344468vw;
-        padding: 0.3653444676409186vw 0px 0.31315240083507306vw 0px;
+
+
         border-radius: 0.20876826722338204vw;
         background: #1F53D8;
         justify-content: center;
@@ -333,13 +336,13 @@
       }
 
       .faceIdtext {
-        width: 5.532359081419624vw;
+        width: 6vw;
         height: 1.8789144050104385vw;
         flex-shrink: 0;
         color: #FFF;
         text-align: center;
         font-family: "SFPro";
-        font-size: 1.5657620041753653vw;
+        font-size: 1.7657620041753653vw;
         font-style: normal;
         font-weight: 600;
         line-height: 119.414%;
@@ -347,13 +350,13 @@
       }
 
       .faceidDesc {
-        width: 12.995824634655532vw;
+        width: 13.8vw;
         height: 4.697286012526096vw;
         flex-shrink: 0;
         color: #FFF;
         text-align: center;
         font-family: "SFPro";
-        font-size: 0.7828810020876826vw;
+        font-size: 0.8828810020876826vw;
         font-style: normal;
         font-weight: 500;
         margin-top: 0.9394572025052192vw;
@@ -361,23 +364,23 @@
       }
 
       .pinPageTitle1 {
-        width: 11.875vw;
+        width: 15.875vw;
         margin-top: 1.25vw;
         color: #FFF;
         text-align: center;
         font-family: "SFPro";
-        font-size: 1.09375vw;
+        font-size: 1.29375vw;
         font-style: normal;
         font-weight: 700;
         line-height: normal;
       }
 
       .pinPageTitle2 {
-        width: 13.697916666666666vw;
+        width: 15.697916666666666vw;
         color: #FFF;
         text-align: center;
         font-family: "SFPro";
-        font-size: 0.78125vw;
+        font-size: 0.84vw;
         font-style: normal;
         font-weight: 500;
         line-height: normal;
@@ -385,14 +388,14 @@
       }
 
       .pinPageTitle3 {
-        width: 9.739583333333334vw;
+        width: 10.739583333333334vw;
         height: 1.6666666666666667vw;
         margin-top: 1.5104166666666667vw;
         flex-shrink: 0;
         color: #FFF;
         text-align: center;
         font-family: "SFPro";
-        font-size: 0.78125vw;
+        font-size: 0.84vw;
         font-style: normal;
         font-weight: 500;
         line-height: normal;
@@ -401,7 +404,7 @@
       .smrtAccount {
         color: #FFF;
         font-family: Saira;
-        font-size: 1.050420168067227vw;
+        font-size: 1.250420168067227vw;
         font-style: normal;
         font-weight: 700;
         line-height: normal;
@@ -409,13 +412,13 @@
       }
 
       .smrDescription {
-        width: 11.659663865546218vw;
+        width: 13.659663865546218vw;
         height: 2.2058823529411766vw;
         flex-shrink: 0;
         color: #FFF;
         margin-top: 0.4726890756302521vw;
         text-align: center;
-        font-size: 0.5777310924369747vw;
+        font-size: 0.6777310924369747vw;
         font-style: normal;
         font-weight: 500;
         line-height: normal;
@@ -458,23 +461,23 @@
 
 .dialpad1 {
   display: flex;
-  width: 15.729166666666666vw;
+  width: 16.757291666666666vw;
   user-select: none;
   height: 10.625vw;
   padding: 0.3125vw 0.052083333333333336vw;
   justify-content: center;
   align-items: flex-start;
   align-content: flex-start;
-  gap: 0.5729166666666666vw;
+  gap: 0.6729166666666666vw;
   flex-shrink: 0;
-  margin-top: 2.146354166666667vw;
+  margin-top: 4.0vw;
   background: rgba(255, 255, 255, 0.30);
   flex-wrap: wrap;
 
   .button {
     display: flex;
-    width: 4.166666666666667vw;
-    height: 1.4583333333333333vw;
+    width: 4.666666666666667vw;
+    height: 1.6583333333333333vw;
     padding: 0.052083333333333336vw 1.09375vw;
     flex-direction: column;
     align-items: center;
@@ -484,7 +487,7 @@
 
     .text {
       display: flex;
-      height: 0.78125vw;
+      height: 0.9vw;
       flex-direction: column;
       justify-content: center;
       flex-shrink: 0;
@@ -492,7 +495,7 @@
       color: #000;
       text-align: center;
       font-family: "SFPro";
-      font-size: 0.5729166666666666vw;
+      font-size: 0.7729166666666666vw;
       font-style: normal;
       font-weight: 700;
       line-height: normal;
@@ -503,10 +506,10 @@
       flex-shrink: 0;
       align-self: stretch;
       color: #000;
-      width: 2.15vw;
+      width: 2.55vw;
       text-align: center;
       font-family: "SFPro";
-      font-size: 0.3645833333333333vw;
+      font-size: 0.43vw;
       font-style: normal;
       font-weight: 500;
       line-height: 119.419%;

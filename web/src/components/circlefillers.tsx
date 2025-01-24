@@ -9,8 +9,8 @@ export default function CircleFillers(props: { mt: string; type: number; length:
                     <svg
                         key={i}
                         xmlns="http://www.w3.org/2000/svg"
-                        width="0.6770833333333334vw"
-                        height="0.6770833333333334vw"
+                        width="0.7870833333333334vw"
+                        height="0.7870833333333334vw"
                         viewBox="0 0 13 13"
                         fill="none"
                         aria-hidden="true"

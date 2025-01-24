@@ -13,7 +13,6 @@ export class NU {
     public async init() {
         RegisterCommand('phoneopen', () => {
             const phoneItem = Utils.GetPhoneItem();
-            console.log(phoneItem);
             if (Utils.phoneList.includes(phoneItem)) {
                 this.openUI(`prop_aphone_${phoneItem.split('_')[0]}`);
             }

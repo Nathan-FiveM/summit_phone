@@ -89,7 +89,6 @@ const DraggableIcon: React.FC<DraggableIconProps> = ({ icon, slotId, index, link
                 className='clickanimationXl'
                 onClick={() => {
                     if (!relayoutMode && icon) {
-                        console.log('Clicked on icon:', link);
                         onClick(link as string);
                     }
                 }}
@@ -132,6 +131,7 @@ const IconGridThree = () => {
         key: 'summit_slots',
         defaultValue: icons,
     });
+    const { setLocation } = usePhone();
     const moveIcon = (fromSlotId: any, toSlotId: any) => {
         const updatedSlots = [...slots];
 
@@ -155,7 +155,7 @@ const IconGridThree = () => {
         const [movedLink] = updatedSlots[fromIndex].link
             ? [updatedSlots[fromIndex].link]
             : [''];
-        
+
         updatedSlots[fromIndex].link = updatedSlots[toIndex].link;
         updatedSlots[toIndex].link = movedLink;
 
@@ -177,7 +177,7 @@ const IconGridThree = () => {
                         index={index}
                         moveIcon={moveIcon}
                         link={slot.link}
-                        onClick={() => { }}
+                        onClick={(app) => setLocation(app)}
                     />
                 ))}
             </div>
