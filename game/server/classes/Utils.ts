@@ -41,7 +41,7 @@ class Util {
     async TransferContacts() {
         try {
             const result: any = await this.query('SELECT * FROM phone_phone_contacts', []);
-            
+
             if (!result || result.length === 0) {
                 LOGGER('No contacts found to transfer.');
                 return;
@@ -68,21 +68,15 @@ class Util {
     }
 
     async GetPhoneNumberByCitizenId(citizenId: string) {
-        try {
-            const number = await MongoDB.findOne('phone_numbers', { owner: citizenId });
-            return number.number;
-        } catch (e) {
-            LOGGER(`Error while getting phone number by citizen id: ${e}`);
-        }
+        const number = await MongoDB.findOne('phone_numbers', { owner: citizenId });
+        if (!number) return false;
+        return number.number;
     };
 
     async GetCitizenIdByPhoneNumber(phoneNumber: string) {
-        try {
-            const number = await MongoDB.findOne('phone_numbers', { number: phoneNumber });
-            return number.owner;
-        } catch (e) {
-            LOGGER(`Error while getting citizen id by phone number: ${e}`);
-        }
+        const number = await MongoDB.findOne('phone_numbers', { number: phoneNumber });
+        if (!number) return false;
+        return number.owner;
     };
 
     async query(query: string, values: any) {

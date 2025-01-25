@@ -1,5 +1,6 @@
 import { MongoDB } from "@server/sv_main";
 import { generateUUid } from "@shared/utils";
+import { Settings } from "./class";
 
 /* RegisterCommand('addSettings', async (source: number, args: string[]) => {
     
@@ -37,8 +38,16 @@ async function GeneratePlayerPhoneNumber(citizenId: string) {
         usePin: false,
         useFaceId: false,
         faceIdIdentifier: '',
+        smrtId: '',
+        smrtPassword: '',
     });
 
     return number;
 }
 exports('GeneratePlayerPhoneNumber', GeneratePlayerPhoneNumber);
+
+on('onResourceStop', async (resource: string) => {
+    if (resource === GetCurrentResourceName()) {
+        await Settings.save();
+    }
+});

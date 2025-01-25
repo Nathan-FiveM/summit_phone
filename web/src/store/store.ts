@@ -57,7 +57,7 @@ export const usePhone = create<State & Actions>()(
             s: 0,
         },
         phoneSettings: {
-            id: '',
+            _id: '',
             background: {
                 current: '/images/lockscreenBG.png',
                 wallpapers: [],

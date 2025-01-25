@@ -479,7 +479,7 @@ export default function Startup() {
                                     const dataX = {
                                         ...phoneSettings,
                                         useFaceId: true,
-                                        faceIdIdentifier: phoneSettings.id
+                                        faceIdIdentifier: phoneSettings._id
                                     }
                                     setPhoneSettings(dataX);
                                     setTimeout(() => {
@@ -503,7 +503,7 @@ export default function Startup() {
                                     const dataX = {
                                         ...phoneSettings,
                                         useFaceId: false,
-                                        faceIdIdentifier: phoneSettings.id
+                                        faceIdIdentifier: phoneSettings._id
                                     }
                                     setPhoneSettings(dataX);
                                 }}>Set Up Later</Button>

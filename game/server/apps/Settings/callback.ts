@@ -1,17 +1,52 @@
 import { onClientCallback } from "@overextended/ox_lib/server";
 import { MongoDB } from "@server/sv_main";
 import { PhoneMail } from "../../../../types/types";
+import { Settings } from "./class";
 
 onClientCallback('GetClientSettings', async (client) => {
     const citizenId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
-    const data = await MongoDB.findOne('phone_settings', { _id: citizenId });
-    return JSON.stringify(data);
+    return JSON.stringify({
+        _id: Settings._id.get(citizenId),
+        background: Settings.background.get(citizenId),
+        ringtone: Settings.ringtone.get(citizenId),
+        showStartupScreen: Settings.showStartupScreen.get(citizenId),
+        showNotifications: Settings.showNotifications.get(citizenId),
+        isLock: Settings.isLock.get(citizenId),
+        lockPin: Settings.lockPin.get(citizenId),
+        usePin: Settings.usePin.get(citizenId),
+        useFaceId: Settings.useFaceId.get(citizenId),
+        faceIdIdentifier: Settings.faceIdIdentifier.get(citizenId),
+        smrtId: Settings.smrtId.get(citizenId),
+        smrtPassword: Settings.smrtPassword.get(citizenId),
+    });
 });
 
 onClientCallback('SetClientSettings', async (client, data: string) => {
     const citizenId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
-    const parsedData = JSON.parse(data);
-    await MongoDB.updateOne('phone_settings', { _id: citizenId }, { ...parsedData });
+    const parsedData: {
+        background: { current: string; wallpapers: string[] };
+        ringtone: { current: string; ringtones: string[] };
+        showStartupScreen: boolean;
+        showNotifications: boolean;
+        isLock: boolean;
+        lockPin: string;
+        usePin: boolean;
+        useFaceId: boolean;
+        faceIdIdentifier: string;
+        smrtId: string;
+        smrtPassword: string;
+    } = JSON.parse(data);
+    Settings.background.set(citizenId, parsedData.background);
+    Settings.ringtone.set(citizenId, parsedData.ringtone);
+    Settings.showStartupScreen.set(citizenId, parsedData.showStartupScreen);
+    Settings.showNotifications.set(citizenId, parsedData.showNotifications);
+    Settings.isLock.set(citizenId, parsedData.isLock);
+    Settings.lockPin.set(citizenId, parsedData.lockPin);
+    Settings.usePin.set(citizenId, parsedData.usePin);
+    Settings.useFaceId.set(citizenId, parsedData.useFaceId);
+    Settings.faceIdIdentifier.set(citizenId, parsedData.faceIdIdentifier);
+    Settings.smrtId.set(citizenId, parsedData.smrtId);
+    Settings.smrtPassword.set(citizenId, parsedData.smrtPassword);
     return true;
 });
 
@@ -49,6 +84,6 @@ onClientCallback('LoginMailAccount', async (client, data: string) => {
 
 onClientCallback('unLockorLockPhone', async (client, data: boolean) => {
     const citizenId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
-    await MongoDB.updateOne('phone_settings', { _id: citizenId }, { isLock: data });
+    Settings.isLock.set(citizenId, data);
     return true;
 });

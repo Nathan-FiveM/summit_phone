@@ -1,5 +1,5 @@
 type PhoneSettings = {
-    id: string;
+    _id: string;
     background: {
         current: string;
         wallpapers: string[];
