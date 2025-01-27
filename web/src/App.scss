@@ -437,6 +437,23 @@
       }
 
     }
+
+    .NumberDialing {
+      display: flex;
+      width: 15.052083333333334vw;
+      height: 2.5vw;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 0.3125vw;
+      flex-shrink: 0;
+      color: #FFF;
+      text-align: center;
+      font-family: "SFPro";
+      font-size: 2.0833333333333335vw;
+      font-weight: 500;
+      line-height: normal;
+      margin-top: 2.8645833333333335vw;
+    }
   }
 
   .backButton {
@@ -514,6 +531,52 @@
       font-weight: 500;
       line-height: 119.419%;
       letter-spacing: 1.05px;
+    }
+  }
+}
+
+.DialpadV3 {
+  display: flex;
+  width: 13.2vw;
+  height: 20.052083333333332vw;
+  justify-content: flex-end;
+  align-items: flex-start;
+  align-content: flex-start;
+  gap: 1.09375vw;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.fotterNavigation {
+  display: inline-flex;
+  width: 100%;
+  height: 3.48125vw;
+  justify-content: center;
+  align-items: start;
+  border-radius: 0px 0px 2.2395833333333335vw 2.2395833333333335vw;
+  background: #1A1A1A;
+  position: absolute;
+  bottom: 0;
+
+  .innerCont {
+    margin-top: 0.6vw;
+    display: flex;
+    align-items: center;
+    gap: 1.7vw;
+
+    .hoverhere {
+      cursor: pointer;
+
+      path {
+        transition: all 0.3s ease;
+      }
+
+      &:hover {
+        path {
+          transition: all 0.3s ease;
+          fill: #0A84FF;
+        }
+      }
     }
   }
 }

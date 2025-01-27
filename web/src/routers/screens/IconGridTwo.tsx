@@ -129,7 +129,7 @@ const DraggableIcon: React.FC<DraggableIconProps> = ({ icon, slotId, index, link
 };
 
 const IconGridTwo = () => {
-    const { setLocation } = usePhone();
+    const { location, setLocation } = usePhone();
     const [slots, setSlots] = useLocalStorage({
         key: 'summit_slots',
         defaultValue: icons,
@@ -180,7 +180,10 @@ const IconGridTwo = () => {
                         index={index}
                         link={slot.link}
                         moveIcon={moveIcon}
-                        onClick={(app) => setLocation(app)}
+                        onClick={(app) => setLocation({
+                            app: app,
+                            page: location.page,
+                        })}
                     />
                 ))}
             </div>

@@ -1,7 +1,7 @@
 import { Transition } from "@mantine/core";
-import { useNuiEvent } from "../hooks/useNuiEvent";
+import { useNuiEvent } from "../../hooks/useNuiEvent";
 import { useEffect, useState } from "react";
-import { usePhone } from "../store/store";
+import { usePhone } from "../../store/store";
 import { useTimeout } from "@mantine/hooks";
 
 export default function Header() {

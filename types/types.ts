@@ -34,4 +34,11 @@ type PhoneMail = {
     }[];
 }
 
-export type { PhoneSettings, PhoneMail };
+type PhoneLocation = {
+    app: string;
+    page?: {
+        phone?: string;
+    };
+}
+
+export type { PhoneSettings, PhoneMail, PhoneLocation };

@@ -1,22 +1,20 @@
 import React, { useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-import phoneIcon from "../../../images/icons/Phone.svg?url";
-import messageIcon from "../../../images/icons/Message.svg?url";
-import settingsIcon from "../../../images/icons/Settings.svg?url";
-import servicesIcon from "../../../images/icons/Services.svg?url";
+
 import { useLocalStorage, useTimeout } from '@mantine/hooks';
 import { deleleteIgnoreiconList, deleteIconById, getIconIdByName, icons } from '../../utils/icons';
 import { usePhone } from '../../store/store';
 
 const ITEM_TYPE = 'ICON';
 
+// Component to display each slot with an icon
 interface DraggableIconProps {
     icon: string | null;
     slotId: number;
     name: string;
     index: number;
-    moveIcon: (fromSlotId: number, toSlotId: number) => void;
     link: string;
+    moveIcon: (fromSlotId: number, toSlotId: number) => void;
     onClick: (icon: string) => void;
 }
 
@@ -47,7 +45,7 @@ const DraggableIcon: React.FC<DraggableIconProps> = ({ icon, slotId, index, link
     const [timerId, setTimerId] = useState<NodeJS.Timeout | null>(null);
 
     const handleMouseDown = () => {
-        if (relayoutMode) return; // Avoid interference with drag mode
+        if (relayoutMode) return;
 
         const id = setTimeout(() => {
             setRelayoutMode(true);
@@ -84,7 +82,6 @@ const DraggableIcon: React.FC<DraggableIconProps> = ({ icon, slotId, index, link
                     justifyContent: 'center',
                     transition: 'all 0.3s ease',
                     position: 'relative',
-                    zIndex: 1,
                 }}
                 className='clickanimationXl'
                 onClick={() => {
@@ -121,17 +118,25 @@ const DraggableIcon: React.FC<DraggableIconProps> = ({ icon, slotId, index, link
                     </svg>
                 )}
             </div>
+            <div
+                className="iconName"
+                style={{
+                    transition: 'all 0.3s ease',
+                }}
+            >
+                {name}
+            </div>
         </div>
     );
 };
 
 
-const IconGridThree = () => {
+const IconGridOne = () => {
     const [slots, setSlots] = useLocalStorage({
         key: 'summit_slots',
         defaultValue: icons,
     });
-    const { setLocation } = usePhone();
+    const { location, setLocation } = usePhone();
     const moveIcon = (fromSlotId: any, toSlotId: any) => {
         const updatedSlots = [...slots];
 
@@ -166,24 +171,26 @@ const IconGridThree = () => {
     return (
         <div>
             <div
-                className="thirdRow"
+                className="secondRow"
             >
-                {slots.slice(16, 20).map((slot, index) => (
+                {slots.slice(4, 16).map((slot, index) => (
                     <DraggableIcon
                         key={slot.id}
                         icon={slot.icon}
+                        link={slot.link}
                         slotId={slot.id}
                         name={slot.name}
                         index={index}
                         moveIcon={moveIcon}
-                        link={slot.link}
-                        onClick={(app) => setLocation(app)}
+                        onClick={(app) => setLocation({
+                            app: app,
+                            page: location.page,
+                        })}
                     />
                 ))}
             </div>
         </div>
-
     );
 };
 
-export default IconGridThree;
+export default IconGridOne;

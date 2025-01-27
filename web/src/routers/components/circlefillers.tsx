@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-
 export default function CircleFillers(props: { mt: string; type: number; length: number, error: boolean }) {
 
     return (

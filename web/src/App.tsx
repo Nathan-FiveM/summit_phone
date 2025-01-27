@@ -1,5 +1,5 @@
 import './App.scss';
-import Header from './components/header';
+import Header from './routers/components/header';
 import { debugData } from './hooks/debugData';
 import { useNuiEvent } from './hooks/useNuiEvent';
 import { usePhone } from './store/store';
@@ -9,14 +9,14 @@ import greenFrame from '../images/frames/green_frame.svg?url';
 import purpleFrame from '../images/frames/purple_frame.svg?url';
 import redFrame from '../images/frames/red_frame.svg?url';
 import phoneBg from "../images/phoneBG.jpg";
-import HomeScreen from './components/screens/Homescreen';
-import Lockscreen from './components/screens/Lockscreen';
-import Startup from './components/screens/Startup';
+import HomeScreen from './routers/screens/Homescreen';
+import Lockscreen from './routers/screens/Lockscreen';
+import Startup from './routers/screens/Startup';
 import { useCallback, useEffect } from 'react';
 import { isEnvBrowser } from './hooks/misc';
 import { fetchNui } from './hooks/fetchNui';
-import ControlCenters from './components/screens/ControlCenters';
-import Phone from './components/apps/phone/Phone';
+import ControlCenters from './routers/screens/ControlCenters';
+import Phone from './routers/apps/phone/Phone';
 import { PhoneSettings } from '../../types/types';
 
 debugData([
@@ -57,12 +57,12 @@ export default function App() {
         });
         setTimeout(() => {
           const dataX = {
-            ...phoneSettings,
+            ...settings,
             isLock: false
           }
           setPhoneSettings(dataX);
           fetchNui('unLockorLockPhone', false);
-        }, 600);
+        }, 800);
       }
     }
   }, []);
@@ -81,7 +81,12 @@ export default function App() {
           }
           setPhoneSettings(dataX);
           fetchNui('unLockorLockPhone', true);
-          setLocation('');
+          setLocation({
+            app: '',
+            page: {
+              phone: location.page.phone
+            }
+          });
         } else {
           setVisible(!visible)
         };
@@ -121,8 +126,13 @@ export default function App() {
           <Phone />
         </div>
         <div className="backButton" onClick={() => {
-          if (location !== '') {
-            setLocation('');
+          if (location.app !== '') {
+            setLocation({
+              app: '',
+              page: {
+                phone: location.page.phone
+              }
+            });
           } else {
             fetchNui("hideFrame");
             const dataX = {

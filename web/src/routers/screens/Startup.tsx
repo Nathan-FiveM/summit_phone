@@ -22,8 +22,8 @@ import 'swiper/css/effect-creative';
 import { Autoplay, EffectCreative } from 'swiper/modules';
 import { countryList } from "../../utils/countrylist";
 import { usePhone } from "../../store/store";
-import CircleFillers from "../circlefillers";
-import Dialpad from "../dialpad1";
+import CircleFillers from "../components/circlefillers";
+import Dialpad from "../components/dialpad1";
 import { fetchNui } from "../../hooks/fetchNui";
 
 export default function Startup() {

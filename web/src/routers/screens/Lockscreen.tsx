@@ -8,8 +8,8 @@ import { CSSTransition } from "react-transition-group";
 import { Swiper, SwiperSlide } from 'swiper/react';
 //@ts-ignore
 import 'swiper/css';
-import CircleFillers from "../circlefillers";
-import DialpadV2 from "../dialpad2";
+import CircleFillers from "../components/circlefillers";
+import DialpadV2 from "../components/dialpad2";
 import { usePhone } from "../../store/store";
 import { fetchNui } from "../../hooks/fetchNui";
 

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
-import { PhoneSettings } from '../../../types/types';
+import { PhoneSettings, PhoneLocation } from '../../../types/types';
 
 type State = {
     visible: boolean;
@@ -18,7 +18,7 @@ type State = {
         s: number;
     };
     phoneSettings: PhoneSettings;
-    location: string;
+    location: PhoneLocation;
 };
 
 type Actions = {
@@ -37,7 +37,7 @@ type Actions = {
         s: number;
     }) => void;
     setPhoneSettings: (phoneSettings: PhoneSettings) => void;
-    setLocation: (location: string) => void;
+    setLocation: (location: PhoneLocation) => void;
 };
 
 export const usePhone = create<State & Actions>()(
@@ -76,7 +76,12 @@ export const usePhone = create<State & Actions>()(
             smrtId: '',
             smrtPassword: '',
         },
-        location: '',
+        location: {
+            app: '',
+            page: {
+                phone: '',
+            },
+        },
         setVisible: (visible: boolean) => set((state) => {
             state.visible = visible;
         }),
@@ -103,7 +108,7 @@ export const usePhone = create<State & Actions>()(
         setPhoneSettings: (phoneSettings: PhoneSettings) => set((state) => {
             state.phoneSettings = phoneSettings;
         }),
-        setLocation: (location: string) => set((state) => {
+        setLocation: (location: PhoneLocation) => set((state) => {
             state.location = location;
         }),
     }))

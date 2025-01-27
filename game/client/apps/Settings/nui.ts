@@ -3,7 +3,7 @@ import { triggerServerCallback } from "@overextended/ox_lib/client";
 
 RegisterNuiCallbackType('getSettings');
 on('__cfx_nui:getSettings', async (data: any, cb: Function) => {
-    const response = await triggerServerCallback('GetClientSettings', 1)
+    const response: any = await triggerServerCallback('GetClientSettings', 1)
     cb(response);
 });
 
