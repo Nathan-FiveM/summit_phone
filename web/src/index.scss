@@ -28,6 +28,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: #53535300 !important;
+  filter: blur(0px) !important;
 }
 
 body {
@@ -40,5 +41,5 @@ body {
   align-items: end;
   min-width: 320px;
   min-height: 100vh;
-  filter: blur(0px);
+  filter: blur(0px) !important;
 }

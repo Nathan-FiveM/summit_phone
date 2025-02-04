@@ -343,7 +343,7 @@ export default function Phone() {
                                                             <path d="M7.50002 0.5C3.63318 0.5 0.5 3.63318 0.5 7.50002C0.5 11.3669 3.63318 14.5 7.50002 14.5C11.3669 14.5 14.5 11.3669 14.5 7.50002C14.5 3.63318 11.3669 0.5 7.50002 0.5ZM7.50002 13.9178C3.96299 13.9178 1.08221 11.0404 1.08221 7.50002C1.08221 3.96299 3.95962 1.08221 7.50002 1.08221C11.037 1.08221 13.9178 3.95962 13.9178 7.50002C13.9178 11.037 11.037 13.9178 7.50002 13.9178Z" fill="#0A84FF" />
                                                         </svg>
                                                     </div>
-                                                    {index === phoneContacts[letter].filter((letter) => letter.isFav).length - 1 ? '' : <div className="divider" style={{ marginTop: '0.3vw' }}></div>}
+                                                    <div className="divider" style={{ marginTop: '0.3vw' }} />
                                                 </>
                                             )
                                         })}
@@ -355,7 +355,6 @@ export default function Phone() {
 
                     </div>}
                 </Transition>
-
                 <Navigation onClick={(locate) => {
                     setLocation({
                         app: location.app,
@@ -384,19 +383,23 @@ export default function Phone() {
 
                 }} onMessage={(number: string, _id: string) => {
 
-                }} onFav={(_id: string) => {
-                    fetchNui('favContact', _id);
-                    setPhoneContacts((prev) => {
-                        const newContacts = { ...prev };
-                        Object.keys(newContacts).forEach((letter) => {
-                            const index = newContacts[letter].findIndex((contact) => contact._id === _id);
-                            if (index !== -1) {
-                                console.log(JSON.stringify(newContacts[letter][index], null, 2), newContacts[letter][index].isFav);
-                                newContacts[letter][index].isFav = false;
-                            }
+                }} onFav={async (_idX: string) => {
+                    
+                    await fetchNui('favContact', _idX).then((res: string) => {
+                        const data: PhoneContacts = JSON.parse(res);
+                        setPhoneContacts((prev) => {
+                            const newContacts = { ...prev };
+                            Object.keys(newContacts).forEach((letter) => {
+                                const index = newContacts[letter].findIndex((contact) => {
+                                    return contact._id === _idX;
+                                });
+                                if (index !== -1) {
+                                    newContacts[letter][index] = data;
+                                }
+                            });
+                            return newContacts;
                         });
-                        console.log(JSON.stringify(newContacts, null, 2), "newContacts");
-                        return newContacts;
+                        setSelectedContact(data);
                     });
                 }} onDelete={(_id: string) => {
                     setPhoneContacts((prev) => {

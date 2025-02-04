@@ -32,6 +32,7 @@ onClientCallback('contacts:deleteContact', async (client, _id: string) => {
 
 onClientCallback('contacts:favContact', async (client, _id: string) => {
     const contact = await MongoDB.findOne('phone_contacts', { _id: _id });
-    await MongoDB.updateOne('phone_contacts', { _id: _id }, { ...contact, isFav: !contact.isFav });
-    return true;
+    const dataX = { ...contact, isFav: !contact.isFav }
+    await MongoDB.updateOne('phone_contacts', { _id: _id }, dataX);
+    return JSON.stringify(dataX);
 });

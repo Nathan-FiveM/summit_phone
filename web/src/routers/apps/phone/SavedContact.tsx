@@ -219,8 +219,7 @@ export default function SavedContact(props: { onContactEdited: (data: PhoneConta
                         setVisible(false);
                     }} />
                 </div>
-            )
-            }
+            )}
         </Transition >
 
     )

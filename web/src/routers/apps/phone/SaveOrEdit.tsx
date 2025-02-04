@@ -31,7 +31,7 @@ export default function SaveOrEdit(props: { data: PhoneContacts, onCancel(): voi
                     alignItems: 'center',
                     height: '80%',
                     width: '100%',
-                    background: "#1C1C1E",
+                    backgroundColor: "#1C1C1E",
                     borderRadius: '0.5208333333333334vw 0.5208333333333334vw 2.2395833333333335vw 2.2395833333333335vw'
                 }}>
                     <div className="save-or-edit-top-buttons">
