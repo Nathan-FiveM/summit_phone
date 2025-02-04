@@ -12,12 +12,13 @@ import phoneBg from "../images/phoneBG.jpg";
 import HomeScreen from './routers/screens/Homescreen';
 import Lockscreen from './routers/screens/Lockscreen';
 import Startup from './routers/screens/Startup';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { isEnvBrowser } from './hooks/misc';
 import { fetchNui } from './hooks/fetchNui';
 import ControlCenters from './routers/screens/ControlCenters';
 import Phone from './routers/apps/phone/Phone';
 import { PhoneSettings } from '../../types/types';
+import Notifications from './routers/components/Notifications';
 
 debugData([
   {
@@ -30,13 +31,20 @@ debugData([
 ]);
 
 export default function App() {
-  const { visible, primaryColor, phoneSettings, location, setVisible, setPrimaryColor, setPhoneSettings, setDynamicNoti, setLocation } = usePhone();
-
+  const { visible, primaryColor, phoneSettings, location, notificationPush, inCall, showNotiy, setVisible, setPrimaryColor, setPhoneSettings, setDynamicNoti, setLocation } = usePhone();
+  const [cursor, setCursor] = useState(false);
   useNuiEvent('setVisible', (data: {
     show: boolean;
     color: string;
   }) => {
     setVisible(data.show);
+    setPrimaryColor(data.color);
+  });
+  useNuiEvent('setCursor', (data: {
+    show: boolean;
+    color: string;
+  }) => {
+    setCursor(data.show);
     setPrimaryColor(data.color);
   });
 
@@ -104,7 +112,7 @@ export default function App() {
       display: 'flex',
       justifyContent: 'start',
       alignItems: 'start',
-      marginTop: visible ? '0vh' : '100vh',
+      marginTop: visible ? '0vh' : (notificationPush || inCall || showNotiy) && !cursor ? '75vh' : '100vh',
       transition: 'all 1s ease',
       backgroundImage: `url(${primaryColor === 'blue' ? blueFrame : primaryColor === 'gold' ? goldFrame : primaryColor === 'green' ? greenFrame : primaryColor === 'purple' ? purpleFrame : primaryColor === 'red' ? redFrame : ''})`,
       backgroundRepeat: 'no-repeat',
@@ -123,6 +131,7 @@ export default function App() {
           <HomeScreen />
           <Lockscreen />
           <Startup />
+          <Notifications />
           <Phone />
         </div>
         <div className="backButton" onClick={() => {

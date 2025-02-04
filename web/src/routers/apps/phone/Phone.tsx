@@ -379,47 +379,50 @@ export default function Phone() {
                         }
                         return newContacts;
                     });
-                }} onCall={(number: string, _id: string) => {
-
+                }} onCall={async (number: string, _id: string) => {
+                    await fetchNui('phoneCall', JSON.stringify({
+                        number: number,
+                        _id: _id,
+                    }));
                 }} onMessage={(number: string, _id: string) => {
 
-                }} onFav={async (_idX: string) => {
-                    
-                    await fetchNui('favContact', _idX).then((res: string) => {
-                        const data: PhoneContacts = JSON.parse(res);
+                    }} onFav={async (_idX: string) => {
+
+                        await fetchNui('favContact', _idX).then((res: string) => {
+                            const data: PhoneContacts = JSON.parse(res);
+                            setPhoneContacts((prev) => {
+                                const newContacts = { ...prev };
+                                Object.keys(newContacts).forEach((letter) => {
+                                    const index = newContacts[letter].findIndex((contact) => {
+                                        return contact._id === _idX;
+                                    });
+                                    if (index !== -1) {
+                                        newContacts[letter][index] = data;
+                                    }
+                                });
+                                return newContacts;
+                            });
+                            setSelectedContact(data);
+                        });
+                    }} onDelete={(_id: string) => {
                         setPhoneContacts((prev) => {
                             const newContacts = { ...prev };
                             Object.keys(newContacts).forEach((letter) => {
-                                const index = newContacts[letter].findIndex((contact) => {
-                                    return contact._id === _idX;
-                                });
+                                const index = newContacts[letter].findIndex((contact) => contact._id === _id);
                                 if (index !== -1) {
-                                    newContacts[letter][index] = data;
+                                    newContacts[letter].splice(index, 1);
                                 }
                             });
                             return newContacts;
                         });
-                        setSelectedContact(data);
-                    });
-                }} onDelete={(_id: string) => {
-                    setPhoneContacts((prev) => {
-                        const newContacts = { ...prev };
-                        Object.keys(newContacts).forEach((letter) => {
-                            const index = newContacts[letter].findIndex((contact) => contact._id === _id);
-                            if (index !== -1) {
-                                newContacts[letter].splice(index, 1);
+                        fetchNui('deleteContact', _id);
+                        setLocation({
+                            app: location.app,
+                            page: {
+                                phone: 'contacts'
                             }
                         });
-                        return newContacts;
-                    });
-                    fetchNui('deleteContact', _id);
-                    setLocation({
-                        app: location.app,
-                        page: {
-                            phone: 'contacts'
-                        }
-                    });
-                }} />
+                    }} />
                 <SaveOrEdit visible={visible} data={{
                     _id: '',
                     personalNumber: '',

@@ -10,6 +10,7 @@ interface Notification {
 
 export default function useNotiQueue() {
     const [state, set] = useState<Notification[]>([]);
+    const [notiFicationhistory, setNotificationHistory] = useState<Notification[]>([]);
 
     return {
         add(value: {
@@ -20,6 +21,7 @@ export default function useNotiQueue() {
             nodeRef?: any;
         }) {
             set((queue) => [...queue, value]);
+            setNotificationHistory((queue) => [...queue, value]);
         },
         remove() {
             let result;
@@ -53,6 +55,12 @@ export default function useNotiQueue() {
                     return true;
                 });
             });
+        },
+        clearhistory() {
+            setNotificationHistory([]);
+        },
+        get historyValues(){
+            return notiFicationhistory;
         },
         get values() {
             return state;

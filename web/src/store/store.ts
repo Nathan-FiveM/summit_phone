@@ -20,6 +20,9 @@ type State = {
     phoneSettings: PhoneSettings;
     location: PhoneLocation;
     selectedContact: PhoneContacts;
+    notificationPush: boolean;
+    inCall: boolean;
+    showNotiy: boolean;
 };
 
 type Actions = {
@@ -40,6 +43,9 @@ type Actions = {
     setPhoneSettings: (phoneSettings: PhoneSettings) => void;
     setLocation: (location: PhoneLocation) => void;
     setSelectedContact: (contact: PhoneContacts) => void;
+    setNotificationPush: (notificationPush: boolean) => void;
+    setInCall: (inCall: boolean) => void;
+    setShowNotiy: (showNotiy: boolean) => void;
 };
 
 export const usePhone = create<State & Actions>()(
@@ -96,6 +102,9 @@ export const usePhone = create<State & Actions>()(
             email: '',
             isFav: false,
         },
+        notificationPush: false,
+        inCall: false,
+        showNotiy: false,
         setVisible: (visible: boolean) => set((state) => {
             state.visible = visible;
         }),
@@ -127,6 +136,15 @@ export const usePhone = create<State & Actions>()(
         }),
         setSelectedContact: (contact: PhoneContacts) => set((state) => {
             state.selectedContact = contact;
+        }),
+        setNotificationPush: (notificationPush: boolean) => set((state) => {
+            state.notificationPush = notificationPush;
+        }),
+        setInCall: (inCall: boolean) => set((state) => {
+            state.inCall = inCall;
+        }),
+        setShowNotiy: (showNotiy: boolean) => set((state) => {
+            state.showNotiy = showNotiy;
         }),
     }))
 );
