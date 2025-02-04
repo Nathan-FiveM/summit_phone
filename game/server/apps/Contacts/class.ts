@@ -2,18 +2,15 @@ import { MongoDB } from "@server/sv_main";
 import { LOGGER } from "@shared/utils";
 
 class Contact {
-    /* public _id = new Map<string, string>();
-    public background = new Map<string, { current: string; wallpapers: string[] }>();
-    public ringtone = new Map<string, { current: string; ringtones: string[] }>();
-    public showStartupScreen = new Map<string, boolean>();
-    public showNotifications = new Map<string, boolean>();
-    public isLock = new Map<string, boolean>();
-    public lockPin = new Map<string, string>();
-    public usePin = new Map<string, boolean>();
-    public useFaceId = new Map<string, boolean>();
-    public faceIdIdentifier = new Map<string, string>();
-    public smrtId = new Map<string, string>();
-    public smrtPassword = new Map<string, string>(); */
+    public contactsData : {
+        _id: string;
+        personalNumber: string;
+        contactNumber: string;
+        firstName: string;
+        lastName: string;
+        image: string;
+        ownerId: string;
+    }[] = [];
 
     public async load() {
         const res: any = await MongoDB.findMany('phone_settings', {});

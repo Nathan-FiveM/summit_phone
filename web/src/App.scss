@@ -54,7 +54,7 @@
   .contentFrame {
     width: 100%;
     height: 100%;
-    border-radius: 2.48vw;
+    border-radius: 2.44vw;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -467,6 +467,266 @@
     margin-left: 0.2vw;
     z-index: 49;
     cursor: pointer;
+  }
+
+  .divider {
+    width: 15.052083333333334vw;
+    height: 0.026041666666666668vw;
+    background: rgba(255, 255, 255, 0.15);
+    margin-top: 0.46875vw;
+  }
+
+  .myCard {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0px;
+    gap: 0.46875vw;
+    margin-top: 0.66875vw;
+    width: 15.052083333333334vw;
+    height: 2.34375vw;
+
+    .details {
+      display: flex;
+
+      flex-direction: column;
+      align-items: flex-start;
+      flex-shrink: 0;
+
+      .FullName {
+        align-self: stretch;
+        color: #FFF;
+        font-family: "SFPro";
+        font-size: 1.0416666666666667vw;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 118.596%;
+        letter-spacing: 0.03125vw;
+      }
+
+      .mydsa {
+        align-self: stretch;
+        color: rgba(255, 255, 255, 0.30);
+        font-family: "SFPro";
+        font-size: 0.6208333333333334vw;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 118.745%;
+        letter-spacing: 0.5px;
+      }
+    }
+
+  }
+
+  .phoneContacts {
+    display: flex;
+    width: 14.427083333333334vw;
+    height: 21.614583333333332vw;
+    padding: 0.052083333333333336vw 0px;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.10416666666666667vw;
+    flex-shrink: 0;
+    margin-top: 0.8vw;
+    overflow-x: hidden;
+    overflow-y: auto;
+    .letter {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      align-self: stretch;
+    }
+  }
+
+  .savedContactTop {
+    width: 16.770833333333332vw;
+    height: 14.0625vw;
+    flex-shrink: 0;
+    border-radius: 2.2395833333333335vw 2.2395833333333335vw 0px 0px;
+    background: linear-gradient(180deg, #4E4F54 0%, #282B34 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .topButtons {
+      width: 15.625vw;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0px;
+      gap: 10.677083333333334vw;
+      margin-top: 2.25vw;
+    }
+
+    .savedFullName {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 0.6333333333333334vw;
+
+      .text {
+        color: #FFF;
+        font-family: "SFPro";
+        font-size: 30px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: normal;
+      }
+    }
+
+    .bottomButton {
+      display: flex;
+      width: 14.479166666666666vw;
+      justify-content: center;
+      align-items: center;
+      gap: 0.4vw;
+      margin-top: 0.6vw;
+    }
+  }
+
+  .savedPhoneNumber {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.3645833333333333vw 0.7291666666666666vw;
+    gap: 0.15625vw;
+    width: 15.520833333333334vw;
+    height: 2.74375vw;
+    margin-top: 1.25vw;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 0.3645833333333333vw;
+
+    .title {
+      width: 13.020833333333334vw;
+
+      font-family: 'SFPro';
+      font-style: normal;
+      font-weight: 500;
+      font-size: 0.6770833333333334vw;
+      line-height: 0.5729166666666666vw;
+      color: #FFFFFF;
+      flex: none;
+      order: 0;
+      align-self: stretch;
+      flex-grow: 0;
+    }
+
+    .number {
+      width: 13.020833333333334vw;
+      margin-top: 0.4vw;
+      font-family: 'SFPro';
+      font-style: normal;
+      font-weight: 500;
+      font-size: 0.7770833333333334vw;
+      line-height: 11px;
+      color: #0A84FF;
+      flex: none;
+      order: 1;
+      align-self: stretch;
+      flex-grow: 0;
+    }
+  }
+
+  .savedPhoneNumberx {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.3645833333333333vw 0.7291666666666666vw;
+    gap: 0.15625vw;
+    width: 15.520833333333334vw;
+    height: 2.74375vw;
+    margin-top: 0.8vw;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 0.3645833333333333vw;
+
+    .title {
+      width: 13.020833333333334vw;
+
+      font-family: 'SFPro';
+      font-style: normal;
+      font-weight: 500;
+      font-size: 0.6770833333333334vw;
+      line-height: 0.5729166666666666vw;
+      color: #FFFFFF;
+      flex: none;
+      order: 0;
+      align-self: stretch;
+      flex-grow: 0;
+    }
+
+    .number {
+      width: 13.020833333333334vw;
+      margin-top: 0.4vw;
+      font-family: 'SFPro';
+      font-style: normal;
+      font-weight: 500;
+      font-size: 0.7770833333333334vw;
+      line-height: 11px;
+      color: #0A84FF;
+      flex: none;
+      order: 1;
+      align-self: stretch;
+      flex-grow: 0;
+    }
+  }
+
+  .save-or-edit-top-buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0px;
+    width: 14.270833333333334vw;
+    height: 0.6770833333333334vw;
+    margin-top: 0.5vw;
+
+    .cancel {
+      
+      height: 0.6770833333333334vw;
+      font-family: 'SFPro';
+      font-style: normal;
+      font-weight: 500;
+      font-size: 0.625vw;
+      line-height: 0.6770833333333334vw;
+      color: #0D73D9;
+      flex: none;
+      order: 0;
+      flex-grow: 0;
+    }
+
+    .newContact {
+      font-family: 'SFPro';
+      font-style: normal;
+      font-weight: 500;
+      font-size: 0.625vw;
+      line-height: 0.6770833333333334vw;
+      letter-spacing: 0.04em;
+      color: #FFFFFF;
+      flex: none;
+      order: 1;
+      flex-grow: 0;
+    }
+
+    .done {
+      
+      height: 0.6770833333333334vw;
+      font-family: 'SFPro';
+      font-style: normal;
+      font-weight: 500;
+      font-size: 0.625vw;
+      line-height: 0.6770833333333334vw;
+      color: #0D73D9;
+      flex: none;
+      order: 2;
+      flex-grow: 0;
+    }
+  }
+}
+
+.searchbar {
+  ::placeholder {
+    color: rgba(255, 255, 255, 0.3);
   }
 }
 

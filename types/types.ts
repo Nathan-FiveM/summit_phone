@@ -41,4 +41,17 @@ type PhoneLocation = {
     };
 }
 
-export type { PhoneSettings, PhoneMail, PhoneLocation };
+type PhoneContacts = {
+    _id: string;
+    personalNumber: string;
+    contactNumber: string;
+    firstName: string;
+    lastName: string;
+    image: string;
+    ownerId: string;
+    notes: string;
+    email: string;
+    isFav: boolean;
+}
+
+export type { PhoneSettings, PhoneMail, PhoneLocation, PhoneContacts };

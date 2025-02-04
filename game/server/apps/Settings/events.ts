@@ -52,7 +52,7 @@ on('onResourceStop', async (resource: string) => {
     if (resource === GetCurrentResourceName()) {
         try {
             await Settings.save();
-            console.log(`[Settings] Saved during resource stop.`);
+            LOGGER(`[Settings] Saved during resource stop.`);
         } catch (error: any) {
             LOGGER(`[Settings] Failed to save during resource stop: ${error.message}`);
         }
