@@ -24,7 +24,9 @@ export class NU {
     };
 
     public async openUI(phoneItem: string) {
+        console.log('openUI', phoneItem);
         if (this.shouldNotOpen) return;
+        console.log('openUI 1', phoneItem);
         const state = LocalPlayer.state;
         state.set('onPhone', true, true);
         SetCursorLocation(0.89, 0.6);

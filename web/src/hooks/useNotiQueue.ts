@@ -24,7 +24,7 @@ export default function useNotiQueue() {
             setNotificationHistory((queue) => [...queue, value]);
         },
         remove() {
-            let result;
+            let result: Notification;
             set(([first, ...rest]) => {
                 result = first;
                 return rest;
@@ -34,9 +34,9 @@ export default function useNotiQueue() {
         removeAll() {
             set([]);
         },
-        editFromNotificationId(id: number, value: any) {
+        editFromNotificationId(id: number, value: Notification) {
             set((queue) => {
-                return queue.map((item: any) => {
+                return queue.map((item: Notification) => {
                     if (item.id) {
                         if (item.id === id) {
                             return value;

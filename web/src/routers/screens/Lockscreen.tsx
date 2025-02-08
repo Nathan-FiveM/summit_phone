@@ -51,7 +51,7 @@ export default function Lockscreen() {
     return (
         <CSSTransition nodeRef={nodeRef} in={phoneSettings.isLock} timeout={450} classNames="enterandexitfromtop" unmountOnExit mountOnEnter>
             <div style={{
-                backgroundImage: `url(/images/lockscreenBG.png)`,
+                backgroundImage: `url(${lockscreenBg})`,
                 backgroundSize: 'cover',
                 backgroundRepeat: 'no-repeat',
             }} ref={nodeRef} className="lockscreen">

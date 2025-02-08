@@ -141,6 +141,8 @@
       flex-direction: column;
       align-items: center;
       user-select: none;
+      background-image: url(../images/lockscreenBG.png);
+      background-size: cover;
 
       .bottomButton {
         width: 14.229166666666666vw;
@@ -530,6 +532,7 @@
     margin-top: 0.8vw;
     overflow-x: hidden;
     overflow-y: auto;
+
     .letter {
       display: flex;
       flex-direction: column;
@@ -682,7 +685,7 @@
     margin-top: 0.5vw;
 
     .cancel {
-      
+
       height: 0.6770833333333334vw;
       font-family: 'SFPro';
       font-style: normal;
@@ -709,7 +712,7 @@
     }
 
     .done {
-      
+
       height: 0.6770833333333334vw;
       font-family: 'SFPro';
       font-style: normal;
@@ -1103,6 +1106,87 @@
   line-height: 0.8333333333333334vw;
 }
 
+.pushNotiFication {
+  display: flex;
+  width: 15.520833333333334vw;
+  padding: 0.4166666666666667vw 1.1979166666666667vw 0.46875vw 0.6770833333333334vw;
+  align-items: center;
+  gap: 0.4166666666666667vw;
+  border-radius: 2.2916666666666665vw;
+  background: #0B0B0B;
+
+  .contextArea {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.052083333333333336vw;
+    flex: 1 0 0;
+
+    .title {
+      width: 11.041666666666666vw;
+      height: 0.78125vw;
+
+      color: #FFF;
+      font-family: "SFPro";
+      font-size: 0.7291666666666666vw;
+      font-style: normal;
+      font-weight: 700;
+      line-height: normal;
+    }
+
+    .description {
+      width: 11.041666666666666vw;
+      height: 0.6770833333333334vw;
+      margin-top: 0.06vw;
+      color: #575757;
+      font-family: "SFPro";
+      font-size: 0.5729166666666666vw;
+      font-style: normal;
+      font-weight: 600;
+      line-height: normal;
+    }
+  }
+}
+
+.pushActionNotiFication1 {
+  display: flex;
+  width: 15.520833333333334vw;
+  padding: 0.4166666666666667vw 1.1979166666666667vw 0.46875vw 0.6770833333333334vw;
+  align-items: center;
+  gap: 0.4166666666666667vw;
+  border-radius: 2.2916666666666665vw;
+  background: #0B0B0B;
+
+  .contextArea {
+    display: flex;
+    width: 8.072916666666666vw;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+    flex-shrink: 0;
+
+    .title {
+      width: 8.072916666666666vw;
+      color: #FFF;
+      font-family: "SFPro";
+      font-size: 0.7291666666666666vw;
+      font-style: normal;
+      font-weight: 700;
+      line-height: normal;
+    }
+
+    .description {
+      width: 8.072916666666666vw;
+      color: #575757;
+      font-family: "SFPro";
+      font-size: 0.5729166666666666vw;
+      font-style: normal;
+      font-weight: 600;
+      line-height: normal;
+    }
+  }
+}
+
 ::-webkit-scrollbar {
   width: 0.0vw;
 }
@@ -1177,4 +1261,32 @@
   opacity: 0;
   transform: translateY(-100%);
   transition: transform 450ms, opacity 450ms;
+}
+
+.popDown-enter {
+  opacity: 0;
+  transform: scale(0.8);
+  /* Start smaller and off-screen */
+  transition: transform 450ms linear, opacity 450ms linear;
+}
+
+.popDown-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  /* Grow to full size */
+  transition: transform 450ms linear, opacity 450ms linear;
+}
+
+.popDown-exit {
+  opacity: 1;
+  transform: scale(1);
+  /* Start at full size */
+  transition: transform 450ms linear, opacity 450ms linear;
+}
+
+.popDown-exit-active {
+  opacity: 0;
+  transform: scale(0.8);
+  /* Shrink and move off-screen */
+  transition: transform 450ms linear, opacity 450ms linear;
 }
