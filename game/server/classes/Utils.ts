@@ -79,6 +79,11 @@ class Util {
         return number.owner;
     };
 
+    async GetPlayerFromPhoneNumber(phoneNumber: string) {
+        const citizenId = await this.GetCitizenIdByPhoneNumber(phoneNumber);
+        return await exports['qb-core'].GetPlayerByCitizenId(citizenId);
+    }
+
     async query(query: string, values: any) {
         return new Promise((resolve, reject) => {
             MySQL.query(query, values, (result: any) => {

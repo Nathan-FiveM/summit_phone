@@ -78,6 +78,7 @@ export default function Notifications() {
     });
 
     useNuiEvent('removeActionNotification', (id: string) => {
+        console.log('removeActionNotification', id);
         actionNotiQueue.removeFromNotificationId(id);
     });
 
@@ -95,12 +96,12 @@ export default function Notifications() {
 
     return (
         <TransitionGroup className="" style={{
-            postion: 'absolute',
+            position: 'absolute',
             display: 'flex',
             flexDirection: 'column',
             height: 'auto',
             overflow: 'hidden',
-            zIndex: 60,
+            zIndex: 100,
         }}>
             {notiQueue.values.map((noti, index) => {
                 return (
@@ -109,11 +110,14 @@ export default function Notifications() {
                         nodeRef={noti.nodeRef}
                         timeout={500}
                         classNames="popDown"
+                        style={{
+                            position: 'absolute',
+                        }}
                     >
                         <div ref={noti.nodeRef} className="pushNotiFication" style={{
                             marginTop: index === 0 ? '0.38vw' : '0.2604166666666667vw',
                         }}>
-                            <Image src={notiIcons(noti.app)} w={'1.71875vw'} h={'1.71875vw'} />
+                            <Image src={notiIcons(noti.app)} w={noti.app === 'phone' ? '1.41875vw' : noti.app === 'messsage' ? '1.41875vw' : '1.71875vw'} h={noti.app === 'phone' ? '1.41875vw' : noti.app === 'messsage' ? '1.41875vw' : '1.71875vw'} />
                             <div className="contextArea">
                                 <div className="title">{noti.title}</div>
                                 <div className="description">{noti.description}</div>
@@ -130,16 +134,17 @@ export default function Notifications() {
                         timeout={500}
                         classNames="popDown"
                     >
-                        <div ref={noti.nodeRef} className="pushActionNotiFication1" style={{
+                        <div ref={noti.nodeRef} className="pushActionNotiFication" style={{
                             marginTop: index === 0 ? '0.38vw' : '0.2604166666666667vw',
                         }}>
-                            <Image src={notiIcons(noti.app)} w={'1.71875vw'} h={'1.71875vw'} />
+                            <Image src={notiIcons(noti.app)} w={noti.app === 'phone' ? '1.41875vw' : noti.app === 'messsage' ? '1.41875vw' : '1.71875vw'} h={noti.app === 'phone' ? '1.41875vw' : noti.app === 'messsage' ? '1.41875vw' : '1.71875vw'} />
                             <div className="contextArea">
                                 <div className="title">{noti.title}</div>
                                 <div className="description">{noti.description}</div>
                             </div>
                             <Image src={noti.icons["0"].icon} w={'1.71875vw'} h={'1.71875vw'} style={{
                                 minHeight: '1.71875vw',
+                                cursor: 'pointer',
                             }} onClick={() => {
                                 fetchNui('actionNotiButtonOne', {
                                     id: noti.id,
@@ -149,12 +154,43 @@ export default function Notifications() {
                             }} />
                             <Image src={noti.icons["1"].icon} w={'1.71875vw'} h={'1.71875vw'} style={{
                                 minHeight: '1.71875vw',
+                                cursor: 'pointer',
                             }} onClick={() => {
-                                console.log(JSON.stringify(noti.icons["1"]));
                                 fetchNui('actionNotiButtonTwo', {
                                     id: noti.id,
                                     event: noti.icons["1"].event,
                                     isServer: noti.icons["1"].isServer,
+                                });
+                            }} />
+                        </div>
+                    </CSSTransition>
+                )
+            })}
+            {actionNotiQueue.values.map((noti, index) => {
+                return (
+                    <CSSTransition
+                        key={index}
+                        nodeRef={noti.nodeRef}
+                        timeout={500}
+                        classNames="popDown"
+
+                    >
+                        <div ref={noti.nodeRef} className="pushActionNotiFication1" style={{
+                            marginTop: index === 0 ? '0.38vw' : '0.2604166666666667vw',
+                        }}>
+                            <Image src={notiIcons(noti.app)} w={noti.app === 'phone' ? '1.41875vw' : noti.app === 'messsage' ? '1.41875vw' : '1.71875vw'} h={noti.app === 'phone' ? '1.41875vw' : noti.app === 'messsage' ? '1.41875vw' : '1.71875vw'} />
+                            <div className="contextArea">
+                                <div className="title">{noti.title}</div>
+                                <div className="description">{noti.description}</div>
+                            </div>
+                            <Image src={noti.icons["0"].icon} w={'1.71875vw'} h={'1.71875vw'} style={{
+                                minHeight: '1.71875vw',
+                                cursor: 'pointer',
+                            }} onClick={() => {
+                                fetchNui('actionNotiButtonOne', {
+                                    id: noti.id,
+                                    event: noti.icons["0"].event,
+                                    isServer: noti.icons["0"].isServer,
                                 });
                             }} />
                         </div>

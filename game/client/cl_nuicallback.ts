@@ -17,6 +17,7 @@ on('__cfx_nui:actionNotiButtonOne', (data: {
   isServer: boolean;
   event: string;
 }) => {
+  console.log(data.id);
   data.isServer ? emitNet(data.event, data.id) : emit(data.event, data.id);
 });
 RegisterNuiCallbackType('actionNotiButtonTwo');
@@ -25,5 +26,6 @@ on('__cfx_nui:actionNotiButtonTwo', (data: {
   isServer: boolean;
   event: string;
 }) => {
+  console.log(data.id);
   data.isServer ? emitNet(data.event, data.id) : emit(data.event, data.id);
 });

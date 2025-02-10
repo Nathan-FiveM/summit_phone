@@ -19,6 +19,7 @@ import ControlCenters from './routers/screens/ControlCenters';
 import Phone from './routers/apps/phone/Phone';
 import { PhoneSettings } from '../../types/types';
 import Notifications from './routers/components/Notifications';
+import CallComponent from './routers/components/CallComponent';
 
 debugData([
   {
@@ -31,7 +32,7 @@ debugData([
 ]);
 
 export default function App() {
-  const { visible, primaryColor, phoneSettings, location, notificationPush, inCall, showNotiy, setVisible, setPrimaryColor, setPhoneSettings, setDynamicNoti, setLocation } = usePhone();
+  const { visible, primaryColor, phoneSettings, location, notificationPush, inCall, showNotiy, setVisible, setInCall, setPrimaryColor, setPhoneSettings, setDynamicNoti, setLocation } = usePhone();
   const [cursor, setCursor] = useState(false);
   useNuiEvent('setVisible', (data: {
     show: boolean;
@@ -52,6 +53,7 @@ export default function App() {
     const data: string = await fetchNui("getSettings");
     if (data) {
       const settings: PhoneSettings = JSON.parse(data);
+      console.log(settings.lockPin, settings.useFaceId)
       setPhoneSettings(settings);
       const citizenId: string = await fetchNui("getCitizenId");
       if (visible && citizenId === settings.faceIdIdentifier && !settings.showStartupScreen && settings.useFaceId) {
@@ -104,7 +106,6 @@ export default function App() {
 
     return () => window.removeEventListener("keydown", keyHandler);
   }, [visible]);
-
   return (
     <div style={{
       width: '20.083333333333332vw',
@@ -119,20 +120,21 @@ export default function App() {
       backgroundSize: 'contain',
     }}>
       <div className="innerFrame" style={{
-        backgroundImage: `url(${phoneBg})`,
+        backgroundImage: `url(${phoneSettings.background.current ? phoneSettings.background.current : phoneBg})`,
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'cover',
       }}>
         <div className='headerFrame'>
           <Header />
         </div>
-        <div className="contentFrame">
+        <div className="contentFrame" id='contentFrame'>
           <ControlCenters />
           <HomeScreen />
           <Lockscreen />
           <Startup />
           <Notifications />
           <Phone />
+          <CallComponent />
         </div>
         <div className="backButton" onClick={() => {
           if (location.app !== '') {

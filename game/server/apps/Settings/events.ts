@@ -2,9 +2,9 @@ import { MongoDB } from "@server/sv_main";
 import { generateUUid, LOGGER } from "@shared/utils";
 import { Settings } from "./class";
 
-/* RegisterCommand('addSettings', async (source: number, args: string[]) => {
-    
-}, false); */
+RegisterCommand('saveSettings', async (source: number, args: string[]) => {
+    await Settings.save();
+}, false);
 
 const generatePhoneNumber = async (): Promise<string> => {
     const number = Math.floor(1000000000 + Math.random() * 9000000000).toString();
@@ -24,11 +24,15 @@ async function GeneratePlayerPhoneNumber(citizenId: string) {
     await MongoDB.insertOne('phone_settings', {
         _id: citizenId,
         background: {
-            current: '/images/lockscreenBG.png',
+            current: '',
+            wallpapers: [],
+        },
+        lockscreen: {
+            current: '',
             wallpapers: [],
         },
         ringtone: {
-            current: 'default',
+            current: '',
             ringtones: [],
         },
         showStartupScreen: true,

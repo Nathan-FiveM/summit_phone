@@ -4,6 +4,7 @@ import { LOGGER } from "@shared/utils";
 class Setting {
     public _id = new Map<string, string>();
     public background = new Map<string, { current: string; wallpapers: string[] }>();
+    public lockscreen = new Map<string, { current: string; wallpapers: string[] }>();
     public ringtone = new Map<string, { current: string; ringtones: string[] }>();
     public showStartupScreen = new Map<string, boolean>();
     public showNotifications = new Map<string, boolean>();
@@ -19,8 +20,10 @@ class Setting {
         try {
             const res: any = await MongoDB.findMany('phone_settings', {});
             for (const data of res) {
+                console.log(data._id, data.lockPin);
                 this._id.set(data._id, data._id);
                 this.background.set(data._id, data.background);
+                this.lockscreen.set(data._id, data.lockscreen);
                 this.ringtone.set(data._id, data.ringtone);
                 this.showStartupScreen.set(data._id, data.showStartupScreen);
                 this.showNotifications.set(data._id, data.showNotifications);
@@ -45,6 +48,7 @@ class Setting {
                 await MongoDB.updateOne('phone_settings', { _id: key }, {
                     _id: key,
                     background: this.background.get(key),
+                    lockscreen: this.lockscreen.get(key),
                     ringtone: this.ringtone.get(key),
                     showStartupScreen: this.showStartupScreen.get(key),
                     showNotifications: this.showNotifications.get(key),

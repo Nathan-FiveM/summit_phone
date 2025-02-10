@@ -456,6 +456,15 @@
       line-height: normal;
       margin-top: 2.8645833333333335vw;
     }
+
+    .speakerButton {
+      transition: all 0.3s ease;
+      cursor: pointer;
+
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
   }
 
   .backButton {
@@ -725,6 +734,7 @@
       flex-grow: 0;
     }
   }
+
 }
 
 .searchbar {
@@ -1068,7 +1078,7 @@
 
 .clickButton {
   transition: all 0.2s ease;
-
+  cursor: pointer;
   &:hover {
     transform: scale(1.1);
   }
@@ -1106,7 +1116,7 @@
   line-height: 0.8333333333333334vw;
 }
 
-.pushNotiFication {
+.pushActionNotiFication {
   display: flex;
   width: 15.520833333333334vw;
   padding: 0.4166666666666667vw 1.1979166666666667vw 0.46875vw 0.6770833333333334vw;
@@ -1123,7 +1133,7 @@
     flex: 1 0 0;
 
     .title {
-      width: 11.041666666666666vw;
+      width: 8.041666666666666vw;
       height: 0.78125vw;
 
       color: #FFF;
@@ -1135,7 +1145,7 @@
     }
 
     .description {
-      width: 11.041666666666666vw;
+      width: 8.041666666666666vw;
       height: 0.6770833333333334vw;
       margin-top: 0.06vw;
       color: #575757;
@@ -1159,17 +1169,17 @@
 
   .contextArea {
     display: flex;
-    width: 8.072916666666666vw;
+    width: 10.072916666666666vw;
     flex-direction: column;
     align-items: flex-start;
     gap: 1px;
     flex-shrink: 0;
 
     .title {
-      width: 8.072916666666666vw;
+      width: 11.072916666666666vw;
       color: #FFF;
       font-family: "SFPro";
-      font-size: 0.7291666666666666vw;
+      font-size: 11.7291666666666666vw;
       font-style: normal;
       font-weight: 700;
       line-height: normal;

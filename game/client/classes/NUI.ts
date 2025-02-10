@@ -7,7 +7,7 @@ export class NU {
     private controlsLoop: any;
     public shouldNotOpen: boolean = false;
     public disableControls = false;
-
+    private isLooprunnig = false;
     public disableSelectedControls = false;
 
     public async init() {
@@ -20,14 +20,24 @@ export class NU {
         RegisterCommand('phoneclose', () => {
             this.closeUI();
         }, false);
+        RegisterCommand('+toggleNuiFocus', () => {
+            const state = LocalPlayer.state;
+            if (!state.onPhone) return;
+
+            if (IsNuiFocused()) {
+                SetNuiFocus(false, false);
+            } else {
+                SetNuiFocus(true, true);
+            }
+        }, false);
         RegisterKeyMapping('phoneopen', 'Open Phone', 'keyboard', 'M');
+        RegisterKeyMapping('+toggleNuiFocus', 'Toggle NUI Focus', 'keyboard', 'LMENU');
     };
 
     public async openUI(phoneItem: string) {
-        console.log('openUI', phoneItem);
         if (this.shouldNotOpen) return;
-        console.log('openUI 1', phoneItem);
         const state = LocalPlayer.state;
+        if (state.onPhone) return;
         state.set('onPhone', true, true);
         SetCursorLocation(0.89, 0.6);
         this.startTimeLoop();
@@ -79,8 +89,10 @@ export class NU {
         SetPauseMenuActive(false);
 
         this.controlsLoop = setTick(() => {
-            DisableControlAction(0, 1, true);
-            DisableControlAction(0, 2, true);
+            if (IsNuiFocused()) {
+                DisableControlAction(0, 1, true);
+                DisableControlAction(0, 2, true);
+            }
             DisableControlAction(0, 24, true);
             DisableControlAction(0, 257, true);
             DisableControlAction(0, 25, true);

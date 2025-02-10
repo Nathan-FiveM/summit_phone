@@ -5,10 +5,19 @@ import { NUI } from "./classes/NUI";
 import { generateUUid } from "@shared/utils";
 
 export const FrameWork = exports['qb-core'].GetCoreObject();
+
 setImmediate(() => {
     NUI.init();
 });
-RegisterCommand('testNoti', async () => {
+
+onNet('phone:addnotiFication', (data: string) => {
+    const notiData: {
+        id: string,
+        title: string,
+        description: string,
+        app: string,
+        timeout: number
+    } = JSON.parse(data);
     NUI.sendReactMessage('addNotification', {
         id: generateUUid(),
         title: 'Test',
@@ -16,28 +25,42 @@ RegisterCommand('testNoti', async () => {
         app: 'settings',
         timeout: 5000
     });
-}, false);
+});
 
-RegisterCommand('testActionNoti', async () => {
-    NUI.sendReactMessage('addActionNotification', {
-        id: generateUUid(),
-        title: 'Test',
-        description: 'This is a test notification',
-        app: 'settings',
+onNet('phone:addActionNotification', (data: string) => {
+    const notiData: {
+        id: string,
+        title: string,
+        description: string,
+        app: string,
         icons: {
             "0": {
-                icon: "https://cdn.summitrp.gg/uploads/red.svg",
-                isServer: false,
-                event: 'phone:client:buttonClicked'
+                icon: string,
+                isServer: boolean,
+                event: string
             },
-            /*  "1": {
-                icon: "https://cdn.summitrp.gg/uploads/green.svg",
-                isServer: false,
-                event: 'phone:client:buttonClicked1'
-            } */
+            "1": {
+                icon: string,
+                isServer: boolean,
+                event: string
+            }
         }
-    });
+    } = JSON.parse(data);
+    NUI.sendReactMessage('addActionNotification', notiData);
+});
+
+RegisterCommand('testActionNoti', async () => {
+    NUI.sendReactMessage('removeCallingInterface', {
+        show: false
+    })
 }, false);
+
+on('onResourceStop', (resource: string) => {
+    if (resource === GetCurrentResourceName()) {
+        const state = LocalPlayer.state;
+        state.set('onPhone', false, true);
+    }
+});
 
 /* on('phone:client:buttonClicked', (id: string) => {
     

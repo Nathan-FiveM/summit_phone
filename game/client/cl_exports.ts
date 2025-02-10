@@ -1,3 +1,4 @@
+import { generateUUid } from "@shared/utils";
 import { NUI } from "./classes/NUI";
 
 function ForceFullyClosePhone() {
@@ -18,3 +19,36 @@ function CloseAndToggleDisablePhone(should: boolean) {
     ForceFullyClosePhone();
 }
 exports("CloseAndToggleDisablePhone", CloseAndToggleDisablePhone);
+
+exports('sendNotification', (data: string) => {
+    const notiData: {
+        id: string,
+        title: string,
+        description: string,
+        app: string,
+        timeout: number
+    } = JSON.parse(data);
+    NUI.sendReactMessage('addNotification', notiData);
+});
+
+exports('sendActionNotification', (data: string) => {
+    const notiData: {
+        id: string,
+        title: string,
+        description: string,
+        app: string,
+        icons: {
+            "0": {
+                icon: string,
+                isServer: boolean,
+                event: string
+            },
+            "1": {
+                icon: string,
+                isServer: boolean,
+                event: string
+            }
+        }
+    } = JSON.parse(data);
+    NUI.sendReactMessage('addActionNotification', notiData);
+});

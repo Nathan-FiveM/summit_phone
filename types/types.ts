@@ -4,6 +4,10 @@ type PhoneSettings = {
         current: string;
         wallpapers: string[];
     };
+    lockscreen: {
+        current: string;
+        wallpapers: string[];
+    };
     ringtone: {
         current: string;
         ringtones: string[];

@@ -18,6 +18,7 @@ export default function Lockscreen() {
     const nodeRef = useRef(null);
     const refB1 = useRef(null);
     const [activeSlide, setActiveSlide] = useState(0);
+    /* console.log(lockscreenBg) */
     const handleSlideChange = (swiper: any) => {
         if (swiper.activeIndex === 1) {
             setActiveSlide(1);
@@ -47,7 +48,7 @@ export default function Lockscreen() {
             }
         }
     }, [passcode]);
-
+    
     return (
         <CSSTransition nodeRef={nodeRef} in={phoneSettings.isLock} timeout={450} classNames="enterandexitfromtop" unmountOnExit mountOnEnter>
             <div style={{

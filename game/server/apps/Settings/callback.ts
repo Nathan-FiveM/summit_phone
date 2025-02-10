@@ -8,6 +8,7 @@ onClientCallback('GetClientSettings', async (client) => {
     return JSON.stringify({
         _id: Settings._id.get(citizenId),
         background: Settings.background.get(citizenId),
+        lockscreen: Settings.lockscreen.get(citizenId),
         ringtone: Settings.ringtone.get(citizenId),
         showStartupScreen: Settings.showStartupScreen.get(citizenId),
         showNotifications: Settings.showNotifications.get(citizenId),
@@ -25,6 +26,7 @@ onClientCallback('SetClientSettings', async (client, data: string) => {
     const citizenId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
     const parsedData: {
         background: { current: string; wallpapers: string[] };
+        lockscreen: { current: string; wallpapers: string[] };
         ringtone: { current: string; ringtones: string[] };
         showStartupScreen: boolean;
         showNotifications: boolean;
@@ -37,6 +39,7 @@ onClientCallback('SetClientSettings', async (client, data: string) => {
         smrtPassword: string;
     } = JSON.parse(data);
     Settings.background.set(citizenId, parsedData.background);
+    Settings.lockscreen.set(citizenId, parsedData.lockscreen);
     Settings.ringtone.set(citizenId, parsedData.ringtone);
     Settings.showStartupScreen.set(citizenId, parsedData.showStartupScreen);
     Settings.showNotifications.set(citizenId, parsedData.showNotifications);

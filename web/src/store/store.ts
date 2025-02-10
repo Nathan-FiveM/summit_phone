@@ -22,6 +22,7 @@ type State = {
     selectedContact: PhoneContacts;
     notificationPush: boolean;
     inCall: boolean;
+    calling: boolean;
     showNotiy: boolean;
 };
 
@@ -45,6 +46,7 @@ type Actions = {
     setSelectedContact: (contact: PhoneContacts) => void;
     setNotificationPush: (notificationPush: boolean) => void;
     setInCall: (inCall: boolean) => void;
+    setCalling: (calling: boolean) => void;
     setShowNotiy: (showNotiy: boolean) => void;
 };
 
@@ -67,7 +69,11 @@ export const usePhone = create<State & Actions>()(
         phoneSettings: {
             _id: '',
             background: {
-                current: '/images/lockscreenBG.png',
+                current: '',
+                wallpapers: [],
+            },
+            lockscreen: {
+                current: '',
                 wallpapers: [],
             },
             ringtone: {
@@ -104,6 +110,7 @@ export const usePhone = create<State & Actions>()(
         },
         notificationPush: false,
         inCall: false,
+        calling: false,
         showNotiy: false,
         setVisible: (visible: boolean) => set((state) => {
             state.visible = visible;
@@ -142,6 +149,9 @@ export const usePhone = create<State & Actions>()(
         }),
         setInCall: (inCall: boolean) => set((state) => {
             state.inCall = inCall;
+        }),
+        setCalling: (calling: boolean) => set((state) => {
+            state.calling = calling;
         }),
         setShowNotiy: (showNotiy: boolean) => set((state) => {
             state.showNotiy = showNotiy;
