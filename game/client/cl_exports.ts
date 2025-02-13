@@ -41,12 +41,14 @@ exports('sendActionNotification', (data: string) => {
             "0": {
                 icon: string,
                 isServer: boolean,
-                event: string
+                event: string,
+                args:any
             },
             "1": {
                 icon: string,
                 isServer: boolean,
-                event: string
+                event: string,
+                args:any
             }
         }
     } = JSON.parse(data);

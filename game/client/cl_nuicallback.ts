@@ -16,16 +16,16 @@ on('__cfx_nui:actionNotiButtonOne', (data: {
   id: number;
   isServer: boolean;
   event: string;
+  args: any;
 }) => {
-  console.log(data.id);
-  data.isServer ? emitNet(data.event, data.id) : emit(data.event, data.id);
+  data.isServer ? emitNet(data.event, data.id, data.args) : emit(data.event, data.id, data.args);
 });
 RegisterNuiCallbackType('actionNotiButtonTwo');
 on('__cfx_nui:actionNotiButtonTwo', (data: {
   id: number;
   isServer: boolean;
   event: string;
+  args: any;
 }) => {
-  console.log(data.id);
-  data.isServer ? emitNet(data.event, data.id) : emit(data.event, data.id);
+  data.isServer ? emitNet(data.event, data.id, data.args) : emit(data.event, data.id, data.args);
 });

@@ -18,13 +18,7 @@ onNet('phone:addnotiFication', (data: string) => {
         app: string,
         timeout: number
     } = JSON.parse(data);
-    NUI.sendReactMessage('addNotification', {
-        id: generateUUid(),
-        title: 'Test',
-        description: 'This is a test notification',
-        app: 'settings',
-        timeout: 5000
-    });
+    NUI.sendReactMessage('addNotification', notiData);
 });
 
 onNet('phone:addActionNotification', (data: string) => {
@@ -37,12 +31,14 @@ onNet('phone:addActionNotification', (data: string) => {
             "0": {
                 icon: string,
                 isServer: boolean,
-                event: string
+                event: string,
+                args:any
             },
             "1": {
                 icon: string,
                 isServer: boolean,
-                event: string
+                event: string,
+                args:any
             }
         }
     } = JSON.parse(data);

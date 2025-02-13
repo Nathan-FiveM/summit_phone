@@ -32,6 +32,25 @@ export default function CallComponent() {
         setCalling(data.show);
     });
 
+    useNuiEvent('startCallAccepted', (data: string) => {
+        console.log(data);
+        const dataX = JSON.parse(data);
+        setCallingData(dataX);
+        setCalling(false);
+        setInCall(true);
+    });
+
+    useNuiEvent('removeAccpetedCallingInterface', (data:any) => {
+        setCallingData({
+            targetSource: 0,
+            targetName: '',
+            sourceName: '',
+            callerSource: 0,
+            databaseTableId: ''
+        });
+        setInCall(false);
+    });
+
     useNuiEvent('removeCallingInterface', (data: {
         data: string,
         show: boolean
@@ -67,7 +86,8 @@ export default function CallComponent() {
                 left: 0,
                 width: '100%',
                 height: '100%',
-                backdropFilter: 'blur(1.8229166666666667vw)',
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                backdropFilter: 'blur(1.7229166666666667vw)',
                 display: 'flex',
                 flexDirection: 'column',
                 zIndex: 50
@@ -91,7 +111,7 @@ export default function CallComponent() {
                     lineHeight: '1.25vw',
                     opacity: 0.7,
                 }}>
-                    Calling...
+                    {inCall ? 'In Call' : 'Calling...'}
                 </div>
                 <div style={{
                     width: '100%',
@@ -198,7 +218,11 @@ export default function CallComponent() {
                             alignItems: 'center',
                             borderRadius: '50%',
                         }} onClick={() => {
-                            fetchNui("declineCall", JSON.stringify(callingData));
+                            if (inCall) {
+                                fetchNui("endCall", JSON.stringify(callingData));
+                            } else {
+                                fetchNui("declineCall", JSON.stringify(callingData));
+                            }
                         }}>
                             <svg width="2.1354166666666665vw" height="0.8854166666666666vw" viewBox="0 0 41 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M38.1519 7.65803C28.3997 -2.09421 12.5881 -2.09422 2.83588 7.65803C2.39591 8.098 1.97576 8.55028 1.57544 9.01394C1.1161 9.54596 0.886428 9.81186 0.790619 10.1674C0.711329 10.4618 0.724888 10.8296 0.825482 11.1175C0.946809 11.4651 1.22034 11.7386 1.76728 12.2856L4.97683 15.4951C5.43685 15.9551 5.66686 16.1852 5.9397 16.3065C6.18065 16.4139 6.44438 16.4603 6.70754 16.4418C7.00545 16.421 7.30028 16.2834 7.88972 16.0083L12.8714 13.6835C13.5573 13.3634 13.9003 13.2033 14.1233 12.9493C14.3201 12.7252 14.4506 12.4509 14.5008 12.157C14.5576 11.8237 14.4658 11.4567 14.2822 10.7223L13.6585 8.22765C18.0446 6.576 22.9423 6.57918 27.3293 8.22765L26.7056 10.7223C26.522 11.4566 26.4303 11.8237 26.4871 12.157C26.5372 12.4509 26.6678 12.7252 26.8645 12.9493C27.0876 13.2034 27.4305 13.3634 28.1163 13.6835L33.0981 16.0083C33.6876 16.2834 33.9823 16.421 34.2802 16.4418C34.5434 16.4603 34.8071 16.4138 35.0481 16.3066C35.321 16.1851 35.551 15.9551 36.011 15.4951L39.2205 12.2856C39.7675 11.7386 40.041 11.4651 40.1624 11.1176C40.263 10.8297 40.2764 10.4618 40.1972 10.1674C40.1014 9.81187 39.8717 9.54588 39.4123 9.0139C39.0121 8.55036 38.5919 8.09803 38.1519 7.65803Z" fill="white" />

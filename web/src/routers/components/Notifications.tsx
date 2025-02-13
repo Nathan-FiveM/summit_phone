@@ -44,11 +44,13 @@ export default function Notifications() {
                 icon: string;
                 isServer: boolean;
                 event: string;
+                args: any;
             },
             "1": {
                 icon: string;
                 isServer: boolean;
                 event: string;
+                args: any;
             }
         }
     }) => {
@@ -93,7 +95,7 @@ export default function Notifications() {
             setShowNotiy(false);
         }
     }, [actionNotiQueue.values]);
-
+    
     return (
         <TransitionGroup className="" style={{
             position: 'absolute',
@@ -110,9 +112,6 @@ export default function Notifications() {
                         nodeRef={noti.nodeRef}
                         timeout={500}
                         classNames="popDown"
-                        style={{
-                            position: 'absolute',
-                        }}
                     >
                         <div ref={noti.nodeRef} className="pushNotiFication" style={{
                             marginTop: index === 0 ? '0.38vw' : '0.2604166666666667vw',
@@ -149,6 +148,7 @@ export default function Notifications() {
                                 fetchNui('actionNotiButtonOne', {
                                     id: noti.id,
                                     event: noti.icons["0"].event,
+                                    args: noti.icons["0"].args,
                                     isServer: noti.icons["0"].isServer,
                                 });
                             }} />
@@ -159,6 +159,7 @@ export default function Notifications() {
                                 fetchNui('actionNotiButtonTwo', {
                                     id: noti.id,
                                     event: noti.icons["1"].event,
+                                    args: noti.icons["1"].args,
                                     isServer: noti.icons["1"].isServer,
                                 });
                             }} />
@@ -190,6 +191,7 @@ export default function Notifications() {
                                 fetchNui('actionNotiButtonOne', {
                                     id: noti.id,
                                     event: noti.icons["0"].event,
+                                    args: noti.icons["0"].args,
                                     isServer: noti.icons["0"].isServer,
                                 });
                             }} />

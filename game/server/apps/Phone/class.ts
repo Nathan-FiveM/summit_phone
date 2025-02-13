@@ -14,10 +14,6 @@ class Phone {
         source: number,
         targetSource: number,
     }>();
-    public gettingCalled = new Map<number, boolean>();
-    public async call(source: number, number: string) {
-
-    }
 
     public async isPlayerCalling(id: number, data: {
         number: string,
@@ -27,8 +23,6 @@ class Phone {
         this.calling.set(id, data);
     }
 
-    public async isPlayerGettingCalled(id: number, data: boolean) {
-        this.gettingCalled.set(id, data);
-    }
+   
 }
 export const Phones = new Phone();

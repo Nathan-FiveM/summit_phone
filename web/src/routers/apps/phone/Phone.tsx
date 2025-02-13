@@ -176,11 +176,11 @@ export default function Phone() {
                                                         <div style={{
                                                             color: '#FFF',
                                                             fontFamily: 'SFPro',
-                                                            fontSize: '15px',
+                                                            fontSize: '0.78125vw',
                                                             fontStyle: 'normal',
                                                             fontWeight: 700,
                                                             lineHeight: '120.596%',
-                                                            letterSpacing: '0.36px',
+                                                            letterSpacing: '0.01875vw',
                                                         }}>
                                                             {contact.firstName} {contact.lastName}
                                                         </div>
@@ -282,7 +282,7 @@ export default function Phone() {
                                                         alignSelf: 'stretch',
                                                         flexGrow: 0,
                                                         marginTop: index === 0 ? '0vw' : '0.4125vw',
-                                                    }}>
+                                                    }} key={index}>
                                                         <Avatar src={tonyImage} size={'2.2395833333333335vw'} style={{ minHeight: '2.2395833333333335vw' }} radius={'50vw'} />
                                                         <div style={{
                                                             display: 'flex',
@@ -309,7 +309,7 @@ export default function Phone() {
                                                                 fontStyle: 'normal',
                                                                 fontWeight: 700,
                                                                 lineHeight: '118.596%',
-                                                                letterSpacing: '0.36px',
+                                                                letterSpacing: '0.01875vw',
                                                             }}>
                                                                 {contact.firstName} {contact.lastName}
                                                             </div>

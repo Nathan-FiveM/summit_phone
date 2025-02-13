@@ -11,6 +11,7 @@ interface Notification1 {
             icon: string;
             isServer: boolean;
             event: string;
+            args: any;
         }
     }
     nodeRef?: any;
@@ -25,11 +26,13 @@ interface Notification2 {
             icon: string;
             isServer: boolean;
             event: string;
+            args: any;
         },
         "1": {
             icon: string;
             isServer: boolean;
             event: string;
+            args: any;
         }
     }
     nodeRef?: any;
@@ -50,6 +53,7 @@ export default function useActionNotiQueue() {
                     icon: string;
                     isServer: boolean;
                     event: string;
+                    args: any;
                 }
             }
             nodeRef?: any;
@@ -66,11 +70,13 @@ export default function useActionNotiQueue() {
                     icon: string;
                     isServer: boolean;
                     event: string;
+                    args: any;
                 },
                 "1": {
                     icon: string;
                     isServer: boolean;
                     event: string;
+                    args: any;
                 }
             }
             nodeRef?: any;

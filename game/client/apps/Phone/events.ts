@@ -51,3 +51,16 @@ onNet('phone:client:removeCallingInterface', (notiId: string) => {
         show: false
     });
 });
+onNet('phone:client:removeAccpetedCallingInterface', (notiId: string) => {
+    NUI.sendReactMessage('removeAccpetedCallingInterface', {
+        data: {},
+        show: false
+    });
+});
+
+onNet('phone:client:acceptCall', (data: string) => {
+    NUI.sendReactMessage('startCallAccepted', data);
+})
+onNet('phone:client:updateCallerInterface', (data: string) => {
+    NUI.sendReactMessage('startCallAccepted', data);
+})

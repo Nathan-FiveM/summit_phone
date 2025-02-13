@@ -14,6 +14,7 @@
   align-items: center;
   color: white;
   position: relative;
+  filter: blur(0px) !important;
 
 
   .headerFrame {
@@ -60,6 +61,7 @@
     align-items: center;
     position: relative;
     overflow: hidden;
+    
 
     .homescreen {
       position: absolute;
@@ -465,6 +467,16 @@
         transform: scale(1.05);
       }
     }
+
+    .clickanimation {
+      transition: all 0.2s ease;
+      cursor: pointer;
+    
+      &:active {
+        transform: scale(0.97);
+      }
+    }
+    
   }
 
   .backButton {
@@ -1098,7 +1110,7 @@
 }
 
 .clickanimationXl {
-  /* transition: all 0.0s ease; */
+  
   cursor: pointer;
 
   &:active {
@@ -1116,6 +1128,47 @@
   line-height: 0.8333333333333334vw;
 }
 
+.pushNotiFication {
+  display: flex;
+  width: 15.520833333333334vw;
+  padding: 0.4166666666666667vw 1.1979166666666667vw 0.46875vw 0.6770833333333334vw;
+  align-items: center;
+  gap: 0.4166666666666667vw;
+  border-radius: 2.2916666666666665vw;
+  background: #0B0B0B;
+
+  .contextArea {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.052083333333333336vw;
+    flex: 1 0 0;
+
+    .title {
+      width: 8.041666666666666vw;
+      height: 0.78125vw;
+
+      color: #FFF;
+      font-family: "SFPro";
+      font-size: 0.7291666666666666vw;
+      font-style: normal;
+      font-weight: 700;
+      line-height: normal;
+    }
+
+    .description {
+      width: 8.041666666666666vw;
+      height: 0.6770833333333334vw;
+      margin-top: 0.06vw;
+      color: #575757;
+      font-family: "SFPro";
+      font-size: 0.5729166666666666vw;
+      font-style: normal;
+      font-weight: 600;
+      line-height: normal;
+    }
+  }
+}
 .pushActionNotiFication {
   display: flex;
   width: 15.520833333333334vw;

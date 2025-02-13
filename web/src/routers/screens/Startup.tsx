@@ -189,7 +189,7 @@ export default function Startup() {
                         ...styles, width: '100%', height: '100%',
                         display: 'flex', justifyContent: 'center', alignItems: 'center',
                         position: 'absolute', backgroundColor: 'black'
-                    }}><Image src={smrtLogo} w={150} h={60} className="opacityAnimation" /></div>}
+                    }}><Image src={smrtLogo} w={'7.8125vw'} h={'3.125vw'} className="opacityAnimation" /></div>}
                 </Transition>
                 <Transition
                     mounted={!logoScreen && !showsetUpPage}
@@ -593,7 +593,9 @@ export default function Startup() {
                                 }} onBlur={() => {
                                     fetchNui('disableControls', false);
                                 }} rightSection={
-                                    <div>
+                                    <div style={{
+                                        fontSize: '0.75vw',
+                                    }}>
                                         @smrt.com
                                     </div>
                                 } value={email} error={emailError} onChange={async (e) => {
@@ -607,6 +609,7 @@ export default function Startup() {
                                 }} placeholder="Email" className="inputForEmail" styles={{
                                     input: {
                                         fontFamily: 'SFPro',
+                                        fontSize: '0.75vw',
                                         color: 'white',
                                         width: '13.5vw',
                                         background: 'rgba(255, 255, 255, 0.0)',
@@ -635,6 +638,7 @@ export default function Startup() {
                                         background: 'rgba(255, 255, 255, 0.0)',
                                         border: 'none',
                                         color: 'white',
+                                        fontSize: '0.75vw',
                                     },
                                 }} style={{
                                     marginTop: '0.6827731092436975vw',
@@ -657,6 +661,7 @@ export default function Startup() {
                                         width: '15.5vw',
                                         background: 'rgba(255, 255, 255, 0.0)',
                                         border: 'none',
+                                        fontSize: '0.75vw',
                                     },
                                 }} onChange={(e) => {
                                     setConfirmPassword(e.target.value);
@@ -711,6 +716,7 @@ export default function Startup() {
                                 <Button mt={'0.3vw'} w={'14.5vw'} style={{
                                     fontFamily: 'SFPro',
                                     letterSpacing: '0.01vw',
+                                    fontSize: '0.75vw',
                                 }} h={'1.5vw'} variant="transparent" onClick={() => {
                                     setSignUp(!signUp);
                                     if (!signUp) {
