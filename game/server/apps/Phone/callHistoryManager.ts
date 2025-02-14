@@ -68,7 +68,7 @@ export class CallHistoryManager {
         const options = { sort: { _id: -1 }, limit: maxRecords };
 
         try {
-            const result = await MongoDB.find("call_history", query, options);
+            const result = await MongoDB.findMany("call_history", query, ()=>{}, false, options);
             return result;
         } catch (error) {
             console.error("Error retrieving call history for phone number:", phoneNumber, error);

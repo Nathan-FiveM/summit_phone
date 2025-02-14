@@ -103,7 +103,7 @@ export default function Notifications() {
             flexDirection: 'column',
             height: 'auto',
             overflow: 'hidden',
-            zIndex: 100,
+            zIndex: 101,
         }}>
             {notiQueue.values.map((noti, index) => {
                 return (

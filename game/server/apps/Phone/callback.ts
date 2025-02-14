@@ -279,12 +279,11 @@ onClientCallback("summit_phone:server:addPlayerToCall", async (source: number, d
   return true;
 });
 
-onClientCallback("phone:server:getCallHistory", async (source: number, data: string) => {
-  let maxRecords = 20; // default value
+onClientCallback("phone:server:getCallHistory", async (source: number, maxRecordsX: number) => {
+  let maxRecords = 100;
   try {
-    const parsed = JSON.parse(data);
-    if (parsed && parsed.maxRecords) {
-      maxRecords = parsed.maxRecords;
+    if (maxRecordsX) {
+      maxRecords = maxRecordsX;
     }
   } catch (error) {
     console.error("Error parsing getCallHistory data", error);
@@ -299,4 +298,13 @@ onClientCallback("phone:server:getCallHistory", async (source: number, data: str
     console.error("Error retrieving call history for phone number:", phoneNumber, error);
     return JSON.stringify([]);
   }
+});
+
+onClientCallback('phone:server:getDataFromDBwithNumber', async (source: number, data: string) => {
+  const parsedData: {
+    number: string,
+    citizenId: string,
+  } = JSON.parse(data);
+  const res = await MongoDB.findOne('phone_contacts', { contactNumber: parsedData.number, ownerId: parsedData.citizenId });
+  return JSON.stringify(res);
 });

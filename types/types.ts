@@ -58,4 +58,14 @@ type PhoneContacts = {
     isFav: boolean;
 }
 
-export type { PhoneSettings, PhoneMail, PhoneLocation, PhoneContacts };
+type PhoneCallHistory = {
+    callId: number;
+    role: string;
+    myPhoneNumber: string;
+    otherPhoneNumber: string;
+    status: string;
+    callTime: string;
+    callTimestamp: Date;
+}
+
+export type { PhoneSettings, PhoneMail, PhoneLocation, PhoneContacts, PhoneCallHistory };

@@ -9,26 +9,12 @@ on('__cfx_nui:phoneCall', async (data: string, cb: Function) => {
 
 RegisterNuiCallbackType('declineCall');
 on('__cfx_nui:declineCall', async (data: string, cb: Function) => {
-    /* const dataX : {
-        targetSource: number,
-        targetName: string,
-        sourceName: string,
-        callerSource: number,
-        databaseTableId: string
-    } = JSON.parse(data); */
     const res = await triggerServerCallback('summit_phone:server:declineCall', 1, data);
     cb(res);
 });
 
 RegisterNuiCallbackType('endCall');
 on('__cfx_nui:endCall', async (data: string, cb: Function) => {
-    /* const dataX : {
-        targetSource: number,
-        targetName: string,
-        sourceName: string,
-        callerSource: number,
-        databaseTableId: string
-    } = JSON.parse(data); */
     const res = await triggerServerCallback('summit_phone:server:endCall', 1, data);
     cb(res);
 });
@@ -37,4 +23,18 @@ RegisterNuiCallbackType('addPlayerToCall');
 on('__cfx_nui:addPlayerToCall', async (data: string, cb: Function) => {
     const res = await triggerServerCallback('summit_phone:server:addPlayerToCall', 1, data);
     cb(true);
+});
+
+RegisterNuiCallbackType('getCallRecentData');
+on('__cfx_nui:getCallRecentData', async (data: string, cb: Function) => {
+    const res = await triggerServerCallback('phone:server:getCallHistory', 1);
+    cb(res);
+});
+
+RegisterNuiCallbackType('callFromDialPad');
+on('__cfx_nui:callFromDialPad', async (data: string, cb: Function) => {
+    const fetchData:any = await triggerServerCallback('phone:server:getDataFromDBwithNumber', 1, data);
+    const {_id, contactNumber}  = JSON.parse(fetchData);
+    const res = await triggerServerCallback('summit_phone:server:call', 1, JSON.stringify({number: contactNumber, _id}));
+    cb(res);
 });

@@ -11,7 +11,7 @@ export default function Title(props: { title: string, mt?: string, mb?: string }
             marginTop: props.mt,
             marginBottom: props.mb
         }}>
-            Contacts
+            {props.title}
         </div>
     )
 }

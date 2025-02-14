@@ -40,7 +40,7 @@ export default function CallComponent() {
         setInCall(true);
     });
 
-    useNuiEvent('removeAccpetedCallingInterface', (data:any) => {
+    useNuiEvent('removeAccpetedCallingInterface', () => {
         setCallingData({
             callId: 0,
             targetSource: 0,

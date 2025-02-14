@@ -124,15 +124,17 @@ export default function App() {
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'cover',
       }}>
+        <Notifications />
         <div className='headerFrame'>
           <Header />
         </div>
-        <div className="contentFrame" id='contentFrame'>
+        <div className="contentFrame" id='contentFrame' style={{
+          
+        }}>
           <ControlCenters />
           <HomeScreen />
           <Lockscreen />
           <Startup />
-          <Notifications />
           <Phone />
           <CallComponent />
         </div>
