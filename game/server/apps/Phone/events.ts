@@ -9,7 +9,7 @@ onNet("phone:server:declineCall", async (notiId: string, args: any) => {
 });
 
 onNet("phone:server:acceptCall", async (notiId: string, args: any) => {
-  const { callId, targetSource, targetName, sourceName,callerSource, databaseTableId } = JSON.parse(args);
+  const { callId, targetSource, targetName, sourceName, callerSource, databaseTableId } = JSON.parse(args);
   const call = callManager.getCallByPlayer(callerSource);
   if (!call || call.callId !== callId) {
     emitNet("phone:addnotiFication", targetSource, JSON.stringify({
@@ -45,8 +45,8 @@ onNet("phone:server:acceptCall", async (notiId: string, args: any) => {
   emitNet("phone:client:updateCallerInterface", callerSource, JSON.stringify({
     callId,
     targetSource,
-    sourceName:targetName,
-    targetName:sourceName,
+    sourceName: targetName,
+    targetName: sourceName,
     callerSource: source,
     databaseTableId,
   }));
@@ -54,7 +54,7 @@ onNet("phone:server:acceptCall", async (notiId: string, args: any) => {
 });
 
 onNet("phone:server:acceptConferenceCall", async (notiId: string, args: any) => {
-  const { callId, targetSource, targetName, sourceName,callerSource, databaseTableId } = JSON.parse(args);
+  const { callId, targetSource, targetName, sourceName, callerSource, databaseTableId } = JSON.parse(args);
 
   const call = callManager.getCallByPlayer(callerSource);
   if (!call) {
@@ -89,7 +89,7 @@ onNet("phone:server:acceptConferenceCall", async (notiId: string, args: any) => 
 
   for (const p of callManager.getParticipants(call.callId)) {
     if (p.source !== targetSource) {
-        const callss = call.callId
+      const callss = call.callId;
       emitNet("phone:client:updateConference", p.source, JSON.stringify({
         callss,
         participants: callManager.getParticipants(call.callId),
@@ -101,16 +101,16 @@ onNet("phone:server:acceptConferenceCall", async (notiId: string, args: any) => 
   emitNet("phone:client:updateCallerInterface", targetSource, JSON.stringify({
     callId,
     targetSource,
-    sourceName:sourceName,
-    targetName:targetName,
+    sourceName: sourceName,
+    targetName: targetName,
     callerSource: source,
     databaseTableId,
   }));
   emitNet("phone:client:updateCallerInterface", callerSource, JSON.stringify({
     callId,
     targetSource,
-    sourceName:sourceName,
-    targetName:"Conference Call",
+    sourceName: sourceName,
+    targetName: "Conference Call",
     callerSource: source,
     databaseTableId,
   }));
@@ -126,11 +126,10 @@ on("onResourceStop", async (resource: string) => {
   }
 });
 
-
 onNet("playerDropped", async (source: number) => {
   const call = callManager.getCallByPlayer(source);
   if (call) {
-    callManager.removeParticipant(call.callId, source);
+    await callManager.removeParticipant(call.callId, source);
     for (const p of callManager.getParticipants(call.callId)) {
       emitNet("phone:client:updateConference", p.source, JSON.stringify({
         callId: call.callId,

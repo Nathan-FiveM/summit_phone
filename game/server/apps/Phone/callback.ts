@@ -4,12 +4,16 @@ import { callManager } from "./CallManager";
 import { generateUUid } from "@shared/utils";
 import { MongoDB } from "@server/sv_main";
 import { PhoneContacts } from "../../../../types/types";
+import { callHistoryManager } from "./callHistoryManager";
 
 onClientCallback("summit_phone:server:call", async (source: number, data: string) => {
   const { number, _id } = JSON.parse(data);
   const targetPlayer = await Utils.GetPlayerFromPhoneNumber(number);
-  const targetData: PhoneContacts = await MongoDB.findOne('phone_contacts', { _id: _id })
-  const sourceData: PhoneContacts = await MongoDB.findOne('phone_contacts', { contactNumber: await Utils.GetPhoneNumberBySource(source), personalNumber: number })
+  const targetData: PhoneContacts = await MongoDB.findOne('phone_contacts', { _id });
+  const sourceData: PhoneContacts = await MongoDB.findOne('phone_contacts', {
+    contactNumber: await Utils.GetPhoneNumberBySource(source),
+    personalNumber: number
+  });
 
   if (!targetPlayer) {
     emitNet("phone:addnotiFication", source, JSON.stringify({
@@ -74,15 +78,22 @@ onClientCallback("summit_phone:server:call", async (source: number, data: string
       app: "settings",
       timeout: 2000,
     }));
-    callManager.endCall(callId);
+    (async () => {
+      const call = callManager.getCallByPlayer(source);
+      if (call) {
+        await callHistoryManager.recordTwoPartyCallHistory(call, "unanswered", "missed", new Date());
+      }
+      callManager.endCall(callId);
+    })();
     exports["pma-voice"].setPlayerCall(source, 0);
     exports["pma-voice"].setPlayerCall(targetSource, 0);
     emitNet("phone:client:removeActionNotification", targetSource, _id);
     emitNet("phone:client:removeCallingInterface", source);
-  }, 3000);
+  }, 20000);
 
-  //Notification Area
-  const sourceName = sourceData ? `${sourceData.firstName} ${sourceData.lastName}` : await Utils.GetPhoneNumberBySource(source);
+  const sourceName = sourceData
+    ? `${sourceData.firstName} ${sourceData.lastName}`
+    : await Utils.GetPhoneNumberBySource(source);
   const targetName = targetData ? `${targetData.firstName} ${targetData.lastName}` : number;
 
   emitNet("phone:addActionNotification", targetSource, JSON.stringify({
@@ -134,6 +145,10 @@ onClientCallback("summit_phone:server:call", async (source: number, data: string
 onClientCallback("summit_phone:server:declineCall", async (source: number, data: string) => {
   const { callId, targetSource, callerSource, databaseTableId } = JSON.parse(data);
   callManager.declineInvitation(callId, targetSource);
+  const call = callManager.getCallByPlayer(callerSource);
+  if (call) {
+    await callHistoryManager.recordTwoPartyCallHistory(call, "declined", "declined", new Date());
+  }
   callManager.endCall(callId);
   emitNet("phone:client:removeActionNotification", targetSource, databaseTableId);
   emitNet("phone:client:removeCallingInterface", callerSource);
@@ -151,28 +166,31 @@ onClientCallback("summit_phone:server:endCall", async (source: number, data: str
       emitNet("phone:client:removeAccpetedCallingInterface", participant.source);
       exports["pma-voice"].setPlayerCall(participant.source, 0);
     }
+    await callHistoryManager.recordTwoPartyCallHistory(call, "completed", "completed", new Date());
     callManager.endCall(callId);
-  } else if (callManager.getParticipants(callId).length > 2){
+  } else if (callManager.getParticipants(callId).length > 2) {
     emitNet("phone:client:removeAccpetedCallingInterface", source);
     emitNet("phone:client:removeCallingInterface", source);
-    exports["pma-voice"].setPlayerCall(source
-      , 0);
+    exports["pma-voice"].setPlayerCall(source, 0);
     callManager.removeFromCall(callId, source);
-  }else{
+  } else {
     for (const participant of callManager.getParticipants(callId)) {
       emitNet("phone:client:removeAccpetedCallingInterface", participant.source);
       exports["pma-voice"].setPlayerCall(participant.source, 0);
     }
+    await callHistoryManager.recordTwoPartyCallHistory(call, "completed", "completed", new Date());
     callManager.endCall(callId);
   }
-
   return true;
 });
 
 onClientCallback("summit_phone:server:addPlayerToCall", async (source: number, data: string) => {
   const { contactNumber, _id } = JSON.parse(data);
-  const targetData: PhoneContacts = await MongoDB.findOne('phone_contacts', { _id: _id })
-  const sourceData: PhoneContacts = await MongoDB.findOne('phone_contacts', { contactNumber: await Utils.GetPhoneNumberBySource(source), personalNumber: contactNumber })
+  const targetData: PhoneContacts = await MongoDB.findOne('phone_contacts', { _id });
+  const sourceData: PhoneContacts = await MongoDB.findOne('phone_contacts', {
+    contactNumber: await Utils.GetPhoneNumberBySource(source),
+    personalNumber: contactNumber
+  });
   const callId = callManager.getCallIdByPlayer(source);
   const call = callManager.getCallByPlayer(source);
   if (!call) {
@@ -219,7 +237,9 @@ onClientCallback("summit_phone:server:addPlayerToCall", async (source: number, d
     }));
   }, 30000);
 
-  const sourceName = sourceData ? `${sourceData.firstName} ${sourceData.lastName}` : await Utils.GetPhoneNumberBySource(source);
+  const sourceName = sourceData
+    ? `${sourceData.firstName} ${sourceData.lastName}`
+    : await Utils.GetPhoneNumberBySource(source);
   const targetName = targetData ? `${targetData.firstName} ${targetData.lastName}` : contactNumber;
 
   emitNet("phone:addActionNotification", targetSource, JSON.stringify({
@@ -257,4 +277,26 @@ onClientCallback("summit_phone:server:addPlayerToCall", async (source: number, d
   }));
 
   return true;
+});
+
+onClientCallback("phone:server:getCallHistory", async (source: number, data: string) => {
+  let maxRecords = 20; // default value
+  try {
+    const parsed = JSON.parse(data);
+    if (parsed && parsed.maxRecords) {
+      maxRecords = parsed.maxRecords;
+    }
+  } catch (error) {
+    console.error("Error parsing getCallHistory data", error);
+  }
+
+  const phoneNumber = await Utils.GetPhoneNumberBySource(source);
+
+  try {
+    const history = await callHistoryManager.getPlayerCallHistory(phoneNumber, maxRecords);
+    return JSON.stringify(history);
+  } catch (error) {
+    console.error("Error retrieving call history for phone number:", phoneNumber, error);
+    return JSON.stringify([]);
+  }
 });
