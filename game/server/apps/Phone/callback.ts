@@ -1,224 +1,260 @@
 import { onClientCallback } from "@overextended/ox_lib/server";
 import { Utils } from "@server/classes/Utils";
-import { MongoDB } from "@server/sv_main";
-import { CallsManger } from "./class";
+import { callManager } from "./CallManager";
 import { generateUUid } from "@shared/utils";
+import { MongoDB } from "@server/sv_main";
+import { PhoneContacts } from "../../../../types/types";
 
-onClientCallback(
-  "summit_phone:server:call",
-  async (source: number, data: string) => {
-    const res: {
-      number: string;
-      _id: string;
-    } = JSON.parse(data);
-    const targetPlayer = await Utils.GetPlayerFromPhoneNumber(res.number);
-    /// add check to check if target has phone
-    if (!targetPlayer) {
-      emitNet(
-        "phone:addnotiFication",
-        source,
-        JSON.stringify({
-          id: generateUUid(),
-          title: "Service Unavailable",
-          description: "Person you are trying to call is not reachable",
-          app: "settings",
-          timeout: 2000,
-        })
-      );
-      return false;
-    }
+onClientCallback("summit_phone:server:call", async (source: number, data: string) => {
+  const { number, _id } = JSON.parse(data);
+  const targetPlayer = await Utils.GetPlayerFromPhoneNumber(number);
+  const targetData: PhoneContacts = await MongoDB.findOne('phone_contacts', { _id: _id })
+  const sourceData: PhoneContacts = await MongoDB.findOne('phone_contacts', { contactNumber: await Utils.GetPhoneNumberBySource(source), personalNumber: number })
 
-    /* if (Phones.calling.has(targetPlayer.PlayerData.source)) {
-      console.log("Player is already calling");
-      return false;
-    }
-    if (Phones.calling.has(source)) {
-      console.log("You are already calling");
-      return false;
-    } */
-
-   /*  Phones.isPlayerCalling(source, {
-      number: res.number,
-      source: source,
-      targetSource: targetPlayer.PlayerData.source,
-    }); */
-
-    const targetSource = targetPlayer.PlayerData.source;
-    const targetName =
-      targetPlayer.PlayerData.charinfo.firstname +
-      " " +
-      targetPlayer.PlayerData.charinfo.lastname;
-    const sourceName = await exports["qb-core"].GetPlayerName(source);
-    emitNet(
-      "phone:addActionNotification",
-      targetSource,
-      JSON.stringify({
-        id: res._id,
-        title: "Incoming Call",
-        description: `${sourceName} is calling you`,
-        app: "phone",
-        icons: {
-          "0": {
-            icon: "https://cdn.summitrp.gg/uploads/red.svg",
-            isServer: true,
-            event: "phone:server:declineCall",
-            args: JSON.stringify({
-              targetSource: targetSource,
-              targetName: targetName,
-              sourceName: sourceName,
-              callerSource: source,
-              databaseTableId: res._id,
-            }),
-          },
-          "1": {
-            icon: "https://cdn.summitrp.gg/uploads/green.svg",
-            isServer: true,
-            event: "phone:server:acceptCall",
-            args: JSON.stringify({
-              targetSource: targetSource,
-              targetName: targetName,
-              sourceName: sourceName,
-              callerSource: source,
-              databaseTableId: res._id,
-            }),
-          },
-        },
-      })
-    );
-
-    emitNet(
-      "summit_phone:server:addCallinginterface",
-      source,
-      JSON.stringify({
-        targetSource: targetSource,
-        targetName: targetName,
-        sourceName: sourceName,
-        callerSource: source,
-        databaseTableId: res._id,
-      })
-    );
-    //set timeout for 30 seconds if not answered
-    return true;
+  if (!targetPlayer) {
+    emitNet("phone:addnotiFication", source, JSON.stringify({
+      id: generateUUid(),
+      title: "Service Unavailable",
+      description: "Person you are trying to call is not reachable",
+      app: "settings",
+      timeout: 2000,
+    }));
+    return false;
   }
-);
 
-onClientCallback("summit_phone:server:declineCall",async (source: number, data: string) => {
-    const dataX: {
-      targetSource: number;
-      targetName: string;
-      sourceName: string;
-      callerSource: number;
-      databaseTableId: string;
-    } = JSON.parse(data);
+  const targetSource = targetPlayer.PlayerData.source;
 
-    emitNet(
-      "phone:client:removeActionNotification",
-      dataX.targetSource,
-      dataX.databaseTableId
-    );
-    emitNet("phone:client:removeCallingInterface", dataX.callerSource);
-    /* Phones.calling.delete(dataX.callerSource); */
-    return true;
+  if (callManager.isPlayerInCall(source)) {
+    emitNet("phone:addnotiFication", source, JSON.stringify({
+      id: generateUUid(),
+      title: "Call Error",
+      description: "You are already in a call",
+      app: "settings",
+      timeout: 2000,
+    }));
+    return false;
+  }
+  if (callManager.isPlayerInCall(targetSource)) {
+    emitNet("phone:addnotiFication", source, JSON.stringify({
+      id: generateUUid(),
+      title: "Call Busy",
+      description: "Target is already in a call",
+      app: "settings",
+      timeout: 2000,
+    }));
+    return false;
+  }
+
+  const sourcePhone = await Utils.GetPhoneNumberBySource(source);
+  const targetPhone = await Utils.GetPhoneNumberBySource(targetSource);
+  const sourceCitizenId = await global.exports["qb-core"].GetPlayerCitizenIdBySource(source);
+  const targetCitizenId = await global.exports["qb-core"].GetPlayerCitizenIdBySource(targetSource);
+
+  const hostParticipant = {
+    source,
+    citizenId: sourceCitizenId,
+    phoneNumber: sourcePhone,
+    onHold: false,
+  };
+
+  const callId = callManager.createCall(hostParticipant);
+
+  callManager.addPendingInvitation(callId, targetSource, () => {
+    emitNet("phone:addnotiFication", source, JSON.stringify({
+      id: generateUUid(),
+      title: "Call Timeout",
+      description: "Call was not answered by target",
+      app: "settings",
+      timeout: 2000,
+    }));
+    emitNet("phone:addnotiFication", targetSource, JSON.stringify({
+      id: generateUUid(),
+      title: "Missed Call",
+      description: "You missed a call",
+      app: "settings",
+      timeout: 2000,
+    }));
+    callManager.endCall(callId);
+    exports["pma-voice"].setPlayerCall(source, 0);
+    exports["pma-voice"].setPlayerCall(targetSource, 0);
+    emitNet("phone:client:removeActionNotification", targetSource, _id);
+    emitNet("phone:client:removeCallingInterface", source);
+  }, 3000);
+
+  //Notification Area
+  const sourceName = sourceData ? `${sourceData.firstName} ${sourceData.lastName}` : await Utils.GetPhoneNumberBySource(source);
+  const targetName = targetData ? `${targetData.firstName} ${targetData.lastName}` : number;
+
+  emitNet("phone:addActionNotification", targetSource, JSON.stringify({
+    id: _id,
+    title: "Incoming Call",
+    description: `${sourceName} is calling you`,
+    app: "phone",
+    icons: {
+      "0": {
+        icon: "https://cdn.summitrp.gg/uploads/red.svg",
+        isServer: true,
+        event: "phone:server:declineCall",
+        args: JSON.stringify({
+          callId,
+          targetSource,
+          sourceName,
+          targetName,
+          callerSource: source,
+          databaseTableId: _id,
+        }),
+      },
+      "1": {
+        icon: "https://cdn.summitrp.gg/uploads/green.svg",
+        isServer: true,
+        event: "phone:server:acceptCall",
+        args: JSON.stringify({
+          callId,
+          targetSource,
+          sourceName: targetName,
+          targetName: sourceName,
+          callerSource: source,
+          databaseTableId: _id,
+        }),
+      },
+    },
+  }));
+
+  emitNet("summit_phone:server:addCallinginterface", source, JSON.stringify({
+    callId,
+    targetSource,
+    targetName,
+    callerSource: source,
+    databaseTableId: _id,
+  }));
+
+  return true;
 });
 
-onClientCallback("summit_phone:server:endCall",async (source: number, data: string) => {
-  // add groupcall logc
-  const dataX: {
-    targetSource: number;
-    targetName: string;
-    sourceName: string;
-    callerSource: number;
-    databaseTableId: string;
-  } = JSON.parse(data);
-  const targetCitizenid = await global.exports["qb-core"].GetPlayerCitizenIdBySource(dataX.targetSource);
-  const sourceCitizenid = await global.exports["qb-core"].GetPlayerCitizenIdBySource(dataX.callerSource);
-  /* Phones.ongoincall.delete(targetCitizenid);
-  Phones.ongoincall.delete(sourceCitizenid); */
-  emitNet("phone:client:removeAccpetedCallingInterface", dataX.targetSource);
-  emitNet("phone:client:removeAccpetedCallingInterface", dataX.callerSource);
-  exports["pma-voice"].setPlayerCall(dataX.targetSource, 0);
-  exports["pma-voice"].setPlayerCall(dataX.callerSource, 0);
+onClientCallback("summit_phone:server:declineCall", async (source: number, data: string) => {
+  const { callId, targetSource, callerSource, databaseTableId } = JSON.parse(data);
+  callManager.declineInvitation(callId, targetSource);
+  callManager.endCall(callId);
+  emitNet("phone:client:removeActionNotification", targetSource, databaseTableId);
+  emitNet("phone:client:removeCallingInterface", callerSource);
+  return true;
+});
+
+onClientCallback("summit_phone:server:endCall", async (source: number, data: string) => {
+  console.log("endCall", JSON.parse(data));
+  const { callId } = JSON.parse(data);
+  const call = callManager.getCallByPlayer(source);
+  if (!call || call.callId !== callId) return false;
+  const callHost = callManager.getCallHost(callId);
+  if (callHost && callHost.source === source || callManager.getParticipants(callId).length <= 1) {
+    for (const participant of callManager.getParticipants(callId)) {
+      emitNet("phone:client:removeAccpetedCallingInterface", participant.source);
+      exports["pma-voice"].setPlayerCall(participant.source, 0);
+    }
+    callManager.endCall(callId);
+  } else if (callManager.getParticipants(callId).length > 2){
+    emitNet("phone:client:removeAccpetedCallingInterface", source);
+    emitNet("phone:client:removeCallingInterface", source);
+    exports["pma-voice"].setPlayerCall(source
+      , 0);
+    callManager.removeFromCall(callId, source);
+  }else{
+    for (const participant of callManager.getParticipants(callId)) {
+      emitNet("phone:client:removeAccpetedCallingInterface", participant.source);
+      exports["pma-voice"].setPlayerCall(participant.source, 0);
+    }
+    callManager.endCall(callId);
+  }
+
   return true;
 });
 
 onClientCallback("summit_phone:server:addPlayerToCall", async (source: number, data: string) => {
-    const res: {
-      number: string;
-      contactNumber: string;
-      _id: string;
-    } = JSON.parse(data);
-    console.log(res);
-
-    const targetPlayer = await Utils.GetPlayerFromPhoneNumber(res.contactNumber);
-    /// getcurrent call of target
-    const targetCitizenid = await global.exports["qb-core"].GetPlayerCitizenIdBySource(targetPlayer.PlayerData.source);
-    /* const targetOngoingCall = Phones.ongoincall.get(targetCitizenid); */
-    /* console.log(targetOngoingCall,": targetOngoingCall"); */
-    if (!targetPlayer) {
-      emitNet(
-        "phone:addnotiFication",
-        source,
-        JSON.stringify({
-          id: generateUUid(),
-          title: "Service Unavailable",
-          description: "Person you are trying to add is not reachable",
-          app: "settings",
-          timeout: 2000,
-        })
-      );
-      return false;
-    }
-
-    /* if (Phones.calling.has(targetPlayer.PlayerData.source)) {
-      console.log("Player is already in a call");
-      return false;
-    }
- */
-    const targetSource = targetPlayer.PlayerData.source;
-    const targetName =
-      targetPlayer.PlayerData.charinfo.firstname +
-      " " +
-      targetPlayer.PlayerData.charinfo.lastname;
-    const sourceName = await exports["qb-core"].GetPlayerName(source);
-    console.log("Adding player to call",  source, targetSource);
-    // Send a notification to the new participant to accept the call
-    emitNet(
-      "phone:addActionNotification",
-      targetSource,
-      JSON.stringify({
-        id: res._id,
-        title: "Incoming Conference Call",
-        description: `${sourceName} is adding you to a conference call`,
-        app: "phone",
-        icons: {
-          "0": {
-            icon: "https://cdn.summitrp.gg/uploads/red.svg",
-            isServer: true,
-            event: "phone:server:declineCall",
-            args: JSON.stringify({
-              targetSource: targetSource,
-              targetName: targetName,
-              sourceName: sourceName,
-              callerSource: source,
-              databaseTableId: res._id,
-            }),
-          },
-          "1": {
-            icon: "https://cdn.summitrp.gg/uploads/green.svg",
-            isServer: true,
-            event: "phone:server:acceptConferenceCall",
-            args: JSON.stringify({
-              targetSource: targetSource,
-              targetName: targetName,
-              sourceName: sourceName,
-              callerSource: source,
-              databaseTableId: res._id,
-            }),
-          },
-        },
-      })
-    );
-
-    return true;
+  const { contactNumber, _id } = JSON.parse(data);
+  const targetData: PhoneContacts = await MongoDB.findOne('phone_contacts', { _id: _id })
+  const sourceData: PhoneContacts = await MongoDB.findOne('phone_contacts', { contactNumber: await Utils.GetPhoneNumberBySource(source), personalNumber: contactNumber })
+  const callId = callManager.getCallIdByPlayer(source);
+  const call = callManager.getCallByPlayer(source);
+  if (!call) {
+    emitNet("phone:addnotiFication", source, JSON.stringify({
+      id: generateUUid(),
+      title: "Call Error",
+      description: "No ongoing call found",
+      app: "phone",
+      timeout: 2000,
+    }));
+    return false;
   }
-);
+
+  const targetPlayer = await Utils.GetPlayerFromPhoneNumber(contactNumber);
+  if (!targetPlayer) {
+    emitNet("phone:addnotiFication", source, JSON.stringify({
+      id: generateUUid(),
+      title: "Service Unavailable",
+      description: "Person you are trying to add is not reachable",
+      app: "phone",
+      timeout: 2000,
+    }));
+    return false;
+  }
+  const targetSource = targetPlayer.PlayerData.source;
+  if (call.participants.has(targetSource)) {
+    emitNet("phone:addnotiFication", source, JSON.stringify({
+      id: generateUUid(),
+      title: "Already in Call",
+      description: "Player is already in the call",
+      app: "phone",
+      timeout: 2000,
+    }));
+    return false;
+  }
+
+  callManager.addPendingInvitation(Number(callId), targetSource, () => {
+    emitNet("phone:addnotiFication", source, JSON.stringify({
+      id: generateUUid(),
+      title: "Call Timeout",
+      description: "Player did not answer conference call invitation",
+      app: "phone",
+      timeout: 2000,
+    }));
+  }, 30000);
+
+  const sourceName = sourceData ? `${sourceData.firstName} ${sourceData.lastName}` : await Utils.GetPhoneNumberBySource(source);
+  const targetName = targetData ? `${targetData.firstName} ${targetData.lastName}` : contactNumber;
+
+  emitNet("phone:addActionNotification", targetSource, JSON.stringify({
+    id: _id,
+    title: "Incoming Conference Call",
+    description: `${sourceName} is adding you to a conference call`,
+    app: "phone",
+    icons: {
+      "0": {
+        icon: "https://cdn.summitrp.gg/uploads/red.svg",
+        isServer: true,
+        event: "phone:server:declineCall",
+        args: JSON.stringify({
+          callId: callId,
+          targetSource,
+          targetName,
+          callerSource: source,
+          databaseTableId: _id,
+        }),
+      },
+      "1": {
+        icon: "https://cdn.summitrp.gg/uploads/green.svg",
+        isServer: true,
+        event: "phone:server:acceptConferenceCall",
+        args: JSON.stringify({
+          callId: callId,
+          targetSource,
+          sourceName: targetName,
+          targetName: sourceName,
+          callerSource: source,
+          databaseTableId: _id,
+        }),
+      },
+    },
+  }));
+
+  return true;
+});

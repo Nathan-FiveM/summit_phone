@@ -13,6 +13,7 @@ export default function CallComponent() {
     const { inCall, calling, setInCall, setCalling } = usePhone();
     const nodeRef = useRef(null);
     const [callingData, setCallingData] = useState<{
+        callId: number,
         targetSource: number,
         targetName: string,
         sourceName: string,
@@ -33,7 +34,6 @@ export default function CallComponent() {
     });
 
     useNuiEvent('startCallAccepted', (data: string) => {
-        console.log(data);
         const dataX = JSON.parse(data);
         setCallingData(dataX);
         setCalling(false);
@@ -42,6 +42,7 @@ export default function CallComponent() {
 
     useNuiEvent('removeAccpetedCallingInterface', (data:any) => {
         setCallingData({
+            callId: 0,
             targetSource: 0,
             targetName: '',
             sourceName: '',
@@ -56,6 +57,7 @@ export default function CallComponent() {
         show: boolean
     }) => {
         setCallingData({
+            callId: 0,
             targetSource: 0,
             targetName: '',
             sourceName: '',

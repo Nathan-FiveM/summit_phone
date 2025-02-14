@@ -1,105 +1,141 @@
+import { callManager } from "./CallManager";
 import { Utils } from "@server/classes/Utils";
-import { CallsManger } from "./class";
+import { generateUUid } from "@shared/utils";
 
-onNet('phone:server:declineCall', async (notiId: string, args: any) => {
-    const parseData: {
-        targetSource: number,
-        targetName: string,
-        sourceName: string,
-        callerSource: number,
-        databaseTableId: string
-    } = JSON.parse(args);
-    emitNet('phone:client:removeActionNotification', parseData.targetSource, notiId);
-    emitNet('phone:client:removeCallingInterface', parseData.callerSource);
-    /* Phones.calling.delete(parseData.callerSource); */
+onNet("phone:server:declineCall", async (notiId: string, args: any) => {
+  const { targetSource, callerSource, databaseTableId } = JSON.parse(args);
+  emitNet("phone:client:removeActionNotification", targetSource, notiId);
+  emitNet("phone:client:removeCallingInterface", callerSource);
 });
 
-onNet('phone:server:acceptCall', async (notiId: string, args: any) => {
-    const randomCallid = Math.floor(Math.random() * 1000000);
-    const source = global.source;
-    const parseData: {
-        targetSource: number,
-        targetName: string,
-        sourceName: string,
-        callerSource: number,
-        databaseTableId: string
-    } = JSON.parse(args);
-
-    const targetCitizenid = await global.exports['qb-core'].GetPlayerCitizenIdBySource(parseData.targetSource);
-    const sourceCitizenid = await global.exports['qb-core'].GetPlayerCitizenIdBySource(parseData.callerSource);
-    /* const targetOngoingCall = Phones.ongoincall.get(targetCitizenid);
-    const sourceOngoingCall = Phones.ongoincall.get(sourceCitizenid);
-    Phones.ongoincall.set(targetCitizenid, [
-        ...targetOngoingCall || [],
-        {
-            citizenId: sourceCitizenid,
-            source: parseData.callerSource,
-            number: await Utils.GetPhoneNumberByCitizenId(sourceCitizenid),
-            onHold: false,
-        }
-    ]);
-
-    Phones.ongoincall.set(sourceCitizenid, [
-        ...sourceOngoingCall || [],
-        {
-            citizenId: targetCitizenid,
-            source: parseData.targetSource,
-            number: await Utils.GetPhoneNumberByCitizenId(targetCitizenid),
-            onHold: false,
-        }
-    ]);
-    Phones.calling.delete(parseData.callerSource); */
-    emitNet('phone:client:acceptCall', source, args);
-    emitNet('phone:client:updateCallerInterface', parseData.callerSource, args);
-    emitNet('phone:client:removeActionNotification', source, notiId);
-    exports['pma-voice'].setPlayerCall(source, randomCallid)
-    exports['pma-voice'].setPlayerCall(parseData.callerSource, randomCallid)
-});
-// add event to join group call ( get call id and set it to pma)
-on('onResourceStop', async (resource: string) => {
-    if (resource === GetCurrentResourceName()) {
-
-    }
-});
-
-// onplayer drop  remove player from calls and group calls
-onNet('phone:server:acceptConferenceCall', async (notiId: string, args: any) => {
-    const parseData: {
-        targetSource: number,
-        targetName: string,
-        sourceName: string,
-        callerSource: number,
-        databaseTableId: string
-    } = JSON.parse(args);
-    console.log(parseData);
-    const targetCitizenid = await global.exports['qb-core'].GetPlayerCitizenIdBySource(parseData.targetSource);
-    const sourceCitizenid = await global.exports['qb-core'].GetPlayerCitizenIdBySource(parseData.callerSource);
-    const targetPhone = await Utils.GetPhoneNumberByCitizenId(targetCitizenid);
-    const sourcePhone = await Utils.GetPhoneNumberByCitizenId(sourceCitizenid);
-    console.log(targetPhone, sourcePhone);
-    // Add the new participant to the conference
-    /* await Phones.addToConference(sourcePhone, targetPhone); */
-
-    // Notify all participants about the new member
-    /* emitNet('phone:client:updateConference', parseData.callerSource, {
-        conferenceParticipants: Phones.calling.get(parseData.callerSource)?.conferenceParticipants || [],
-    });
-    emitNet('phone:client:updateConference', parseData.targetSource, {
-        conferenceParticipants: Phones.calling.get(parseData.callerSource)?.conferenceParticipants || [],
-    }); */
-
-    // Update the voice chat system to include the new participant
-    const randomCallid = Math.floor(Math.random() * 1000000);
-    exports['pma-voice'].setPlayerCall(parseData.targetSource, randomCallid);
-    exports['pma-voice'].setPlayerCall(parseData.callerSource, randomCallid);
-
-    // Remove the notification
-    emitNet('phone:client:removeActionNotification', parseData.targetSource, notiId);
-    emitNet('phone:client:updateCallerInterface', parseData.targetSource, JSON.stringify({
-        targetSource: parseData.targetSource,
-        targetName: "Conference Call",
-        sourceName: parseData.sourceName,
-        callerSource: parseData.callerSource,
-        databaseTableId: parseData.databaseTableId,
+onNet("phone:server:acceptCall", async (notiId: string, args: any) => {
+  const { callId, targetSource, targetName, sourceName,callerSource, databaseTableId } = JSON.parse(args);
+  const call = callManager.getCallByPlayer(callerSource);
+  if (!call || call.callId !== callId) {
+    emitNet("phone:addnotiFication", targetSource, JSON.stringify({
+      id: generateUUid(),
+      title: "Call Error",
+      description: "Call no longer exists",
+      app: "phone",
+      timeout: 2000,
     }));
+    return;
+  }
+  const targetCitizenId = await global.exports["qb-core"].GetPlayerCitizenIdBySource(targetSource);
+  const targetPhone = await Utils.GetPhoneNumberBySource(targetSource);
+  const participant = {
+    source: targetSource,
+    citizenId: targetCitizenId,
+    phoneNumber: targetPhone,
+    onHold: false,
+  };
+  if (!callManager.acceptInvitation(callId, participant)) {
+    emitNet("phone:addnotiFication", targetSource, JSON.stringify({
+      id: generateUUid(),
+      title: "Call Error",
+      description: "Could not join call",
+      app: "phone",
+      timeout: 2000,
+    }));
+    return;
+  }
+  exports["pma-voice"].setPlayerCall(targetSource, callId);
+  exports["pma-voice"].setPlayerCall(callerSource, callId);
+  emitNet("phone:client:acceptCall", targetSource, args);
+  emitNet("phone:client:updateCallerInterface", callerSource, JSON.stringify({
+    callId,
+    targetSource,
+    sourceName:targetName,
+    targetName:sourceName,
+    callerSource: source,
+    databaseTableId,
+  }));
+  emitNet("phone:client:removeActionNotification", targetSource, notiId);
+});
+
+onNet("phone:server:acceptConferenceCall", async (notiId: string, args: any) => {
+  const { callId, targetSource, targetName, sourceName,callerSource, databaseTableId } = JSON.parse(args);
+
+  const call = callManager.getCallByPlayer(callerSource);
+  if (!call) {
+    emitNet("phone:addnotiFication", targetSource, JSON.stringify({
+      id: generateUUid(),
+      title: "Call Error",
+      description: "Conference call no longer exists",
+      app: "phone",
+      timeout: 2000,
+    }));
+    return;
+  }
+  const targetCitizenId = await global.exports["qb-core"].GetPlayerCitizenIdBySource(targetSource);
+  const targetPhone = await Utils.GetPhoneNumberBySource(targetSource);
+  const participant = {
+    source: targetSource,
+    citizenId: targetCitizenId,
+    phoneNumber: targetPhone,
+    onHold: false,
+  };
+  if (!callManager.acceptInvitation(call.callId, participant)) {
+    emitNet("phone:addnotiFication", targetSource, JSON.stringify({
+      id: generateUUid(),
+      title: "Call Error",
+      description: "Could not join conference call",
+      app: "phone",
+      timeout: 2000,
+    }));
+    return;
+  }
+  exports["pma-voice"].setPlayerCall(targetSource, call.callId);
+
+  for (const p of callManager.getParticipants(call.callId)) {
+    if (p.source !== targetSource) {
+        const callss = call.callId
+      emitNet("phone:client:updateConference", p.source, JSON.stringify({
+        callss,
+        participants: callManager.getParticipants(call.callId),
+      }));
+    }
+  }
+  emitNet("phone:client:removeActionNotification", targetSource, notiId);
+  
+  emitNet("phone:client:updateCallerInterface", targetSource, JSON.stringify({
+    callId,
+    targetSource,
+    sourceName:sourceName,
+    targetName:targetName,
+    callerSource: source,
+    databaseTableId,
+  }));
+  emitNet("phone:client:updateCallerInterface", callerSource, JSON.stringify({
+    callId,
+    targetSource,
+    sourceName:sourceName,
+    targetName:"Conference Call",
+    callerSource: source,
+    databaseTableId,
+  }));
+});
+
+on("onResourceStop", async (resource: string) => {
+  if (resource === GetCurrentResourceName()) {
+    for (const call of callManager.getAllCalls()) {
+      for (const participant of call.participants.values()) {
+        exports["pma-voice"].setPlayerCall(participant.source, 0);
+      }
+    }
+  }
+});
+
+
+onNet("playerDropped", async (source: number) => {
+  const call = callManager.getCallByPlayer(source);
+  if (call) {
+    callManager.removeParticipant(call.callId, source);
+    for (const p of callManager.getParticipants(call.callId)) {
+      emitNet("phone:client:updateConference", p.source, JSON.stringify({
+        callId: call.callId,
+        participants: callManager.getParticipants(call.callId),
+      }));
+    }
+  }
 });

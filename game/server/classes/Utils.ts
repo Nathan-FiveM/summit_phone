@@ -83,6 +83,10 @@ class Util {
         const citizenId = await this.GetCitizenIdByPhoneNumber(phoneNumber);
         return await exports['qb-core'].GetPlayerByCitizenId(citizenId);
     }
+    async GetPhoneNumberBySource(source: number) {
+        const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(source);
+        return await this.GetPhoneNumberByCitizenId(citizenId);
+    }
 
     async query(query: string, values: any) {
         return new Promise((resolve, reject) => {
