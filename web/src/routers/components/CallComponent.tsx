@@ -200,7 +200,9 @@ export default function CallComponent() {
                             alignItems: 'center',
                             borderRadius: '50%',
                         }} onClick={() => {
-                            setShowContactsPortal(true);
+                            if (inCall){
+                                setShowContactsPortal(true);
+                            }
                         }}>
                             <svg width="1.1458333333333333vw" height="1.25vw" viewBox="0 0 22 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M12.4113 12.6508C8.86777 12.6508 5.99348 9.8174 5.99348 6.32894C5.99348 2.83396 8.86725 0 12.4113 0C15.9574 0 18.8277 2.83448 18.8277 6.32894C18.8277 9.8174 15.9579 12.6508 12.4113 12.6508Z" fill="white" fill-opacity="0.76" />
@@ -381,7 +383,11 @@ export default function CallComponent() {
                                                         alignSelf: 'stretch',
                                                         cursor: 'pointer',
                                                     }} key={index} onClick={() => {
-
+                                                        fetchNui('addPlayerToCall', JSON.stringify(contact)).then((res:boolean)=>{
+                                                            if (res){
+                                                                setShowContactsPortal(false);
+                                                            }
+                                                        })
                                                     }}>
                                                         <div style={{
                                                             color: '#FFF',
