@@ -81,7 +81,7 @@ onClientCallback("summit_phone:server:call", async (source: number, data: string
     (async () => {
       const call = callManager.getCallByPlayer(source);
       if (call) {
-        await callHistoryManager.recordTwoPartyCallHistory(call, "unanswered", "missed", new Date());
+        await callHistoryManager.recordTwoPartyCallHistory(call, "unanswered", "missed", new Date(), targetPhone);
       }
       callManager.endCall(callId);
     })();

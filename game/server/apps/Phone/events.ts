@@ -1,10 +1,18 @@
 import { callManager } from "./CallManager";
 import { Utils } from "@server/classes/Utils";
 import { generateUUid } from "@shared/utils";
+import { callHistoryManager } from "./callHistoryManager";
 
 onNet("phone:server:declineCall", async (notiId: string, args: any) => {
-  const { targetSource, callerSource, databaseTableId } = JSON.parse(args);
-  emitNet("phone:client:removeActionNotification", targetSource, notiId);
+  const { callId, targetSource, callerSource, databaseTableId } = JSON.parse(args);
+  callManager.declineInvitation(callId, targetSource);
+  const call = callManager.getCallByPlayer(callerSource);
+  if (call) {
+    const targetPhone = await Utils.GetPhoneNumberBySource(targetSource);
+    await callHistoryManager.recordTwoPartyCallHistory(call, "declined", "declined", new Date(), targetPhone);
+  }
+  callManager.endCall(callId);
+  emitNet("phone:client:removeActionNotification", targetSource, databaseTableId);
   emitNet("phone:client:removeCallingInterface", callerSource);
 });
 
