@@ -47,6 +47,7 @@ onNet("phone:server:acceptCall", async (notiId: string, args: any) => {
     }));
     return;
   }
+  callManager.stopRingTone(targetSource);
   exports["pma-voice"].setPlayerCall(targetSource, callId);
   exports["pma-voice"].setPlayerCall(callerSource, callId);
   emitNet("phone:client:acceptCall", targetSource, args);
@@ -75,6 +76,7 @@ onNet("phone:server:acceptConferenceCall", async (notiId: string, args: any) => 
     }));
     return;
   }
+  callManager.stopRingTone(targetSource);
   const targetCitizenId = await global.exports["qb-core"].GetPlayerCitizenIdBySource(targetSource);
   const targetPhone = await Utils.GetPhoneNumberBySource(targetSource);
   const participant = {

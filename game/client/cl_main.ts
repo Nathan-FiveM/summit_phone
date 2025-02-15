@@ -2,7 +2,6 @@ import "./cl_nuicallback";
 import "./cl_exports";
 import "./apps/index";
 import { NUI } from "./classes/NUI";
-import { generateUUid } from "@shared/utils";
 
 export const FrameWork = exports['qb-core'].GetCoreObject();
 
@@ -44,12 +43,6 @@ onNet('phone:addActionNotification', (data: string) => {
     } = JSON.parse(data);
     NUI.sendReactMessage('addActionNotification', notiData);
 });
-
-RegisterCommand('testActionNoti', async () => {
-    NUI.sendReactMessage('removeCallingInterface', {
-        show: false
-    })
-}, false);
 
 on('onResourceStop', (resource: string) => {
     if (resource === GetCurrentResourceName()) {

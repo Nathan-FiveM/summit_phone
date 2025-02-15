@@ -18,6 +18,7 @@ export interface OngoingCall {
 class CallManager {
     private calls = new Map<number, OngoingCall>();
     private playerCallMap = new Map<number, number>();
+    private ringToneManger = new Map<number, number>();
 
     public createCall(host: CallParticipant): number {
         const callId = Math.floor(Math.random() * 1000000);
@@ -131,6 +132,20 @@ class CallManager {
     }
     public getAllCalls(): IterableIterator<OngoingCall> {
         return this.calls.values();
+    }
+
+    public createRingTone(source: number, ringtoneLink:string) {
+        const ped = GetPlayerPed(String(source));
+        const pedId = NetworkGetNetworkIdFromEntity(ped);
+        const soundId = exports['summit_soundhandler'].StartAttachSound(ringtoneLink, pedId, 5);
+        exports['summit_soundhandler'].ChangeLoop(soundId, true);
+        this.ringToneManger.set(source, soundId);
+    }
+    public stopRingTone(source: number) {
+        const soundId = this.ringToneManger.get(source);
+        if (!soundId) return;
+        exports['summit_soundhandler'].StopSound(soundId);
+        this.ringToneManger.delete(source);
     }
 }
 

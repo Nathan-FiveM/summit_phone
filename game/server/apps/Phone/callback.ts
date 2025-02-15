@@ -5,6 +5,7 @@ import { generateUUid } from "@shared/utils";
 import { MongoDB } from "@server/sv_main";
 import { PhoneContacts } from "../../../../types/types";
 import { callHistoryManager } from "./callHistoryManager";
+import { Settings } from "../Settings/class";
 
 onClientCallback("summit_phone:server:call", async (source: number, data: string) => {
   const { number, _id } = JSON.parse(data);
@@ -38,6 +39,7 @@ onClientCallback("summit_phone:server:call", async (source: number, data: string
     }));
     return false;
   }
+  
   if (callManager.isPlayerInCall(targetSource)) {
     emitNet("phone:addnotiFication", source, JSON.stringify({
       id: generateUUid(),
@@ -63,6 +65,7 @@ onClientCallback("summit_phone:server:call", async (source: number, data: string
 
   const callId = callManager.createCall(hostParticipant);
 
+  callManager.createRingTone(targetSource, Settings.ringtone.get(targetCitizenId)?.current ?? 'https://cdn.summitrp.gg/uploads/server/phone/sounds/iPhoneXTrap.mp3');
   callManager.addPendingInvitation(callId, targetSource, () => {
     emitNet("phone:addnotiFication", source, JSON.stringify({
       id: generateUUid(),
@@ -84,6 +87,7 @@ onClientCallback("summit_phone:server:call", async (source: number, data: string
         await callHistoryManager.recordTwoPartyCallHistory(call, "unanswered", "missed", new Date(), targetPhone);
       }
       callManager.endCall(callId);
+      callManager.stopRingTone(targetSource);
     })();
     exports["pma-voice"].setPlayerCall(source, 0);
     exports["pma-voice"].setPlayerCall(targetSource, 0);
@@ -226,7 +230,7 @@ onClientCallback("summit_phone:server:addPlayerToCall", async (source: number, d
     }));
     return false;
   }
-
+  callManager.createRingTone(targetSource, Settings.ringtone.get(targetPlayer.PlayerData.citizenId)?.current ?? 'https://cdn.summitrp.gg/uploads/server/phone/sounds/iPhoneXTrap.mp3');
   callManager.addPendingInvitation(Number(callId), targetSource, () => {
     emitNet("phone:addnotiFication", source, JSON.stringify({
       id: generateUUid(),
@@ -235,6 +239,7 @@ onClientCallback("summit_phone:server:addPlayerToCall", async (source: number, d
       app: "phone",
       timeout: 2000,
     }));
+    callManager.stopRingTone(targetSource);
   }, 30000);
 
   const sourceName = sourceData

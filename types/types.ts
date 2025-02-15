@@ -68,4 +68,14 @@ type PhoneCallHistory = {
     callTimestamp: Date;
 }
 
-export type { PhoneSettings, PhoneMail, PhoneLocation, PhoneContacts, PhoneCallHistory };
+type PhonePlayerCard = {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    email: string;
+    notes: string;
+    avatar: string;
+}
+
+export type { PhoneSettings, PhoneMail, PhoneLocation, PhoneContacts, PhoneCallHistory, PhonePlayerCard };

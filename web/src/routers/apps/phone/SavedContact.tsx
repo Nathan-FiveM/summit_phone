@@ -2,12 +2,15 @@ import { Avatar, Transition } from "@mantine/core";
 import { usePhone } from "../../../store/store";
 import { PhoneContacts } from "../../../../../types/types";
 import SaveOrEdit from "./SaveOrEdit";
-import { useState } from "react";
+import { createRef, useState } from "react";
 import { fetchNui } from "../../../hooks/fetchNui";
+import useNotiQueue from "../../../hooks/useNotiQueue";
+import { generateUUid } from "../../../hooks/misc";
 
 export default function SavedContact(props: { onContactEdited: (data: PhoneContacts) => void, onCall: (number: string, _id: string) => void, onMessage: (number: string, _id: string) => void, onFav: (email: string) => void, onDelete: (id: string) => void }) {
     const { location, selectedContact, setLocation, setSelectedContact } = usePhone();
     const [visible, setVisible] = useState(false);
+    const noti = useNotiQueue();
     return (
         <Transition
             mounted={location.page.phone === 'savedcontact'}
@@ -41,13 +44,13 @@ export default function SavedContact(props: { onContactEdited: (data: PhoneConta
                                     isFav: false,
                                 });
                             }} className='clickanimation' width="1.1979166666666667vw" height="1.1979166666666667vw" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect width="23" height="23" rx="11.5" fill="white" fill-opacity="0.14" />
-                                <path d="M13 17L8.42806 11.9709C8.18534 11.7039 8.18534 11.2961 8.42806 11.0291L13 6" stroke="white" stroke-width="2" stroke-linecap="round" />
+                                <rect width="23" height="23" rx="11.5" fill="white" fillOpacity="0.14" />
+                                <path d="M13 17L8.42806 11.9709C8.18534 11.7039 8.18534 11.2961 8.42806 11.0291L13 6" stroke="white" strokeWidth="2" strokeLinecap="round" />
                             </svg>
                             <svg onClick={() => {
                                 setVisible(true);
                             }} className='clickanimation' width="2.6041666666666665vw" height="1.1979166666666667vw" viewBox="0 0 50 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect width="50" height="23" rx="11.5" fill="white" fill-opacity="0.14" />
+                                <rect width="50" height="23" rx="11.5" fill="white" fillOpacity="0.14" />
                                 <path d="M20.6587 15.2686V16.5H14.8442V7.34033H20.6587V8.56543H16.2661V11.2441H20.4238V12.4248H16.2661V15.2686H20.6587ZM24.4609 16.6143C22.7725 16.6143 21.6553 15.2686 21.6553 13.1611C21.6553 11.0537 22.7725 9.71436 24.4482 9.71436C25.4067 9.71436 26.1685 10.1968 26.543 10.9331H26.5684V7.34033H27.9458V16.5H26.6128V15.3638H26.5874C26.1938 16.1255 25.4321 16.6143 24.4609 16.6143ZM24.8228 10.8696C23.7373 10.8696 23.0581 11.7583 23.0581 13.1611C23.0581 14.5703 23.7373 15.4526 24.8228 15.4526C25.8765 15.4526 26.5811 14.5576 26.5811 13.1611C26.5811 11.7773 25.8765 10.8696 24.8228 10.8696ZM29.3994 16.5V9.82227H30.7705V16.5H29.3994ZM30.085 8.84473C29.647 8.84473 29.2915 8.49561 29.2915 8.06396C29.2915 7.62598 29.647 7.27686 30.085 7.27686C30.5293 7.27686 30.8848 7.62598 30.8848 8.06396C30.8848 8.49561 30.5293 8.84473 30.085 8.84473ZM32.5732 8.2417H33.9507V9.82227H35.2202V10.9077H33.9507V14.5894C33.9507 15.167 34.2046 15.4272 34.7632 15.4272C34.9028 15.4272 35.125 15.4146 35.2139 15.3955V16.481C35.0615 16.519 34.7568 16.5444 34.4521 16.5444C33.1001 16.5444 32.5732 16.0303 32.5732 14.7417V10.9077H31.6021V9.82227H32.5732V8.2417Z" fill="white" />
                             </svg>
                         </div>
@@ -70,6 +73,10 @@ export default function SavedContact(props: { onContactEdited: (data: PhoneConta
                                 borderRadius: '0.20833333333333334vw',
                                 background: 'rgba(255, 255, 255, 0.15)',
                             }} className='clickanimation' onClick={() => {
+                                if (selectedContact.contactNumber === selectedContact.personalNumber) {
+                                    fetchNui('showNoti', { app: 'settings', title: 'Phone', description: 'You can\'t message yourself' });
+                                    return;
+                                };
                                 props.onMessage(selectedContact.contactNumber, selectedContact._id);
                             }}>
                                 <svg width="0.78125vw" height="0.78125vw" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -98,6 +105,10 @@ export default function SavedContact(props: { onContactEdited: (data: PhoneConta
                                 borderRadius: '0.20833333333333334vw',
                                 background: 'rgba(255, 255, 255, 0.15)',
                             }} className='clickanimation' onClick={() => {
+                                if (selectedContact.contactNumber === selectedContact.personalNumber) {
+                                    fetchNui('showNoti', { app: 'settings', title: 'Phone', description: 'You can\'t call yourself' });
+                                    return;
+                                };
                                 props.onCall(selectedContact.contactNumber, selectedContact._id);
                             }}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="0.78125vw" height="0.78125vw" viewBox="0 0 12 12" fill="none">
@@ -126,6 +137,10 @@ export default function SavedContact(props: { onContactEdited: (data: PhoneConta
                                 borderRadius: '0.20833333333333334vw',
                                 background: 'rgba(255, 255, 255, 0.15)',
                             }} className='clickanimation' onClick={() => {
+                                if (selectedContact.contactNumber === selectedContact.personalNumber) {
+                                    fetchNui('showNoti', { app: 'settings', title: 'Phone', description: 'You can\'t favourite yourself' });
+                                    return;
+                                };
                                 props.onFav(selectedContact._id);
                             }}>
                                 <svg width="0.9375vw" height="0.8333333333333334vw" viewBox="0 0 18 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -154,6 +169,10 @@ export default function SavedContact(props: { onContactEdited: (data: PhoneConta
                                 borderRadius: '0.20833333333333334vw',
                                 background: 'rgba(255, 255, 255, 0.15)',
                             }} className='clickanimation' onClick={() => {
+                                if (selectedContact.contactNumber === selectedContact.personalNumber) {
+                                    fetchNui('showNoti', { app: 'settings', title: 'Phone', description: 'You can\'t delete your card' });
+                                    return;
+                                };
                                 props.onDelete(selectedContact._id);
                             }}>
                                 <svg className='clickanimation' width="0.78125vw" height="0.78125vw" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -204,17 +223,20 @@ export default function SavedContact(props: { onContactEdited: (data: PhoneConta
                     <SaveOrEdit visible={visible} data={selectedContact} onCancel={() => {
                         setVisible(false);
                     }} onDone={(data) => {
-                        fetchNui('saveContact', JSON.stringify({
-                            _id: data._id,
-                            firstName: data.firstName,
-                            lastName: data.lastName,
-                            contactNumber: data.contactNumber,
-                            email: data.email,
-                            personalNumber: data.personalNumber,
-                            ownerId: data.ownerId,
-                            notes: data.notes,
-                            image: data.image,
-                        }));
+                        if (selectedContact.contactNumber !== selectedContact.personalNumber) {
+                            fetchNui('saveContact', JSON.stringify({
+                                _id: data._id,
+                                firstName: data.firstName,
+                                lastName: data.lastName,
+                                contactNumber: data.contactNumber,
+                                email: data.email,
+                                personalNumber: data.personalNumber,
+                                ownerId: data.ownerId,
+                                notes: data.notes,
+                                image: data.image,
+                            }));
+                        };
+                        
                         props.onContactEdited(data);
                         setVisible(false);
                     }} />

@@ -46,11 +46,19 @@ async function GeneratePlayerPhoneNumber(citizenId: string) {
         smrtPassword: '',
     });
 
+    await MongoDB.insertOne('phone_player_card', {
+        _id: citizenId,
+        firstName: 'Setup',
+        lastName: 'Card',
+        phoneNumber: number,
+        email: '',
+        notes: '',
+        avatar: '',
+    });
+
     return number;
 }
 exports('GeneratePlayerPhoneNumber', GeneratePlayerPhoneNumber);
-
-
 
 on('onResourceStop', async (resource: string) => {
     if (resource === GetCurrentResourceName()) {

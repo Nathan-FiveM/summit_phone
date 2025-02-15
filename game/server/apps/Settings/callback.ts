@@ -1,6 +1,6 @@
 import { onClientCallback } from "@overextended/ox_lib/server";
 import { MongoDB } from "@server/sv_main";
-import { PhoneMail } from "../../../../types/types";
+import { PhoneMail, PhonePlayerCard } from "../../../../types/types";
 import { Settings } from "./class";
 
 onClientCallback('GetClientSettings', async (client) => {
@@ -88,5 +88,17 @@ onClientCallback('LoginMailAccount', async (client, data: string) => {
 onClientCallback('unLockorLockPhone', async (client, data: boolean) => {
     const citizenId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
     Settings.isLock.set(citizenId, data);
+    return true;
+});
+
+onClientCallback('getPhonePlayerCard', async (client) => {
+    const citizenId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
+    const res = await MongoDB.findOne('phone_player_card', { _id: citizenId });
+    return JSON.stringify(res);
+});
+
+onClientCallback('phone:updatePersonalCard', async (client, data: string) => {
+    const parsedData : PhonePlayerCard = JSON.parse(data);
+    await MongoDB.updateOne('phone_player_card', { _id: parsedData._id }, parsedData);
     return true;
 });

@@ -42,3 +42,9 @@ on('__cfx_nui:getCitizenId', async (data: any, cb: Function) => {
     const citizenId = await FrameWork.Functions.GetPlayerData().citizenid;
     cb(citizenId);
 });
+
+RegisterNuiCallbackType('getPhonePlayerCard');
+on('__cfx_nui:getPhonePlayerCard', async (data: any, cb: Function) => {
+    const response = await triggerServerCallback('getPhonePlayerCard', 1)
+    cb(response);
+});
