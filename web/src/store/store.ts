@@ -89,6 +89,7 @@ export const usePhone = create<State & Actions>()(
             faceIdIdentifier: '',
             smrtId: '',
             smrtPassword: '',
+            isFlightMode: false,
         },
         location: {
             app: '',

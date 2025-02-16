@@ -21,6 +21,7 @@ type PhoneSettings = {
     faceIdIdentifier: string;
     smrtId: string;
     smrtPassword: string;
+    isFlightMode: boolean;
 }
 
 type PhoneMail = {

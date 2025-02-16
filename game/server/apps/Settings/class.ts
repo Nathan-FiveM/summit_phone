@@ -15,6 +15,7 @@ class Setting {
     public faceIdIdentifier = new Map<string, string>();
     public smrtId = new Map<string, string>();
     public smrtPassword = new Map<string, string>();
+    public isFlightMode = new Map<string, boolean>();
 
     public async load() {
         try {
@@ -34,6 +35,7 @@ class Setting {
                 this.faceIdIdentifier.set(data._id, data.faceIdIdentifier);
                 this.smrtId.set(data._id, data.smrtId);
                 this.smrtPassword.set(data._id, data.smrtPassword);
+                this.isFlightMode.set(data._id, data.isFlightMode);
             }
             LOGGER(`[Settings] Loaded.`);
         } catch (error: any) {
@@ -59,6 +61,7 @@ class Setting {
                     faceIdIdentifier: this.faceIdIdentifier.get(key),
                     smrtId: this.smrtId.get(key),
                     smrtPassword: this.smrtPassword.get(key),
+                    isFlightMode: this.isFlightMode.get(key),
                 });
             }
             LOGGER(`[Settings] Saved successfully.`);

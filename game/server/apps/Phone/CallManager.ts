@@ -135,7 +135,6 @@ class CallManager {
     }
 
     public async createRingTone(source: any, ringtoneLink:string) {
-        console.log("Ringtone Link: ", source,ringtoneLink);
         const ped = GetPlayerPed(source);
         const pedId = NetworkGetNetworkIdFromEntity(ped);
         const soundId = await exports['summit_soundhandler'].StartAttachSound(ringtoneLink, pedId, 5);

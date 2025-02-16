@@ -44,6 +44,7 @@ async function GeneratePlayerPhoneNumber(citizenId: string) {
         faceIdIdentifier: '',
         smrtId: '',
         smrtPassword: '',
+        isFlightMode: false,
     });
 
     await MongoDB.insertOne('phone_player_card', {
