@@ -55,7 +55,60 @@ onClientCallback("summit_phone:server:call", async (source: number, data: string
   const targetPhone = await Utils.GetPhoneNumberBySource(targetSource);
   const sourceCitizenId = await global.exports["qb-core"].GetPlayerCitizenIdBySource(source);
   const targetCitizenId = await global.exports["qb-core"].GetPlayerCitizenIdBySource(targetSource);
-
+  const IsNumberBlocked = await Utils.IsNumberBlocked(targetPhone, sourcePhone);
+  const sourceFlightMode = await Utils.InFlightMode(sourceCitizenId);
+  const targetFlightMode = await Utils.InFlightMode(targetCitizenId);
+  if (sourceFlightMode) {
+    emitNet("phone:addnotiFication", source, JSON.stringify({
+      id: generateUUid(),
+      title: "Flight Mode",
+      description: "You cannot make calls while in flight mode",
+      app: "settings",
+      timeout: 2000,
+    }));
+    return false;
+  } else if (targetFlightMode) {
+    emitNet("phone:addnotiFication", source, JSON.stringify({
+      id: generateUUid(),
+      title: "Service Unavailable",
+      description: "Person you are trying to call is unreachable",
+      app: "settings",
+      timeout: 2000,
+    }));
+    return false;
+  }
+  if (IsNumberBlocked) {
+    emitNet("phone:addnotiFication", source, JSON.stringify({
+      id: generateUUid(),
+      title: "Service Unavailable",
+      description: "Person you are trying to call is not reachable",
+      app: "settings",
+      timeout: 2000,
+    }));
+    return false;
+  }
+  const ShourceNumberBlocked = await Utils.IsNumberBlocked(sourcePhone, targetPhone);
+  if (ShourceNumberBlocked) {
+    emitNet("phone:addnotiFication", source, JSON.stringify({
+      id: generateUUid(),
+      title: "Number Blocked",
+      description: "Unblock the number to call",
+      app: "settings",
+      timeout: 2000,
+    }));
+    return false;
+  }
+  const targetHasPhone = await Utils.HasPhone(targetSource);
+  if (!targetHasPhone) {
+    emitNet("phone:addnotiFication", source, JSON.stringify({
+      id: generateUUid(),
+      title: "Service Unavailable",
+      description: "Person you are trying to call is not reachable",
+      app: "settings",
+      timeout: 2000,
+    }));
+    return false;
+  }
   const hostParticipant = {
     source,
     citizenId: sourceCitizenId,
@@ -65,7 +118,7 @@ onClientCallback("summit_phone:server:call", async (source: number, data: string
 
   const callId = callManager.createCall(hostParticipant);
 
-  callManager.createRingTone(targetSource, Settings.ringtone.get(targetCitizenId)?.current ?? 'https://cdn.summitrp.gg/uploads/server/phone/sounds/iPhoneXTrap.mp3');
+  callManager.createRingTone(targetSource, 'https://cdn.summitrp.gg/uploads/server/phone/sounds/iPhoneXTrap.mp3');
   callManager.addPendingInvitation(callId, targetSource, () => {
     emitNet("phone:addnotiFication", source, JSON.stringify({
       id: generateUUid(),
@@ -154,6 +207,7 @@ onClientCallback("summit_phone:server:declineCall", async (source: number, data:
     await callHistoryManager.recordTwoPartyCallHistory(call, "declined", "declined", new Date());
   }
   callManager.endCall(callId);
+  callManager.stopRingTone(targetSource);
   emitNet("phone:client:removeActionNotification", targetSource, databaseTableId);
   emitNet("phone:client:removeCallingInterface", callerSource);
   return true;
@@ -207,7 +261,7 @@ onClientCallback("summit_phone:server:addPlayerToCall", async (source: number, d
     }));
     return false;
   }
-
+  const sourcePhone = await Utils.GetPhoneNumberBySource(source);
   const targetPlayer = await Utils.GetPlayerFromPhoneNumber(contactNumber);
   if (!targetPlayer) {
     emitNet("phone:addnotiFication", source, JSON.stringify({
@@ -220,6 +274,62 @@ onClientCallback("summit_phone:server:addPlayerToCall", async (source: number, d
     return false;
   }
   const targetSource = targetPlayer.PlayerData.source;
+  const IsNumberBlocked = await Utils.IsNumberBlocked(contactNumber, sourcePhone);
+  const sourceCitizenId = await global.exports["qb-core"].GetPlayerCitizenIdBySource(source);
+  const targetCitizenId = await Utils.GetCitizenIdByPhoneNumber(contactNumber);
+  const sourceFlightMode = await Utils.InFlightMode(sourceCitizenId);
+  const targetFlightMode = await Utils.InFlightMode(targetCitizenId);
+  if (sourceFlightMode) {
+    emitNet("phone:addnotiFication", source, JSON.stringify({
+      id: generateUUid(),
+      title: "Flight Mode",
+      description: "You cannot make calls while in flight mode",
+      app: "settings",
+      timeout: 2000,
+    }));
+    return false;
+  } else if (targetFlightMode) {
+    emitNet("phone:addnotiFication", source, JSON.stringify({
+      id: generateUUid(),
+      title: "Service Unavailable",
+      description: "Person you are trying to call is unreachable",
+      app: "settings",
+      timeout: 2000,
+    }));
+    return false;
+  }
+  if (IsNumberBlocked) {
+    emitNet("phone:addnotiFication", source, JSON.stringify({
+      id: generateUUid(),
+      title: "Service Unavailable",
+      description: "Person you are trying to call is not reachable",
+      app: "settings",
+      timeout: 2000,
+    }));
+    return false;
+  }
+  const ShourceNumberBlocked = await Utils.IsNumberBlocked(sourcePhone, contactNumber);
+  if (ShourceNumberBlocked) {
+    emitNet("phone:addnotiFication", source, JSON.stringify({
+      id: generateUUid(),
+      title: "Number Blocked",
+      description: "Unblock the number to call",
+      app: "settings",
+      timeout: 2000,
+    }));
+    return false;
+  }
+  const targetHasPhone = await Utils.HasPhone(targetSource);
+  if (!targetHasPhone) {
+    emitNet("phone:addnotiFication", source, JSON.stringify({
+      id: generateUUid(),
+      title: "Service Unavailable",
+      description: "Person you are trying to call is not reachable",
+      app: "settings",
+      timeout: 2000,
+    }));
+    return false;
+  }
   if (call.participants.has(targetSource)) {
     emitNet("phone:addnotiFication", source, JSON.stringify({
       id: generateUUid(),
@@ -230,7 +340,7 @@ onClientCallback("summit_phone:server:addPlayerToCall", async (source: number, d
     }));
     return false;
   }
-  callManager.createRingTone(targetSource, Settings.ringtone.get(targetPlayer.PlayerData.citizenId)?.current ?? 'https://cdn.summitrp.gg/uploads/server/phone/sounds/iPhoneXTrap.mp3');
+  callManager.createRingTone(targetSource, 'https://cdn.summitrp.gg/uploads/server/phone/sounds/iPhoneXTrap.mp3');
   callManager.addPendingInvitation(Number(callId), targetSource, () => {
     emitNet("phone:addnotiFication", source, JSON.stringify({
       id: generateUUid(),
@@ -312,4 +422,32 @@ onClientCallback('phone:server:getDataFromDBwithNumber', async (source: number, 
   } = JSON.parse(data);
   const res = await MongoDB.findOne('phone_contacts', { contactNumber: parsedData.number, ownerId: parsedData.citizenId });
   return JSON.stringify(res);
+});
+
+onClientCallback('phone:server:toggleBlockNumber', async (source: number, data: string) => {
+  const parsedData : PhoneContacts = JSON.parse(data);
+  const personalNumber = parsedData.personalNumber;
+  const contactNumber = parsedData.contactNumber;
+  let IsNumberBlocked = await Utils.IsNumberBlocked(personalNumber, contactNumber);
+  if (!IsNumberBlocked) {
+    await Utils.BlockNumber(personalNumber, contactNumber);
+    emitNet("phone:addnotiFication", source, JSON.stringify({
+      id: generateUUid(),
+      title: "Number Blocked",
+      description: "Number has been blocked",
+      app: "phone",
+      timeout: 2000,
+    }));
+    return true;
+  } else {
+    await Utils.UnblockNumber(personalNumber, contactNumber);
+    emitNet("phone:addnotiFication", source, JSON.stringify({
+      id: generateUUid(),
+      title: "Number Unblocked",
+      description: "Number has been unblocked",
+      app: "phone",
+      timeout: 2000,
+    }));
+    return false;
+  }
 });

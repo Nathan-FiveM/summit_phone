@@ -12,6 +12,7 @@ onNet("phone:server:declineCall", async (notiId: string, args: any) => {
     await callHistoryManager.recordTwoPartyCallHistory(call, "declined", "declined", new Date(), targetPhone);
   }
   callManager.endCall(callId);
+  callManager.stopRingTone(targetSource);
   emitNet("phone:client:removeActionNotification", targetSource, databaseTableId);
   emitNet("phone:client:removeCallingInterface", callerSource);
 });

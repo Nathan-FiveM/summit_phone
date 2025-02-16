@@ -38,3 +38,9 @@ on('__cfx_nui:callFromDialPad', async (data: string, cb: Function) => {
     const res = await triggerServerCallback('summit_phone:server:call', 1, JSON.stringify({number: contactNumber, _id}));
     cb(res);
 });
+
+RegisterNuiCallbackType('blockNumber');
+on('__cfx_nui:blockNumber', async (data: string, cb: Function) => {
+    const res = await triggerServerCallback('phone:server:toggleBlockNumber', 1, data);
+    cb(res);
+});

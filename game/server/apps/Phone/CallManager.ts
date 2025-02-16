@@ -134,14 +134,15 @@ class CallManager {
         return this.calls.values();
     }
 
-    public createRingTone(source: number, ringtoneLink:string) {
-        const ped = GetPlayerPed(String(source));
+    public async createRingTone(source: any, ringtoneLink:string) {
+        console.log("Ringtone Link: ", source,ringtoneLink);
+        const ped = GetPlayerPed(source);
         const pedId = NetworkGetNetworkIdFromEntity(ped);
-        const soundId = exports['summit_soundhandler'].StartAttachSound(ringtoneLink, pedId, 5);
+        const soundId = await exports['summit_soundhandler'].StartAttachSound(ringtoneLink, pedId, 5);
         exports['summit_soundhandler'].ChangeLoop(soundId, true);
         this.ringToneManger.set(source, soundId);
     }
-    public stopRingTone(source: number) {
+    public async stopRingTone(source: number) {
         const soundId = this.ringToneManger.get(source);
         if (!soundId) return;
         exports['summit_soundhandler'].StopSound(soundId);

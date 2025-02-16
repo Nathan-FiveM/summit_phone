@@ -88,6 +88,59 @@ class Util {
         return await this.GetPhoneNumberByCitizenId(citizenId);
     }
 
+    async BlockNumber(phoneNumber: string, targetPhoneNumber: string) {
+        const citizenId = await this.GetCitizenIdByPhoneNumber(phoneNumber);
+        const targetCitizenId = await this.GetCitizenIdByPhoneNumber(targetPhoneNumber);
+        if (!citizenId || !targetCitizenId) return;
+        await MongoDB.insertOne('phone_blocked_numbers', {
+            _id: generateUUid(),
+            citizenId: citizenId,
+            targetCitizenId: targetCitizenId,
+        });
+    }
+
+    async UnblockNumber(phoneNumber: string, targetPhoneNumber: string) {
+        const citizenId = await this.GetCitizenIdByPhoneNumber(phoneNumber);
+        const targetCitizenId = await this.GetCitizenIdByPhoneNumber(targetPhoneNumber);
+        if (!citizenId || !targetCitizenId) return;
+        await MongoDB.deleteOne('phone_blocked_numbers', { citizenId: citizenId, targetCitizenId: targetCitizenId });
+    }
+
+    async IsNumberBlocked(phoneNumber: string, targetPhoneNumber: string) {
+        const citizenId = await this.GetCitizenIdByPhoneNumber(phoneNumber);
+        const targetCitizenId = await this.GetCitizenIdByPhoneNumber(targetPhoneNumber);
+        if (!citizenId || !targetCitizenId) return false;
+        const blocked = await MongoDB.findOne('phone_blocked_numbers', { citizenId: citizenId, targetCitizenId: targetCitizenId });
+        return blocked ? true : false;
+    }
+    async HasPhone(playerSource: number) {
+        const phoneList: string[] = [
+            'blue_phone',
+            'green_phone',
+            'red_phone',
+            'gold_phone',
+            'purple_phone',
+        ];
+        const hasItem: {
+            'blue_phone': number,
+            'green_phone': number,
+            'red_phone': number,
+            'gold_phone': number,
+            'purple_phone': number,
+        } = exports['ox_inventory'].Search(playerSource,'count', phoneList);
+        for (let i = 0; i < phoneList.length; i++) {
+            // @ts-ignore
+            if (hasItem[phoneList[i]] > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+    async InFlightMode(citizenId: string) {
+        const settings = await MongoDB.findOne('phone_settings', { _id: citizenId });
+        if (!settings) return false;
+        return settings.isFlightMode || false;
+    }
     async query(query: string, values: any) {
         return new Promise((resolve, reject) => {
             MySQL.query(query, values, (result: any) => {

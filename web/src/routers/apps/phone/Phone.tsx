@@ -289,7 +289,7 @@ export default function Phone() {
                                 }
                             })
                         }}>
-                            <Avatar src={playerPhoneCard.avatar} w={'2.74375vw'} h={'2.74375vw  '} />
+                            <Avatar src={playerPhoneCard?.avatar} w={'2.74375vw'} h={'2.74375vw  '} />
                             <div className="details">
                                 <div className="FullName">
                                     {playerPhoneCard.firstName} {playerPhoneCard.lastName}
