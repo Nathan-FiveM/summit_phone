@@ -1,16 +1,14 @@
 import { useState } from "react";
+import { Notification } from "../../../types/types";
+import { usePhone } from "../store/store";
+import { get } from "http";
 
-interface Notification {
-    id: number;
-    title: string;
-    description: string;
-    app: string;
-    nodeRef?: any;
-}
+
 
 export default function useNotiQueue() {
     const [state, set] = useState<Notification[]>([]);
-    const [notiFicationhistory, setNotificationHistory] = useState<Notification[]>([]);
+    
+    const [ notifiCationHistory, setNotifiCationHistory ] = useState<Notification[]>([]);
 
     return {
         add(value: {
@@ -21,7 +19,15 @@ export default function useNotiQueue() {
             nodeRef?: any;
         }) {
             set((queue) => [...queue, value]);
-            setNotificationHistory((queue) => [...queue, value]);
+        },
+        addhistory(value: {
+            id: number;
+            title: string;
+            description: string;
+            app: string;
+            nodeRef?: any;
+        }) {
+            setNotifiCationHistory((queue) => [...queue, value]);
         },
         remove() {
             let result: Notification;
@@ -57,10 +63,10 @@ export default function useNotiQueue() {
             });
         },
         clearhistory() {
-            setNotificationHistory([]);
+            setNotifiCationHistory([]);
         },
-        get historyValues(){
-            return notiFicationhistory;
+        get history() {
+            return notifiCationHistory;
         },
         get values() {
             return state;

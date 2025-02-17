@@ -21,7 +21,6 @@ class Setting {
         try {
             const res: any = await MongoDB.findMany('phone_settings', {});
             for (const data of res) {
-                console.log(data._id, data.lockPin);
                 this._id.set(data._id, data._id);
                 this.background.set(data._id, data.background);
                 this.lockscreen.set(data._id, data.lockscreen);
@@ -46,7 +45,6 @@ class Setting {
     public async save() {
         try {
             for (const [key, value] of this._id) {
-                console.log(key);
                 await MongoDB.updateOne('phone_settings', { _id: key }, {
                     _id: key,
                     background: this.background.get(key),

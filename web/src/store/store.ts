@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
-import { PhoneSettings, PhoneLocation, PhoneContacts } from '../../../types/types';
+import { PhoneSettings, PhoneLocation, PhoneContacts, Notification } from '../../../types/types';
 
 type State = {
     visible: boolean;
@@ -24,6 +24,7 @@ type State = {
     inCall: boolean;
     calling: boolean;
     showNotiy: boolean;
+    notifiCationHistory: Notification[];
 };
 
 type Actions = {
@@ -48,6 +49,7 @@ type Actions = {
     setInCall: (inCall: boolean) => void;
     setCalling: (calling: boolean) => void;
     setShowNotiy: (showNotiy: boolean) => void;
+    setNotifiCationHistory: (notifiCationHistory: Notification[]) => void;
 };
 
 export const usePhone = create<State & Actions>()(
@@ -113,6 +115,7 @@ export const usePhone = create<State & Actions>()(
         inCall: false,
         calling: false,
         showNotiy: false,
+        notifiCationHistory: [],
         setVisible: (visible: boolean) => set((state) => {
             state.visible = visible;
         }),
@@ -156,6 +159,9 @@ export const usePhone = create<State & Actions>()(
         }),
         setShowNotiy: (showNotiy: boolean) => set((state) => {
             state.showNotiy = showNotiy;
+        }),
+        setNotifiCationHistory: (notifiCationHistory: Notification[]) => set((state) => {
+            state.notifiCationHistory = notifiCationHistory
         }),
     }))
 );

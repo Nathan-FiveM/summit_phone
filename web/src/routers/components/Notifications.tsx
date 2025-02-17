@@ -80,7 +80,6 @@ export default function Notifications() {
     });
 
     useNuiEvent('removeActionNotification', (id: string) => {
-        console.log('removeActionNotification', id);
         actionNotiQueue.removeFromNotificationId(id);
     });
 

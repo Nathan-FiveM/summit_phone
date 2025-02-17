@@ -61,7 +61,7 @@
     align-items: center;
     position: relative;
     overflow: hidden;
-    
+
 
     .homescreen {
       position: absolute;
@@ -471,12 +471,80 @@
     .clickanimation {
       transition: all 0.2s ease;
       cursor: pointer;
-    
+
       &:active {
         transform: scale(0.97);
       }
     }
-    
+
+    .message {
+      .Xsadsasa {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 0px 0.15625vw;
+        gap: 0.3619791666666667vw;
+        width: 14.895833333333334vw;
+        height: 0.8333333333333334vw;
+        flex: none;
+        order: 0;
+        align-self: stretch;
+        flex-grow: 0;
+
+        .XSADAAA {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
+          height: 0.6770833333333334vw;
+          flex: none;
+          order: 1;
+          flex-grow: 1;
+
+          .text {
+            width: 4.427083333333333vw;
+            height: 0.6770833333333334vw;
+            font-weight: 400;
+            font-size: 0.7291666666666666vw;
+            line-height: 0.6770833333333334vw;
+            text-align: center;
+            letter-spacing: 0.03em;
+            color: #FFFFFF;
+            flex: none;
+            order: 0;
+            flex-grow: 0;
+          }
+
+          .readsada {
+            display: flex;
+            flex-direction: row;
+            padding: 0px;
+            align-items: center;
+            justify-content: space-between;
+            width: 1.9791666666666667vw;
+            height: 0.6770833333333334vw;
+            flex: none;
+            order: 1;
+            flex-grow: 0;
+
+            .textX {
+              width: 1.0416666666666667vw;
+              height: 0.6770833333333334vw;
+              font-style: normal;
+              font-weight: 500;
+              font-size: 0.6770833333333334vw;
+              line-height: 0.6770833333333334vw;
+              text-align: center;
+              letter-spacing: 0.03em;
+              color: rgba(255, 255, 255, 0.3);
+              flex: none;
+              order: 0;
+              flex-grow: 0;
+            }
+          }
+        }
+      }
+    }
   }
 
   .backButton {
@@ -1091,6 +1159,7 @@
 .clickButton {
   transition: all 0.2s ease;
   cursor: pointer;
+
   &:hover {
     transform: scale(1.1);
   }
@@ -1110,7 +1179,7 @@
 }
 
 .clickanimationXl {
-  
+
   cursor: pointer;
 
   &:active {
@@ -1136,7 +1205,7 @@
   gap: 0.4166666666666667vw;
   border-radius: 2.2916666666666665vw;
   background: #0B0B0B;
-  
+
 
   .contextArea {
     display: flex;
@@ -1147,7 +1216,7 @@
 
     .title {
       width: 8.041666666666666vw;
-      
+
       color: #FFF;
       font-family: "SFPro";
       font-size: 0.7291666666666666vw;
@@ -1168,6 +1237,7 @@
     }
   }
 }
+
 .pushActionNotiFication {
   display: flex;
   width: 15.520833333333334vw;

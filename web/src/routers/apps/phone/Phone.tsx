@@ -214,6 +214,7 @@ export default function Phone() {
                                                 </div>
                                             </div>
                                             <svg onClick={() => {
+                                                if (!contactData) return;
                                                 setSelectedContact(contactData);
                                                 setLocation({
                                                     app: location.app,

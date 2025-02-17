@@ -20,6 +20,7 @@ import Phone from './routers/apps/phone/Phone';
 import { PhoneSettings } from '../../types/types';
 import Notifications from './routers/components/Notifications';
 import CallComponent from './routers/components/CallComponent';
+import Message from './routers/apps/Messages/Message';
 
 debugData([
   {
@@ -53,7 +54,6 @@ export default function App() {
     const data: string = await fetchNui("getSettings");
     if (data) {
       const settings: PhoneSettings = JSON.parse(data);
-      console.log(settings.lockPin, settings.useFaceId)
       setPhoneSettings(settings);
       const citizenId: string = await fetchNui("getCitizenId");
       if (visible && citizenId === settings.faceIdIdentifier && !settings.showStartupScreen && settings.useFaceId) {
@@ -137,6 +137,7 @@ export default function App() {
           <Startup />
           <Phone />
           <CallComponent />
+          <Message />
         </div>
         <div className="backButton" onClick={() => {
           if (location.app !== '') {

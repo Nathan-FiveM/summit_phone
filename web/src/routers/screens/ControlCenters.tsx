@@ -2,20 +2,37 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 //@ts-ignore
 import 'swiper/css';
 import { useState, useRef, useEffect, SetStateAction, createRef } from 'react';
-import { Button, Image } from '@mantine/core';
 import { useNuiEvent } from '../../hooks/useNuiEvent';
 import { clamp, useLocalStorage, useMove } from '@mantine/hooks';
 import dayjs from 'dayjs';
 import useNotiQueue from '../../hooks/useNotiQueue';
-import { notiIcons } from '../../utils/icons';
+import { usePhone } from '../../store/store';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import { Image } from '@mantine/core';
+import { notiIcons } from '../../utils/icons';
 
 export default function ControlCenters() {
     const [index, setIndex] = useState(0);
-    const notiQueue = useNotiQueue();
-
     const ref = useRef(null);
     const refB1 = useRef(null);
+    const [notifiCationHistory, setNotifiCationHistory] = useState([]);
+
+    useNuiEvent('addNotification', (data: {
+        id: number;
+        title: string;
+        description: string;
+        app: string;
+        timeout?: number;
+    }) => {
+        const noti = {
+            id: data.id,
+            title: data.title,
+            description: data.description,
+            app: data.app,
+            nodeRef: createRef(),
+        }
+        setNotifiCationHistory((queue) => [...queue, noti]);
+    });
 
     const handleMouseDown = () => {
         ref.current.swiper.allowTouchMove = true
@@ -128,7 +145,7 @@ export default function ControlCenters() {
                             display: "flex",
                             gap: "0.625vw",
                             marginTop: "1.0vw",
-                            
+
                         }}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="6.041666666666667vw" height="6.041666666666667vw" viewBox="0 0 116 116" fill="none">
                                 <g filter="url(#filter0_b_593_218)">
@@ -431,7 +448,7 @@ export default function ControlCenters() {
                             top: '24%',
                             right: '7%',
                         }} onClick={() => {
-                            notiQueue.clearhistory();
+                            setNotifiCationHistory([]);
                         }} className='clickanimationXl' width="0.8333333333333334vw" height="0.8333333333333334vw" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path fillRule="evenodd" clipRule="evenodd" d="M8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16ZM5.2838 4.42288C5.07552 4.2146 4.73783 4.2146 4.52955 4.42288C4.32127 4.63116 4.32127 4.96884 4.52955 5.17712L7.35242 8L4.52954 10.8229C4.32126 11.0312 4.32126 11.3688 4.52954 11.5771C4.73782 11.7854 5.07551 11.7854 5.28379 11.5771L8.10667 8.75425L10.9295 11.5771C11.1378 11.7854 11.4755 11.7854 11.6838 11.5771C11.8921 11.3688 11.8921 11.0312 11.6838 10.8229L8.86091 8L11.6838 5.17712C11.8921 4.96884 11.8921 4.63116 11.6838 4.42288C11.4755 4.2146 11.1378 4.2146 10.9295 4.42288L8.10667 7.24575L5.2838 4.42288Z" fill="#B5B5B5" />
                         </svg>
@@ -440,7 +457,7 @@ export default function ControlCenters() {
                             height: "65%",
                         }} className='notiFicationCenter'>
                             <TransitionGroup className="notiFicationCenter">
-                                {notiQueue.historyValues.map((noti, index) => {
+                                {notifiCationHistory.map((noti, index) => {
                                     return (
                                         <CSSTransition
                                             key={index}

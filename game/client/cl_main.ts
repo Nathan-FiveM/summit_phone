@@ -2,6 +2,7 @@ import "./cl_nuicallback";
 import "./cl_exports";
 import "./apps/index";
 import { NUI } from "./classes/NUI";
+import { generateUUid } from "@shared/utils";
 
 export const FrameWork = exports['qb-core'].GetCoreObject();
 
@@ -31,13 +32,13 @@ onNet('phone:addActionNotification', (data: string) => {
                 icon: string,
                 isServer: boolean,
                 event: string,
-                args:any
+                args: any
             },
             "1": {
                 icon: string,
                 isServer: boolean,
                 event: string,
-                args:any
+                args: any
             }
         }
     } = JSON.parse(data);
@@ -50,6 +51,16 @@ on('onResourceStop', (resource: string) => {
         state.set('onPhone', false, true);
     }
 });
+
+RegisterCommand('testNoti', () => {
+    NUI.sendReactMessage('addNotification', {
+        id: generateUUid(),
+        title: 'test',
+        description: "Test",
+        app: 'settings',
+        timeout: 5000
+    });
+}, false);
 
 /* on('phone:client:buttonClicked', (id: string) => {
     

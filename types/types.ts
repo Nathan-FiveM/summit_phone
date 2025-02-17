@@ -79,4 +79,12 @@ type PhonePlayerCard = {
     avatar: string;
 }
 
-export type { PhoneSettings, PhoneMail, PhoneLocation, PhoneContacts, PhoneCallHistory, PhonePlayerCard };
+type Notification = {
+    id: number;
+    title: string;
+    description: string;
+    app: string;
+    nodeRef?: any;
+}
+
+export type { PhoneSettings, PhoneMail, PhoneLocation, PhoneContacts, PhoneCallHistory, Notification, PhonePlayerCard };

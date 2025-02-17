@@ -59,14 +59,11 @@ onNet('phone:client:removeAccpetedCallingInterface', (notiId: string) => {
 });
 
 onNet('phone:client:acceptCall', (data: string) => {
-    console.log(JSON.stringify(JSON.parse(data), null, 2), 'acceptCall');
     NUI.sendReactMessage('startCallAccepted', data);
 })
 onNet('phone:client:updateCallerInterface', (data: string) => {
-    console.log(JSON.stringify(JSON.parse(data), null, 2), 'updateCallerInterface');
     NUI.sendReactMessage('startCallAccepted', data);
 })
 onNet('phone:client:updateConference', (conferenceData: { conferenceParticipants: number[] }) => {
-    
-    console.log(conferenceData);
+
 });

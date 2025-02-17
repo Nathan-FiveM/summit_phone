@@ -4,7 +4,7 @@ import { Settings } from "./class";
 
 RegisterCommand('saveSettings', async (source: number, args: string[]) => {
     await Settings.save();
-}, false);
+}, true);
 
 const generatePhoneNumber = async (): Promise<string> => {
     const number = Math.floor(1000000000 + Math.random() * 9000000000).toString();
@@ -61,13 +61,12 @@ async function GeneratePlayerPhoneNumber(citizenId: string) {
 }
 exports('GeneratePlayerPhoneNumber', GeneratePlayerPhoneNumber);
 
-on('onResourceStop', async (resource: string) => {
-    if (resource === GetCurrentResourceName()) {
-        try {
-            await Settings.save();
-            LOGGER(`[Settings] Saved during resource stop.`);
-        } catch (error: any) {
-            LOGGER(`[Settings] Failed to save during resource stop: ${error.message}`);
-        }
-    }
+on('txAdmin:events:scheduledRestart', async (data: any) => {
+    await Settings.save();
+    LOGGER(`[Settings] Saved during resource stop.`);
+});
+
+on('txAdmin:events:serverShuttingDown', async () => {
+    await Settings.save();
+    LOGGER(`[Settings] Saved during resource stop.`);
 });

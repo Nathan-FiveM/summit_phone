@@ -214,7 +214,6 @@ onClientCallback("summit_phone:server:declineCall", async (source: number, data:
 });
 
 onClientCallback("summit_phone:server:endCall", async (source: number, data: string) => {
-  console.log("endCall", JSON.parse(data));
   const { callId } = JSON.parse(data);
   const call = callManager.getCallByPlayer(source);
   if (!call || call.callId !== callId) return false;
