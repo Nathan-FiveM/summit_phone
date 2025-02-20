@@ -150,7 +150,7 @@ export default function Phone() {
                                 const contactData = getContactByPhoneNumber(call.otherPartyPhoneNumber);
                                 return (
                                     <>
-                                        <div key={index+"/*-_ds"} style={{
+                                        <div key={index + "/*-_ds"} style={{
                                             width: '15.052083333333334vw',
                                             display: 'flex',
                                             alignItems: 'center',
@@ -219,7 +219,24 @@ export default function Phone() {
                                                 setLocation({
                                                     app: location.app,
                                                     page: {
-                                                        phone: 'savedcontact'
+                                                        phone: 'savedcontact',
+                                                        messages: location.page.messages,
+                                                        settings: location.page.settings,
+                                                        services: location.page.services,
+                                                        mail: location.page.mail,
+                                                        wallet: location.page.wallet,
+                                                        calulator: location.page.calulator,
+                                                        appstore: location.page.appstore,
+                                                        camera: location.page.camera,
+                                                        gallery: location.page.gallery,
+                                                        pigeon: location.page.pigeon,
+                                                        darkchat: location.page.darkchat,
+                                                        garages: location.page.garages,
+                                                        notes: location.page.notes,
+                                                        houses: location.page.houses,
+                                                        bluepages: location.page.bluepages,
+                                                        pixie: location.page.pixie,
+                                                        groups: location.page.groups,
                                                     }
                                                 })
                                             }} className='clickanimation' xmlns="http://www.w3.org/2000/svg" width="0.88125vw" height="0.88125vw" viewBox="0 0 15 15" fill="none">
@@ -228,7 +245,7 @@ export default function Phone() {
                                                 <path d="M7.50002 0.5C3.63318 0.5 0.5 3.63318 0.5 7.50002C0.5 11.3669 3.63318 14.5 7.50002 14.5C11.3669 14.5 14.5 11.3669 14.5 7.50002C14.5 3.63318 11.3669 0.5 7.50002 0.5ZM7.50002 13.9178C3.96299 13.9178 1.08221 11.0404 1.08221 7.50002C1.08221 3.96299 3.95962 1.08221 7.50002 1.08221C11.037 1.08221 13.9178 3.95962 13.9178 7.50002C13.9178 11.037 11.037 13.9178 7.50002 13.9178Z" fill="#0A84FF" />
                                             </svg>
                                         </div>
-                                        {index === recentCallData.length - 1 ? '' : <div className="divider" key={index+'////_+'} style={{ marginTop: '0.1vw' }} />}
+                                        {index === recentCallData.length - 1 ? '' : <div className="divider" key={index + '////_+'} style={{ marginTop: '0.1vw' }} />}
                                     </>
                                 )
                             })}
@@ -286,7 +303,24 @@ export default function Phone() {
                             setLocation({
                                 app: location.app,
                                 page: {
-                                    phone: 'savedcontact'
+                                    phone: 'savedcontact',
+                                    messages: location.page.messages,
+                                    settings: location.page.settings,
+                                    services: location.page.services,
+                                    mail: location.page.mail,
+                                    wallet: location.page.wallet,
+                                    calulator: location.page.calulator,
+                                    appstore: location.page.appstore,
+                                    camera: location.page.camera,
+                                    gallery: location.page.gallery,
+                                    pigeon: location.page.pigeon,
+                                    darkchat: location.page.darkchat,
+                                    garages: location.page.garages,
+                                    notes: location.page.notes,
+                                    houses: location.page.houses,
+                                    bluepages: location.page.bluepages,
+                                    pixie: location.page.pixie,
+                                    groups: location.page.groups,
                                 }
                             })
                         }}>
@@ -307,7 +341,7 @@ export default function Phone() {
                                 ).length > 0
                             ).map((letter, index) => {
                                 return (
-                                    <div key={index+"_+-"}>
+                                    <div key={index + "_+-"}>
                                         <div className="letter">
                                             <div style={{
                                                 color: 'rgba(255, 255, 255, 0.40)',
@@ -340,12 +374,29 @@ export default function Phone() {
                                                         flexShrink: 0,
                                                         alignSelf: 'stretch',
                                                         cursor: 'pointer',
-                                                    }} key={index+"_+"} onClick={() => {
+                                                    }} key={index + "_+"} onClick={() => {
                                                         setSelectedContact(contact);
                                                         setLocation({
                                                             app: location.app,
                                                             page: {
-                                                                phone: 'savedcontact'
+                                                                phone: 'savedcontact',
+                                                                messages: location.page.messages,
+                                                                settings: location.page.settings,
+                                                                services: location.page.services,
+                                                                mail: location.page.mail,
+                                                                wallet: location.page.wallet,
+                                                                calulator: location.page.calulator,
+                                                                appstore: location.page.appstore,
+                                                                camera: location.page.camera,
+                                                                gallery: location.page.gallery,
+                                                                pigeon: location.page.pigeon,
+                                                                darkchat: location.page.darkchat,
+                                                                garages: location.page.garages,
+                                                                notes: location.page.notes,
+                                                                houses: location.page.houses,
+                                                                bluepages: location.page.bluepages,
+                                                                pixie: location.page.pixie,
+                                                                groups: location.page.groups,
                                                             }
                                                         })
                                                     }}>
@@ -440,7 +491,7 @@ export default function Phone() {
                                 letter => phoneContacts[letter].filter((letter) => letter.isFav).length > 0
                             ).map((letter, index) => {
                                 return (
-                                    <div key={index+"_+-/"}>
+                                    <div key={index + "_+-/"}>
                                         {phoneContacts[letter].filter((letter) => letter.isFav).map((contact, index) => {
                                             return (
                                                 <>
@@ -458,7 +509,7 @@ export default function Phone() {
                                                         alignSelf: 'stretch',
                                                         flexGrow: 0,
                                                         marginTop: index === 0 ? '0vw' : '0.4125vw',
-                                                    }} key={index+'__+'}>
+                                                    }} key={index + '__+'}>
                                                         <Avatar src={contact?.image} size={'2.2395833333333335vw'} style={{ minHeight: '2.2395833333333335vw' }} radius={'50vw'} />
                                                         <div style={{
                                                             display: 'flex',
@@ -509,7 +560,24 @@ export default function Phone() {
                                                             setLocation({
                                                                 app: location.app,
                                                                 page: {
-                                                                    phone: 'savedcontact'
+                                                                    phone: 'savedcontact',
+                                                                    messages: location.page.messages,
+                                                                    settings: location.page.settings,
+                                                                    services: location.page.services,
+                                                                    mail: location.page.mail,
+                                                                    wallet: location.page.wallet,
+                                                                    calulator: location.page.calulator,
+                                                                    appstore: location.page.appstore,
+                                                                    camera: location.page.camera,
+                                                                    gallery: location.page.gallery,
+                                                                    pigeon: location.page.pigeon,
+                                                                    darkchat: location.page.darkchat,
+                                                                    garages: location.page.garages,
+                                                                    notes: location.page.notes,
+                                                                    houses: location.page.houses,
+                                                                    bluepages: location.page.bluepages,
+                                                                    pixie: location.page.pixie,
+                                                                    groups: location.page.groups,
                                                                 }
                                                             })
                                                             setSelectedContact(contact);
@@ -535,13 +603,30 @@ export default function Phone() {
                     setLocation({
                         app: location.app,
                         page: {
-                            phone: locate
+                            phone: locate,
+                            messages: location.page.messages,
+                            settings: location.page.settings,
+                            services: location.page.services,
+                            mail: location.page.mail,
+                            wallet: location.page.wallet,
+                            calulator: location.page.calulator,
+                            appstore: location.page.appstore,
+                            camera: location.page.camera,
+                            gallery: location.page.gallery,
+                            pigeon: location.page.pigeon,
+                            darkchat: location.page.darkchat,
+                            garages: location.page.garages,
+                            notes: location.page.notes,
+                            houses: location.page.houses,
+                            bluepages: location.page.bluepages,
+                            pixie: location.page.pixie,
+                            groups: location.page.groups,
                         }
                     });
                 }} location={location.page.phone} />
                 <SavedContact onContactEdited={(data: PhoneContacts) => {
-                    
-                    if (data.contactNumber === data.personalNumber){
+
+                    if (data.contactNumber === data.personalNumber) {
                         fetchNui('updatePersonalCard', JSON.stringify({
                             _id: data._id,
                             firstName: data.firstName,
@@ -564,7 +649,7 @@ export default function Phone() {
                             notes: data.notes,
                             avatar: data.image,
                         });
-                    }else{
+                    } else {
                         const dataX = {
                             ...data,
                         }
@@ -621,7 +706,24 @@ export default function Phone() {
                     setLocation({
                         app: location.app,
                         page: {
-                            phone: 'contacts'
+                            phone: 'contacts',
+                            messages: location.page.messages,
+                            settings: location.page.settings,
+                            services: location.page.services,
+                            mail: location.page.mail,
+                            wallet: location.page.wallet,
+                            calulator: location.page.calulator,
+                            appstore: location.page.appstore,
+                            camera: location.page.camera,
+                            gallery: location.page.gallery,
+                            pigeon: location.page.pigeon,
+                            darkchat: location.page.darkchat,
+                            garages: location.page.garages,
+                            notes: location.page.notes,
+                            houses: location.page.houses,
+                            bluepages: location.page.bluepages,
+                            pixie: location.page.pixie,
+                            groups: location.page.groups,
                         }
                     });
                 }} />

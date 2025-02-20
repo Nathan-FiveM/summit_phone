@@ -43,6 +43,23 @@ type PhoneLocation = {
     app: string;
     page?: {
         phone?: string;
+        messages?: string;
+        settings?: string;
+        services?: string;
+        mail?: string;
+        wallet?: string;
+        calulator?: string;
+        appstore?: string;
+        camera?: string;
+        gallery?: string;
+        pigeon?: string;
+        darkchat?: string;
+        garages?: string;
+        notes?: string;
+        houses?: string;
+        bluepages?: string;
+        pixie?: string;
+        groups?: string;
     };
 }
 

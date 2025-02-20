@@ -1,14 +1,47 @@
-import { useRef } from "react"
+import { useRef, useState } from "react"
 import { usePhone } from "../../../store/store";
 import { CSSTransition } from "react-transition-group";
 import Title from "../../components/Title";
+import { fetchNui } from "../../../hooks/fetchNui";
 
 export default function Message() {
     const nodeRef = useRef(null);
-    const { location } = usePhone();
+    const { location, setLocation } = usePhone();
+    const [messageStats, setMessageStats] = useState<{
+        success: boolean,
+        stats: {
+            allMessages: number, 
+            knownMessages: number, 
+            unknownMessages: number, 
+            unreadMessages: number, 
+            recentlyDeleted: number
+        }
+    }>({
+        success: false,
+        stats: {
+            allMessages: 0, 
+            knownMessages: 0, 
+            unknownMessages: 0, 
+            unreadMessages: 0, 
+            recentlyDeleted: 0
+        }
+    });
 
     return (
-        <CSSTransition nodeRef={nodeRef} in={location.app === 'message'} timeout={450} classNames="enterandexitfromtop" unmountOnExit mountOnEnter onEntering={() => { }}>
+        <CSSTransition nodeRef={nodeRef} in={location.app === 'message' && location.page.messages === ''} timeout={450} classNames="enterandexitfromtop" unmountOnExit mountOnEnter onEntering={async () => {
+            const res: any = await fetchNui('getMessagesStats', "Ok");
+            const parsedData: {
+                success: boolean,
+                stats: {
+                    allMessages: number, 
+                    knownMessages: number, 
+                    unknownMessages: number, 
+                    unreadMessages: number, 
+                    recentlyDeleted: number
+                }
+            } = JSON.parse(res);
+            setMessageStats(parsedData);
+        }}>
             <div ref={nodeRef} style={{
                 backgroundColor: '#0E0E0E',
                 width: '100%',
@@ -44,8 +77,19 @@ export default function Message() {
                         </svg>
                         <div className="XSADAAA">
                             <div className="text">All messages</div>
-                            <div className="readsada">
-                                <div className="textX">247</div>
+                            <div className="readsada" style={{
+                                cursor: 'pointer'
+                            }} onClick={() => {
+                                const data = {
+                                    ...location.page,
+                                    messages: 'all'
+                                }
+                                setLocation({
+                                    app: 'message',
+                                    page: data
+                                })
+                            }}>
+                                <div className="textX">{messageStats.stats.allMessages}</div>
                                 <svg width="0.46875vw" height="0.6770833333333334vw" viewBox="0 0 6 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M1 0.5L4.58662 4.53495C4.82237 4.80017 4.82237 5.19983 4.58662 5.46505L1 9.5" stroke="white" stroke-opacity="0.4" stroke-width="0.7" stroke-linecap="round" />
                                 </svg>
@@ -60,8 +104,19 @@ export default function Message() {
                         </svg>
                         <div className="XSADAAA">
                             <div className="text" style={{ width: '6.2vw' }}>Known messages</div>
-                            <div className="readsada">
-                                <div className="textX">247</div>
+                            <div className="readsada" style={{
+                                cursor: 'pointer'
+                            }} onClick={() => {
+                                const data = {
+                                    ...location.page,
+                                    messages: 'all'
+                                }
+                                setLocation({
+                                    app: 'message',
+                                    page: data
+                                })
+                            }}>
+                                <div className="textX">{messageStats.stats.knownMessages}</div>
                                 <svg width="0.46875vw" height="0.6770833333333334vw" viewBox="0 0 6 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M1 0.5L4.58662 4.53495C4.82237 4.80017 4.82237 5.19983 4.58662 5.46505L1 9.5" stroke="white" stroke-opacity="0.4" stroke-width="0.7" stroke-linecap="round" />
                                 </svg>
@@ -78,8 +133,19 @@ export default function Message() {
                         </svg>
                         <div className="XSADAAA">
                             <div className="text" style={{ width: '7vw' }}>Unknown messages</div>
-                            <div className="readsada">
-                                <div className="textX">247</div>
+                            <div className="readsada" style={{
+                                cursor: 'pointer'
+                            }} onClick={() => {
+                                const data = {
+                                    ...location.page,
+                                    messages: 'all'
+                                }
+                                setLocation({
+                                    app: 'message',
+                                    page: data
+                                })
+                            }}>
+                                <div className="textX">{messageStats.stats.unknownMessages}</div>
                                 <svg width="0.46875vw" height="0.6770833333333334vw" viewBox="0 0 6 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M1 0.5L4.58662 4.53495C4.82237 4.80017 4.82237 5.19983 4.58662 5.46505L1 9.5" stroke="white" stroke-opacity="0.4" stroke-width="0.7" stroke-linecap="round" />
                                 </svg>
@@ -93,8 +159,19 @@ export default function Message() {
                         </svg>
                         <div className="XSADAAA">
                             <div className="text" style={{ width: '6.35vw' }}>Unread messages</div>
-                            <div className="readsada">
-                                <div className="textX">247</div>
+                            <div className="readsada" style={{
+                                cursor: 'pointer'
+                            }} onClick={() => {
+                                const data = {
+                                    ...location.page,
+                                    messages: 'all'
+                                }
+                                setLocation({
+                                    app: 'message',
+                                    page: data
+                                })
+                            }}>
+                                <div className="textX">{messageStats.stats.unreadMessages}</div>
                                 <svg width="0.46875vw" height="0.6770833333333334vw" viewBox="0 0 6 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M1 0.5L4.58662 4.53495C4.82237 4.80017 4.82237 5.19983 4.58662 5.46505L1 9.5" stroke="white" stroke-opacity="0.4" stroke-width="0.7" stroke-linecap="round" />
                                 </svg>
@@ -130,7 +207,6 @@ export default function Message() {
                         </div>
                     </div>
                 </div>
-
             </div>
         </CSSTransition>
     )

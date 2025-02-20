@@ -21,6 +21,7 @@ import { PhoneSettings } from '../../types/types';
 import Notifications from './routers/components/Notifications';
 import CallComponent from './routers/components/CallComponent';
 import Message from './routers/apps/Messages/Message';
+import FilteredPage from './routers/apps/Messages/FilteredPage';
 
 debugData([
   {
@@ -94,7 +95,24 @@ export default function App() {
           setLocation({
             app: '',
             page: {
-              phone: location.page.phone
+              phone: location.page.phone,
+              messages: location.page.messages,
+              settings: location.page.settings,
+              services: location.page.services,
+              mail: location.page.mail,
+              wallet: location.page.wallet,
+              calulator: location.page.calulator,
+              appstore: location.page.appstore,
+              camera: location.page.camera,
+              gallery: location.page.gallery,
+              pigeon: location.page.pigeon,
+              darkchat: location.page.darkchat,
+              garages: location.page.garages,
+              notes: location.page.notes,
+              houses: location.page.houses,
+              bluepages: location.page.bluepages,
+              pixie: location.page.pixie,
+              groups: location.page.groups,
             }
           });
         } else {
@@ -129,7 +147,7 @@ export default function App() {
           <Header />
         </div>
         <div className="contentFrame" id='contentFrame' style={{
-          
+
         }}>
           <ControlCenters />
           <HomeScreen />
@@ -138,13 +156,31 @@ export default function App() {
           <Phone />
           <CallComponent />
           <Message />
+          <FilteredPage />
         </div>
         <div className="backButton" onClick={() => {
           if (location.app !== '') {
             setLocation({
               app: '',
               page: {
-                phone: location.page.phone
+                phone: location.page.phone,
+                messages: location.page.messages,
+                settings: location.page.settings,
+                services: location.page.services,
+                mail: location.page.mail,
+                wallet: location.page.wallet,
+                calulator: location.page.calulator,
+                appstore: location.page.appstore,
+                camera: location.page.camera,
+                gallery: location.page.gallery,
+                pigeon: location.page.pigeon,
+                darkchat: location.page.darkchat,
+                garages: location.page.garages,
+                notes: location.page.notes,
+                houses: location.page.houses,
+                bluepages: location.page.bluepages,
+                pixie: location.page.pixie,
+                groups: location.page.groups,
               }
             });
           } else {

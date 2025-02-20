@@ -544,6 +544,125 @@
           }
         }
       }
+
+      .topBar {
+        margin-top: 2vw;
+        display: flex;
+        align-items: center;
+        width: 100%;
+
+        .title {
+          font-family: 'SFPro';
+          font-style: normal;
+          font-weight: 700;
+          font-size: 0.9375vw;
+          line-height: 0.9375vw;
+          margin-left: 2.4vw;
+          text-align: center;
+          color: #FFFFFF;
+        }
+
+        .BackButton {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          padding: 0px;
+          gap: 0.3125vw;
+          margin-left: 1vw;
+
+          .text {
+            width: 40px;
+            height: 0.9375vw;
+            font-style: normal;
+            font-weight: 500;
+            font-size: 0.78125vw;
+            line-height: 0.9375vw;
+            text-align: center;
+            color: #0A84FF;
+            flex: none;
+            order: 1;
+            flex-grow: 0;
+          }
+        }
+      }
+
+      .messageContent {
+        display: flex;
+        width: 90%;
+        height: 29vw;
+        margin-top: 1vw;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.20833333333333334vw;
+        flex-shrink: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+
+        .innerChannel {
+          display: flex;
+          width: 90%;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.3125vw;
+
+          .channelContent {
+            display: flex;
+            width: 14.8vw;
+            justify-content: space-between;
+            align-items: flex-start;
+            align-self: stretch;
+            cursor: pointer;
+
+            .messageCont {
+              display: flex;
+              width: 12.760416666666666vw;
+              flex-direction: column;
+              align-items: flex-start;
+              margin-left: 0.5vw;
+
+              .title {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                align-self: stretch;
+
+                .name {
+                  color: #FFF;
+                  font-size: 0.78125vw;
+                  font-style: normal;
+                  font-weight: 700;
+                  line-height: normal;
+                }
+
+                .timeStamp {
+                  display: flex;
+                  align-items: center;
+                  gap: 0.625vw;
+
+                  .text {
+                    color: rgba(255, 255, 255, 0.50);
+                    font-size: 12px;
+                    font-style: normal;
+                    font-weight: 500;
+                    line-height: normal;
+                  }
+                }
+              }
+
+              .description {
+                height: 1.3vw;
+                overflow: hidden;;
+                color: rgba(255, 255, 255, 0.50);
+                font-size: 10px;
+                font-style: normal;
+                font-weight: 500;
+                line-height: normal;
+                align-self: stretch;
+              }
+            }
+          }
+        }
+      }
     }
   }
 

@@ -1,6 +1,10 @@
-import "./Settings/callback";
-import "./Settings/events";
-import "./Phone/callback";
-import "./Phone/events";
-import "./Contacts/callback";
-import "./Contacts/events";
+export * from './Contacts/callback';
+export * from './Contacts/events';
+export * from './Messages/callback';
+export * from './Messages/events';
+export * from './Phone/CallManager';
+export * from './Phone/callHistoryManager';
+export * from './Phone/callback';
+export * from './Phone/events';
+export * from './Settings/callback';
+export * from './Settings/events';

@@ -11,7 +11,6 @@ await build({
   outfile: '../build/client.js',
 })
 
-
 // Obfuscate the output file if not in dev mode
 if (!process.argv.includes('--dev')) {
   const outputFilePath = '../build/client.js';

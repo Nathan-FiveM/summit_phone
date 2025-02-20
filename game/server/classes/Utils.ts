@@ -17,7 +17,7 @@ class Util {
             if (source === 0) return LOGGER('This command can only be executed in-game.');
             await Utils.TransferContacts();
         }, true);
-    }
+    };
 
     async TransferNumbers() {
         let newData: any[] = [];
@@ -65,7 +65,7 @@ class Util {
         } catch (e) {
             LOGGER(`Error while transferring contacts: ${JSON.stringify(e, null, 2)}`);
         }
-    }
+    };
 
     async GetPhoneNumberByCitizenId(citizenId: string) {
         const number = await MongoDB.findOne('phone_numbers', { owner: citizenId });
@@ -82,11 +82,12 @@ class Util {
     async GetPlayerFromPhoneNumber(phoneNumber: string) {
         const citizenId = await this.GetCitizenIdByPhoneNumber(phoneNumber);
         return await exports['qb-core'].GetPlayerByCitizenId(citizenId);
-    }
+    };
+
     async GetPhoneNumberBySource(source: number) {
         const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(source);
         return await this.GetPhoneNumberByCitizenId(citizenId);
-    }
+    };
 
     async BlockNumber(phoneNumber: string, targetPhoneNumber: string) {
         const citizenId = await this.GetCitizenIdByPhoneNumber(phoneNumber);
@@ -97,14 +98,14 @@ class Util {
             citizenId: citizenId,
             targetCitizenId: targetCitizenId,
         });
-    }
+    };
 
     async UnblockNumber(phoneNumber: string, targetPhoneNumber: string) {
         const citizenId = await this.GetCitizenIdByPhoneNumber(phoneNumber);
         const targetCitizenId = await this.GetCitizenIdByPhoneNumber(targetPhoneNumber);
         if (!citizenId || !targetCitizenId) return;
         await MongoDB.deleteOne('phone_blocked_numbers', { citizenId: citizenId, targetCitizenId: targetCitizenId });
-    }
+    };
 
     async IsNumberBlocked(phoneNumber: string, targetPhoneNumber: string) {
         const citizenId = await this.GetCitizenIdByPhoneNumber(phoneNumber);
@@ -112,7 +113,20 @@ class Util {
         if (!citizenId || !targetCitizenId) return false;
         const blocked = await MongoDB.findOne('phone_blocked_numbers', { citizenId: citizenId, targetCitizenId: targetCitizenId });
         return blocked ? true : false;
-    }
+    };
+
+    async GetContactNameByNumber(phoneNumber: string, citizenId: string) {
+        const contact = await MongoDB.findOne('phone_contacts', { contactNumber: phoneNumber, ownerId: citizenId });
+        if (!contact) return phoneNumber;
+        return `${contact.firstName} ${contact.lastName}`;
+    };
+
+    async GetContactAvatarByNumber(phoneNumber: string, citizenId: string) {
+        const contact = await MongoDB.findOne('phone_contacts', { contactNumber: phoneNumber, ownerId: citizenId });
+        if (!contact) return '';
+        return contact.image;
+    };
+
     async HasPhone(playerSource: number) {
         const phoneList: string[] = [
             'blue_phone',
@@ -127,7 +141,7 @@ class Util {
             'red_phone': number,
             'gold_phone': number,
             'purple_phone': number,
-        } = exports['ox_inventory'].Search(playerSource,'count', phoneList);
+        } = exports['ox_inventory'].Search(playerSource, 'count', phoneList);
         for (let i = 0; i < phoneList.length; i++) {
             // @ts-ignore
             if (hasItem[phoneList[i]] > 0) {
@@ -135,19 +149,35 @@ class Util {
             }
         }
         return false;
-    }
+    };
+
     async InFlightMode(citizenId: string) {
         const settings = await MongoDB.findOne('phone_settings', { _id: citizenId });
         if (!settings) return false;
         return settings.isFlightMode || false;
-    }
+    };
+
     async query(query: string, values: any) {
         return new Promise((resolve, reject) => {
             MySQL.query(query, values, (result: any) => {
                 resolve(result);
             });
         });
-    }
+    };
+
+    async isSenderKnown(senderId: string, receiverId: string): Promise<boolean> {
+        // Query to check if the sender is in the receiver's contacts
+        const contactQuery = {
+            ownerId: receiverId,
+            contactNumber: senderId
+        };
+
+        // Try to find a contact entry
+        const contact = await MongoDB.findOne('phone_contacts', contactQuery);
+
+        // If a contact is found, the sender is known
+        return contact !== null;
+    };
 }
 
 export const Utils = new Util();
