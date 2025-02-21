@@ -22,6 +22,10 @@ import Notifications from './routers/components/Notifications';
 import CallComponent from './routers/components/CallComponent';
 import Message from './routers/apps/Messages/Message';
 import FilteredPage from './routers/apps/Messages/FilteredPage';
+import MessageDetails from './routers/apps/Messages/MessageDetails';
+import FilteredPage2 from './routers/apps/Messages/FilteredPage2';
+import FilteredPage3 from './routers/apps/Messages/FilteredPage3';
+import FilteredPage4 from './routers/apps/Messages/FilteredPage4';
 
 debugData([
   {
@@ -124,6 +128,9 @@ export default function App() {
 
     return () => window.removeEventListener("keydown", keyHandler);
   }, [visible]);
+
+  const breakedLocation = location.page.messages.split("/")
+
   return (
     <div style={{
       width: '20.083333333333332vw',
@@ -157,7 +164,16 @@ export default function App() {
           <CallComponent />
           <Message />
           <FilteredPage />
+          <FilteredPage2 />
+          <FilteredPage3 />
+          <FilteredPage4 />
+          <MessageDetails />
         </div>
+       {/*  <div className='fuckerMessager' id='fuckerMessager' style={{
+          visibility: location.app === "message" && breakedLocation[0] === "details" ? 'visible' : 'hidden',
+        }}>
+          <MessageDetails />
+        </div> */}
         <div className="backButton" onClick={() => {
           if (location.app !== '') {
             setLocation({

@@ -19,6 +19,7 @@
     "react-dnd": "^16.0.1",
     "react-dnd-touch-backend": "^16.0.1",
     "react-dom": "latest",
+    "react-infinite-scroll-component": "^6.1.0",
     "react-transition-group": "^4.4.5",
     "sass": "^1.80.6",
     "swiper": "^11.1.15",

@@ -8,7 +8,24 @@ import { fetchNui } from "../../../hooks/fetchNui";
 import { Avatar } from "@mantine/core";
 import dayjs from "dayjs";
 
-export default function FilteredPage() {
+/* interface Message {
+    message: string;
+    read: boolean;
+    page: number;
+    timestamp: string;
+    senderId: string;
+    attachments: { type: string; url: string }[];
+}
+
+interface Conversation {
+    messages: Message[];
+    avatar?: string | null;
+    memberPhoneNumbers?: string[];
+    hasMore: boolean;
+    totalMessages: number;
+} */
+
+export default function FilteredPage3() {
     const nodeRef = useRef(null);
     const { location, setLocation } = usePhone();
     const [searchValue, setSearchValue] = useState('');
@@ -33,11 +50,9 @@ export default function FilteredPage() {
             }[]
         }
     }[]>([]);
-    const [phoneContacts, setPhoneContacts] = useState<{ [key: string]: PhoneContacts[] }>({});
-    const [alphabetArrange, setAlphabetArrange] = useState('');
 
     return (
-        <CSSTransition nodeRef={nodeRef} in={location.app === 'message' && location.page.messages === 'all'} timeout={450} classNames="enterandexitfromtop" unmountOnExit mountOnEnter onEntering={async () => {
+        <CSSTransition nodeRef={nodeRef} in={location.app === 'message' && location.page.messages === 'unknown'} timeout={450} classNames="enterandexitfromtop" unmountOnExit mountOnEnter onEntering={async () => {
             const res = await fetchNui('getMessagesChannels', JSON.stringify({}));
             const parsedData: {
                 success: boolean;
@@ -103,14 +118,14 @@ export default function FilteredPage() {
                 <Searchbar mt="0.8vw" value={searchValue} onChange={setSearchValue} />
                 <div className="messageContent">
                     {channelsData.filter(channel => {
-                        return channel.name.toLowerCase().includes(searchValue.toLowerCase());
+                        return channel.name.match(/^[0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*$/) && channel.name.toLowerCase().includes(searchValue.toLowerCase());
                     }).map((channel, index) => {
 
                         return (
                             <div className="innerChannel" style={{
                                 marginTop: index === 0 ? '0vw' : '0.2vw',
                             }} key={index}>
-                                <div className="channelContent" onClick={() => {
+                                <div className="channelContent" onClick={()=>{
                                     console.log(channel.groupId)
                                     const data = {
                                         ...location.page,
@@ -144,7 +159,7 @@ export default function FilteredPage() {
 
                 </div>
 
-                <CSSTransition nodeRef={nodeRef} in={showContactsPortal} timeout={450} classNames="enterandexitfromtop" unmountOnExit mountOnEnter onEntering={async () => {
+                {/* <CSSTransition nodeRef={nodeRef} in={showContactsPortal} timeout={450} classNames="enterandexitfromtop" unmountOnExit mountOnEnter onEntering={async () => {
                     const data: string = await fetchNui('getContacts', JSON.stringify({}));
                     const parsedData: PhoneContacts[] = JSON.parse(data);
                     if (parsedData.length === 0) return;
@@ -250,7 +265,7 @@ export default function FilteredPage() {
                                                         alignSelf: 'stretch',
                                                         cursor: 'pointer',
                                                     }} key={index} onClick={() => {
-
+                                                       
                                                     }}>
                                                         <div style={{
                                                             color: '#FFF',
@@ -290,7 +305,7 @@ export default function FilteredPage() {
                             }} />
                         </div>
                     </div>
-                </CSSTransition>
+                </CSSTransition> */}
             </div>
         </CSSTransition>
     );

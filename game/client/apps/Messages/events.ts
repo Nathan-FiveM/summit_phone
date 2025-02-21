@@ -34,7 +34,7 @@ RegisterCommand('testGroup', async (source: number, args: string[]) => {
             attachments: []
         }
     }));
-    console.log(await res);
+    /* console.log(await res); */
 
     // Add Member
     /* const addRes = await triggerServerCallback('phone_message:addMember', 1, JSON.stringify({

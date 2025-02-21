@@ -51,7 +51,7 @@ onClientCallback('phone_message:sendMessage', async (client, data: string) => {
 
     let conversation;
     if (type === 'private') {
-        conversation = userMessages.messages.find((msg: { type: string, phoneNumber?: string }) => 
+        conversation = userMessages.messages.find((msg: { type: string, phoneNumber?: string }) =>
             msg.type === 'private' && msg.phoneNumber === phoneNumber);
         if (!conversation) {
             const contactName = await Utils.GetContactNameByNumber(phoneNumber, senderId) || `Unknown (${phoneNumber})`;
@@ -66,7 +66,7 @@ onClientCallback('phone_message:sendMessage', async (client, data: string) => {
             userMessages.messages.push(conversation);
         }
     } else if (type === 'group') {
-        conversation = userMessages.messages.find((msg: { type: string, groupId?: string }) => 
+        conversation = userMessages.messages.find((msg: { type: string, groupId?: string }) =>
             msg.type === 'group' && msg.groupId === groupId);
         if (!conversation) {
             return { success: false, message: 'Group not found for sender' };
@@ -81,7 +81,7 @@ onClientCallback('phone_message:sendMessage', async (client, data: string) => {
         read: true,
         page: nextPage,
         timestamp: new Date().toISOString(),
-        senderId: senderPhoneNumber,
+        senderId: senderId,
         attachments: messageData.attachments || []
     };
 
@@ -154,7 +154,7 @@ async function sendToRecipient(
 
     let targetConversation;
     if (type === 'private') {
-        targetConversation = targetMessages.messages.find((msg: { type: string, phoneNumber?: string }) => 
+        targetConversation = targetMessages.messages.find((msg: { type: string, phoneNumber?: string }) =>
             msg.type === 'private' && msg.phoneNumber === senderPhoneNumber);
         if (!targetConversation) {
             const contactName = await Utils.GetContactNameByNumber(senderPhoneNumber, targetCitizenId);
@@ -169,7 +169,7 @@ async function sendToRecipient(
             targetMessages.messages.push(targetConversation);
         }
     } else if (type === 'group') {
-        targetConversation = targetMessages.messages.find((msg: { type: string, groupId?: string }) => 
+        targetConversation = targetMessages.messages.find((msg: { type: string, groupId?: string }) =>
             msg.type === 'group' && msg.groupId === groupId);
         if (!targetConversation) {
             const senderMessages = await MongoDB.findOne('phone_messages', { citizenId: await Utils.GetCitizenIdByPhoneNumber(senderPhoneNumber) });
@@ -196,7 +196,7 @@ async function sendToRecipient(
         read: false,
         page: targetNextPage,
         timestamp: new Date().toISOString(),
-        senderId: senderPhoneNumber,
+        senderId: await Utils.GetCitizenIdByPhoneNumber(senderPhoneNumber),
         attachments: messageData.attachments || []
     };
 
@@ -442,40 +442,86 @@ onClientCallback('phone_message:deleteGroup', async (client, data: string) => {
 });
 
 onClientCallback('phone_message:getGroupMessages', async (client, data: string) => {
-    const { groupId } = JSON.parse(data);
+    const { groupId, page = 1, limit = 20 } = JSON.parse(data); // Add page and limit for pagination
     const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
+
+    if (!senderId) {
+        return JSON.stringify({ success: false, messages: [], message: 'Sender not found' });
+    }
 
     const userMessages = await MongoDB.findOne('phone_messages', { citizenId: senderId });
     if (!userMessages) {
-        return { success: false, messages: [], message: 'No messages found' };
+        return JSON.stringify({ success: false, messages: [], message: 'No messages found' });
     }
 
     const conversation = userMessages.messages.find((msg: { type: string, groupId?: string }) =>
         msg.type === 'group' && msg.groupId === groupId);
-    return {
+
+    if (!conversation) {
+        return JSON.stringify({ success: false, messages: [], message: 'Conversation not found' });
+    }
+
+    // Sort messages by timestamp (descending) and paginate
+    const sortedMessages = conversation.messages.sort((a: any, b: any) =>
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+    );
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const paginatedMessages = sortedMessages.slice(startIndex, endIndex);
+
+    const hasMore = endIndex < sortedMessages.length;
+
+    return JSON.stringify({
         success: true,
-        messages: conversation?.messages || [],
-        memberPhoneNumbers: conversation?.memberPhoneNumbers || [],
-        avatar: conversation?.avatar || null // Include avatar
-    };
+        messages: paginatedMessages,
+        memberPhoneNumbers: conversation.memberPhoneNumbers || [],
+        name: conversation.name,
+        avatar: conversation.avatar || null,
+        hasMore: hasMore,
+        totalMessages: sortedMessages.length
+    });
 });
 
 onClientCallback('phone_message:getPrivateMessages', async (client, data: string) => {
-    const { phoneNumber } = JSON.parse(data);
+    const { phoneNumber, page = 1, limit = 20 } = JSON.parse(data); // Add page and limit for pagination
     const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
+
+    if (!senderId) {
+        return JSON.stringify({ success: false, messages: [], message: 'Sender not found' });
+    }
 
     const userMessages = await MongoDB.findOne('phone_messages', { citizenId: senderId });
     if (!userMessages) {
-        return { success: false, messages: [], message: 'No messages found' };
+        return JSON.stringify({ success: false, messages: [], message: 'No messages found' });
     }
 
-    const conversation = userMessages.messages.find((msg: { type: string, phoneNumber?: string }) => 
+    const conversation = userMessages.messages.find((msg: { type: string, phoneNumber?: string }) =>
         msg.type === 'private' && msg.phoneNumber === phoneNumber);
-    return { 
-        success: true, 
-        messages: conversation?.messages || [], 
-        avatar: conversation?.avatar || null // Include avatar
-    };
+
+    if (!conversation) {
+        return JSON.stringify({ success: false, messages: [], message: 'Conversation not found' });
+    }
+
+    // Sort messages by timestamp (descending) and paginate
+    const sortedMessages = conversation.messages.sort((a: any, b: any) =>
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+    );
+
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const paginatedMessages = sortedMessages.slice(startIndex, endIndex);
+    const hasMore = endIndex < sortedMessages.length;
+
+    return JSON.stringify({
+        success: true,
+        messages: paginatedMessages,
+        avatar: conversation.avatar || null,
+        name: conversation.name,
+        hasMore: hasMore,
+        totalMessages: sortedMessages.length
+    });
 });
 
 onClientCallback('phone_message:getMessageChannelsandLastMessages', async (client) => {
@@ -486,7 +532,7 @@ onClientCallback('phone_message:getMessageChannelsandLastMessages', async (clien
         return { success: false, message: 'No messages found' };
     }
 
-    const channels = userMessages.messages.map((msg: { type: string, name: string, phoneNumber?: string, avatar:string, groupId?: string, members?: string[], memberPhoneNumbers?: string[], messages: any[] }) => {
+    const channels = userMessages.messages.map((msg: { type: string, name: string, phoneNumber?: string, avatar: string, groupId?: string, members?: string[], memberPhoneNumbers?: string[], messages: any[] }) => {
         return {
             type: msg.type,
             name: msg.name,
@@ -551,7 +597,7 @@ onClientCallback('phone_message:getMessageStats', async (client, data: string) =
     }
 
     if (userMessages.deletedMessages) {
-        recentlyDeleted = userMessages.deletedMessages.filter((deleted:any) => 
+        recentlyDeleted = userMessages.deletedMessages.filter((deleted: any) =>
             deleted.timestamp > thirtyDaysAgo
         ).length;
     }
@@ -583,10 +629,10 @@ onClientCallback('phone_message:deleteMessage', async (client, data: string) => 
 
     let conversation;
     if (conversationType === 'private') {
-        conversation = userMessages.messages.find((msg: { type: string, phoneNumber?: string }) => 
+        conversation = userMessages.messages.find((msg: { type: string, phoneNumber?: string }) =>
             msg.type === 'private' && msg.phoneNumber === phoneNumber);
     } else if (conversationType === 'group') {
-        conversation = userMessages.messages.find((msg: { type: string, groupId?: string }) => 
+        conversation = userMessages.messages.find((msg: { type: string, groupId?: string }) =>
             msg.type === 'group' && msg.groupId === groupId);
     }
 
@@ -610,7 +656,7 @@ onClientCallback('phone_message:deleteMessage', async (client, data: string) => 
     });
 
     const thirtyDaysAgo = new Date(new Date().getTime() - 30 * 24 * 60 * 60 * 1000);
-    userMessages.deletedMessages = userMessages.deletedMessages.filter((deleted:any) => 
+    userMessages.deletedMessages = userMessages.deletedMessages.filter((deleted: any) =>
         deleted.timestamp > thirtyDaysAgo
     );
 
