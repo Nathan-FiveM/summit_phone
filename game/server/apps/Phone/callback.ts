@@ -118,7 +118,7 @@ onClientCallback("summit_phone:server:call", async (source: number, data: string
 
   const callId = callManager.createCall(hostParticipant);
 
-  callManager.createRingTone(targetSource, 'https://cdn.summitrp.gg/uploads/server/phone/sounds/iPhoneXTrap.mp3');
+  callManager.createRingTone(targetSource, String(Settings.ringtone.get(targetCitizenId)?.current));
   callManager.addPendingInvitation(callId, targetSource, () => {
     emitNet("phone:addnotiFication", source, JSON.stringify({
       id: generateUUid(),
@@ -339,7 +339,7 @@ onClientCallback("summit_phone:server:addPlayerToCall", async (source: number, d
     }));
     return false;
   }
-  callManager.createRingTone(targetSource, 'https://cdn.summitrp.gg/uploads/server/phone/sounds/iPhoneXTrap.mp3');
+  callManager.createRingTone(targetSource, String(Settings.ringtone.get(targetCitizenId)?.current));
   callManager.addPendingInvitation(Number(callId), targetSource, () => {
     emitNet("phone:addnotiFication", source, JSON.stringify({
       id: generateUUid(),

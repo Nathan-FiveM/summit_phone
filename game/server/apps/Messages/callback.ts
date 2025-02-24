@@ -13,6 +13,7 @@ type databaseSchema = {
         groupId?: string,
         members?: string[],
         memberPhoneNumbers?: string[],
+        creatorId?: string, // New field for group creator (admin)
         messages: {
             message: string,
             read: boolean,
@@ -34,7 +35,7 @@ onClientCallback('phone_message:sendMessage', async (client, data: string) => {
     let firstMessage = false;
 
     if (!senderId) {
-        return { success: false, message: 'Sender not found' };
+        return JSON.stringify({ success: false, message: 'Sender not found' });
     }
 
     let userMessages = await MongoDB.findOne('phone_messages', { citizenId: senderId });
@@ -69,7 +70,7 @@ onClientCallback('phone_message:sendMessage', async (client, data: string) => {
         conversation = userMessages.messages.find((msg: { type: string, groupId?: string }) =>
             msg.type === 'group' && msg.groupId === groupId);
         if (!conversation) {
-            return { success: false, message: 'Group not found for sender' };
+            return JSON.stringify({ success: false, message: 'Group not found for sender' });
         }
     }
 
@@ -81,7 +82,7 @@ onClientCallback('phone_message:sendMessage', async (client, data: string) => {
         read: true,
         page: nextPage,
         timestamp: new Date().toISOString(),
-        senderId: senderId,
+        senderId: senderPhoneNumber,
         attachments: messageData.attachments || []
     };
 
@@ -101,6 +102,15 @@ onClientCallback('phone_message:sendMessage', async (client, data: string) => {
             const isBlocked = targetMessages?.blockedNumbers?.includes(senderPhoneNumber);
             if (!isBlocked) {
                 await sendToRecipient(targetCitizenId, senderPhoneNumber, messageData, 'private', phoneNumber);
+                const CVXCS = await Utils.GetSourceFromCitizenId(targetCitizenId);
+                emitNet("phone:addnotiFication", CVXCS, JSON.stringify({
+                    id: generateUUid(),
+                    title: "Messages",
+                    description: "You have a new message",
+                    app: "message",
+                    timeout: 2000,
+                }));
+                emitNet('phone_messages:client:updateMessages', CVXCS, JSON.stringify(newMessage));
             } else {
                 console.log(`Sender ${senderPhoneNumber} is blocked by ${phoneNumber}. Message saved only for sender.`);
             }
@@ -110,7 +120,7 @@ onClientCallback('phone_message:sendMessage', async (client, data: string) => {
     } else if (type === 'group') {
         const groupConversation = userMessages.messages.find((msg: { groupId?: string }) => msg.groupId === groupId);
         if (!groupConversation?.members) {
-            return { success: false, message: 'Group members not found' };
+            return JSON.stringify({ success: false, message: 'Group members not found' });
         }
         for (const memberId of groupConversation.members) {
             if (memberId !== senderId) {
@@ -122,11 +132,19 @@ onClientCallback('phone_message:sendMessage', async (client, data: string) => {
                 } else {
                     console.log(`Sender ${senderPhoneNumber} is blocked by group member ${memberPhoneNumber}.`);
                 }
+                emitNet("phone:addnotiFication", await Utils.GetSourceFromCitizenId(memberId), JSON.stringify({
+                    id: generateUUid(),
+                    title: "Messages",
+                    description: "You have a new message",
+                    app: "message",
+                    timeout: 2000,
+                }));
+                emitNet('phone_messages:client:updateMessages', await Utils.GetSourceFromCitizenId(memberId), JSON.stringify(newMessage));
             }
         }
     }
 
-    return { success: true };
+    return JSON.stringify({ success: true });
 });
 
 // Helper function to send messages to recipients (unchanged)
@@ -182,6 +200,7 @@ async function sendToRecipient(
                 groupId: groupId,
                 members: group.members,
                 memberPhoneNumbers: group.memberPhoneNumbers,
+                creatorId: group.creatorId, // Copy creatorId
                 messages: []
             };
             targetMessages.messages.push(targetConversation);
@@ -215,7 +234,7 @@ onClientCallback('phone_message:createGroup', async (client, data: string) => {
     const senderPhoneNumber = await Utils.GetPhoneNumberByCitizenId(senderId);
 
     if (!senderId) {
-        return { success: false, message: 'Sender not found' };
+        return JSON.stringify({ success: false, message: 'Sender not found' });
     }
 
     const memberIds = [senderId];
@@ -232,14 +251,22 @@ onClientCallback('phone_message:createGroup', async (client, data: string) => {
     const groupConversation = {
         type: 'group',
         name: groupName,
-        avatar: avatar || null, // Use provided avatar or default to null
+        avatar: avatar || '',
         groupId: groupId,
         members: memberIds,
         memberPhoneNumbers: phoneNumbers,
+        creatorId: senderId, // Set the creator as the sender
         messages: []
     };
 
     let userMessages = await MongoDB.findOne('phone_messages', { citizenId: senderId });
+    emitNet("phone:addnotiFication", client, JSON.stringify({
+        id: generateUUid(),
+        title: "Messages",
+        description: "You created new Group",
+        app: "message",
+        timeout: 2000,
+    }));
     if (!userMessages) {
         userMessages = {
             _id: generateUUid(),
@@ -257,6 +284,13 @@ onClientCallback('phone_message:createGroup', async (client, data: string) => {
     for (const memberId of memberIds) {
         if (memberId !== senderId) {
             let memberMessages = await MongoDB.findOne('phone_messages', { citizenId: memberId });
+            emitNet("phone:addnotiFication", await Utils.GetSourceFromCitizenId(memberId), JSON.stringify({
+                id: generateUUid(),
+                title: "Messages",
+                description: "You you have been added to a new group",
+                app: "message",
+                timeout: 2000,
+            }));
             if (!memberMessages) {
                 memberMessages = {
                     _id: generateUUid(),
@@ -273,15 +307,15 @@ onClientCallback('phone_message:createGroup', async (client, data: string) => {
         }
     }
 
-    return { success: true, groupId };
+    return JSON.stringify({ success: true, groupId });
 });
 
 onClientCallback('phone_message:toggleBlock', async (client, data: string) => {
-    const { phoneNumber, action } = JSON.parse(data);
+    const { phoneNumber } = JSON.parse(data);
     const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
 
     if (!senderId) {
-        return { success: false, message: 'Sender not found' };
+        return JSON.stringify({ success: false, message: 'Sender not found' });
     }
 
     let userMessages = await MongoDB.findOne('phone_messages', { citizenId: senderId });
@@ -299,21 +333,26 @@ onClientCallback('phone_message:toggleBlock', async (client, data: string) => {
         userMessages.blockedNumbers = [];
     }
 
-    if (action === 'block') {
-        if (!userMessages.blockedNumbers.includes(phoneNumber)) {
-            userMessages.blockedNumbers.push(phoneNumber);
-        } else {
-            return { success: false, message: 'Number already blocked' };
-        }
-    } else if (action === 'unblock') {
+    const isBlocked = userMessages.blockedNumbers.includes(phoneNumber);
+    if (isBlocked) {
         const index = userMessages.blockedNumbers.indexOf(phoneNumber);
-        if (index !== -1) {
-            userMessages.blockedNumbers.splice(index, 1);
-        } else {
-            return { success: false, message: 'Number not blocked' };
-        }
+        userMessages.blockedNumbers.splice(index, 1);
+        emitNet("phone:addNotification", client, JSON.stringify({
+            id: generateUUid(),
+            title: "System",
+            description: "Number unblocked",
+            app: "message",
+            timeout: 2000,
+        }));
     } else {
-        return { success: false, message: 'Invalid action' };
+        userMessages.blockedNumbers.push(phoneNumber);
+        emitNet("phone:addNotification", client, JSON.stringify({
+            id: generateUUid(),
+            title: "System",
+            description: "Number blocked",
+            app: "message",
+            timeout: 2000,
+        }));
     }
 
     if (userMessages.messages.length === 0 && userMessages.blockedNumbers.length === 0 && !userMessages.deletedMessages?.length) {
@@ -322,53 +361,88 @@ onClientCallback('phone_message:toggleBlock', async (client, data: string) => {
         await MongoDB.updateOne('phone_messages', { _id: userMessages._id }, userMessages);
     }
 
-    return { success: true };
+    return JSON.stringify({ success: true });
 });
 
 onClientCallback('phone_message:addMember', async (client, data: string) => {
-    const { groupId, phoneNumber } = JSON.parse(data);
-    const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
+    try {
+        const { groupId, phoneNumber } = JSON.parse(data);
+        const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
 
-    const newMemberId = await Utils.GetCitizenIdByPhoneNumber(phoneNumber);
-    if (!newMemberId) {
-        return { success: false, message: 'Member not found' };
-    }
-
-    let userMessages = await MongoDB.findOne('phone_messages', { citizenId: senderId });
-    const group = userMessages?.messages.find((msg: { groupId?: string }) => msg.groupId === groupId);
-    if (!group || !group.members) {
-        return { success: false, message: 'Group not found or unauthorized' };
-    }
-
-    if (group.members.includes(newMemberId)) {
-        return { success: false, message: 'Member already in group' };
-    }
-
-    group.members.push(newMemberId);
-    group.memberPhoneNumbers.push(phoneNumber);
-
-    for (const memberId of group.members) {
-        let memberMessages = await MongoDB.findOne('phone_messages', { citizenId: memberId });
-        const memberGroup = memberMessages?.messages.find((msg: { groupId?: string }) => msg.groupId === groupId);
-        if (memberGroup) {
-            memberGroup.members = group.members;
-            memberGroup.memberPhoneNumbers = group.memberPhoneNumbers;
-            memberGroup.avatar = group.avatar; // Ensure avatar is copied
-            await MongoDB.updateOne('phone_messages', { _id: memberMessages._id }, memberMessages);
-        } else if (memberId === newMemberId) {
-            memberMessages = memberMessages || {
-                _id: generateUUid(),
-                citizenId: memberId,
-                blockedNumbers: [],
-                deletedMessages: [],
-                messages: []
-            };
-            memberMessages.messages.push({ ...group });
-            await MongoDB.insertOne('phone_messages', memberMessages);
+        if (!senderId) {
+            return JSON.stringify({ success: false, message: 'Sender not found' });
         }
-    }
 
-    return { success: true };
+        // Validate the new member
+        const newMemberId = await Utils.GetCitizenIdByPhoneNumber(phoneNumber);
+        if (!newMemberId) {
+            return JSON.stringify({ success: false, message: 'Member not found' });
+        }
+
+        // Fetch the sender's messages to find the group
+        let userMessages = await MongoDB.findOne('phone_messages', { citizenId: senderId });
+        if (!userMessages) {
+            return JSON.stringify({ success: false, message: 'Messages not found for sender' });
+        }
+
+        const group = userMessages.messages.find((msg: { groupId?: string, members?: string[], creatorId?: string }) => msg.groupId === groupId);
+        if (!group || !group.members) {
+            return JSON.stringify({ success: false, message: 'Group not found or unauthorized' });
+        }
+
+        // Check if the new member is already in the group
+        if (group.members.includes(newMemberId)) {
+            return JSON.stringify({ success: false, message: 'Member already in group' });
+        }
+
+        // Add the new member to the group
+        group.members.push(newMemberId);
+        group.memberPhoneNumbers.push(phoneNumber);
+
+        // Update all existing members' group data, including the sender and new member
+        for (const memberId of group.members) {
+            let memberMessages = await MongoDB.findOne('phone_messages', { citizenId: memberId });
+
+            if (!memberMessages) {
+                // If the member is new (no messages document), create one
+                memberMessages = {
+                    _id: generateUUid(),
+                    citizenId: memberId,
+                    blockedNumbers: [],
+                    deletedMessages: [],
+                    messages: []
+                };
+            }
+
+            const memberGroup = memberMessages.messages.find((msg: { groupId?: string }) => msg.groupId === groupId);
+            if (memberGroup) {
+                // Update existing group data for this member
+                memberGroup.members = group.members;
+                memberGroup.memberPhoneNumbers = group.memberPhoneNumbers;
+                memberGroup.avatar = group.avatar; // Ensure avatar is copied
+                memberGroup.creatorId = group.creatorId; // Ensure creatorId is copied
+            } else {
+                // Add the group to this member's messages if it doesn’t exist
+                memberMessages.messages.push({ ...group });
+            }
+
+            // Save or update the member's messages
+            if (memberMessages._id) {
+                await MongoDB.updateOne('phone_messages', { _id: memberMessages._id }, memberMessages)
+                    .then(() => console.log(`Updated group data for member ${memberId}`))
+                    .catch((error: any) => console.error(`Failed to update group data for member ${memberId}:`, error));
+            } else {
+                await MongoDB.insertOne('phone_messages', memberMessages)
+                    .then(() => console.log(`Created messages for new member ${memberId}`))
+                    .catch((error: any) => console.error(`Failed to create messages for new member ${memberId}:`, error));
+            }
+        }
+
+        return JSON.stringify({ success: true });
+    } catch (error) {
+        console.error('Error adding member to group:', error);
+        return JSON.stringify({ success: false, message: 'An error occurred while adding the member to the group' });
+    }
 });
 
 onClientCallback('phone_message:removeMember', async (client, data: string) => {
@@ -377,30 +451,31 @@ onClientCallback('phone_message:removeMember', async (client, data: string) => {
 
     const memberIdToRemove = await Utils.GetCitizenIdByPhoneNumber(phoneNumber);
     if (!memberIdToRemove) {
-        return { success: false, message: 'Member not found' };
+        return JSON.stringify({ success: false, message: 'Member not found' });
     }
 
     let userMessages = await MongoDB.findOne('phone_messages', { citizenId: senderId });
     const group = userMessages?.messages.find((msg: { groupId?: string }) => msg.groupId === groupId);
     if (!group || !group.members) {
-        return { success: false, message: 'Group not found or unauthorized' };
+        return JSON.stringify({ success: false, message: 'Group not found or unauthorized' });
     }
 
     const memberIndex = group.members.indexOf(memberIdToRemove);
     if (memberIndex === -1) {
-        return { success: false, message: 'Member not in group' };
+        return JSON.stringify({ success: false, message: 'Member not in group' });
     }
 
     group.members.splice(memberIndex, 1);
     group.memberPhoneNumbers.splice(memberIndex, 1);
 
     for (const memberId of group.members) {
-        const memberMessages = await MongoDB.findOne('phone_messages', { citizenId: memberId });
+        const memberMessages = await MongoDB.findOne('phone_messages', { citizenId: memberId });        
         const memberGroup = memberMessages?.messages.find((msg: { groupId?: string }) => msg.groupId === groupId);
         if (memberGroup) {
             memberGroup.members = group.members;
             memberGroup.memberPhoneNumbers = group.memberPhoneNumbers;
             memberGroup.avatar = group.avatar; // Ensure avatar is copied
+            memberGroup.creatorId = group.creatorId; // Ensure creatorId is copied
             await MongoDB.updateOne('phone_messages', { _id: memberMessages._id }, memberMessages);
         }
     }
@@ -414,21 +489,32 @@ onClientCallback('phone_message:removeMember', async (client, data: string) => {
         }
     }
 
-    return { success: true };
+    return JSON.stringify({ success: true });
 });
 
-onClientCallback('phone_message:deleteGroup', async (client, data: string) => {
-    const { groupId } = JSON.parse(data);
+onClientCallback('phone_message:deleteGroup', async (client, groupId: string) => {
     const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
 
     let userMessages = await MongoDB.findOne('phone_messages', { citizenId: senderId });
     const group = userMessages?.messages.find((msg: { groupId?: string }) => msg.groupId === groupId);
     if (!group || !group.members) {
-        return { success: false, message: 'Group not found or unauthorized' };
+        return JSON.stringify({ success: false, message: 'Group not found or unauthorized' });
+    }
+
+    // Check if the sender is the group creator (admin)
+    if (group.creatorId !== senderId) {
+        return JSON.stringify({ success: false, message: 'Only the group creator can delete the group' });
     }
 
     for (const memberId of group.members) {
         const memberMessages = await MongoDB.findOne('phone_messages', { citizenId: memberId });
+        emitNet("phone:addnotiFication", await Utils.GetSourceFromCitizenId(memberId), JSON.stringify({
+            id: generateUUid(),
+            title: "Messages",
+            description: "Group has been deleted",
+            app: "message",
+            timeout: 2000,
+        }));
         if (memberMessages) {
             const groupIndex = memberMessages.messages.findIndex((msg: { groupId?: string }) => msg.groupId === groupId);
             if (groupIndex !== -1) {
@@ -438,7 +524,7 @@ onClientCallback('phone_message:deleteGroup', async (client, data: string) => {
         }
     }
 
-    return { success: true };
+    return JSON.stringify({ success: true });
 });
 
 onClientCallback('phone_message:getGroupMessages', async (client, data: string) => {
@@ -479,7 +565,8 @@ onClientCallback('phone_message:getGroupMessages', async (client, data: string) 
         name: conversation.name,
         avatar: conversation.avatar || null,
         hasMore: hasMore,
-        totalMessages: sortedMessages.length
+        totalMessages: sortedMessages.length,
+        creatorId: conversation.creatorId // Include creatorId for UI or verification if needed
     });
 });
 
@@ -508,7 +595,6 @@ onClientCallback('phone_message:getPrivateMessages', async (client, data: string
         new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
     );
 
-
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + limit;
     const paginatedMessages = sortedMessages.slice(startIndex, endIndex);
@@ -525,34 +611,74 @@ onClientCallback('phone_message:getPrivateMessages', async (client, data: string
 });
 
 onClientCallback('phone_message:getMessageChannelsandLastMessages', async (client) => {
-    const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
+    try {
+        const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
 
-    const userMessages = await MongoDB.findOne('phone_messages', { citizenId: senderId });
-    if (!userMessages) {
-        return { success: false, message: 'No messages found' };
+        if (!senderId) {
+            return JSON.stringify({ success: false, message: 'Sender not found' });
+        }
+
+        const userMessages = await MongoDB.findOne('phone_messages', { citizenId: senderId });
+        if (!userMessages) {
+            return JSON.stringify({ success: false, message: 'No messages found' });
+        }
+
+        const channels = userMessages.messages.map(async (msg: { type: string, name: string, phoneNumber?: string, avatar: string, groupId?: string, members?: string[], memberPhoneNumbers?: string[], messages: any[], creatorId?: string }) => {
+            let updatedName = msg.name;
+            let updatedMemberPhoneNumbers = msg.memberPhoneNumbers || [];
+
+            // Handle private conversations
+            if (msg.type === 'private' && msg.phoneNumber) {
+                const newContactName = await Utils.GetContactNameByNumber(msg.phoneNumber, senderId) || `Unknown (${msg.phoneNumber})`;
+                if (newContactName !== msg.name) {
+                    // Update the name in the database if it has changed
+                    const conversation = userMessages.messages.find((m: any) => m.type === 'private' && m.phoneNumber === msg.phoneNumber);
+                    if (conversation) {
+                        conversation.name = newContactName;
+                        await MongoDB.updateOne('phone_messages', { _id: userMessages._id }, userMessages)
+                            .then(() => console.log(`Updated contact name for ${msg.phoneNumber} to ${newContactName}`))
+                            .catch((error: any) => console.error(`Failed to update contact name for ${msg.phoneNumber}:`, error));
+                    }
+                    updatedName = newContactName;
+                }
+            }
+            // Handle group conversations
+            else if (msg.type === 'group' && msg.memberPhoneNumbers && msg.memberPhoneNumbers.length > 0) {
+                for (let i = 0; i < msg.memberPhoneNumbers.length; i++) {
+                    const phone = msg.memberPhoneNumbers[i];
+                    const newContactName = await Utils.GetContactNameByNumber(phone, senderId) || `Unknown (${phone})`;
+                    // You could update individual member names here if needed, but for group name, we keep it as-is unless specified
+                    // Optionally, you could aggregate member names into the group name if desired
+                }
+            }
+
+            return {
+                type: msg.type,
+                name: updatedName,
+                phoneNumber: msg.phoneNumber,
+                groupId: msg.groupId,
+                members: msg.members,
+                avatar: msg.avatar,
+                memberPhoneNumbers: updatedMemberPhoneNumbers,
+                lastMessage: msg.messages[msg.messages.length - 1],
+                creatorId: msg.creatorId // Include creatorId
+            };
+        });
+
+        // Wait for all promises to resolve
+        const resolvedChannels = await Promise.all(channels);
+
+        return JSON.stringify({ success: true, channels: resolvedChannels });
+    } catch (error) {
+        console.error('Error fetching message channels and last messages:', error);
+        return JSON.stringify({ success: false, message: 'An error occurred while fetching message channels' });
     }
-
-    const channels = userMessages.messages.map((msg: { type: string, name: string, phoneNumber?: string, avatar: string, groupId?: string, members?: string[], memberPhoneNumbers?: string[], messages: any[] }) => {
-        return {
-            type: msg.type,
-            name: msg.name,
-            phoneNumber: msg.phoneNumber,
-            groupId: msg.groupId,
-            members: msg.members,
-            avatar: msg.avatar,
-            memberPhoneNumbers: msg.memberPhoneNumbers,
-            lastMessage: msg.messages[msg.messages.length - 1]
-        };
-    });
-
-    return JSON.stringify({ success: true, channels });
 });
-
 onClientCallback('phone_message:getMessageStats', async (client, data: string) => {
     const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
 
     if (!senderId) {
-        return { success: false, message: 'Sender not found' };
+        return JSON.stringify({ success: false, message: 'Sender not found' });
     }
 
     let userMessages = await MongoDB.findOne('phone_messages', { citizenId: senderId });
@@ -619,12 +745,12 @@ onClientCallback('phone_message:deleteMessage', async (client, data: string) => 
     const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
 
     if (!senderId) {
-        return { success: false, message: 'Sender not found' };
+        return JSON.stringify({ success: false, message: 'Sender not found' });
     }
 
     let userMessages = await MongoDB.findOne('phone_messages', { citizenId: senderId });
     if (!userMessages) {
-        return { success: false, message: 'Messages not found' };
+        return JSON.stringify({ success: false, message: 'Messages not found' });
     }
 
     let conversation;
@@ -637,7 +763,7 @@ onClientCallback('phone_message:deleteMessage', async (client, data: string) => 
     }
 
     if (!conversation || messageIndex < 0 || messageIndex >= conversation.messages.length) {
-        return { success: false, message: 'Message not found' };
+        return JSON.stringify({ success: false, message: 'Message not found' });
     }
 
     const deletedMessage = conversation.messages.splice(messageIndex, 1)[0];
@@ -662,5 +788,116 @@ onClientCallback('phone_message:deleteMessage', async (client, data: string) => 
 
     await MongoDB.updateOne('phone_messages', { _id: userMessages._id }, userMessages);
 
-    return { success: true };
+    return JSON.stringify({ success: true });
+});
+
+onClientCallback('phone_message:updateGroupName', async (client, data: string) => {
+    try {
+        const { groupId, newName } = JSON.parse(data);
+        const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
+
+        if (!senderId) {
+            return JSON.stringify({ success: false, message: 'Sender not found' });
+        }
+
+        let userMessages = await MongoDB.findOne('phone_messages', { citizenId: senderId });
+        if (!userMessages) {
+            return JSON.stringify({ success: false, message: 'Messages not found for sender' });
+        }
+
+        const group = userMessages.messages.find((msg: { groupId?: string, creatorId?: string }) => msg.groupId === groupId);
+        if (!group) {
+            return JSON.stringify({ success: false, message: 'Group not found' });
+        }
+
+        if (group.creatorId !== senderId) {
+            return JSON.stringify({ success: false, message: 'Only the group creator can update the group name' });
+        }
+
+        group.name = newName;
+
+        for (const memberId of group.members || []) {
+            const memberMessages = await MongoDB.findOne('phone_messages', { citizenId: memberId });
+            if (memberMessages) {
+                const memberGroup = memberMessages.messages.find((msg: { groupId?: string }) => msg.groupId === groupId);
+                if (memberGroup) {
+                    memberGroup.name = newName;
+                    await MongoDB.updateOne('phone_messages', { _id: memberMessages._id }, memberMessages)
+                        .then(() => console.log(`Updated group name for member ${memberId}`))
+                        .catch((error: any) => console.error(`Failed to update group name for member ${memberId}:`, error));
+                } else {
+                    console.warn(`Group not found in member ${memberId}'s messages`);
+                }
+            } else {
+                console.warn(`No messages found for member ${memberId}`);
+            }
+        }
+
+        await MongoDB.updateOne('phone_messages', { _id: userMessages._id }, userMessages)
+            .then(() => console.log(`Updated group name for sender ${senderId}`))
+            .catch((error: any) => console.error(`Failed to update group name for sender ${senderId}:`, error));
+
+        return JSON.stringify({ success: true });
+    } catch (error) {
+        console.error('Error updating group name:', error);
+        return JSON.stringify({ success: false, message: 'An error occurred while updating the group name' });
+    }
+});
+
+onClientCallback('phone_message:updateGroupAvatar', async (client, data: string) => {
+    try {
+        const { groupId, newAvatar } = JSON.parse(data);
+        const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
+
+        if (!senderId) {
+            return JSON.stringify({ success: false, message: 'Sender not found' });
+        }
+
+        // Fetch the sender's messages to find the group
+        let userMessages = await MongoDB.findOne('phone_messages', { citizenId: senderId });
+        if (!userMessages) {
+            return JSON.stringify({ success: false, message: 'Messages not found for sender' });
+        }
+
+        const group = userMessages.messages.find((msg: { groupId?: string, creatorId?: string }) => msg.groupId === groupId);
+        if (!group) {
+            return JSON.stringify({ success: false, message: 'Group not found' });
+        }
+
+        // Check if the sender is the group creator (admin)
+        if (group.creatorId !== senderId) {
+            return JSON.stringify({ success: false, message: 'Only the group creator can update the group avatar' });
+        }
+
+        // Update the group avatar for the sender
+        group.avatar = newAvatar;
+
+        // Update the group avatar for all members
+        for (const memberId of group.members || []) {
+            const memberMessages = await MongoDB.findOne('phone_messages', { citizenId: memberId });
+            if (memberMessages) {
+                const memberGroup = memberMessages.messages.find((msg: { groupId?: string }) => msg.groupId === groupId);
+                if (memberGroup) {
+                    memberGroup.avatar = newAvatar;
+                    await MongoDB.updateOne('phone_messages', { _id: memberMessages._id }, memberMessages)
+                        .then(() => console.log(`Updated group avatar for member ${memberId}`))
+                        .catch((error: any) => console.error(`Failed to update group avatar for member ${memberId}:`, error));
+                } else {
+                    console.warn(`Group not found in member ${memberId}'s messages`);
+                }
+            } else {
+                console.warn(`No messages found for member ${memberId}`);
+            }
+        }
+
+        // Update the sender's messages
+        await MongoDB.updateOne('phone_messages', { _id: userMessages._id }, userMessages)
+            .then(() => console.log(`Updated group avatar for sender ${senderId}`))
+            .catch((error: any) => console.error(`Failed to update group avatar for sender ${senderId}:`, error));
+
+        return JSON.stringify({ success: true });
+    } catch (error) {
+        console.error('Error updating group avatar:', error);
+        return JSON.stringify({ success: false, message: 'An error occurred while updating the group avatar' });
+    }
 });

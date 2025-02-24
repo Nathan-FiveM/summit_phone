@@ -48,3 +48,16 @@ on('__cfx_nui:getPhonePlayerCard', async (data: any, cb: Function) => {
     const response = await triggerServerCallback('getPhonePlayerCard', 1)
     cb(response);
 });
+
+RegisterNuiCallbackType('getStreamerMode');
+on('__cfx_nui:getStreamerMode', async (data: any, cb: Function) => {
+    const res = GetResourceKvpString('streamerMode');
+    cb(res);
+});
+
+RegisterNuiCallbackType('setStreamerMode');
+on('__cfx_nui:setStreamerMode', async (data: boolean, cb: Function) => {
+    SetResourceKvp('streamerMode', data.toString());
+    exports['summit_soundhandler'].StreamerMode(data);
+    cb(true);
+});

@@ -127,6 +127,11 @@ class Util {
         return contact.image;
     };
 
+    async GetSourceFromCitizenId(citizenId: string) {
+        const source = await exports['qb-core'].GetPlayerByCitizenId(citizenId);
+        return source.PlayerData.source;
+    }
+
     async HasPhone(playerSource: number) {
         const phoneList: string[] = [
             'blue_phone',

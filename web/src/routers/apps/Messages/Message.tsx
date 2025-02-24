@@ -10,19 +10,19 @@ export default function Message() {
     const [messageStats, setMessageStats] = useState<{
         success: boolean,
         stats: {
-            allMessages: number, 
-            knownMessages: number, 
-            unknownMessages: number, 
-            unreadMessages: number, 
+            allMessages: number,
+            knownMessages: number,
+            unknownMessages: number,
+            unreadMessages: number,
             recentlyDeleted: number
         }
     }>({
         success: false,
         stats: {
-            allMessages: 0, 
-            knownMessages: 0, 
-            unknownMessages: 0, 
-            unreadMessages: 0, 
+            allMessages: 0,
+            knownMessages: 0,
+            unknownMessages: 0,
+            unreadMessages: 0,
             recentlyDeleted: 0
         }
     });
@@ -33,10 +33,10 @@ export default function Message() {
             const parsedData: {
                 success: boolean,
                 stats: {
-                    allMessages: number, 
-                    knownMessages: number, 
-                    unknownMessages: number, 
-                    unreadMessages: number, 
+                    allMessages: number,
+                    knownMessages: number,
+                    unknownMessages: number,
+                    unreadMessages: number,
                     recentlyDeleted: number
                 }
             } = JSON.parse(res);
@@ -82,7 +82,7 @@ export default function Message() {
                             }} onClick={() => {
                                 const data = {
                                     ...location.page,
-                                    messages: 'all'
+                                    messages: 'm/all'
                                 }
                                 setLocation({
                                     app: 'message',
@@ -109,7 +109,7 @@ export default function Message() {
                             }} onClick={() => {
                                 const data = {
                                     ...location.page,
-                                    messages: 'known'
+                                    messages: 'm/known'
                                 }
                                 setLocation({
                                     app: 'message',
@@ -138,7 +138,7 @@ export default function Message() {
                             }} onClick={() => {
                                 const data = {
                                     ...location.page,
-                                    messages: 'unknown'
+                                    messages: 'm/unknown'
                                 }
                                 setLocation({
                                     app: 'message',
@@ -164,7 +164,7 @@ export default function Message() {
                             }} onClick={() => {
                                 const data = {
                                     ...location.page,
-                                    messages: 'unread'
+                                    messages: 'm/unread'
                                 }
                                 setLocation({
                                     app: 'message',
@@ -173,6 +173,51 @@ export default function Message() {
                             }}>
                                 <div className="textX">{messageStats.stats.unreadMessages}</div>
                                 <svg width="0.46875vw" height="0.6770833333333334vw" viewBox="0 0 6 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M1 0.5L4.58662 4.53495C4.82237 4.80017 4.82237 5.19983 4.58662 5.46505L1 9.5" stroke="white" strokeOpacity="0.4" strokeWidth="0.7" strokeLinecap="round" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style={{
+                    display: 'flex',
+                    width: '14.895833333333334vw',
+                    height: '1.7vw',
+                    padding: '0.3645833333333333vw 0px',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    gap: '0.46875vw',
+                    flexShrink: 0,
+                    marginTop: '0.9375vw',
+                    borderRadius: '0.3125vw',
+                    background: '#1C1C1E'
+                }}>
+                    <div className="Xsadsasa">
+                        <svg width="1.0416666666666667vw" height="1.0416666666666667vw" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19.8048 0.252418C19.7345 0.175226 19.6493 0.113079 19.5544 0.069733C19.4594 0.0263867 19.3567 0.00274094 19.2524 0.000224464C19.148 -0.00229201 19.0442 0.016373 18.9473 0.0550919C18.8504 0.0938107 18.7623 0.151779 18.6884 0.225495L18.0937 0.817321C18.0216 0.889443 17.9812 0.987234 17.9812 1.0892C17.9812 1.19116 18.0216 1.28895 18.0937 1.36107L18.6389 1.9053C18.6746 1.94121 18.7171 1.9697 18.7639 1.98914C18.8107 2.00858 18.8608 2.01859 18.9115 2.01859C18.9622 2.01859 19.0123 2.00858 19.0591 1.98914C19.1059 1.9697 19.1484 1.94121 19.1841 1.9053L19.7639 1.32838C20.0572 1.03559 20.0846 0.558668 19.8048 0.252418Z" fill="#0A84FF" />
+                            <path d="M16.8913 2.01924L8.21248 10.6827C8.15986 10.7351 8.12162 10.8002 8.10143 10.8716L7.69999 12.0673C7.69037 12.0998 7.68969 12.1342 7.69801 12.167C7.70634 12.1998 7.72336 12.2297 7.74729 12.2537C7.77122 12.2776 7.80116 12.2946 7.83396 12.3029C7.86676 12.3113 7.9012 12.3106 7.93364 12.301L9.12835 11.8995C9.19981 11.8793 9.26488 11.8411 9.31729 11.7885L17.9807 3.10867C18.0609 3.02766 18.1058 2.9183 18.1058 2.80434C18.1058 2.69038 18.0609 2.58102 17.9807 2.50001L17.5024 2.01924C17.4213 1.93836 17.3114 1.89294 17.1968 1.89294C17.0823 1.89294 16.9724 1.93836 16.8913 2.01924Z" fill="#0A84FF" />
+                            <path d="M16.2663 7.00289L10.4062 12.8745C10.1797 13.1016 9.90137 13.27 9.59517 13.3654L8.34998 13.7822C8.05447 13.8657 7.74205 13.8688 7.44491 13.7913C7.14778 13.7139 6.87668 13.5585 6.65954 13.3414C6.44241 13.1243 6.2871 12.8532 6.20962 12.556C6.13214 12.2589 6.13529 11.9465 6.21874 11.651L6.63556 10.4058C6.73063 10.0997 6.89877 9.82131 7.12547 9.59472L12.9971 3.73367C13.0509 3.6799 13.0876 3.61139 13.1025 3.53679C13.1173 3.46218 13.1098 3.38484 13.0807 3.31455C13.0516 3.24425 13.0023 3.18415 12.9391 3.14186C12.8759 3.09956 12.8015 3.07697 12.7255 3.07693H2.6923C1.97826 3.07693 1.29346 3.36059 0.788557 3.86549C0.283653 4.3704 0 5.0552 0 5.76924V17.3077C0 18.0217 0.283653 18.7065 0.788557 19.2114C1.29346 19.7163 1.97826 20 2.6923 20H14.2307C14.9448 20 15.6296 19.7163 16.1345 19.2114C16.6394 18.7065 16.923 18.0217 16.923 17.3077V7.27453C16.923 7.19846 16.9004 7.1241 16.8581 7.06087C16.8158 6.99764 16.7557 6.94837 16.6854 6.91929C16.6151 6.89022 16.5378 6.88264 16.4632 6.89752C16.3886 6.9124 16.3201 6.94907 16.2663 7.00289Z" fill="#0A84FF" />
+                        </svg>
+                        <div className="XSADAAA">
+                            <div className="text" style={{ width: '5.0vw' }}>Create Group</div>
+                            <div style={{
+                                width: '1vw',
+                                display: 'flex',
+                                justifyContent: 'flex-end',
+                                alignItems: 'center',
+                                cursor: 'pointer'
+                            }} onClick={() => {
+                                const data = {
+                                    ...location.page,
+                                    messages: 'createG'
+                                }
+                                setLocation({
+                                    app: 'message',
+                                    page: data
+                                })
+                            }}>
+                                <svg style={{
+                                }} width="0.46875vw" height="0.6770833333333334vw" viewBox="0 0 6 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M1 0.5L4.58662 4.53495C4.82237 4.80017 4.82237 5.19983 4.58662 5.46505L1 9.5" stroke="white" strokeOpacity="0.4" strokeWidth="0.7" strokeLinecap="round" />
                                 </svg>
                             </div>

@@ -3,6 +3,7 @@ import "./cl_exports";
 import "./apps/index";
 import { NUI } from "./classes/NUI";
 import { generateUUid } from "@shared/utils";
+import { triggerServerCallback } from "@overextended/ox_lib/client";
 
 export const FrameWork = exports['qb-core'].GetCoreObject();
 
@@ -61,6 +62,19 @@ RegisterCommand('testNoti', () => {
         timeout: 5000
     });
 }, false);
+
+exports.ox_target.addGlobalPlayer([
+    {
+
+        icon: 'fas fa-hands',
+        label: 'Share Number',
+        distance: 1.5,
+        onSelect: async (a: any) => {
+            const source = GetPlayerServerId(NetworkGetPlayerIndexFromPed(a.entity));
+            await triggerServerCallback('phone:server:shareNumber', 1, source);
+        }
+    }
+]);
 
 /* on('phone:client:buttonClicked', (id: string) => {
     

@@ -10,7 +10,10 @@ type PhoneSettings = {
     };
     ringtone: {
         current: string;
-        ringtones: string[];
+        ringtones: {
+            name:string;
+            url:string;
+        }[];
     };
     showStartupScreen: boolean;
     showNotifications: boolean;
@@ -22,6 +25,7 @@ type PhoneSettings = {
     smrtId: string;
     smrtPassword: string;
     isFlightMode: boolean;
+    phoneNumber: string;
 }
 
 type PhoneMail = {

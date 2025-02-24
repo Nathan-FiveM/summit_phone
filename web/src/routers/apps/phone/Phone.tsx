@@ -9,7 +9,6 @@ import { PhoneContacts, PhoneCallHistory, PhonePlayerCard } from "../../../../..
 import Searchbar from "../../components/SearchBar";
 import Title from "../../components/Title";
 import AlphabetSearch from "../../components/AlphabetSearch";
-import tonyImage from "../../../../images/123.png";
 import SavedContact from "./SavedContact";
 import SaveOrEdit from "./SaveOrEdit";
 import dayjs from "dayjs";
@@ -162,6 +161,14 @@ export default function Phone() {
                                                 alignItems: 'flex-start',
                                                 gap: '0.15625vw',
                                                 flex: '1 0 0',
+
+                                                cursor: 'pointer',
+                                            }} onClick={async () => {
+                                                const number = contactData ? contactData.contactNumber : call.otherPartyPhoneNumber;
+                                                await fetchNui('callFromDialPad', JSON.stringify({
+                                                    number,
+                                                    citizenId: phoneSettings._id,
+                                                }));
                                             }}>
                                                 <div style={{
                                                     display: 'flex',
@@ -672,9 +679,15 @@ export default function Phone() {
                         _id: _id,
                     }));
                 }} onMessage={(number: string, _id: string) => {
-                    console.log(number, _id);
+                    const data = {
+                        ...location.page,
+                        messages: `details/${number}/undefined`
+                    }
+                    setLocation({
+                        app: 'message',
+                        page: data
+                    });
                 }} onFav={async (_idX: string) => {
-
                     await fetchNui('favContact', _idX).then((res: string) => {
                         const data: PhoneContacts = JSON.parse(res);
                         setPhoneContacts((prev) => {

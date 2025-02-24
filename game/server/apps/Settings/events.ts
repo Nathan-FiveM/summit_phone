@@ -32,14 +32,20 @@ async function GeneratePlayerPhoneNumber(citizenId: string) {
             wallpapers: [],
         },
         ringtone: {
-            current: '',
-            ringtones: [],
+            current: 'https://cdn.summitrp.gg/uploads/server/phone/sounds/iPhoneXTrap.mp3',
+            ringtones: [
+                {
+                    name: 'default',
+                    url: 'https://cdn.summitrp.gg/uploads/server/phone/sounds/iPhoneXTrap.mp3',
+                }
+            ],
         },
         showStartupScreen: true,
         showNotifications: true,
         isLock: true,
         lockPin: '',
         usePin: false,
+        phoneNumber: number,
         useFaceId: false,
         faceIdIdentifier: '',
         smrtId: '',

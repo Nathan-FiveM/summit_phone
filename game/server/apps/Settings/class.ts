@@ -16,6 +16,7 @@ class Setting {
     public smrtId = new Map<string, string>();
     public smrtPassword = new Map<string, string>();
     public isFlightMode = new Map<string, boolean>();
+    public phoneNumber = new Map<string, string>();
 
     public async load() {
         try {
@@ -35,6 +36,7 @@ class Setting {
                 this.smrtId.set(data._id, data.smrtId);
                 this.smrtPassword.set(data._id, data.smrtPassword);
                 this.isFlightMode.set(data._id, data.isFlightMode);
+                this.phoneNumber.set(data._id, data.phoneNumber);
             }
             LOGGER(`[Settings] Loaded.`);
         } catch (error: any) {
@@ -60,12 +62,40 @@ class Setting {
                     smrtId: this.smrtId.get(key),
                     smrtPassword: this.smrtPassword.get(key),
                     isFlightMode: this.isFlightMode.get(key),
+                    phoneNumber: this.phoneNumber.get(key),
                 });
             }
             LOGGER(`[Settings] Saved successfully.`);
             return true;
         } catch (error: any) {
             LOGGER(`[Settings] Failed to save settings: ${error.message}`);
+            return false;
+        }
+    }
+
+    public async SavePlayerSettings(citizenId: string) {
+        try {
+            await MongoDB.updateOne('phone_settings', { _id: citizenId }, {
+                _id: citizenId,
+                background: this.background.get(citizenId),
+                lockscreen: this.lockscreen.get(citizenId),
+                ringtone: this.ringtone.get(citizenId),
+                showStartupScreen: this.showStartupScreen.get(citizenId),
+                showNotifications: this.showNotifications.get(citizenId),
+                isLock: this.isLock.get(citizenId),
+                lockPin: this.lockPin.get(citizenId),
+                usePin: this.usePin.get(citizenId),
+                useFaceId: this.useFaceId.get(citizenId),
+                faceIdIdentifier: this.faceIdIdentifier.get(citizenId),
+                smrtId: this.smrtId.get(citizenId),
+                smrtPassword: this.smrtPassword.get(citizenId),
+                isFlightMode: this.isFlightMode.get(citizenId),
+                phoneNumber: this.phoneNumber.get(citizenId),
+            });
+            LOGGER(`[Settings] Saved player settings for ${citizenId} successfully.`);
+            return true;
+        } catch (error: any) {
+            LOGGER(`[Settings] Failed to save player settings for ${citizenId}: ${error.message}`);
             return false;
         }
     }

@@ -5,7 +5,7 @@ import AlphabetSearch from "../../components/AlphabetSearch";
 import { PhoneContacts } from "../../../../../types/types";
 import Searchbar from "../../components/SearchBar";
 import { fetchNui } from "../../../hooks/fetchNui";
-import { Avatar } from "@mantine/core";
+import { Avatar, TextInput, Transition } from "@mantine/core";
 import dayjs from "dayjs";
 
 export default function FilteredPage() {
@@ -34,10 +34,59 @@ export default function FilteredPage() {
         }
     }[]>([]);
     const [phoneContacts, setPhoneContacts] = useState<{ [key: string]: PhoneContacts[] }>({});
+    const [showSavedContacts, setShowSavedContacts] = useState(false);
     const [alphabetArrange, setAlphabetArrange] = useState('');
+    const [selectedContact, setSelectedContact] = useState<PhoneContacts>({
+        _id: '',
+        firstName: '',
+        lastName: '',
+        personalNumber: '',
+        contactNumber: '',
+        email: '',
+        notes: '',
+        image: '',
+        isFav: false,
+        ownerId: '',
+    });
+    const [showAttachmentModal, setShowAttachmentModal] = useState(false);
+    const [attachments, setAttachments] = useState<{ type: string; url: string }[]>([]);
+    const [textValue, setTextValue] = useState("");
+    const sendMessage = async () => {
+        if (!textValue.trim()) return;
+
+        try {
+            await fetchNui(
+                "sendMessage",
+                JSON.stringify({
+                    type: 'private',
+                    phoneNumber: selectedContact.contactNumber,
+                    messageData: {
+                        message: textValue,
+                        attachments: attachments,
+                    },
+                })
+            ).then(async (res) => {
+                const parsedData = JSON.parse(res as string);
+                if (parsedData.success) {
+                    const data = {
+                        ...location.page,
+                        messages: `details/${selectedContact.contactNumber}/undefined`,
+                    };
+                    setLocation({
+                        app: "message",
+                        page: data,
+                    });
+                }
+            });
+        } catch (error) {
+            console.error("Error sending message:", error);
+        }
+    };
+    const breakedLocation = location.page.messages.split('/');
+    const isAllorIsKnownorIsUnknownorIsunRead = breakedLocation[1] === 'all' ? 'all' : breakedLocation[1] === 'known' ? 'known' : breakedLocation[1] === 'unknown' ? 'unknown' : 'unread';
 
     return (
-        <CSSTransition nodeRef={nodeRef} in={location.app === 'message' && location.page.messages === 'all'} timeout={450} classNames="enterandexitfromtop" unmountOnExit mountOnEnter onEntering={async () => {
+        <CSSTransition nodeRef={nodeRef} in={location.app === 'message' && breakedLocation[0] === 'm'} timeout={450} classNames="enterandexitfromtop" unmountOnExit mountOnEnter onEntering={async () => {
             const res = await fetchNui('getMessagesChannels', JSON.stringify({}));
             const parsedData: {
                 success: boolean;
@@ -94,7 +143,7 @@ export default function FilteredPage() {
                         Messages
                     </div>
                     <svg onClick={() => {
-                        /* setShowContactsPortal(true); */
+                        setShowContactsPortal(true);
                     }} style={{ marginLeft: '4.5vw', cursor: 'pointer' }} width="0.9895833333333334vw" height="0.8854166666666666vw" viewBox="0 0 19 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M15.0468 1.53577L6.88299 9.69963C6.82237 9.76025 6.79004 9.84108 6.79004 9.92595V10.997C6.79004 11.1748 6.93553 11.3162 7.10932 11.3162H8.17224C8.25711 11.3162 8.34198 11.2839 8.4026 11.2233L16.5705 3.05942C16.6958 2.93414 16.6958 2.73206 16.5705 2.60678L15.4995 1.53577C15.3742 1.41049 15.1721 1.41049 15.0468 1.53577ZM17.9284 0.767887L17.3465 0.185909L17.3384 0.177827C17.2131 0.0687058 17.0474 0 16.8736 0C16.6958 0 16.5301 0.0687057 16.4048 0.181868L15.9481 0.6426C15.8875 0.707265 15.8875 0.808302 15.9481 0.868925L16.3684 1.28924L17.2454 2.16625C17.3101 2.23091 17.4111 2.23091 17.4758 2.16625L17.9325 1.70956C18.0456 1.58427 18.1103 1.42261 18.1103 1.24074C18.1063 1.06292 18.0416 0.893174 17.9284 0.767887Z" fill="#0A84FF" />
                         <path d="M8.8105 11.8821C8.68925 12.0033 8.52355 12.072 8.35381 12.072H6.68062C6.32497 12.072 6.03398 11.781 6.03398 11.4254V9.74816C6.03398 9.57842 6.10268 9.41271 6.22393 9.29147L6.25626 9.25914L12.2215 3.29387C12.3226 3.19283 12.2498 3.01904 12.1084 3.01904H2.37237C1.06292 3.01904 0 4.08196 0 5.39141V14.4444C0 15.7538 1.06292 16.8168 2.37237 16.8168H12.7186C14.0281 16.8168 15.091 15.7538 15.091 14.4444V5.99764C15.091 5.85214 14.9172 5.78344 14.8162 5.88448L8.84283 11.8497L8.8105 11.8821Z" fill="#0A84FF" />
@@ -102,16 +151,22 @@ export default function FilteredPage() {
                 </div>
                 <Searchbar mt="0.8vw" value={searchValue} onChange={setSearchValue} />
                 <div className="messageContent">
-                    {channelsData.filter(channel => {
-                        return channel.name.toLowerCase().includes(searchValue.toLowerCase());
+                    {channelsData && channelsData.filter(channel => {
+                        if (isAllorIsKnownorIsUnknownorIsunRead === 'all') {
+                            return channel.name.toLowerCase().includes(searchValue.toLowerCase());
+                        } else if (isAllorIsKnownorIsUnknownorIsunRead === 'known') {
+                            return !channel.name.match(/^[0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*$/) && channel.name.toLowerCase().includes(searchValue.toLowerCase());
+                        } else if (isAllorIsKnownorIsUnknownorIsunRead === 'unknown') {
+                            return channel.name.match(/^[0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*$/) && channel.name.toLowerCase().includes(searchValue.toLowerCase());
+                        } else if (isAllorIsKnownorIsUnknownorIsunRead === 'unread') {
+                            return channel.lastMessage && !channel.lastMessage.read && channel.name.toLowerCase().includes(searchValue.toLowerCase());
+                        }
                     }).map((channel, index) => {
-
                         return (
                             <div className="innerChannel" style={{
                                 marginTop: index === 0 ? '0vw' : '0.2vw',
                             }} key={index}>
                                 <div className="channelContent" onClick={() => {
-                                    console.log(channel.groupId)
                                     const data = {
                                         ...location.page,
                                         messages: `details/${channel.phoneNumber}/${channel.groupId}`,
@@ -162,136 +217,323 @@ export default function FilteredPage() {
                         width: '100%',
                         height: '82%',
                         position: 'absolute',
-                        top: '6.5vw',
-                        backgroundColor: 'rgba(0, 0, 0, 1)',
+                        bottom: '0',
+                        backgroundColor: 'rgb(34, 33, 33)',
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
                         borderTopLeftRadius: '1.0416666666666667vw',
                         borderTopRightRadius: '1.0416666666666667vw',
                     }}>
-                        <div style={{
-                            width: '100%',
+                        <div className="Header" style={{
                             display: 'flex',
+                            flexDirection: 'column',
                             justifyContent: 'center',
-                            alignItems: 'center',
-                            marginTop: '0.25vw',
-                        }} >
-                            <div style={{
-                                width: '34%',
-                                fontWeight: 500,
-                                fontSize: '.7vw',
+                            alignItems: 'flex-end',
+                            width: '100%',
+                            height: '10%',
+                            backgroundColor: 'rgb(56, 54, 54)',
+                            borderTopLeftRadius: '1.0416666666666667vw',
+                            borderTopRightRadius: '1.0416666666666667vw',
+                        }}>
+                            <div className="cancelButton" style={{
+                                fontSize: '0.7vw',
+                                marginRight: '1.0416666666666667vw',
                                 color: '#0A84FF',
-                                cursor: 'pointer',
+                                lineHeight: '0vw',
                             }} onClick={() => {
                                 setShowContactsPortal(false);
                             }}>
                                 Cancel
                             </div>
-                            <div style={{
-                                width: '34%',
-                                fontWeight: 500,
-                                fontSize: '0.7vw',
+                            <div className="title" style={{
+                                fontSize: '0.9vw',
                                 color: 'white',
+                                marginRight: '32%',
+                                lineHeight: '0vw',
                             }}>
-                                Select Contact
-                            </div>
-                            <div style={{
-                                width: '21%',
-                                textAlign: 'end',
-                                fontSize: '.7vw',
-                                color: '#0A84FF',
-                                fontWeight: 500
-                            }}>
-                                Done
+                                New Message
                             </div>
                         </div>
-                        <Searchbar mt="0.8vw" value={searchValue} onChange={(e: string) => {
-                            setSearchValue(e);
-                        }} />
-                        <div className="phoneContacts">
-                            {Object.keys(phoneContacts).filter(
-                                letter => letter.includes(alphabetArrange) && phoneContacts[letter].filter((letter) =>
-                                    letter.firstName.toLowerCase().includes(searchValue.toLowerCase()) || letter.lastName.toLowerCase().includes(searchValue.toLowerCase())
-                                ).length > 0
-                            ).map((letter, index) => {
-                                return (
-                                    <div key={index}>
-                                        <div className="letter">
-                                            <div style={{
-                                                color: 'rgba(255, 255, 255, 0.40)',
-                                                fontFamily: 'SFPro',
-                                                fontSize: '0.78125vw',
-                                                fontStyle: 'normal',
-                                                fontWeight: 700,
-                                                lineHeight: '118.596%',
-                                                marginTop: index === 0 ? '' : '0.2125vw',
-                                                letterSpacing: '0.01875vw',
-                                            }}>
-                                                {letter}
-                                                <div style={{
-                                                    width: '14.427083333333334vw',
-                                                    height: '0.026041666666666668vw',
-                                                    background: 'rgba(255, 255, 255, 0.15)',
-                                                }} />
-                                            </div>
-                                            {phoneContacts[letter].filter((letter) =>
-                                                letter.firstName.toLowerCase().includes(searchValue.toLowerCase()) || letter.lastName.toLowerCase().includes(searchValue.toLowerCase())
-                                            ).map((contact, index) => {
-                                                return (
+                        <TextInput placeholder="" value={selectedContact.contactNumber} onChange={(e) => {
+                            setSelectedContact({
+                                ...selectedContact,
+                                contactNumber: e.currentTarget.value
+                            })
+                        }} leftSection={<div style={{ fontSize: '0.7vw' }}>To:</div>} styles={{
+                            root: {
+                                backgroundColor: 'rgb(34, 33, 33)',
+                                width: '100%',
+                            },
+                            input: {
+                                color: 'white',
+                                backgroundColor: 'rgb(34, 33, 33)',
+                                border: 'none',
+                                borderBottom: '1px solid rgba(255, 255, 255, 0.15)',
+                                borderRadius: '0',
+                            }
+                        }} rightSection={
+                            <svg onClick={() => {
+                                setShowSavedContacts(!showSavedContacts);
+                            }} style={{ cursor: 'pointer' }} width="1.0416666666666667vw" height="1.0416666666666667vw" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M10 18.75C5.1675 18.75 1.25 14.8313 1.25 10C1.25 5.16875 5.1675 1.25 10 1.25C14.8325 1.25 18.75 5.16875 18.75 10C18.75 14.8313 14.8325 18.75 10 18.75ZM10 0C4.47687 0 0 4.475 0 10C0 15.525 4.47687 20 10 20C15.5231 20 20 15.525 20 10C20 4.475 15.5231 0 10 0ZM13.75 9.375H10.625V6.25C10.625 5.90625 10.3456 5.625 10 5.625C9.65438 5.625 9.375 5.90625 9.375 6.25V9.375H6.25C5.90438 9.375 5.625 9.65625 5.625 10C5.625 10.3438 5.90438 10.625 6.25 10.625H9.375V13.75C9.375 14.0938 9.65438 14.375 10 14.375C10.3456 14.375 10.625 14.0938 10.625 13.75V10.625H13.75C14.0956 10.625 14.375 10.3438 14.375 10C14.375 9.65625 14.0956 9.375 13.75 9.375Z" fill="#0A84FF" />
+                            </svg>
+                        }
+                            onFocus={() => fetchNui("disableControls", true)}
+                            onBlur={() => fetchNui("disableControls", false)}
+                        />
+                        <div style={{
+                            position: 'absolute',
+                            bottom: '0',
+                            zIndex: 1,
+                        }}>
+                            <Transition
+                                mounted={showAttachmentModal}
+                                transition="fade"
+                                duration={400}
+                                timingFunction="ease"
+                            >
+                                {(styles) => <div style={{
+                                    ...styles,
+                                    width: '16.8vw',
+                                    height: '5vw',
+                                    marginTop: '-1vw',
+                                    backgroundColor: 'rgba(55,55,55,1)',
+                                    borderTopLeftRadius: '1vw',
+                                    borderTopRightRadius: '1vw',
+                                }}>
+                                    <div style={{
+                                        fontSize: '0.7vw',
+                                        fontWeight: '500',
+                                        marginLeft: '0.5vw',
+                                        marginTop: '0.5vw',
+                                    }} onClick={() => {
+                                        setShowAttachmentModal(false);
+                                    }}>Close</div>
+                                    <div>
+                                        <TextInput
+                                            value={attachments[0]?.url || ""}
+                                            onChange={(e) => {
+                                                setAttachments([{ type: "image", url: e.currentTarget.value }]);
+                                            }}
+                                            placeholder="Enter Image link..."
+                                            styles={{
+                                                root: { backgroundColor: "", marginTop: '0.5vw', width: '90%', marginLeft: '0.8vw' },
+                                                input: {
+                                                    color: "white",
+                                                    backgroundColor: "rgba(0,0,0,0)",
+                                                    borderRadius: "7.8125vw",
+                                                    border: "0.052083333333333336vw solid rgba(87, 87, 87, 0.86)",
+                                                },
+                                            }}
+                                            onFocus={() => fetchNui("disableControls", true)}
+                                            onBlur={() => fetchNui("disableControls", false)}
+                                            onKeyDown={(e) => {
+                                                if (e.key === "Enter") {
+                                                    sendMessage();
+                                                }
+                                            }}
+                                        />
+                                    </div>
+                                </div>}
+                            </Transition>
+                        </div>
+                        <div className="inputSFsada" style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            position: 'absolute',
+                            bottom: '1.2vw',
+                            width: '100%',
+                        }}>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="1.3541666666666667vw"
+                                height="1.3541666666666667vw"
+                                viewBox="0 0 26 26"
+                                fill="none"
+                                style={{ cursor: "pointer" }}
+                                onClick={() => {
+                                    setShowAttachmentModal(true);
+                                }}
+                            >
+                                <circle cx="13" cy="13" r="13" fill="#D9D9D9" fillOpacity="0.3" />
+                                <path
+                                    d="M13.6857 12.3143V5H12.3143V12.3143H5V13.6857H12.3143V21H13.6857V13.6857H21V12.3143H13.6857Z"
+                                    fill="black"
+                                />
+                            </svg>
+                            <TextInput
+                                value={textValue}
+                                onChange={(e) => setTextValue(e.currentTarget.value)}
+                                placeholder="Type a message..."
+                                styles={{
+                                    root: { backgroundColor: "", width: '90%', },
+                                    input: {
+                                        color: "white",
+                                        backgroundColor: "rgba(0,0,0,0)",
+                                        borderRadius: "7.8125vw",
+                                        border: "0.052083333333333336vw solid rgba(87, 87, 87, 0.86)",
+                                    },
+                                }}
+                                onFocus={() => fetchNui("disableControls", true)}
+                                onBlur={() => fetchNui("disableControls", false)}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                        sendMessage();
+                                    }
+                                }}
+                            />
+                        </div>
+                        <Transition
+                            mounted={showSavedContacts}
+                            transition="fade"
+                            duration={400}
+                            timingFunction="ease"
+                        >
+                            {(styles) => <div style={{
+                                ...styles,
+                                width: '100%',
+                                height: '100%',
+                                position: 'absolute',
+                                top: '0.5vw',
+                                zIndex: 1,
+                                backgroundColor: 'rgba(0, 0, 0, 1)',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                borderTopLeftRadius: '1.0416666666666667vw',
+                                borderTopRightRadius: '1.0416666666666667vw',
+                            }}>
+                                <div style={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    marginTop: '0.25vw',
+                                }} >
+                                    <div style={{
+                                        width: '34%',
+                                        fontWeight: 500,
+                                        fontSize: '.7vw',
+                                        color: '#0A84FF',
+                                        cursor: 'pointer',
+                                    }} onClick={() => {
+                                        setShowSavedContacts(false);
+                                    }}>
+                                        Cancel
+                                    </div>
+                                    <div style={{
+                                        width: '34%',
+                                        fontWeight: 500,
+                                        fontSize: '0.7vw',
+                                        color: 'white',
+                                    }}>
+                                        Select Contact
+                                    </div>
+                                    <div style={{
+                                        width: '21%',
+                                        textAlign: 'end',
+                                        fontSize: '.7vw',
+                                        color: '#0A84FF',
+                                        fontWeight: 500
+                                    }}>
+                                        Done
+                                    </div>
+                                </div>
+                                <Searchbar mt="0.8vw" value={searchValue} onChange={(e: string) => {
+                                    setSearchValue(e);
+                                }} />
+                                <div className="phoneContacts">
+                                    {Object.keys(phoneContacts).filter(
+                                        letter => letter.includes(alphabetArrange) && phoneContacts[letter].filter((letter) =>
+                                            letter.firstName.toLowerCase().includes(searchValue.toLowerCase()) || letter.lastName.toLowerCase().includes(searchValue.toLowerCase())
+                                        ).length > 0
+                                    ).map((letter, index) => {
+                                        return (
+                                            <div key={index}>
+                                                <div className="letter">
                                                     <div style={{
-                                                        display: 'flex',
-                                                        height: '1.39375vw',
-                                                        flexDirection: 'column',
-                                                        justifyContent: 'flex-end',
-                                                        alignItems: 'flex-start',
-                                                        gap: '0.15625vw',
-                                                        flexShrink: 0,
-                                                        alignSelf: 'stretch',
-                                                        cursor: 'pointer',
-                                                    }} key={index} onClick={() => {
-
+                                                        color: 'rgba(255, 255, 255, 0.40)',
+                                                        fontFamily: 'SFPro',
+                                                        fontSize: '0.78125vw',
+                                                        fontStyle: 'normal',
+                                                        fontWeight: 700,
+                                                        lineHeight: '118.596%',
+                                                        marginTop: index === 0 ? '' : '0.2125vw',
+                                                        letterSpacing: '0.01875vw',
                                                     }}>
-                                                        <div style={{
-                                                            color: '#FFF',
-                                                            fontFamily: 'SFPro',
-                                                            fontSize: '15px',
-                                                            fontStyle: 'normal',
-                                                            fontWeight: 700,
-                                                            lineHeight: '120.596%',
-                                                            letterSpacing: '0.36px',
-                                                        }}>
-                                                            {contact.firstName} {contact.lastName}
-                                                        </div>
+                                                        {letter}
                                                         <div style={{
                                                             width: '14.427083333333334vw',
                                                             height: '0.026041666666666668vw',
                                                             background: 'rgba(255, 255, 255, 0.15)',
                                                         }} />
                                                     </div>
-                                                )
-                                            })}
-                                        </div>
-                                    </div>
-                                )
-                            })}
-                        </div>
-                        <div style={{
-                            position: 'absolute',
-                            right: '-0.2vw',
-                            top: '4vw',
-                        }}>
-                            <AlphabetSearch onClick={(letter: string) => {
-                                if (alphabetArrange === letter) {
-                                    setAlphabetArrange('');
-                                } else {
-                                    setAlphabetArrange(letter);
-                                }
-                            }} />
-                        </div>
+                                                    {phoneContacts[letter].filter((letter) =>
+                                                        letter.firstName.toLowerCase().includes(searchValue.toLowerCase()) || letter.lastName.toLowerCase().includes(searchValue.toLowerCase())
+                                                    ).map((contact, index) => {
+                                                        return (
+                                                            <div style={{
+                                                                display: 'flex',
+                                                                height: '1.39375vw',
+                                                                flexDirection: 'column',
+                                                                justifyContent: 'flex-end',
+                                                                alignItems: 'flex-start',
+                                                                gap: '0.15625vw',
+                                                                flexShrink: 0,
+                                                                alignSelf: 'stretch',
+                                                                cursor: 'pointer',
+                                                            }} key={index} onClick={() => {
+                                                                setSelectedContact(contact);
+                                                                setShowSavedContacts(false);
+                                                            }}>
+                                                                <div style={{
+                                                                    color: '#FFF',
+                                                                    fontFamily: 'SFPro',
+                                                                    fontSize: '15px',
+                                                                    fontStyle: 'normal',
+                                                                    fontWeight: 700,
+                                                                    lineHeight: '120.596%',
+                                                                    letterSpacing: '0.36px',
+                                                                }}>
+                                                                    {contact.firstName} {contact.lastName}
+                                                                </div>
+                                                                <div style={{
+                                                                    width: '14.427083333333334vw',
+                                                                    height: '0.026041666666666668vw',
+                                                                    background: 'rgba(255, 255, 255, 0.15)',
+                                                                }} />
+                                                            </div>
+                                                        )
+                                                    })}
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                                <div style={{
+                                    position: 'absolute',
+                                    right: '-0.2vw',
+                                    top: '4vw',
+                                }}>
+                                    <AlphabetSearch onClick={(letter: string) => {
+                                        if (alphabetArrange === letter) {
+                                            setAlphabetArrange('');
+                                        } else {
+                                            setAlphabetArrange(letter);
+                                        }
+                                    }} />
+                                </div>
+                            </div>}
+                        </Transition>
                     </div>
                 </CSSTransition>
             </div>
         </CSSTransition>
     );
 }
+
+/* 
+
+ */

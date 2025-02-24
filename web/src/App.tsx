@@ -23,9 +23,9 @@ import CallComponent from './routers/components/CallComponent';
 import Message from './routers/apps/Messages/Message';
 import FilteredPage from './routers/apps/Messages/FilteredPage';
 import MessageDetails from './routers/apps/Messages/MessageDetails';
-import FilteredPage2 from './routers/apps/Messages/FilteredPage2';
-import FilteredPage3 from './routers/apps/Messages/FilteredPage3';
-import FilteredPage4 from './routers/apps/Messages/FilteredPage4';
+import CreateGroup from './routers/apps/Messages/CreateGroup';
+import Settings from './routers/apps/Settings/Settings';
+import { useLocalStorage } from '@mantine/hooks';
 
 debugData([
   {
@@ -127,9 +127,14 @@ export default function App() {
     window.addEventListener("keydown", keyHandler);
 
     return () => window.removeEventListener("keydown", keyHandler);
-  }, [visible]);
+  }, [visible, phoneSettings.usePin, phoneSettings.useFaceId, phoneSettings.lockPin, phoneSettings.faceIdIdentifier, phoneSettings.showStartupScreen]);
 
-  const breakedLocation = location.page.messages.split("/")
+  const breakedLocation = location.page.messages.split("/");
+  const [brightness, setBrightness] = useLocalStorage({
+    key: 'brightness',
+    defaultValue: 30,
+  });
+  const [settingsEnter, setSettingsEnter] = useState(false);
 
   return (
     <div style={{
@@ -143,6 +148,7 @@ export default function App() {
       backgroundImage: `url(${primaryColor === 'blue' ? blueFrame : primaryColor === 'gold' ? goldFrame : primaryColor === 'green' ? greenFrame : primaryColor === 'purple' ? purpleFrame : primaryColor === 'red' ? redFrame : ''})`,
       backgroundRepeat: 'no-repeat',
       backgroundSize: 'contain',
+      filter: `brightness(${brightness + 30}%)`,
     }}>
       <div className="innerFrame" style={{
         backgroundImage: `url(${phoneSettings.background.current ? phoneSettings.background.current : phoneBg})`,
@@ -164,16 +170,18 @@ export default function App() {
           <CallComponent />
           <Message />
           <FilteredPage />
-          <FilteredPage2 />
-          <FilteredPage3 />
-          <FilteredPage4 />
           <MessageDetails />
+          <CreateGroup />
         </div>
-       {/*  <div className='fuckerMessager' id='fuckerMessager' style={{
-          visibility: location.app === "message" && breakedLocation[0] === "details" ? 'visible' : 'hidden',
+        <div className='fuckerMessager' id='fuckerMessager' style={{
+          visibility: settingsEnter ? 'visible' : 'hidden',
         }}>
-          <MessageDetails />
-        </div> */}
+          <Settings onExit={() => {
+            setSettingsEnter(false);
+          }} onEnter={() => {
+            setSettingsEnter(true);
+          }} />
+        </div>
         <div className="backButton" onClick={() => {
           if (location.app !== '') {
             setLocation({

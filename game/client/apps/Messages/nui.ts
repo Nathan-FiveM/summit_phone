@@ -26,14 +26,48 @@ on(`__cfx_nui:getGroupMessages`, async (data: any, cb: Function) => {
 
 RegisterNuiCallbackType('sendMessage');
 on(`__cfx_nui:sendMessage`, async (data: any, cb: Function) => {
-    /* const res = await triggerServerCallback('phone_message:sendMessage', 1, JSON.stringify({
-        type: 'private',
-        phoneNumber: '5655101368',
-        messageData: {
-            message: 'Test message',
-            attachments: []
-        }
-    })); */
     const res = await triggerServerCallback('phone_message:sendMessage', 1, data);
+    cb(res);
+});
+
+RegisterNuiCallbackType('toggleMessageBlock');
+on(`__cfx_nui:toggleMessageBlock`, async (data: any, cb: Function) => {
+    const res = await triggerServerCallback('phone_message:toggleBlock', 1, data);
+    cb(res);
+});
+
+RegisterNuiCallbackType('createGroup');
+on(`__cfx_nui:createGroup`, async (data: any, cb: Function) => {
+    const res = await triggerServerCallback('phone_message:createGroup', 1, data);
+    cb(res);
+});
+
+RegisterNuiCallbackType('updateGroupName');
+on(`__cfx_nui:updateGroupName`, async (data: any, cb: Function) => {
+    const res = await triggerServerCallback('phone_message:updateGroupName', 1, data);
+    cb(res);
+});
+
+RegisterNuiCallbackType('updateGroupAvatar');
+on(`__cfx_nui:updateGroupAvatar`, async (data: any, cb: Function) => {
+    const res = await triggerServerCallback('phone_message:updateGroupAvatar', 1, data);
+    cb(res);
+});
+
+RegisterNuiCallbackType('deleteGroup');
+on(`__cfx_nui:deleteGroup`, async (groupId: any, cb: Function) => {
+    const res = await triggerServerCallback('phone_message:deleteGroup', 1, groupId);
+    cb(res);
+});
+
+RegisterNuiCallbackType('leaveGroup');
+on(`__cfx_nui:leaveGroup`, async (groupId: any, cb: Function) => {
+    const res = await triggerServerCallback('phone_message:removeMember', 1, groupId);
+    cb(res);
+});
+
+RegisterNuiCallbackType('addMember');
+on(`__cfx_nui:addMember`, async (data: any, cb: Function) => {
+    const res = await triggerServerCallback('phone_message:addMember', 1, data);
     cb(res);
 });

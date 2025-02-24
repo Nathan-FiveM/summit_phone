@@ -92,6 +92,7 @@ export const usePhone = create<State & Actions>()(
             smrtId: '',
             smrtPassword: '',
             isFlightMode: false,
+            phoneNumber: '',
         },
         location: {
             app: '',

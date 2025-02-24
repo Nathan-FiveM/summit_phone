@@ -1,4 +1,9 @@
+import { NUI } from "@client/classes/NUI";
 import { triggerServerCallback } from "@overextended/ox_lib/client";
+
+onNet('phone_messages:client:updateMessages', (messages: any) => {
+    NUI.sendReactMessage('upDatemessages', messages);
+});
 
 RegisterCommand('testGroup', async (source: number, args: string[]) => {
 
@@ -26,7 +31,7 @@ RegisterCommand('testGroup', async (source: number, args: string[]) => {
     console.log('Send Group Message:', await sendRes); */
 
     // Send Private Message
-    const res = triggerServerCallback('phone_message:sendMessage', 1, JSON.stringify({
+    /* const res = triggerServerCallback('phone_message:sendMessage', 1, JSON.stringify({
         type: 'private',
         phoneNumber: '5655101368',
         messageData: {
@@ -34,7 +39,7 @@ RegisterCommand('testGroup', async (source: number, args: string[]) => {
             attachments: []
         }
     }));
-    /* console.log(await res); */
+    console.log(await res); */
 
     // Add Member
     /* const addRes = await triggerServerCallback('phone_message:addMember', 1, JSON.stringify({

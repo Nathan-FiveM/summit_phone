@@ -49,9 +49,9 @@ export default function Lockscreen() {
     }, [passcode]);
     
     return (
-        <CSSTransition nodeRef={nodeRef} in={phoneSettings.isLock} timeout={450} classNames="enterandexitfromtop" unmountOnExit mountOnEnter>
+        <CSSTransition nodeRef={nodeRef} in={phoneSettings.usePin && phoneSettings.isLock} timeout={450} classNames="enterandexitfromtop" unmountOnExit mountOnEnter>
             <div style={{
-                backgroundImage: `url(${lockscreenBg})`,
+                backgroundImage: `url(${phoneSettings.lockscreen.current ? phoneSettings.lockscreen.current : lockscreenBg})`,
                 backgroundSize: 'cover',
                 backgroundRepeat: 'no-repeat',
             }} ref={nodeRef} className="lockscreen">
