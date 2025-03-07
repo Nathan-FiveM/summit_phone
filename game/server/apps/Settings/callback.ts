@@ -67,7 +67,9 @@ onClientCallback('RegisterNewMailAccount', async (client, data: string) => {
     } = JSON.parse(data);
     const dataX: PhoneMail = {
         activeMaidId: parsedData.email,
+        username: parsedData.email,
         activeMailPassword: parsedData.password,
+        avator: '',
         messages: [],
     }
     await MongoDB.insertOne('phone_mail', { _id: parsedData.email, ...dataX });

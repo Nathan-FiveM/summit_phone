@@ -26,6 +26,8 @@ import MessageDetails from './routers/apps/Messages/MessageDetails';
 import CreateGroup from './routers/apps/Messages/CreateGroup';
 import Settings from './routers/apps/Settings/Settings';
 import { useLocalStorage } from '@mantine/hooks';
+import Services from './routers/apps/Services/Services';
+import PhoneContextMenu from './routers/components/PhoneContextMenu';
 
 debugData([
   {
@@ -127,14 +129,14 @@ export default function App() {
     window.addEventListener("keydown", keyHandler);
 
     return () => window.removeEventListener("keydown", keyHandler);
-  }, [visible, phoneSettings.usePin, phoneSettings.useFaceId, phoneSettings.lockPin, phoneSettings.faceIdIdentifier, phoneSettings.showStartupScreen]);
+  }, [visible, phoneSettings.usePin, phoneSettings.useFaceId, phoneSettings.showStartupScreen]);
 
-  const breakedLocation = location.page.messages.split("/");
   const [brightness, setBrightness] = useLocalStorage({
     key: 'brightness',
     defaultValue: 30,
   });
   const [settingsEnter, setSettingsEnter] = useState(false);
+  const [servicesEnter, setServiceEnter] = useState(false);
 
   return (
     <div style={{
@@ -156,12 +158,11 @@ export default function App() {
         backgroundSize: 'cover',
       }}>
         <Notifications />
+        <PhoneContextMenu />
         <div className='headerFrame'>
           <Header />
         </div>
-        <div className="contentFrame" id='contentFrame' style={{
-
-        }}>
+        <div className="contentFrame" id='contentFrame'>
           <ControlCenters />
           <HomeScreen />
           <Lockscreen />
@@ -180,6 +181,15 @@ export default function App() {
             setSettingsEnter(false);
           }} onEnter={() => {
             setSettingsEnter(true);
+          }} />
+        </div>
+        <div className='fuckerMessager' id='fuckerMessager' style={{
+          visibility: servicesEnter ? 'visible' : 'hidden',
+        }}>
+          <Services onExit={() => {
+            setServiceEnter(false);
+          }} onEnter={() => {
+            setServiceEnter(true);
           }} />
         </div>
         <div className="backButton" onClick={() => {
@@ -212,7 +222,7 @@ export default function App() {
             const dataX = {
               ...phoneSettings,
               isLock: true
-            }
+            };
             setPhoneSettings(dataX);
             fetchNui('unLockorLockPhone', true);
           }

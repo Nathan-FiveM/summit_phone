@@ -17,6 +17,11 @@ class Util {
             if (source === 0) return LOGGER('This command can only be executed in-game.');
             await Utils.TransferContacts();
         }, true);
+
+        RegisterCommand('migrateMultiJobData', async (source: any, args: any) => {
+            if (source === 0) return LOGGER('This command can only be executed in-game.');
+            await Utils.MigrateMultiJobData();
+        }, true);
     };
 
     async TransferNumbers() {
@@ -66,6 +71,29 @@ class Util {
             LOGGER(`Error while transferring contacts: ${JSON.stringify(e, null, 2)}`);
         }
     };
+
+    async MigrateMultiJobData() {
+        const result: any = await this.query('SELECT * FROM summit_multijobs', []);
+        if (!result || result.length === 0) {
+            LOGGER('No multijobs found to transfer.');
+            return;
+        }
+        let newData: any[] = [];
+        result.forEach(async (job: any) => {
+            console.log(`Processing multijob ${job.cid} of ${result.length}`);
+            const citizenId = job.cid;
+            const jobName = job.job;
+            const gradeLevel = job.grade;
+            newData.push({
+                _id: generateUUid(),
+                citizenId: citizenId,
+                jobName: jobName,
+                gradeLevel: gradeLevel,
+            });
+        });
+        await MongoDB.insertMany('phone_multijobs', newData);
+        LOGGER('Multijobs have been transferred to MongoDB.');
+    }
 
     async GetPhoneNumberByCitizenId(citizenId: string) {
         const number = await MongoDB.findOne('phone_numbers', { owner: citizenId });

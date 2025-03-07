@@ -753,7 +753,7 @@
           flex-shrink: 0;
 
           .name {
-            height: 1.0416666666666667vw;
+            height: 1.1416666666666667vw;
             color: #FFF;
             font-size: 1.0416666666666667vw;
             font-style: normal;
@@ -934,6 +934,69 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+      }
+    }
+
+    .company {
+      display: flex;
+      width: 15.625vw;
+      height: 26.145833333333332vw;
+      margin-left: 0.6vw;
+      margin-top: 0.8vw;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.2604166666666667vw;
+      flex-shrink: 0;
+
+      .containerXSa {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 0.3125vw;
+        align-self: stretch;
+
+        .innerContXassda {
+          display: flex;
+          width: 15.625vw;
+          align-items: center;
+          gap: 0.20833333333333334vw;
+
+          .moreInnerContX {
+            display: flex;
+            width: 10.3vw;
+            align-items: center;
+            gap: 0.4166666666666667vw;
+            flex-shrink: 0;
+
+            .moreInnerContX2 {
+              display: flex;
+              flex-direction: column;
+              align-items: flex-start;
+              gap: 0.15625vw;
+              flex: 1 0 0;
+
+              .title {
+                color: #FFF;
+                font-size: 0.78125vw;
+                font-style: normal;
+                font-weight: 500;
+                line-height: 118.596%;
+                letter-spacing: 0.01875vw;
+              }
+
+              .text {
+                color: #545454;
+                text-align: center;
+                font-size: 0.6770833333333334vw;
+                font-style: normal;
+                font-weight: 500;
+                line-height: 118.596%;
+                letter-spacing: 0.0171875vw;
+              }
+            }
+          }
+        }
       }
     }
   }
@@ -1302,7 +1365,7 @@
   position: absolute;
   bottom: 0;
 
-  .innerCont {
+  .innerContx {
     margin-top: 0.6vw;
     display: flex;
     align-items: center;

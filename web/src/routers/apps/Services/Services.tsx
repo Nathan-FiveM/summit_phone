@@ -1,0 +1,484 @@
+import { useRef, useState } from "react";
+import { CSSTransition } from "react-transition-group";
+import { usePhone } from "../../../store/store";
+import Title from "../../components/Title";
+import CustomSwitch from "../../components/CustomSwitch";
+import { fetchNui } from "../../../hooks/fetchNui";
+import Navigation from "./Navigation";
+import { PhoneBusiness } from "../../../../../types/types";
+import { Avatar, NumberFormatter } from "@mantine/core";
+import { useLocalStorage } from "@mantine/hooks";
+import InputDialog from "./InputDialog";
+import { useNuiEvent } from "../../../hooks/useNuiEvent";
+
+type JobData = {
+    label: string,
+    grade: {
+        level: number,
+        name: string
+    },
+    isboss: boolean,
+    onduty: boolean,
+    name: string,
+    payment: number,
+    type: string
+}
+
+export default function Services(props: { onExit: () => void, onEnter: () => void }) {
+    const nodeRef = useRef(null);
+    const { location, setLocation } = usePhone();
+    const [businessData, setBusinessData] = useState<PhoneBusiness[]>([]);
+    const [jobData, setJobData] = useState<JobData>({
+        label: '',
+        grade: {
+            level: 0,
+            name: ''
+        },
+        isboss: false,
+        onduty: false,
+        name: '',
+        payment: 0,
+        type: ''
+    });
+    const [jobCalls, setJobCalls] = useState(false);
+    const [bankBalance, setBankBalance] = useState(0);
+
+    const [inputTitle, setInputTitle] = useState('');
+    const [inputDescription, setInputDescription] = useState('');
+    const [inputPlaceholder, setInputPlaceholder] = useState('');
+    const [inputShow, setInputShow] = useState(false);
+
+    const [employeeData, setEmployeeData] = useState<any[]>([]);
+    const [inActiveEmployees, setInActiveEmployees] = useState<any[]>([]);
+
+    useNuiEvent('updateEmployees', (data: any) => {
+        setEmployeeData(JSON.parse(data as string).employees);
+        setInActiveEmployees(JSON.parse(data as string).multijobEmployees);
+    })
+
+    return (
+        <CSSTransition nodeRef={nodeRef} in={location.app === 'services'} timeout={450} classNames="enterandexitfromtop" unmountOnExit mountOnEnter onEntering={async () => {
+            props.onEnter();
+            const jsonData = await fetchNui('getAllBusinessData');
+            const fetchJobData = await fetchNui('getJobData');
+            const jobData = JSON.parse(fetchJobData as string);
+            setJobData(jobData);
+            const parsedData = JSON.parse(jsonData as string);
+            setBusinessData(parsedData);
+            const jobCalls = await fetchNui('getJobCalls');
+            setJobCalls(jobCalls as boolean);
+            if (jobData.isboss) {
+                const data = await fetchNui('getBankbalance', jobData.name);
+                setBankBalance(data as number);
+                const emploYeesdata = await fetchNui('getEmployeesData', jobData.name);
+                setEmployeeData(JSON.parse(emploYeesdata as string).employees);
+                setInActiveEmployees(JSON.parse(emploYeesdata as string).multijobEmployees);
+            }
+        }} onExited={() => {
+            props.onExit();
+        }}>
+            <div ref={nodeRef} style={{
+                backgroundColor: '#0E0E0E',
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+            }} className="settings">
+                <div style={{
+                    marginLeft: '0.8vw',
+                    marginTop: '2.5vw',
+                    letterSpacing: '0.07vw',
+                }}>
+                    <Title title={location.page.services === 'company' ? "Companies" : "Actions"} fontSize="1.9vw" />
+                </div>
+                {location.page.services === 'company' ? (
+                    <div className="company">
+                        {businessData && businessData.map((business, index) => {
+                            return (
+                                <div className="containerXSa" key={index}>
+                                    <div className="innerContXassda">
+                                        <div className="moreInnerContX">
+                                            <Avatar size="1.71875vw" src={business.businessLogo} radius="xl" />
+                                            <div className="moreInnerContX2">
+                                                <div className="title">{business.businessName}</div>
+                                                <div style={{
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    gap: "3.198px",
+                                                    alignSelf: "stretch",
+                                                }}>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16" fill="none">
+                                                        <path d="M16.1802 14.5446H15.3835V4.41567C15.3853 4.30316 15.3196 4.19959 15.2172 4.14602L10.6453 1.80665C10.4296 1.69593 10.1683 1.84594 10.1683 2.0763V14.5464H9.60918V0.30481C9.61101 0.0923026 9.38808 -0.0541311 9.17428 0.0190858L2.19941 2.46381C2.07332 2.50667 1.98926 2.62275 1.98926 2.74954V14.5446H0.819781C0.642531 14.5446 0.5 14.7089 0.5 14.9089V15.6357C0.5 15.8357 0.642531 16 0.819781 16H16.1802C16.3575 16 16.5 15.8375 16.5 15.6357V14.9089C16.5 14.7089 16.3575 14.5446 16.1802 14.5446ZM11.8038 4.54246C11.8038 4.28888 12.0194 4.08351 12.288 4.08351H13.1359C13.4027 4.08351 13.6201 4.28709 13.6201 4.54246V4.84783C13.6201 5.10141 13.4045 5.30677 13.1359 5.30677H12.288C12.0212 5.30677 11.8038 5.10319 11.8038 4.84783V4.54246ZM11.8038 6.38359C11.8038 6.13001 12.0194 5.92465 12.288 5.92465H13.1359C13.4027 5.92465 13.6201 6.12823 13.6201 6.38359V6.68896C13.6201 6.94254 13.4045 7.14791 13.1359 7.14791H12.288C12.0212 7.14791 11.8038 6.94433 11.8038 6.68896V6.38359ZM11.8038 8.2283C11.8038 7.97472 12.0194 7.76936 12.288 7.76936H13.1359C13.4027 7.76936 13.6201 7.97293 13.6201 8.2283V8.53367C13.6201 8.78725 13.4045 8.99261 13.1359 8.99261H12.288C12.0212 8.99261 11.8038 8.78903 11.8038 8.53367V8.2283ZM11.8038 10.1087C11.8038 9.85514 12.0194 9.64978 12.288 9.64978H13.1359C13.4027 9.64978 13.6201 9.85336 13.6201 10.1087V10.4141C13.6201 10.6677 13.4045 10.873 13.1359 10.873H12.288C12.0212 10.873 11.8038 10.6695 11.8038 10.4141V10.1087ZM11.8038 11.8963C11.8038 11.6427 12.0194 11.4373 12.288 11.4373H13.1359C13.4027 11.4373 13.6201 11.6409 13.6201 11.8963V12.2017C13.6201 12.4552 13.4045 12.6606 13.1359 12.6606H12.288C12.0212 12.6606 11.8038 12.457 11.8038 12.2017V11.8963ZM6.34559 2.74418C6.34559 2.4906 6.56121 2.28524 6.82983 2.28524H7.67771C7.94632 2.28524 8.16195 2.48881 8.16195 2.74418V3.04955C8.16195 3.30313 7.94632 3.50849 7.67771 3.50849H6.82983C6.56304 3.50849 6.34559 3.30491 6.34559 3.04955V2.74418ZM6.34559 4.54246C6.34559 4.28888 6.56121 4.08351 6.82983 4.08351H7.67771C7.94632 4.08351 8.16195 4.28709 8.16195 4.54246V4.84783C8.16195 5.10141 7.94632 5.30677 7.67771 5.30677H6.82983C6.56304 5.30677 6.34559 5.10319 6.34559 4.84783V4.54246ZM6.34559 6.38359C6.34559 6.13001 6.56121 5.92465 6.82983 5.92465H7.67771C7.94632 5.92465 8.16195 6.12823 8.16195 6.38359V6.68896C8.16195 6.94254 7.94632 7.14791 7.67771 7.14791H6.82983C6.56304 7.14791 6.34559 6.94433 6.34559 6.68896V6.38359ZM6.34559 8.2283C6.34559 7.97472 6.56121 7.76936 6.82983 7.76936H7.67771C7.94632 7.76936 8.16195 7.97293 8.16195 8.2283V8.53367C8.16195 8.78725 7.94632 8.99261 7.67771 8.99261H6.82983C6.56304 8.99261 6.34559 8.78903 6.34559 8.53367V8.2283ZM6.34559 10.1087C6.34559 9.85514 6.56121 9.64978 6.82983 9.64978H7.67771C7.94632 9.64978 8.16195 9.85336 8.16195 10.1087V10.4141C8.16195 10.6677 7.94632 10.873 7.67771 10.873H6.82983C6.56304 10.873 6.34559 10.6695 6.34559 10.4141V10.1087ZM6.34559 11.8963C6.34559 11.6427 6.56121 11.4373 6.82983 11.4373H7.67771C7.94632 11.4373 8.16195 11.6409 8.16195 11.8963V12.2017C8.16195 12.4552 7.94632 12.6606 7.67771 12.6606H6.82983C6.56304 12.6606 6.34559 12.457 6.34559 12.2017V11.8963ZM3.48401 4.54246C3.48401 4.28888 3.69963 4.08351 3.96825 4.08351H4.81613C5.08291 4.08351 5.30037 4.28709 5.30037 4.54246V4.84783C5.30037 5.10141 5.08474 5.30677 4.81613 5.30677H3.96825C3.70146 5.30677 3.48401 5.10319 3.48401 4.84783V4.54246ZM3.48401 6.38359C3.48401 6.13001 3.69963 5.92465 3.96825 5.92465H4.81613C5.08291 5.92465 5.30037 6.12823 5.30037 6.38359V6.68896C5.30037 6.94254 5.08474 7.14791 4.81613 7.14791H3.96825C3.70146 7.14791 3.48401 6.94433 3.48401 6.68896V6.38359ZM3.48401 8.2283C3.48401 7.97472 3.69963 7.76936 3.96825 7.76936H4.81613C5.08291 7.76936 5.30037 7.97293 5.30037 8.2283V8.53367C5.30037 8.78725 5.08474 8.99261 4.81613 8.99261H3.96825C3.70146 8.99261 3.48401 8.78903 3.48401 8.53367V8.2283ZM3.48401 10.1087C3.48401 9.85514 3.69963 9.64978 3.96825 9.64978H4.81613C5.08291 9.64978 5.30037 9.85336 5.30037 10.1087V10.4141C5.30037 10.6677 5.08474 10.873 4.81613 10.873H3.96825C3.70146 10.873 3.48401 10.6695 3.48401 10.4141V10.1087ZM3.48401 11.8963C3.48401 11.6427 3.69963 11.4373 3.96825 11.4373H4.81613C5.08291 11.4373 5.30037 11.6409 5.30037 11.8963V12.2017C5.30037 12.4552 5.08474 12.6606 4.81613 12.6606H3.96825C3.70146 12.6606 3.48401 12.457 3.48401 12.2017V11.8963Z" fill="#545454" />
+                                                    </svg>
+                                                    <div className="text">{business.businessName} HQ</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '0.3125vw'
+                                        }}>
+                                            <svg className='clickanimationXl' onClick={() => {
+                                                fetchNui('setWayPoint', business.coords);
+                                            }} xmlns="http://www.w3.org/2000/svg" width="1.40625vw" height="1.40625vw" viewBox="0 0 21 21" fill="none">
+                                                <rect x="0.5" y="0.5" width="20" height="20" rx="2" fill="#3A3A3A" />
+                                                <path d="M10.5002 9.96081C11.3321 9.96081 12.0128 9.23287 12.0128 8.34316C12.0128 7.45346 11.3321 6.72552 10.5002 6.72552C9.6682 6.72552 8.98751 7.45346 8.98751 8.34316C8.98751 9.23287 9.6682 9.96081 10.5002 9.96081ZM10.5002 7.80395C10.7775 7.80395 11.0044 8.04659 11.0044 8.34316C11.0044 8.63973 10.7775 8.88238 10.5002 8.88238C10.2228 8.88238 9.99594 8.63973 9.99594 8.34316C9.99594 8.04659 10.2228 7.80395 10.5002 7.80395ZM7.4093 11.1201C7.5404 11.2927 7.66646 11.4598 7.7673 11.627L7.81268 11.6917L10.117 14.5711C10.2128 14.6897 10.3539 14.7598 10.5002 14.7598C10.6464 14.7598 10.7876 14.6897 10.8834 14.5711L13.1876 11.6917L13.233 11.627C13.3339 11.4544 13.4599 11.2873 13.5961 11.1147L13.6313 11.0662C14.2649 10.2391 14.5875 9.18918 14.5363 8.12139C14.485 7.05361 14.0635 6.04457 13.354 5.29121C12.98 4.88952 12.5352 4.57117 12.0453 4.35459C11.5554 4.138 11.0302 4.02749 10.5002 4.02944C9.42113 4.02944 8.40766 4.47699 7.64629 5.29121C6.93787 6.04518 6.51709 7.05405 6.46583 8.12149C6.41457 9.18892 6.7365 10.2386 7.36897 11.0662L7.4093 11.1201ZM8.36228 6.05689C8.93204 5.44219 9.69341 5.10787 10.5002 5.10787C11.3069 5.10787 12.0683 5.44219 12.638 6.05689C13.17 6.62178 13.4859 7.37845 13.5242 8.1791C13.5624 8.97975 13.3201 9.76689 12.8448 10.3868L12.8095 10.4299C12.6683 10.6133 12.5221 10.802 12.396 11.0177L10.5002 13.3902L8.6043 11.0177C8.47825 10.802 8.33202 10.6133 8.19588 10.4353L8.15555 10.3868C7.67897 9.76745 7.43596 8.98003 7.47421 8.17899C7.51245 7.37795 7.82919 6.6211 8.36228 6.05689ZM17.5189 16.2211L16.0062 12.4466C15.9255 12.2471 15.744 12.1177 15.5423 12.1177H13.5255V13.1961H15.2096L16.2886 15.8922H4.71174L5.79077 13.1961H7.47485V12.1177H5.45798C5.2563 12.1177 5.07478 12.2471 4.9941 12.4466L3.48145 16.2211C3.4159 16.3882 3.43103 16.577 3.52179 16.7279C3.61759 16.8789 3.7739 16.9706 3.94533 16.9706H17.055C17.2264 16.9706 17.3827 16.8789 17.4735 16.7279C17.5693 16.577 17.5844 16.3882 17.5189 16.2211Z" fill="white" />
+                                            </svg>
+                                            <svg onClick={() => {
+                                                fetchNui('callBusiness', String(business.businessPhoneNumber));
+                                            }} className='clickanimationXl' xmlns="http://www.w3.org/2000/svg" width="1.40625vw" height="1.40625vw" viewBox="0 0 21 21" fill="none">
+                                                <rect x="0.5" y="0.5" width="20" height="20" rx="2" fill="#3A3A3A" />
+                                                <path d="M5.56401 6.12893C6.26972 5.32749 7.09613 4.92052 7.60791 5.43346L9.31505 7.14272C9.74797 7.57628 9.64295 8.15046 9.14526 8.74278C8.92245 9.00783 8.79085 9.33773 8.76998 9.68357C8.7491 10.0294 8.84007 10.3728 9.02938 10.6628C9.25872 11.0141 9.54599 11.3631 9.8912 11.7088C10.312 12.1303 10.7462 12.474 11.1932 12.7411C11.4764 12.9103 11.8046 12.9882 12.1334 12.9644C12.4623 12.9406 12.7759 12.8163 13.0319 12.6082C13.6523 12.1037 14.086 11.9212 14.4361 12.2713L16.1432 13.981C17.1619 15.0012 14.7048 17.2488 12.9446 16.9422C11.5243 16.6943 9.33154 15.137 7.89277 13.6961C6.62297 12.4244 4.91302 9.94877 4.65311 8.64648C4.49378 7.84987 4.88486 6.89894 5.56401 6.12812V6.12893Z" fill="white" />
+                                            </svg>
+                                            <svg className='clickanimationXl' xmlns="http://www.w3.org/2000/svg" width="1.40625vw" height="1.40625vw" viewBox="0 0 21 21" fill="none">
+                                                <rect x="0.5" y="0.5" width="20" height="20" rx="2" fill="#3A3A3A" />
+                                                <path d="M17.8774 7.27184L13.9976 11.2207C13.9688 11.2495 13.9688 11.2927 13.9976 11.3215L16.7127 14.2111C16.8966 14.3949 16.8966 14.6903 16.7127 14.874C16.6226 14.9641 16.5 15.011 16.381 15.011C16.262 15.011 16.1394 14.9641 16.0493 14.874L13.345 11.9953C13.3161 11.9665 13.2692 11.9665 13.2404 11.9953L12.5805 12.6654C12.0288 13.2239 11.2969 13.5338 10.5108 13.5374C9.71394 13.541 8.95673 13.2059 8.39784 12.6402L7.76322 11.9953C7.73438 11.9665 7.6875 11.9665 7.65865 11.9953L4.95433 14.874C4.86418 14.9641 4.74159 15.011 4.6226 15.011C4.50361 15.011 4.38101 14.9641 4.29087 14.874C4.10697 14.6903 4.10697 14.3949 4.29087 14.2111L7.00601 11.3215C7.03125 11.2927 7.03125 11.2495 7.00601 11.2207L3.1226 7.27184C3.07572 7.225 3 7.25743 3 7.32228V15.2235C3 15.8576 3.51923 16.3765 4.15385 16.3765H16.8462C17.4808 16.3765 18 15.8576 18 15.2235V7.32228C18 7.25743 17.9207 7.2286 17.8774 7.27184Z" fill="white" />
+                                                <path d="M10.5 12.597C11.0337 12.597 11.5349 12.388 11.9099 12.0061L17.5673 6.25221C17.369 6.09368 17.1238 6 16.8534 6H4.15024C3.87981 6 3.63101 6.09368 3.4363 6.25221L9.09375 12.0061C9.46514 12.3844 9.96635 12.597 10.5 12.597Z" fill="white" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div className="divider" style={{ width: '100%' }}></div>
+                                </div>
+                            )
+                        })}
+                    </div>
+                ) : (
+                    <div>
+                        <div style={{
+                            alignSelf: 'stretch',
+                            color: 'rgba(255, 255, 255, 0.17)',
+                            fontSize: '14px',
+                            marginTop: '0.5vw',
+                            marginLeft: '0.8vw',
+                            fontStyle: 'normal',
+                            fontWeight: 500,
+                            lineHeight: 'normal',
+                        }}>SETTINGS</div>
+                        <div className="innerCont" style={{ marginTop: '0.5vw' }}>
+                            <div className="conta1">
+                                <div className="innerConta1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.3541666666666667vw" height="1.3541666666666667vw" viewBox="0 0 23 23" fill="none">
+                                        <rect width="23" height="23" rx="4" fill="#FFA600" />
+                                        <path d="M15.6824 20H7.31768C7.04433 20 6.82273 19.7942 6.82273 19.5404V15.8757C6.82273 13.4808 8.92097 11.5323 11.5 11.5323C11.7734 11.5323 11.995 11.7381 11.995 11.9919C11.995 12.2457 11.7734 12.4515 11.5 12.4515C9.46677 12.4515 7.81264 13.9876 7.81264 15.8757V19.0808H15.1874V15.8757C15.1874 15.1356 14.9374 14.4313 14.4643 13.8388C14.3016 13.6349 14.3476 13.347 14.5672 13.1958C14.7867 13.0446 15.0968 13.0874 15.2595 13.2913C15.86 14.0433 16.1773 14.937 16.1773 15.8757V19.5404C16.1773 19.7942 15.9557 20 15.6824 20Z" fill="white" />
+                                        <path d="M16.505 20H6.49496C6.2216 20 6 19.7942 6 19.5404C6 19.2866 6.2216 19.0808 6.49496 19.0808H16.505C16.7784 19.0808 17 19.2866 17 19.5404C17 19.7942 16.7784 20 16.505 20Z" fill="white" />
+                                        <path d="M11.5 12.4677C8.92097 12.4677 6.82273 10.5193 6.82273 8.12431V4.45963C6.82273 4.20581 7.04429 4 7.31768 4H15.6824C15.9557 4 16.1773 4.20581 16.1773 4.45963V8.12428C16.1773 10.5193 14.0791 12.4677 11.5 12.4677ZM7.8126 4.91925V8.12428C7.8126 10.0124 9.46674 11.5485 11.5 11.5485C13.5332 11.5485 15.1874 10.0124 15.1874 8.12428V4.91925H7.8126Z" fill="white" />
+                                        <path d="M16.505 4.91925H6.49496C6.2216 4.91925 6 4.71344 6 4.45963C6 4.20581 6.2216 4 6.49496 4H16.505C16.7784 4 17 4.20581 17 4.45963C17 4.71344 16.7784 4.91925 16.505 4.91925Z" fill="white" />
+                                        <path d="M11.5 15.3069C11.2267 15.3069 11.0051 15.1011 11.0051 14.8472V11.9919C11.0051 11.7381 11.2267 11.5322 11.5 11.5322C11.7734 11.5322 11.995 11.7381 11.995 11.9919V14.8472C11.995 15.1011 11.7733 15.3069 11.5 15.3069Z" fill="white" />
+                                        <path d="M9.86666 6.78328H7.41665C7.1433 6.78328 6.9217 6.57747 6.9217 6.32366C6.9217 6.06984 7.1433 5.86403 7.41665 5.86403H9.86666C10.14 5.86403 10.3616 6.06984 10.3616 6.32366C10.3616 6.57747 10.1401 6.78328 9.86666 6.78328Z" fill="white" />
+                                        <path d="M15.6948 18.136H13.2448C12.9714 18.136 12.7498 17.9302 12.7498 17.6764C12.7498 17.4226 12.9714 17.2168 13.2448 17.2168H15.6948C15.9681 17.2168 16.1897 17.4226 16.1897 17.6764C16.1897 17.9302 15.9681 18.136 15.6948 18.136Z" fill="white" />
+                                    </svg>
+                                    <div className="textConta">
+                                        <div className="text1">
+                                            Toggle Duty
+                                        </div>
+                                        <div className="text2">
+                                            Help to Toggle Your Current Job Duty.
+                                        </div>
+                                    </div>
+                                </div>
+                                <CustomSwitch switchValue={jobData.onduty} setSwitchValue={async (e) => {
+                                    setJobData({
+                                        ...jobData,
+                                        onduty: e,
+                                    })
+                                    await fetchNui('toggleDuty');
+                                }} />
+                            </div>
+                            <div className="divider" style={{
+                                marginTop: '.15vw',
+                                marginBottom: '.15vw',
+                            }}></div>
+                            <div className="conta1">
+                                <div className="innerConta1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.3541666666666667vw" height="1.3541666666666667vw" viewBox="0 0 23 23" fill="none">
+                                        <rect width="23" height="23" rx="4" fill="#23AF00" />
+                                        <path d="M6.94633 6.92299C7.65204 6.12155 8.47845 5.71459 8.99023 6.22752L10.6974 7.93678C11.1303 8.37035 11.0253 8.94453 10.5276 9.53685C10.3048 9.8019 10.1732 10.1318 10.1523 10.4776C10.1314 10.8235 10.2224 11.1668 10.4117 11.4568C10.641 11.8082 10.9283 12.1571 11.2735 12.5029C11.6944 12.9243 12.1285 13.268 12.5755 13.5352C12.8587 13.7043 13.1869 13.7823 13.5158 13.7585C13.8446 13.7347 14.1582 13.6103 14.4142 13.4022C15.0346 12.8977 15.4683 12.7152 15.8184 13.0654L17.5255 14.775C18.5443 15.7953 16.0871 18.0429 14.3269 17.7362C12.9066 17.4884 10.7139 15.9311 9.27509 14.4902C8.0053 13.2185 6.29534 10.7428 6.03543 9.44055C5.8761 8.64394 6.26718 7.69301 6.94633 6.92219V6.92299Z" fill="white" />
+                                    </svg>
+                                    <div className="textConta">
+                                        <div className="text1">
+                                            Job Calls
+                                        </div>
+                                        <div className="text2">
+                                            Toggle Calls Receiving from Customers.
+                                        </div>
+                                    </div>
+                                </div>
+                                <CustomSwitch switchValue={jobCalls} setSwitchValue={async () => {
+                                    const das = await fetchNui('toggleJobCalls');
+                                    setJobCalls(das as boolean);
+                                }} />
+                            </div>
+                        </div>
+                        {jobData.isboss && (<>
+                            <div style={{
+                                alignSelf: 'stretch',
+                                color: 'rgba(255, 255, 255, 0.17)',
+                                fontSize: '14px',
+                                marginTop: '0.5vw',
+                                marginLeft: '0.8vw',
+                                fontStyle: 'normal',
+                                fontWeight: 500,
+                                lineHeight: 'normal',
+                            }}>ACTIONS</div>
+                            <div className="innerCont" style={{ marginTop: '0.5vw', paddingBottom: 0 }}>
+                                <div style={{
+                                    display: 'flex',
+                                    gap: '0.4vw',
+                                    alignItems: 'center',
+                                    height: '2.5vw',
+                                }}>
+                                    <svg style={{
+                                        flexShrink: 0,
+                                    }} xmlns="http://www.w3.org/2000/svg" width="1.3541666666666667vw" height="1.3541666666666667vw" viewBox="0 0 23 23" fill="none">
+                                        <rect width="23" height="23" rx="4" fill="#1CDAA4" />
+                                        <path d="M11.5001 7.71875C11.1376 7.71875 10.8438 7.42494 10.8438 7.0625C10.8438 6.70006 11.1376 6.40625 11.5001 6.40625C11.8625 6.40625 12.1563 6.70006 12.1563 7.0625C12.1563 7.42494 11.8625 7.71875 11.5001 7.71875Z" fill="white" />
+                                        <path d="M17.625 9.46875H5.37512C4.98269 9.46875 4.63838 9.20756 4.5325 8.82956C4.42663 8.45156 4.58544 8.0495 4.92078 7.84584L11.0457 4.12709C11.1855 4.04222 11.3428 4 11.5001 4C11.6573 4 11.8146 4.04222 11.9542 4.12709L18.0791 7.84584C18.4145 8.0495 18.5735 8.45178 18.4674 8.82956C18.3618 9.20756 18.0174 9.46875 17.625 9.46875ZM11.5001 5.96875C10.8959 5.96875 10.4063 6.45831 10.4063 7.0625C10.4063 7.66669 10.8959 8.15625 11.5001 8.15625C12.1042 8.15625 12.5938 7.66669 12.5938 7.0625C12.5938 6.45831 12.1042 5.96875 11.5001 5.96875Z" fill="white" />
+                                        <path d="M9.31258 9.90625H11.0626V15.375H9.31258V9.90625Z" fill="white" />
+                                        <path d="M6.68761 9.90625H8.43759V15.375H6.68761V9.90625Z" fill="white" />
+                                        <path d="M11.9376 9.90625H13.6875V15.375H11.9376V9.90625Z" fill="white" />
+                                        <path d="M14.5625 9.90625H16.3125V15.375H14.5625V9.90625Z" fill="white" />
+                                        <path d="M17.625 16.6875H5.37512C5.37512 16.2043 5.7669 15.8125 6.25011 15.8125H16.75C17.2332 15.8125 17.625 16.2043 17.625 16.6875Z" fill="white" />
+                                        <path d="M4.62153 17.125H18.3786C18.4538 17.2543 18.5 17.4024 18.5 17.5625V18H4.50013V17.5625C4.50013 17.4024 4.54628 17.2543 4.62153 17.125Z" fill="white" />
+                                    </svg>
+                                    <div style={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                    }}>
+                                        <div style={{
+                                            color: "#FFF",
+                                            fontSize: "0.78125vw",
+                                            fontStyle: "normal",
+                                            fontWeight: 500,
+                                            lineHeight: "normal",
+                                        }}>Balance</div>
+                                        <div style={{
+                                            width: '98px',
+                                            color: 'rgba(255, 255, 255, 0.21)',
+                                            fontSize: '0.5208333333333334vw',
+                                            fontStyle: 'normal',
+                                            fontWeight: 500,
+                                            lineHeight: 'normal',
+                                        }}>
+                                            Current Balance of Business
+                                        </div>
+                                    </div>
+                                    <div style={{
+                                        width: '7vw',
+                                        whiteSpace: 'nowrap',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        textAlign: 'right',
+                                        color: 'rgba(255, 255, 255, 0.50)',
+                                        fontSize: '0.7291666666666666vw',
+                                        lineHeight: 'normal'
+                                    }}><NumberFormatter suffix=" $" value={bankBalance} thousandSeparator /></div>
+                                </div>
+                                <div style={{
+                                    width: '100%',
+                                    height: '1.9vw',
+                                    borderTop: '0.052083333333333336vw solid rgba(255, 255, 255, 0.17)',
+                                    display: 'flex',
+                                    justifyContent: 'space-between'
+                                }}>
+                                    <div style={{
+                                        width: '50%',
+                                        height: '100%', display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        color: '#FFF',
+                                        fontSize: '0.725vw',
+                                        fontStyle: 'normal',
+                                        fontWeight: 500,
+                                        lineHeight: 'normal',
+                                        borderRight: '0.052083333333333336vw solid rgba(255, 255, 255, 0.17)',
+                                        cursor: 'pointer',
+                                    }} onClick={() => {
+                                        setInputTitle('Deposit');
+                                        setInputDescription('Deposit money into the company account');
+                                        setInputPlaceholder('Amount');
+                                        setInputShow(true);
+                                    }}>
+                                        Deposit
+                                    </div>
+                                    <div style={{
+                                        width: '50%',
+                                        height: '100%', display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        color: '#FFF',
+                                        fontSize: '0.725vw',
+                                        fontStyle: 'normal',
+                                        fontWeight: 500,
+                                        lineHeight: 'normal',
+                                        cursor: 'pointer',
+                                    }} onClick={() => {
+                                        setInputTitle('Withdraw');
+                                        setInputDescription('Withdraw money from the company account');
+                                        setInputPlaceholder('Amount');
+                                        setInputShow(true);
+                                    }}>
+                                        Withdraw
+                                    </div>
+                                </div>
+                            </div>
+                            <div style={{
+                                maxHeight: '14vw',
+                                overflowY: 'auto',
+                                overflowX: 'hidden',
+                            }}>
+                                <div style={{
+                                    alignSelf: 'stretch',
+                                    color: 'rgba(255, 255, 255, 0.17)',
+                                    fontSize: '14px',
+                                    marginTop: '0.5vw',
+                                    marginLeft: '0.8vw',
+                                    fontStyle: 'normal',
+                                    fontWeight: 500,
+                                    lineHeight: 'normal',
+                                }}>MANAGE EMPLOYEES</div>
+                                <div className="innerCont" style={{ marginTop: '0.5vw' }}>
+                                    <div className="conta1">
+                                        <div className="innerConta1">
+                                            <svg width="1.3541666666666667vw" height="1.3541666666666667vw" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <rect width="23" height="23" rx="4" fill="#0095E0" />
+                                                <path d="M15.6824 20H7.31768C7.04433 20 6.82273 19.7942 6.82273 19.5404V15.8757C6.82273 13.4808 8.92097 11.5323 11.5 11.5323C11.7734 11.5323 11.995 11.7381 11.995 11.9919C11.995 12.2457 11.7734 12.4515 11.5 12.4515C9.46677 12.4515 7.81264 13.9876 7.81264 15.8757V19.0808H15.1874V15.8757C15.1874 15.1356 14.9374 14.4313 14.4643 13.8388C14.3016 13.6349 14.3476 13.347 14.5672 13.1958C14.7867 13.0446 15.0968 13.0874 15.2595 13.2913C15.86 14.0433 16.1773 14.937 16.1773 15.8757V19.5404C16.1773 19.7942 15.9557 20 15.6824 20Z" fill="white" />
+                                                <path d="M16.505 20H6.49496C6.2216 20 6 19.7942 6 19.5404C6 19.2866 6.2216 19.0808 6.49496 19.0808H16.505C16.7784 19.0808 17 19.2866 17 19.5404C17 19.7942 16.7784 20 16.505 20Z" fill="white" />
+                                                <path d="M11.5 12.4677C8.92097 12.4677 6.82273 10.5193 6.82273 8.12431V4.45963C6.82273 4.20581 7.04429 4 7.31768 4H15.6824C15.9557 4 16.1773 4.20581 16.1773 4.45963V8.12428C16.1773 10.5193 14.0791 12.4677 11.5 12.4677ZM7.8126 4.91925V8.12428C7.8126 10.0124 9.46674 11.5485 11.5 11.5485C13.5332 11.5485 15.1874 10.0124 15.1874 8.12428V4.91925H7.8126Z" fill="white" />
+                                                <path d="M16.505 4.91925H6.49496C6.2216 4.91925 6 4.71344 6 4.45963C6 4.20581 6.2216 4 6.49496 4H16.505C16.7784 4 17 4.20581 17 4.45963C17 4.71344 16.7784 4.91925 16.505 4.91925Z" fill="white" />
+                                                <path d="M11.5 15.3069C11.2267 15.3069 11.0051 15.1011 11.0051 14.8472V11.9919C11.0051 11.7381 11.2267 11.5322 11.5 11.5322C11.7734 11.5322 11.995 11.7381 11.995 11.9919V14.8472C11.995 15.1011 11.7733 15.3069 11.5 15.3069Z" fill="white" />
+                                                <path d="M9.86666 6.78328H7.41665C7.1433 6.78328 6.9217 6.57747 6.9217 6.32366C6.9217 6.06984 7.1433 5.86403 7.41665 5.86403H9.86666C10.14 5.86403 10.3616 6.06984 10.3616 6.32366C10.3616 6.57747 10.1401 6.78328 9.86666 6.78328Z" fill="white" />
+                                                <path d="M15.6948 18.136H13.2448C12.9714 18.136 12.7498 17.9302 12.7498 17.6764C12.7498 17.4226 12.9714 17.2168 13.2448 17.2168H15.6948C15.9681 17.2168 16.1897 17.4226 16.1897 17.6764C16.1897 17.9302 15.9681 18.136 15.6948 18.136Z" fill="white" />
+                                            </svg>
+                                            <div className="textConta">
+                                                <div className="text1">
+                                                    Hire
+                                                </div>
+                                                <div className="text2">
+                                                    Hire a new employee
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <svg className='clickanimation' onClick={() => {
+                                            setInputTitle('Hire');
+                                            setInputDescription('Hire a new employee hopefully they are good.');
+                                            setInputPlaceholder('Enter Server ID.');
+                                            setInputShow(true);
+                                        }} width="0.78125vw" height="0.8333333333333334vw" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M5.97143 6.47143V11.5H5.02857V6.47143H0V5.52857H5.02857V0.5H5.97143V5.52857H11V6.47143H5.97143Z" fill="white" />
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <div className="innerCont" style={{ marginTop: '0.5vw', maxHeight: '9vw', overflowY: 'auto', overflowX: 'hidden' }}>
+                                    {employeeData && employeeData.map((employee, index) => {
+                                        return (
+                                            <div className="conta1" key={index}>
+                                                <div className="innerConta1">
+                                                    <svg width="1.3541666666666667vw" height="1.3541666666666667vw" viewBox="0 0 23 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <rect y="0.5" width="23" height="23" rx="4" fill={employee.status === 'online' ? "rgba(52, 199, 89, 0.7)" : "rgba(255, 62, 65, 0.7)"} />
+                                                        <path d="M17.5 17.1393C17.5 17.8685 17.2926 18.4442 16.8778 18.8665C16.4631 19.2888 15.9119 19.5 15.2244 19.5H7.77557C7.08807 19.5 6.53693 19.2888 6.12216 18.8665C5.70739 18.4442 5.5 17.8685 5.5 17.1393C5.5 16.8173 5.50994 16.5028 5.52983 16.196C5.54972 15.8891 5.58949 15.5579 5.64915 15.2025C5.70881 14.847 5.78409 14.5174 5.875 14.2135C5.96591 13.9097 6.08807 13.6135 6.24148 13.3249C6.39489 13.0362 6.57102 12.7901 6.76989 12.5866C6.96875 12.383 7.21165 12.2205 7.49858 12.099C7.78551 11.9774 8.10227 11.9167 8.44886 11.9167C8.5 11.9167 8.61932 11.982 8.80682 12.1126C8.99432 12.2433 9.20597 12.3891 9.44176 12.5501C9.67756 12.7112 9.98438 12.857 10.3622 12.9876C10.7401 13.1183 11.1193 13.1836 11.5 13.1836C11.8807 13.1836 12.2599 13.1183 12.6378 12.9876C13.0156 12.857 13.3224 12.7112 13.5582 12.5501C13.794 12.3891 14.0057 12.2433 14.1932 12.1126C14.3807 11.982 14.5 11.9167 14.5511 11.9167C14.8977 11.9167 15.2145 11.9774 15.5014 12.099C15.7884 12.2205 16.0313 12.383 16.2301 12.5866C16.429 12.7901 16.6051 13.0362 16.7585 13.3249C16.9119 13.6135 17.0341 13.9097 17.125 14.2135C17.2159 14.5174 17.2912 14.847 17.3509 15.2025C17.4105 15.5579 17.4503 15.8891 17.4702 16.196C17.4901 16.5028 17.5 16.8173 17.5 17.1393ZM14.7727 9C14.7727 9.96615 14.4531 10.791 13.8139 11.4746C13.1747 12.1582 12.4034 12.5 11.5 12.5C10.5966 12.5 9.82528 12.1582 9.18608 11.4746C8.54688 10.791 8.22727 9.96615 8.22727 9C8.22727 8.03385 8.54688 7.20898 9.18608 6.52539C9.82528 5.8418 10.5966 5.5 11.5 5.5C12.4034 5.5 13.1747 5.8418 13.8139 6.52539C14.4531 7.20898 14.7727 8.03385 14.7727 9Z" fill="white" />
+                                                    </svg>
+                                                    <div className="textConta">
+                                                        <div className="text1">
+                                                            {employee.name}
+                                                        </div>
+                                                        <div className="text2">
+                                                            {employee.grade.name}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <svg className='clickanimation' onClick={async () => {
+                                                    await fetchNui('MangeEmployee', employee.empSource);
+                                                }} width="0.15625vw" height="0.7291666666666666vw" viewBox="0 0 3 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M3 2C3 2.82843 2.32843 3.5 1.5 3.5C0.671573 3.5 0 2.82843 0 2C0 1.17157 0.671573 0.5 1.5 0.5C2.32843 0.5 3 1.17157 3 2Z" fill="#D9D9D9" />
+                                                    <path d="M3 7C3 7.82843 2.32843 8.5 1.5 8.5C0.671573 8.5 0 7.82843 0 7C0 6.17157 0.671573 5.5 1.5 5.5C2.32843 5.5 3 6.17157 3 7Z" fill="#D9D9D9" />
+                                                    <path d="M3 12C3 12.8284 2.32843 13.5 1.5 13.5C0.671573 13.5 0 12.8284 0 12C0 11.1716 0.671573 10.5 1.5 10.5C2.32843 10.5 3 11.1716 3 12Z" fill="#D9D9D9" />
+                                                </svg>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                                <div style={{
+                                    alignSelf: 'stretch',
+                                    color: 'rgba(255, 255, 255, 0.17)',
+                                    fontSize: '14px',
+                                    marginTop: '0.5vw',
+                                    marginLeft: '0.8vw',
+                                    fontStyle: 'normal',
+                                    fontWeight: 500,
+                                    lineHeight: 'normal',
+                                }}>INACTIVE EMPLOYEES</div>
+                                <div className="innerCont" style={{ marginTop: '0.5vw', maxHeight: '9vw', overflowY: 'auto', overflowX: 'hidden' }}>
+                                    {inActiveEmployees && inActiveEmployees.map((employee, index) => {
+                                        return (
+                                            <div className="conta1" key={index}>
+                                                <div className="innerConta1">
+                                                    <svg width="1.3541666666666667vw" height="1.3541666666666667vw" viewBox="0 0 23 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <rect y="0.5" width="23" height="23" rx="4" fill="#4D4D4D" />
+                                                        <path d="M17.5 17.1393C17.5 17.8685 17.2926 18.4442 16.8778 18.8665C16.4631 19.2888 15.9119 19.5 15.2244 19.5H7.77557C7.08807 19.5 6.53693 19.2888 6.12216 18.8665C5.70739 18.4442 5.5 17.8685 5.5 17.1393C5.5 16.8173 5.50994 16.5028 5.52983 16.196C5.54972 15.8891 5.58949 15.5579 5.64915 15.2025C5.70881 14.847 5.78409 14.5174 5.875 14.2135C5.96591 13.9097 6.08807 13.6135 6.24148 13.3249C6.39489 13.0362 6.57102 12.7901 6.76989 12.5866C6.96875 12.383 7.21165 12.2205 7.49858 12.099C7.78551 11.9774 8.10227 11.9167 8.44886 11.9167C8.5 11.9167 8.61932 11.982 8.80682 12.1126C8.99432 12.2433 9.20597 12.3891 9.44176 12.5501C9.67756 12.7112 9.98438 12.857 10.3622 12.9876C10.7401 13.1183 11.1193 13.1836 11.5 13.1836C11.8807 13.1836 12.2599 13.1183 12.6378 12.9876C13.0156 12.857 13.3224 12.7112 13.5582 12.5501C13.794 12.3891 14.0057 12.2433 14.1932 12.1126C14.3807 11.982 14.5 11.9167 14.5511 11.9167C14.8977 11.9167 15.2145 11.9774 15.5014 12.099C15.7884 12.2205 16.0313 12.383 16.2301 12.5866C16.429 12.7901 16.6051 13.0362 16.7585 13.3249C16.9119 13.6135 17.0341 13.9097 17.125 14.2135C17.2159 14.5174 17.2912 14.847 17.3509 15.2025C17.4105 15.5579 17.4503 15.8891 17.4702 16.196C17.4901 16.5028 17.5 16.8173 17.5 17.1393ZM14.7727 9C14.7727 9.96615 14.4531 10.791 13.8139 11.4746C13.1747 12.1582 12.4034 12.5 11.5 12.5C10.5966 12.5 9.82528 12.1582 9.18608 11.4746C8.54688 10.791 8.22727 9.96615 8.22727 9C8.22727 8.03385 8.54688 7.20898 9.18608 6.52539C9.82528 5.8418 10.5966 5.5 11.5 5.5C12.4034 5.5 13.1747 5.8418 13.8139 6.52539C14.4531 7.20898 14.7727 8.03385 14.7727 9Z" fill="white" />
+                                                    </svg>
+                                                    <div className="textConta">
+                                                        <div className="text1">
+                                                            {employee.name}
+                                                        </div>
+                                                        <div className="text2">
+                                                            {employee.curJob} - {employee.grade.name}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <svg className='clickanimation' onClick={async () => {
+                                                    await fetchNui('MangeInactiveEmployee', employee.empSource);
+                                                }} width="0.15625vw" height="0.7291666666666666vw" viewBox="0 0 3 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M3 2C3 2.82843 2.32843 3.5 1.5 3.5C0.671573 3.5 0 2.82843 0 2C0 1.17157 0.671573 0.5 1.5 0.5C2.32843 0.5 3 1.17157 3 2Z" fill="#D9D9D9" />
+                                                    <path d="M3 7C3 7.82843 2.32843 8.5 1.5 8.5C0.671573 8.5 0 7.82843 0 7C0 6.17157 0.671573 5.5 1.5 5.5C2.32843 5.5 3 6.17157 3 7Z" fill="#D9D9D9" />
+                                                    <path d="M3 12C3 12.8284 2.32843 13.5 1.5 13.5C0.671573 13.5 0 12.8284 0 12C0 11.1716 0.671573 10.5 1.5 10.5C2.32843 10.5 3 11.1716 3 12Z" fill="#D9D9D9" />
+                                                </svg>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            </div>
+                        </>)}
+                    </div>
+                )}
+                <Navigation location={location.page.services} onClick={async (e) => {
+                    const dataX = {
+                        ...location.page,
+                        services: e,
+                    }
+                    setLocation({
+                        app: 'services',
+                        page: dataX,
+                    });
+                }} />
+                <InputDialog show={inputShow} placeholder={inputPlaceholder} description={inputDescription} title={inputTitle} onConfirm={async (e: number) => {
+                    setInputShow(false);
+                    if (inputTitle === 'Deposit') {
+                        await fetchNui('depositMoney', e).then((res) => {
+                            if (res) {
+                                setBankBalance(bankBalance + e);
+                            }
+                        });
+                    } else if (inputTitle === 'Hire') {
+                        await fetchNui('hireEmployee', {
+                            source: e,
+                            jobname: jobData.name,
+                        }).then(() => {
+
+                        });
+                    } else {
+                        await fetchNui('withdrawMoney', e).then((res) => {
+                            if (res) {
+                                setBankBalance(bankBalance - e);
+                            }
+                        });
+                    }
+                }} onCancel={() => {
+                    setInputShow(false);
+                }} />
+            </div>
+        </CSSTransition>
+    );
+}

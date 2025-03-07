@@ -11,18 +11,6 @@ export interface PlayerCallHistory {
 }
 
 export class CallHistoryManager {
-  /**
-   * Records a two-party call by inserting two separate records—
-   * one for the caller and one for the callee.
-   *
-   * @param call - The call object from the call manager.
-   * @param callerStatus - The status from the caller’s perspective 
-   *                       (e.g. "unanswered", "declined", or "completed").
-   * @param calleeStatus - The status from the callee’s perspective 
-   *                       (e.g. "missed", "declined", or "completed").
-   * @param endTime - The Date when the call ended.
-   * @param targetPhoneNumber - (Optional) The target’s phone number, used if the callee never joined.
-   */
   async recordTwoPartyCallHistory(
     call: {
       callId: number;
@@ -89,7 +77,7 @@ export class CallHistoryManager {
     const options = { sort: { _id: -1 }, limit: maxRecords };
 
     try {
-      const result = await MongoDB.findMany("call_history", query, () => {}, false, options);
+      const result = await MongoDB.findMany("call_history", query, () => { }, false, options);
       return result;
     } catch (error) {
       console.error("Error retrieving call history for phone number:", phoneNumber, error);

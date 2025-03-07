@@ -100,7 +100,7 @@ export const usePhone = create<State & Actions>()(
                 phone: 'recent',
                 messages: '',
                 settings: '',
-                services: '',
+                services: 'company',
                 mail: '',
                 wallet: '',
                 calulator: '',

@@ -11,8 +11,8 @@ type PhoneSettings = {
     ringtone: {
         current: string;
         ringtones: {
-            name:string;
-            url:string;
+            name: string;
+            url: string;
         }[];
     };
     showStartupScreen: boolean;
@@ -31,6 +31,8 @@ type PhoneSettings = {
 type PhoneMail = {
     activeMaidId: string;
     activeMailPassword: string;
+    avator: string;
+    username: string;
     messages: {
         from: string;
         to: string;
@@ -108,4 +110,23 @@ type Notification = {
     nodeRef?: any;
 }
 
-export type { PhoneSettings, PhoneMail, PhoneLocation, PhoneContacts, PhoneCallHistory, Notification, PhonePlayerCard };
+type PhoneBusiness = {
+    ownerCitizenId: string,
+    businessName: string,
+    businessDescription:string,
+    businessType: string[],
+    businessLogo: string,
+    businessPhoneNumber: number,
+    businessAddress: string,
+    generateBusinessEmail: boolean,
+    businessEmail:string,
+    coords: {
+        x: string,
+        y: string,
+        z: string
+    },
+    job: string,
+    _id: string
+}
+
+export type { PhoneSettings, PhoneMail, PhoneLocation, PhoneContacts, PhoneCallHistory, Notification, PhonePlayerCard, PhoneBusiness };

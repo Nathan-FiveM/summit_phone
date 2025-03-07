@@ -48,7 +48,23 @@ on('__cfx_nui:showNoti', (data: {
 });
 
 RegisterNuiCallbackType('updatePersonalCard');
-on('__cfx_nui:updatePersonalCard', async (data: string, cb:Function) => {
+on('__cfx_nui:updatePersonalCard', async (data: string, cb: Function) => {
   const res = await triggerServerCallback('phone:updatePersonalCard', 1, data);
   cb(res);
+});
+
+RegisterNuiCallbackType('phone:contextMenu:click');
+on('__cfx_nui:phone:contextMenu:click', async (data: {
+  name: string,
+  event: string,
+  isServer: boolean,
+  args: string
+}, cb: Function) => {
+  data.isServer ? emitNet(data.event, data.args) : emit(data.event, data.args);
+  cb('ok');
+});
+
+RegisterNuiCallbackType('phone:contextMenu:close');
+on('__cfx_nui:phone:contextMenu:close', () => {
+  NUI.sendReactMessage('phone:contextMenu:close', {});
 });

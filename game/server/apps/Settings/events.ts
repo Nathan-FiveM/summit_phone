@@ -44,7 +44,7 @@ async function GeneratePlayerPhoneNumber(citizenId: string) {
         showNotifications: true,
         isLock: true,
         lockPin: '',
-        usePin: false,
+        usePin: true,
         phoneNumber: number,
         useFaceId: false,
         faceIdIdentifier: '',

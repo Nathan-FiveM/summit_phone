@@ -122,7 +122,8 @@ export default function FacePass() {
                     <CustomSwitch switchValue={phoneSettings.usePin} setSwitchValue={async (e: boolean) => {
                         const data = {
                             ...phoneSettings,
-                            usePin: e
+                            usePin: e,
+                            useFaceId: e
                         };
                         setPhoneSettings(data);
                         await fetchNui('setSettings', JSON.stringify(data));
