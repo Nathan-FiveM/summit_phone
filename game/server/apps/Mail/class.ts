@@ -7,11 +7,12 @@ class Mail {
     async getMailMessages(email: string, password: string) {
         if (!email && !password) return false;
         const mailData = await MongoDB.findOne('phone_mail', { activeMaidId: email, activeMailPassword: password });
+        mailData.messages = mailData.messages.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
         if (!mailData) return false;
         return JSON.stringify(mailData.messages);
     }
 
-    async sendMail(email: string, to: string, subject: string, message: string, images: string[]) {
+    async sendMail(email: string, to: string, subject: string, message: string, images: string[], source: number) {
         const player = email;
         const target = to;
 
@@ -22,6 +23,8 @@ class Mail {
             _id: generateUUid(),
             from: player,
             to: target,
+            avatar: await Utils.GetAvatarFromEmail(target),
+            username: await Utils.GetUserNameFromEmail(target),
             subject: subject,
             message: message,
             images: images,
@@ -34,8 +37,10 @@ class Mail {
             _id: generateUUid(),
             from: player,
             to: target,
+            avatar: await Utils.GetAvatarFromEmail(player),
             subject: subject,
             message: message,
+            username: await Utils.GetUserNameFromEmail(player),
             images: images,
             date: new Date().toISOString(),
             read: false,
@@ -56,6 +61,22 @@ class Mail {
                 timeout: 5000
             }));
         }
+
+        playerMail.messages.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+        emitNet('summit_phone:client:refreshmailMessages', source, JSON.stringify(playerMail.messages));
+        return true;
+    }
+
+    async selecteMessage(data: string) {
+        const parsedData = JSON.parse(data);
+        const { messageId, mailId } = parsedData;
+        const mailData: PhoneMail = await MongoDB.findOne('phone_mail', { _id: mailId });
+        if (!mailData) return false;
+        const message = mailData.messages.find((m) => m._id === messageId);
+        if (!message) return false;
+        message.read = true;
+        await MongoDB.updateOne('phone_mail', { _id: mailId }, mailData);
         return true;
     }
 }

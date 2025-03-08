@@ -6,6 +6,11 @@ onClientCallback('summit_phone:getEmailMessages', async (source: number, email: 
 });
 
 onClientCallback('summit_phone:sendEmail', async (source: number, email: string, to: string, subject: string, message: string, images: string[]) => {
-    const res = await MailClass.sendMail(email, to, subject, message, images);
+    const res = await MailClass.sendMail(email, to, subject, message, images, source);
     return res;
 });
+
+onClientCallback('summit_phone:setSelectedMessage', async (source: number, data: string) => {
+    const res = await MailClass.selecteMessage(data);
+    return res;
+})

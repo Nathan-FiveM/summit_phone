@@ -642,7 +642,7 @@
 
                   .text {
                     color: rgba(255, 255, 255, 0.50);
-                    font-size: 12px;
+                    font-size: 0.625vw;
                     font-style: normal;
                     font-weight: 500;
                     line-height: normal;
@@ -819,7 +819,7 @@
 
               .text1 {
                 color: #FFF;
-                font-size: 15px;
+                font-size: 0.78125vw;
                 font-style: normal;
                 font-weight: 500;
                 line-height: normal;
@@ -829,7 +829,7 @@
               .text2 {
                 align-self: stretch;
                 color: rgba(255, 255, 255, 0.20);
-                font-size: 11px;
+                font-size: 0.5729166666666666vw;
                 font-style: normal;
                 font-weight: 500;
                 line-height: normal;
@@ -935,6 +935,230 @@
         justify-content: space-between;
         align-items: center;
       }
+
+
+      .mainMailBox {
+        display: flex;
+        width: 15.572916666666666vw;
+        max-height: 3.125vw;
+        overflow: hidden;
+        align-items: flex-start;
+        gap: 0.2604166666666667vw;
+        cursor: pointer;
+
+        .mailsemiContainer {
+          display: flex;
+          padding: 0px 0.052083333333333336vw;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.052083333333333336vw;
+          flex: 1 0 0;
+
+          .titleCont {
+            display: flex;
+            align-items: center;
+            align-self: stretch;
+
+            .title {
+              width: 7.90625vw;
+              color: #FFF;
+              font-size: 0.78125vw;
+              font-style: normal;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              overflow: hidden;
+              font-weight: 700;
+              line-height: normal;
+              letter-spacing: 0.026041666666666668vw;
+            }
+
+            .dateTime {
+              display: flex;
+              width: 5.21875vw;
+              justify-content: end;
+              align-items: center;
+              gap: 0.15625vw;
+              color: #5E5E5E;
+              text-align: right;
+              font-size: 0.625vw;
+              font-style: normal;
+              font-weight: 700;
+              line-height: normal;
+              letter-spacing: 0.021875vw;
+            }
+          }
+
+          .description {
+            align-self: stretch;
+            color: rgba(255, 255, 255, 0.70);
+            font-size: 0.5729166666666666vw;
+            font-style: normal;
+            font-weight: 500;
+            line-height: normal;
+            letter-spacing: 0.011458333333333333vw;
+          }
+        }
+      }
+
+      .mailMessageheader {
+        display: flex;
+        width: 15.625vw;
+        align-items: flex-start;
+        gap: 0.3645833333333333vw;
+
+        .semicontexsa {
+          display: flex;
+          padding: 0px 0.052083333333333336vw;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.052083333333333336vw;
+          flex: 1 0 0;
+
+          .titleCont {
+            display: flex;
+            align-items: center;
+            align-self: stretch;
+
+            .title {
+              width: 8.427083333333334vw;
+              color: #FFF;
+              font-size: 0.78125vw;
+              font-style: normal;
+              font-weight: 700;
+              line-height: normal;
+              letter-spacing: 0.026041666666666668vw;
+            }
+
+            .timestamp {
+              display: flex;
+              width: 4.6979166666666665vw;
+              align-items: center;
+              gap: 0.15625vw;
+
+              .treasa {
+                width: 4.6979166666666665vw;
+                flex-shrink: 0;
+                color: #5E5E5E;
+                text-align: right;
+                font-size: 0.6770833333333334vw;
+                font-style: normal;
+                font-weight: 700;
+                line-height: normal;
+                letter-spacing: 0.021875vw;
+              }
+            }
+          }
+
+          .toCont {
+            display: flex;
+            height: 0.6770833333333334vw;
+            align-self: stretch;
+            color: #FFF;
+            font-size: 0.625vw;
+            font-style: normal;
+            font-weight: 700;
+            line-height: normal;
+            letter-spacing: 0.020416666666666666vw;
+
+            .toEmail {
+              color: rgba(255, 255, 255, 0.4);
+              font-size: 0.625vw;
+              font-style: normal;
+              font-weight: 700;
+              line-height: normal;
+              letter-spacing: 0.020416666666666666vw;
+            }
+          }
+        }
+      }
+
+      .mailMessageBody {
+        width: 15.625vw;
+        max-height: 80%;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+
+      .headerOfComposeMail {
+        display: flex;
+        width: 14.558333333333334vw;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-top: 0.5vw;
+
+        .cancelBut {
+          color: #0A84FF;
+          font-size: 0.78125vw;
+          font-style: normal;
+          font-weight: 500;
+          line-height: normal;
+        }
+      }
+
+      .headerOfComposeMailx {
+        display: flex;
+        width: 14.958333333333334vw;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-top: 1vw;
+
+        .cancelBut {
+          color: #0A84FF;
+          font-size: 0.78125vw;
+          font-style: normal;
+          font-weight: 500;
+          line-height: normal;
+        }
+
+        .composeMailTitle {
+          width: 12.760416666666666vw;
+          color: #FFF;
+          font-size: 1.3020833333333333vw;
+          font-style: normal;
+          font-weight: 700;
+          line-height: normal;
+        }
+      }
+
+      .composeMailContent {
+        width: 14.958333333333334vw;
+        max-height: 83%;
+        overflow-y: auto;
+        overflow-x: hidden;
+        margin-top: 0.6vw;
+
+        .composeMailData {
+          .toMail {
+            display: flex;
+            align-items: center;
+
+            .title {
+              color: rgba(255, 255, 255, 0.40);
+              font-size: 0.78125vw;
+              font-style: normal;
+              font-weight: 700;
+              line-height: normal;
+            }
+
+            .inputSsd {
+              ::placeholder {
+                color: #ffffff;
+                letter-spacing: 0.05vw;
+                font-size: 0.7854166666666666vw;
+                font-style: normal;
+                font-weight: 500;
+                line-height: normal;
+              }
+              font-weight: 500;
+              width: 13.5vw;
+              color: #ffffff;
+              background-color: #0a84ff00;
+              outline: none;
+              border: none;
+            }
+          }
+        }
+      }
     }
 
     .company {
@@ -999,6 +1223,8 @@
         }
       }
     }
+
+
   }
 
   .backButton {
@@ -1165,7 +1391,7 @@
       font-style: normal;
       font-weight: 500;
       font-size: 0.7770833333333334vw;
-      line-height: 11px;
+      line-height: 0.5729166666666666vw;
       color: #0A84FF;
       flex: none;
       order: 1;
@@ -1208,7 +1434,7 @@
       font-style: normal;
       font-weight: 500;
       font-size: 0.7770833333333334vw;
-      line-height: 11px;
+      line-height: 0.5729166666666666vw;
       color: #0A84FF;
       flex: none;
       order: 1;
@@ -1766,7 +1992,7 @@
     width: 10.072916666666666vw;
     flex-direction: column;
     align-items: flex-start;
-    gap: 1px;
+    gap: 0.052083333333333336vw;
     flex-shrink: 0;
 
     .title {

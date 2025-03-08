@@ -38,8 +38,10 @@ type PhoneMail = {
         from: string;
         to: string;
         subject: string;
+        username: string;
         images: string[];
         message: string;
+        avatar: string;
         date: string;
         read: boolean;
         tags: string[];
@@ -49,9 +51,11 @@ type PhoneMail = {
 type PhoneMailMessage = {
     _id: string;
     from: string;
+    username: string;
     to: string;
     subject: string;
     images: string[];
+    avatar: string;
     message: string;
     date: string;
     read: boolean;

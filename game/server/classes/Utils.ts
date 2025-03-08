@@ -228,6 +228,18 @@ class Util {
         const citizenId = await this.GetCitizenIdByEmail(email);
         return await exports['qb-core'].GetPlayerByCitizenId(citizenId);
     }
+
+    async GetAvatarFromEmail(email: string) {
+        const avator = await MongoDB.findOne('phone_mail', { activeMaidId: email });
+        if (!avator) return false;
+        return avator.avatar;
+    }
+
+    async GetUserNameFromEmail(email: string) {
+        const user = await MongoDB.findOne('phone_mail', { activeMaidId: email });
+        if (!user) return false;
+        return user.username;
+    }
 }
 
 export const Utils = new Util();

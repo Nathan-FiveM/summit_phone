@@ -64,6 +64,11 @@ onNet('phone:client:acceptCall', (data: string) => {
 onNet('phone:client:updateCallerInterface', (data: string) => {
     NUI.sendReactMessage('startCallAccepted', data);
 })
+
 onNet('phone:client:updateConference', (conferenceData: { conferenceParticipants: number[] }) => {
 
+});
+
+onNet('phone:client:upDateInterFaceName', (data: string) => {
+    NUI.sendReactMessage('upDateInterFaceName', "Conference Call");
 });

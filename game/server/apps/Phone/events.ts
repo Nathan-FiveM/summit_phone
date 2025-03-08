@@ -105,6 +105,7 @@ onNet("phone:server:acceptConferenceCall", async (notiId: string, args: any) => 
         callss,
         participants: callManager.getParticipants(call.callId),
       }));
+      emitNet('phone:client:upDateInterFaceName', p.source);
     }
   }
   emitNet("phone:client:removeActionNotification", targetSource, notiId);
@@ -113,7 +114,7 @@ onNet("phone:server:acceptConferenceCall", async (notiId: string, args: any) => 
     callId,
     targetSource,
     sourceName: sourceName,
-    targetName: targetName,
+    targetName: 'Conference Call',
     callerSource: source,
     databaseTableId,
   }));

@@ -1,4 +1,5 @@
-import { FrameWork } from '@client/cl_main';
 import { NUI } from '@client/classes/NUI';
-import { triggerServerCallback } from '@overextended/ox_lib/client';
-import { generateUUid } from '@shared/utils';
+
+onNet('summit_phone:client:refreshmailMessages', async (data: any) => {
+    NUI.sendReactMessage('updateEmailMessages', data);
+});

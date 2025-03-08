@@ -52,6 +52,13 @@ export default function CallComponent() {
         setInCall(false);
     });
 
+    useNuiEvent('upDateInterFaceName', (name:string)=>{
+        setCallingData({
+            ...callingData,
+            targetName: name
+        });
+    })
+
     useNuiEvent('removeCallingInterface', (data: {
         data: string,
         show: boolean

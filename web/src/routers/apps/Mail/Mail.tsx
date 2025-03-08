@@ -5,6 +5,10 @@ import { fetchNui } from "../../../hooks/fetchNui";
 import { useDebouncedCallback } from "@mantine/hooks";
 import FilterPage from "./FilterPage";
 import FilteredMessage from "./FilteredMessage";
+import { PhoneMailMessage } from "../../../../../types/types";
+import MessageData from "./MessageData";
+import ComposeMail from "./ComposeMail";
+import { useNuiEvent } from "../../../hooks/useNuiEvent";
 
 export default function MailApp(props: { onExit: () => void, onEnter: () => void }) {
     const nodeRef = useRef(null);
@@ -37,6 +41,25 @@ export default function MailApp(props: { onExit: () => void, onEnter: () => void
         return parsedRes;
     }, 500);
 
+    const [selectedMessageData, setSelectedMessageData] = useState<PhoneMailMessage>({
+        _id: '',
+        from: '',
+        to: '',
+        username: '',
+        avatar: '',
+        subject: '',
+        message: '',
+        images: [],
+        date: '',
+        read: false,
+        tags: [],
+    });
+
+    useNuiEvent('updateEmailMessages', (data: string) => {
+        const messagesData = JSON.parse(data);
+        setMessagesData(messagesData);
+    });
+
     return (
         <CSSTransition
             nodeRef={nodeRef}
@@ -52,7 +75,6 @@ export default function MailApp(props: { onExit: () => void, onEnter: () => void
                     password: phoneSettings.smrtPassword,
                 }));
                 const messagesData = JSON.parse(messages);
-                console.log(JSON.stringify(messagesData, null, 2));
                 setMessagesData(messagesData);
             }}
             onExited={() => {
@@ -369,12 +391,61 @@ export default function MailApp(props: { onExit: () => void, onEnter: () => void
                             app: 'mail',
                             page: {
                                 ...location.page,
-                                messages: tag,
+                                mail: tag,
                             }
                         });
                     }}
                 />
-                <FilteredMessage show={location.page.messages === 'inbox' || location.page.messages === 'sent' || location.page.messages === 'draft' || location.page.messages === 'bin'} />
+                <FilteredMessage show={location.page.mail === 'inbox' || location.page.mail === 'sent' || location.page.mail === 'draft' || location.page.mail === 'bin'} messages={messagesData} onMessageClick={(messageData) => {
+                    fetchNui('setSelectedMessage', JSON.stringify({
+                        messageId: messageData._id,
+                        mailId: phoneSettings.smrtId,
+                    }));
+                    setSelectedMessageData(messageData);
+                    const newMessageData = messagesData.map((message: any) => {
+                        if (message._id === messageData._id) {
+                            return {
+                                ...message,
+                                read: true,
+                            }
+                        }
+                        return message;
+                    });
+                    setMessagesData(newMessageData);
+                    setLocation({
+                        app: 'mail',
+                        page: {
+                            ...location.page,
+                            mail: 'message',
+                        }
+                    });
+                }} />
+                <ComposeMail show={location.page.mail.split('/')[0] === 'compose'} onCancel={() => {
+                    setLocation({
+                        app: 'mail',
+                        page: {
+                            ...location.page,
+                            mail: 'inbox',
+                        }
+                    })
+                }} onSend={async (to: string, from: string, subject: string, body: string, attachments: string[]) => {
+                    setLocation({
+                        app: 'mail',
+                        page: {
+                            ...location.page,
+                            mail: '',
+                        }
+                    })
+                    await fetchNui('sendEmail', JSON.stringify({
+                        email: from,
+                        to: to,
+                        subject: subject,
+                        message: body,
+                        images: attachments
+                    })).then(() => {
+                    });
+                }} />
+                <MessageData show={location.page.mail === 'message'} message={selectedMessageData} totalUnreadMessages={messagesData.filter((message: any) => !message.read).length} />
             </div>
         </CSSTransition>
     );
