@@ -1,6 +1,8 @@
 export * from './Contacts/callback';
 export * from './Contacts/class';
 export * from './Contacts/events';
+export * from './Mail/callback';
+export * from './Mail/events';
 export * from './Messages/callback';
 export * from './Messages/class';
 export * from './Messages/events';
@@ -9,7 +11,6 @@ export * from './Phone/callHistoryManager';
 export * from './Phone/callback';
 export * from './Phone/events';
 export * from './Services/callback';
-export * from './Services/class';
 export * from './Services/events';
 export * from './Settings/callback';
 export * from './Settings/class';

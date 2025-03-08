@@ -211,6 +211,23 @@ class Util {
         // If a contact is found, the sender is known
         return contact !== null;
     };
+
+    async GetPhoneNumberByEmail(email: string) {
+        const number = await MongoDB.findOne('phone_settings', { smrtId: email });
+        if (!number) return false;
+        return number.phoneNumber;
+    };
+
+    async GetCitizenIdByEmail(email: string) {
+        const number = await MongoDB.findOne('phone_settings', { smrtId: email });
+        if (!number) return false;
+        return number._id;
+    };
+
+    async GetPlayerByEmail(email: string) {
+        const citizenId = await this.GetCitizenIdByEmail(email);
+        return await exports['qb-core'].GetPlayerByCitizenId(citizenId);
+    }
 }
 
 export const Utils = new Util();

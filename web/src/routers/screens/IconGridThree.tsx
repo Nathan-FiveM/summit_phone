@@ -1,9 +1,5 @@
 import React, { useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-import phoneIcon from "../../../images/icons/Phone.svg?url";
-import messageIcon from "../../../images/icons/Message.svg?url";
-import settingsIcon from "../../../images/icons/Settings.svg?url";
-import servicesIcon from "../../../images/icons/Services.svg?url";
 import { useLocalStorage, useTimeout } from '@mantine/hooks';
 import { deleleteIgnoreiconList, deleteIconById, getIconIdByName, icons } from '../../utils/icons';
 import { usePhone } from '../../store/store';

@@ -34,6 +34,7 @@ type PhoneMail = {
     avator: string;
     username: string;
     messages: {
+        _id: string;
         from: string;
         to: string;
         subject: string;
@@ -43,6 +44,18 @@ type PhoneMail = {
         read: boolean;
         tags: string[];
     }[];
+}
+
+type PhoneMailMessage = {
+    _id: string;
+    from: string;
+    to: string;
+    subject: string;
+    images: string[];
+    message: string;
+    date: string;
+    read: boolean;
+    tags: string[];
 }
 
 type PhoneLocation = {
@@ -113,13 +126,13 @@ type Notification = {
 type PhoneBusiness = {
     ownerCitizenId: string,
     businessName: string,
-    businessDescription:string,
+    businessDescription: string,
     businessType: string[],
     businessLogo: string,
     businessPhoneNumber: number,
     businessAddress: string,
     generateBusinessEmail: boolean,
-    businessEmail:string,
+    businessEmail: string,
     coords: {
         x: string,
         y: string,
@@ -129,4 +142,4 @@ type PhoneBusiness = {
     _id: string
 }
 
-export type { PhoneSettings, PhoneMail, PhoneLocation, PhoneContacts, PhoneCallHistory, Notification, PhonePlayerCard, PhoneBusiness };
+export type { PhoneSettings, PhoneMail, PhoneLocation, PhoneContacts, PhoneCallHistory, Notification, PhonePlayerCard, PhoneBusiness, PhoneMailMessage };

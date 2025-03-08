@@ -1,4 +1,6 @@
 export * from './Contacts/nui';
+export * from './Mail/events';
+export * from './Mail/nui';
 export * from './Messages/events';
 export * from './Messages/nui';
 export * from './Phone/events';
