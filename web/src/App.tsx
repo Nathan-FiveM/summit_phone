@@ -29,6 +29,7 @@ import { useLocalStorage } from '@mantine/hooks';
 import Services from './routers/apps/Services/Services';
 import PhoneContextMenu from './routers/components/PhoneContextMenu';
 import MailApp from './routers/apps/Mail/Mail';
+import AppStore from './routers/apps/AppStore/AppStore';
 
 debugData([
   {
@@ -132,13 +133,14 @@ export default function App() {
     return () => window.removeEventListener("keydown", keyHandler);
   }, [visible, phoneSettings.usePin, phoneSettings.useFaceId, phoneSettings.showStartupScreen]);
 
-  const [brightness, setBrightness] = useLocalStorage({
+  const [brightness] = useLocalStorage({
     key: 'brightness',
-    defaultValue: 30,
+    defaultValue: 60,
   });
   const [settingsEnter, setSettingsEnter] = useState(false);
   const [servicesEnter, setServiceEnter] = useState(false);
   const [mailEnter, setMailEnter] = useState(false);
+  const [appStoreEnter, setAppStoreEnter] = useState(false);
 
   return (
     <div style={{
@@ -201,6 +203,15 @@ export default function App() {
             setMailEnter(false);
           }} onEnter={() => {
             setMailEnter(true);
+          }} />
+        </div>
+        <div className='fuckerMessager' id='fuckerMessager' style={{
+          visibility: appStoreEnter ? 'visible' : 'hidden',
+        }}>
+          <AppStore onExit={() => {
+            setAppStoreEnter(false);
+          }} onEnter={() => {
+            setAppStoreEnter(true);
           }} />
         </div>
         <div className="backButton" onClick={() => {

@@ -22,15 +22,3 @@ on('__cfx_nui:sendEmail', async (data: string) => {
     const res = await triggerServerCallback('summit_phone:sendEmail', 1, email, to, subject, message, images);
     return res;
 });
-
-RegisterNuiCallbackType('getProfileSettings');
-on('__cfx_nui:getProfileSettings', async (data: string, cb: Function) => {
-    const res = await triggerServerCallback('summit_phone:getProfileSettings', 1, data);
-    cb(res);
-});
-
-RegisterNuiCallbackType('updateProfileSettings');
-on('__cfx_nui:updateProfileSettings', async (data: string, cb: Function) => {
-    const res = await triggerServerCallback('summit_phone:updateProfileSettings', 1, data);
-    cb(res);
-});

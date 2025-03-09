@@ -10,7 +10,7 @@ class Mail {
         mailData.messages = mailData.messages.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
         if (!mailData) return false;
         return JSON.stringify(mailData.messages);
-    }
+    };
 
     async sendMail(email: string, to: string, subject: string, message: string, images: string[], source: number) {
         const player = email;
@@ -66,7 +66,7 @@ class Mail {
 
         emitNet('summit_phone:client:refreshmailMessages', source, JSON.stringify(playerMail.messages));
         return true;
-    }
+    };
 
     async selecteMessage(data: string) {
         const parsedData = JSON.parse(data);
@@ -78,7 +78,22 @@ class Mail {
         message.read = true;
         await MongoDB.updateOne('phone_mail', { _id: mailId }, mailData);
         return true;
-    }
+    };
+
+    async getProfileSettings(email: string, password: string) {
+        const mailData = await MongoDB.findAndReturnSpecificFields('phone_mail', { activeMaidId: email, activeMailPassword: password }, ['activeMaidId', 'activeMailPassword', 'avatar', 'username']);
+        if (!mailData) return false;
+        return JSON.stringify(mailData);
+    };
+
+    async updateProfileSettings(email: string, password: string, username: string, avatar: string) {
+        const mailData = await MongoDB.findOne('phone_mail', { activeMaidId: email, activeMailPassword: password });
+        if (!mailData) return false;
+        mailData.username = username;
+        mailData.avatar = avatar;
+        await MongoDB.updateOne('phone_mail', { activeMaidId: email, activeMailPassword: password }, mailData);
+        return true;
+    };
 }
 
 export const MailClass = new Mail();

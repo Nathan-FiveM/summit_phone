@@ -14,3 +14,17 @@ onClientCallback('summit_phone:setSelectedMessage', async (source: number, data:
     const res = await MailClass.selecteMessage(data);
     return res;
 })
+
+onClientCallback('summit_phone:getProfileSettings', async (source: number, data: string) => {
+    const parsedData = JSON.parse(data);
+    const { email, password } = parsedData;
+    const res = await MailClass.getProfileSettings(email, password);
+    return res;
+});
+
+onClientCallback('summit_phone:updateProfileSettings', async (source: number, data: string) => {
+    const parsedData = JSON.parse(data);
+    const { email, password, username, avatar } = parsedData;
+    const res = await MailClass.updateProfileSettings(email, password, username, avatar);
+    return res;
+});

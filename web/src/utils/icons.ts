@@ -187,6 +187,7 @@ export function deleteIconById(id: number, iconsTable: any[]) {
     const index = updatedIcons.findIndex(icon => icon.id === id);
     updatedIcons[index].icon = null;
     updatedIcons[index].name = '';
+    updatedIcons[index].link = '';
     return updatedIcons;
 }
 
@@ -195,7 +196,21 @@ export function addIconById(id: number, icon: string, name: string, iconsTable: 
     const index = updatedIcons.findIndex(icon => icon.id === id);
     updatedIcons[index].icon = icon;
     updatedIcons[index].name = name;
+    updatedIcons[index].link = name.toLowerCase();
     return updatedIcons;
+}
+
+export function AddIconToEmptySlot(icon: string, name: string, iconsTable: any[]) {
+    const updatedIcons = [...iconsTable];
+    const index = updatedIcons.findIndex(icon => icon.icon === null);
+    updatedIcons[index].icon = icon;
+    updatedIcons[index].name = name;
+    updatedIcons[index].link = name.toLowerCase();
+    return updatedIcons;
+}
+
+export function isIconInstalled(name: string, iconsTable: any[]) {
+    return iconsTable.find(icon => icon.name === name)?.icon !== null;
 }
 
 export const notiIcons = (icon: string) => {

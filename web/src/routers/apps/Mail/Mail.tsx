@@ -9,6 +9,7 @@ import { PhoneMailMessage } from "../../../../../types/types";
 import MessageData from "./MessageData";
 import ComposeMail from "./ComposeMail";
 import { useNuiEvent } from "../../../hooks/useNuiEvent";
+import ProfilePage from "./ProfilePage";
 
 export default function MailApp(props: { onExit: () => void, onEnter: () => void }) {
     const nodeRef = useRef(null);
@@ -446,6 +447,7 @@ export default function MailApp(props: { onExit: () => void, onEnter: () => void
                     });
                 }} />
                 <MessageData show={location.page.mail === 'message'} message={selectedMessageData} totalUnreadMessages={messagesData.filter((message: any) => !message.read).length} />
+                <ProfilePage show={location.page.mail === 'profile'} />
             </div>
         </CSSTransition>
     );
