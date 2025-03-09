@@ -43,81 +43,81 @@ export const icons = [
         id: 1,
     },
     {
-        icon: walletIcon,
-        name: 'Wallet',
-        link: 'wallet',
-        id: 2,
-    },
-    {
         icon: calculatorIcon,
         name: 'Calculator',
         link: 'calculator',
-        id: 3,
-    },
-    {
-        icon: appStoreIcon,
-        name: 'App Store',
-        link: 'appstore',
-        id: 4,
+        id: 2,
     },
     {
         icon: cameraIcon,
         name: 'Camera',
         link: 'camera',
-        id: 5,
+        id: 3,
     },
     {
         icon: photosIcon,
         name: 'Photos',
         link: 'photos',
+        id: 4,
+    },
+    {
+        icon: null,
+        name: '',
+        link: '',
+        id: 5,
+    },
+    {
+        icon: null,
+        name: '',
+        link: '',
         id: 6,
     },
     {
-        icon: pigeonIcon,
-        name: 'Pigeon',
-        link: 'pigeon',
+        icon: null,
+        name: '',
+        link: '',
         id: 7,
     },
     {
-        icon: darkChatIcon,
-        name: 'Dark Chat',
-        link: 'darkchat',
+        icon: null,
+        name: '',
+        link: '',
         id: 8,
     },
     {
-        icon: garageIcon,
-        name: 'Garage',
-        link: 'garage',
+        icon: null,
+        name: '',
+        link: '',
         id: 9,
     },
     {
-        icon: notesIcon,
-        name: 'Notes',
-        link: 'notes',
+        icon: null,
+        name: '',
+        link: '',
         id: 10,
     },
     {
-        icon: housingIcon,
-        name: 'Housing',
-        link: 'housing',
+        icon: null,
+        name: '',
+        link: '',
         id: 11,
     },
     {
-        icon: bluePageicon,
-        name: 'Blue page',
-        link: 'bluepage',
+        icon: null,
+        name: '',
+        link: '',
         id: 12,
     },
     {
-        icon: pixieIcon,
-        name: 'Pixie',
-        link: 'pixie',
+        icon: null,
+        name: '',
+        link: '',
         id: 13,
     },
     {
-        icon: groupsIcon,
-        name: 'Groups',
-        link: 'groups',
+        icon: null,
+        name: '',
+        link: '',
         id: 14,
     },
     {
@@ -151,11 +151,24 @@ export const icons = [
         id: 19,
     },
     {
-        icon: servicesIcon,
-        name: 'Services',
-        link: 'services',
+        icon: appStoreIcon,
+        name: 'App Store',
+        link: 'appstore',
         id: 20,
     }
+]
+
+export const iconList = [
+    'wallet',
+    'pigeon',
+    'darkchat',
+    'garage',
+    'notes',
+    'housing',
+    'bluepage',
+    'pixie',
+    'groups',
+    'services'
 ]
 
 export const deleleteIgnoreiconList = [
@@ -167,11 +180,141 @@ export const deleleteIgnoreiconList = [
     'Phone',
     'Message',
     'Settings',
-    'Services'
+]
+
+export const fullIconsDetails = [
+    {
+        icon: mailIcon,
+        name: 'Mail',
+        link: 'mail',
+        description: 'Mail is a service that allows users to send and receive electronic messages.',
+        id: 1,
+    },
+    {
+        icon: walletIcon,
+        name: 'Wallet',
+        link: 'wallet',
+        description: 'A Place where you can accept or send all your money.',
+        id: 2,
+    },
+    {
+        icon: calculatorIcon,
+        name: 'Calculator',
+        link: 'calculator',
+        description: 'A calculator is a device that performs arithmetic operations on numbers.',
+        id: 3,
+    },
+    {
+        icon: appStoreIcon,
+        name: 'App Store',
+        link: 'appstore',
+        description: 'An app store is a type of digital distribution platform for phone software.',
+        id: 4,
+    },
+    {
+        icon: cameraIcon,
+        name: 'Camera',
+        link: 'camera',
+        description: 'A camera is an optical instrument used to capture an image.',
+        id: 5,
+    },
+    {
+        icon: photosIcon,
+        name: 'Photos',
+        link: 'photos',
+        description: 'Photos app made easy to retrive your stored photos or videos.',
+        id: 6,
+    },
+    {
+        icon: pigeonIcon,
+        name: 'Pigeon',
+        link: 'pigeon',
+        description: 'Pigeon is just like chit chatting with world.',
+        id: 7,
+    },
+    {
+        icon: darkChatIcon,
+        name: 'Dark Chat',
+        link: 'darkchat',
+        description: 'If you love your privacy, then dark chat is the best option for you.',
+        id: 8,
+    },
+    {
+        icon: garageIcon,
+        name: 'Garage',
+        link: 'garage',
+        description: 'Garage App made find your stored cars or bikes.',
+        id: 9,
+    },
+    {
+        icon: notesIcon,
+        name: 'Notes',
+        link: 'notes',
+        description: 'Notes app is a place where you can store your important notes',
+        id: 10,
+    },
+    {
+        icon: housingIcon,
+        name: 'Housing',
+        link: 'housing',
+        description: 'Housing app made easy to manage your purchased properties.',
+        id: 11,
+    },
+    {
+        icon: bluePageicon,
+        name: 'Blue page',
+        link: 'bluepage',
+        description: 'Blue page is a place where you can sell your things.',
+        id: 12,
+    },
+    {
+        icon: pixieIcon,
+        name: 'Pixie',
+        link: 'pixie',
+        description: 'A place where you show off your stuffs.',
+        id: 13,
+    },
+    {
+        icon: groupsIcon,
+        name: 'Groups',
+        link: 'groups',
+        description: 'A place where you can create or join groups.',
+        id: 14,
+    },
+    {
+        icon: phoneIcon,
+        name: 'Phone',
+        link: 'phone',
+        description: 'A phone is a device that allows you to make calls.',
+        id: 17,
+    },
+    {
+        icon: messageIcon,
+        name: 'Message',
+        link: 'message',
+        id: 18,
+    },
+    {
+        icon: settingsIcon,
+        name: 'Settings',
+        link: 'settings',
+        id: 19,
+    },
+    {
+        icon: servicesIcon,
+        name: 'Services',
+        link: 'services',
+        description: 'Usually Business owners loves this app.',
+        id: 20,
+    }
 ]
 
 export function getIconIdByName(name: string, iconsTable: any[]) {
     return iconsTable.find(icon => icon.name === name)?.id;
+}
+
+export function getIconByLink(link: string) {
+    return fullIconsDetails.find(icon => icon.link === link);
 }
 
 export function getIconNameById(id: number, iconsTable: any[]) {
@@ -200,17 +343,18 @@ export function addIconById(id: number, icon: string, name: string, iconsTable: 
     return updatedIcons;
 }
 
-export function AddIconToEmptySlot(icon: string, name: string, iconsTable: any[]) {
+export function AddIconToEmptySlot(icon: string, name: string, link: string, iconsTable: any[]) {
     const updatedIcons = [...iconsTable];
     const index = updatedIcons.findIndex(icon => icon.icon === null);
     updatedIcons[index].icon = icon;
     updatedIcons[index].name = name;
-    updatedIcons[index].link = name.toLowerCase();
+    updatedIcons[index].link = link;
     return updatedIcons;
 }
 
 export function isIconInstalled(name: string, iconsTable: any[]) {
-    return iconsTable.find(icon => icon.name === name)?.icon !== null;
+    const res = iconsTable.find(icon => icon.link === name)?.link !== undefined;
+    return res;
 }
 
 export const notiIcons = (icon: string) => {

@@ -1,21 +1,47 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CSSTransition } from "react-transition-group";
 import { usePhone } from "../../../store/store";
-import Title from "../../components/Title";
 import Searchbar from "../../components/SearchBar";
 import { useLocalStorage } from "@mantine/hooks";
-import { icons } from "../../../utils/icons";
+import { AddIconToEmptySlot, deleteIconById, getIconByLink, iconList, icons, isIconInstalled } from "../../../utils/icons";
+import { Avatar, Button } from "@mantine/core";
 
 
 export default function AppStore(props: { onExit: () => void, onEnter: () => void }) {
     const nodeRef = useRef(null);
     const { location, phoneSettings, setLocation, setPhoneSettings } = usePhone();
     const [searchValue, setSearchValue] = useState('');
+    const [loading, setLoading] = useState([]);
     const [slots, setSlots] = useLocalStorage({
         key: 'summit_slots',
         defaultValue: icons,
     });
-    console.log(JSON.stringify(slots, null, 2));
+
+    function installIcon(icon: any, name: string, link: string, slots: any, index: number = 0) {
+        setLoading(prev => {
+            const newLoading = [...prev];
+            newLoading[index] = true;
+            return newLoading;
+        });
+
+        setTimeout(() => {
+            if (isIconInstalled(link, slots)) {
+                setSlots(deleteIconById(slots.find((slot: any) => slot.link === link).id, slots));
+            } else {
+                setSlots(AddIconToEmptySlot(icon, name, link, slots));
+            }
+            setLoading(prev => {
+                const newLoading = [...prev];
+                newLoading[index] = false;
+                return newLoading;
+            });
+        }, 2000);
+    }
+
+    useEffect(() => {
+        setLoading(Array(iconList.length).fill(false));
+    }, []);
+
     return (
         <CSSTransition
             nodeRef={nodeRef}
@@ -76,6 +102,30 @@ export default function AppStore(props: { onExit: () => void, onEnter: () => voi
                     <Searchbar value={searchValue} onChange={(e) => {
                         setSearchValue(e);
                     }} mt="" />
+                </div>
+                <div className="appstore">
+                    {iconList.filter(icon => icon.includes(searchValue.toLowerCase())).map((icon, index) => {
+                        return (
+                            <div className="appStoreBox" key={index}>
+                                <div className="appStoreDetails">
+                                    <Avatar src={getIconByLink(icon).icon} size="lg" radius="" />
+                                    <div className="appStoreDetailsTexts">
+                                        <div className="titles">
+                                            {getIconByLink(icon).name}
+                                        </div>
+                                        <div className="descriptions">
+                                            {getIconByLink(icon).description}
+                                        </div>
+                                    </div>
+                                </div>
+                                <Button loading={loading[index]} className="installIcons" onClick={() => {
+                                    installIcon(getIconByLink(icon).icon, getIconByLink(icon).name, getIconByLink(icon).link, slots, index);
+                                }}>
+                                    {isIconInstalled(icon, slots) ? 'Installed' : 'Get'}
+                                </Button>
+                            </div>
+                        )
+                    })}
                 </div>
             </div>
         </CSSTransition>
