@@ -33,6 +33,7 @@
     "typescript": "^5.5.4"
   },
   "dependencies": {
+    "@citizenfx/three": "^0.100.0",
     "@overextended/ox_lib": "^3.28.1",
     "cron": "^3.2.1"
   },

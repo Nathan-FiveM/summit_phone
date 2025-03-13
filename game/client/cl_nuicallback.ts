@@ -68,3 +68,8 @@ RegisterNuiCallbackType('phone:contextMenu:close');
 on('__cfx_nui:phone:contextMenu:close', () => {
   NUI.sendReactMessage('phone:contextMenu:close', {});
 });
+
+RegisterNuiCallbackType('selfiMode');
+on('__cfx_nui:selfiMode', (data: boolean) => {
+  
+});

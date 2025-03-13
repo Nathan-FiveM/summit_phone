@@ -10,9 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@citizenfx/three": "^0.100.0",
     "@mantine/core": "^7.16.3",
     "@mantine/hooks": "^7.16.3",
     "@types/react-transition-group": "^4.4.12",
+    "axios": "^1.8.2",
     "dayjs": "^1.11.13",
     "immer": "^10.1.1",
     "react": "latest",

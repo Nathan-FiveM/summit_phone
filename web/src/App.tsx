@@ -30,6 +30,9 @@ import Services from './routers/apps/Services/Services';
 import PhoneContextMenu from './routers/components/PhoneContextMenu';
 import MailApp from './routers/apps/Mail/Mail';
 import AppStore from './routers/apps/AppStore/AppStore';
+import Calculator from './routers/apps/Calculator/Calculator';
+import Camera from './routers/apps/Camera/Camera';
+import CameraAdapter from './routers/apps/Camera/Camera';
 
 debugData([
   {
@@ -141,7 +144,9 @@ export default function App() {
   const [servicesEnter, setServiceEnter] = useState(false);
   const [mailEnter, setMailEnter] = useState(false);
   const [appStoreEnter, setAppStoreEnter] = useState(false);
-
+  const [calculatorEnter, setCalculatorEnter] = useState(false);
+  const [cameraEnter, setCameraEnter] = useState(false);
+  
   return (
     <div style={{
       width: '20.083333333333332vw',
@@ -149,12 +154,14 @@ export default function App() {
       display: 'flex',
       justifyContent: 'start',
       alignItems: 'start',
-      marginTop: visible ? '0vh' : (notificationPush || inCall || showNotiy) && !cursor ? '80vh' : '100vh',
+      marginTop: visible && location.page.camera === 'landscape' ? '45vh' : visible ? '0vh' : (notificationPush || inCall || showNotiy) && !cursor ? '80vh' : '100vh',
       transition: 'all 0.9s ease',
       backgroundImage: `url(${primaryColor === 'blue' ? blueFrame : primaryColor === 'gold' ? goldFrame : primaryColor === 'green' ? greenFrame : primaryColor === 'purple' ? purpleFrame : primaryColor === 'red' ? redFrame : ''})`,
       backgroundRepeat: 'no-repeat',
       backgroundSize: 'contain',
       filter: `brightness(${brightness + 30}%)`,
+      transform: location.page.camera === 'landscape' ? 'rotate(-90deg)' : 'rotate(0deg)',
+      marginRight: location.page.camera === 'landscape' ? '9vw' : '0vw',
     }}>
       <div className="innerFrame" style={{
         backgroundImage: `url(${phoneSettings.background.current ? phoneSettings.background.current : phoneBg})`,
@@ -212,6 +219,24 @@ export default function App() {
             setAppStoreEnter(false);
           }} onEnter={() => {
             setAppStoreEnter(true);
+          }} />
+        </div>
+        <div className='fuckerMessager' id='fuckerMessager' style={{
+          visibility: calculatorEnter ? 'visible' : 'hidden',
+        }}>
+          <Calculator onExit={() => {
+            setCalculatorEnter(false);
+          }} onEnter={() => {
+            setCalculatorEnter(true);
+          }} />
+        </div>
+        <div className='fuckerMessager' id='fuckerMessager' style={{
+          visibility: cameraEnter ? 'visible' : 'hidden',
+        }}>
+          <Camera onExit={() => {
+            setCameraEnter(false);
+          }} onEnter={() => {
+            setCameraEnter(true);
           }} />
         </div>
         <div className="backButton" onClick={() => {
