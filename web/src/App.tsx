@@ -33,6 +33,8 @@ import AppStore from './routers/apps/AppStore/AppStore';
 import Calculator from './routers/apps/Calculator/Calculator';
 import Camera from './routers/apps/Camera/Camera';
 import CameraAdapter from './routers/apps/Camera/Camera';
+import Photos from './routers/apps/Photos/Photos';
+import { Image } from '@mantine/core';
 
 debugData([
   {
@@ -146,7 +148,8 @@ export default function App() {
   const [appStoreEnter, setAppStoreEnter] = useState(false);
   const [calculatorEnter, setCalculatorEnter] = useState(false);
   const [cameraEnter, setCameraEnter] = useState(false);
-  
+  const [photosEnter, setPhotosEnter] = useState(false);
+
   return (
     <div style={{
       width: '20.083333333333332vw',
@@ -163,6 +166,7 @@ export default function App() {
       transform: location.page.camera === 'landscape' ? 'rotate(-90deg)' : 'rotate(0deg)',
       marginRight: location.page.camera === 'landscape' ? '9vw' : '0vw',
     }}>
+      
       <div className="innerFrame" style={{
         backgroundImage: `url(${phoneSettings.background.current ? phoneSettings.background.current : phoneBg})`,
         backgroundRepeat: 'no-repeat',
@@ -237,6 +241,15 @@ export default function App() {
             setCameraEnter(false);
           }} onEnter={() => {
             setCameraEnter(true);
+          }} />
+        </div>
+        <div className='fuckerMessager' id='fuckerMessager' style={{
+          visibility: photosEnter ? 'visible' : 'hidden',
+        }}>
+          <Photos onExit={() => {
+            setPhotosEnter(false);
+          }} onEnter={() => {
+            setPhotosEnter(true);
           }} />
         </div>
         <div className="backButton" onClick={() => {

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { CSSTransition } from "react-transition-group";
 import { usePhone } from "../../../store/store";
 import { dataURItoBlob, MainRender } from "./CameraAdapter";
@@ -20,21 +20,17 @@ export default function Camera(props: { onExit: () => void; onEnter: () => void 
         const formData = new FormData();
         formData.append('files[]', dataURItoBlob(image), `screenshot.png`);
 
-        fetch('http://localhost/upload', {
+        fetch('https://cdn.summitrp.gg/upload', {
             method: 'POST',
             mode: 'cors',
             body: formData
         })
             .then(response => response.text())
             .then((text: any) => {
-                /* const textX = JSON.parse(text); */
-                console.log(JSON.stringify(text));
-                /*  if (textX.attachments[0].url) {
-                     console.log(textX.attachments[0].url);
-                 } else {
-                     console.log(false);
-                 } */
-
+                const textX = JSON.parse(text);
+                if (textX.attachments[0].url) {
+                    fetchNui('saveimageToPhotos', textX.attachments[0].url)
+                }
             });
     };
 
@@ -57,7 +53,7 @@ export default function Camera(props: { onExit: () => void; onEnter: () => void 
                     }
                 });
             }}
-            onExiting={()=>{
+            onExiting={() => {
                 MainRender.stop();
             }}
             onExited={props.onExit}

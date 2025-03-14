@@ -4,6 +4,8 @@ export * from './AppStore/events';
 export * from './Contacts/callback';
 export * from './Contacts/class';
 export * from './Contacts/events';
+export * from './DarkChat/callback';
+export * from './DarkChat/events';
 export * from './Mail/callback';
 export * from './Mail/class';
 export * from './Mail/events';

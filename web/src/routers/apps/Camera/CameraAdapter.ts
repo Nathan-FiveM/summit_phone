@@ -142,7 +142,7 @@ class GameRender {
             throw new Error("Failed to get 2D context");
         }
 
-        const videoStream = (cameraCanvas as any).captureStream(60);
+        const videoStream = (cameraCanvas as any).captureStream(55);
         return videoStream;
     }
 
