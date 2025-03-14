@@ -14,6 +14,7 @@ export * from './Phone/CallManager';
 export * from './Phone/callHistoryManager';
 export * from './Phone/callback';
 export * from './Phone/events';
+export * from './Photos/callback';
 export * from './Services/callback';
 export * from './Services/events';
 export * from './Settings/callback';

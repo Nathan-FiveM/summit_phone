@@ -1,6 +1,6 @@
 import { Utils } from "@server/classes/Utils";
 import { Framework, MongoDB } from "@server/sv_main";
-import { generateUUid } from "@shared/utils";
+import { generateUUid, LOGGER } from "@shared/utils";
 
 onNet('summit_phone:server:fireEmployee', async (citizenId: string) => {
     const source = global.source;
@@ -96,4 +96,15 @@ onNet('summit_phone:server:fireInactiveEmployee', async (data: { jobName: string
         timeout: 5000,
     }));
     emitNet('summit_phone:client:refreshEmpData', source, data.jobName);
+});
+
+setImmediate(async () => {
+    const jobArray: any = {};
+    const jobData = await MongoDB.findMany('summit_jobs', {});
+    jobData.forEach(async (job: any) => {
+        const { _id, ...rest } = job;
+        LOGGER(`[SUMMIT_PHONE] Created job ${_id} Successfully`);
+        jobArray[_id] = rest;
+    });
+    const [updated, message] = exports['qb-core'].AddJobs(jobArray);
 });

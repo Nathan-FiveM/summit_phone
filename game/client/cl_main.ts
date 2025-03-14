@@ -5,7 +5,10 @@ import { NUI } from "./classes/NUI";
 import { generateUUid } from "@shared/utils";
 import { triggerServerCallback } from "@overextended/ox_lib/client";
 
-export const FrameWork = exports['qb-core'].GetCoreObject();
+export let FrameWork = exports['qb-core'].GetCoreObject();
+on('QBCore:Client:UpdateObject', ()=>{
+    FrameWork = exports['qb-core'].GetCoreObject();
+})
 
 setImmediate(() => {
     NUI.init();

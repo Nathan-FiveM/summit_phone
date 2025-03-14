@@ -1,3 +1,5 @@
+export * from './AppStore/events';
+export * from './AppStore/nui';
 export * from './Contacts/nui';
 export * from './Mail/events';
 export * from './Mail/nui';
@@ -5,6 +7,8 @@ export * from './Messages/events';
 export * from './Messages/nui';
 export * from './Phone/events';
 export * from './Phone/nui';
+export * from './Photos/events';
+export * from './Photos/nui';
 export * from './Services/events';
 export * from './Services/nui';
 export * from './Settings/nui';

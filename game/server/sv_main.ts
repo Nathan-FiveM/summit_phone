@@ -2,12 +2,16 @@ import "./sv_exports";
 import "./apps/index";
 import { Utils } from "./classes/Utils";
 import { Settings } from "./apps/Settings/class";
-import { generateUUid } from "@shared/utils";
+import { generateUUid, LOGGER } from "@shared/utils";
 import { onClientCallback } from "@overextended/ox_lib/server";
 
-export const Framework = global.exports['qb-core'].GetCoreObject();
-export const MongoDB = global.exports['mongoDB'];
-export const MySQL = global.exports.oxmysql;
+export let Framework = exports['qb-core'].GetCoreObject();
+export const MongoDB = exports['mongoDB'];
+export const MySQL = exports.oxmysql;
+
+on('QBCore:Server:UpdateObject', () => {
+    Framework = exports['qb-core'].GetCoreObject();
+});
 
 setImmediate(() => {
     Utils.load();

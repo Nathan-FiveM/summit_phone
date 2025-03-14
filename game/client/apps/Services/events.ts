@@ -1,5 +1,6 @@
 import { FrameWork } from '@client/cl_main';
 import { NUI } from '@client/classes/NUI';
+import { JobData } from '../../../../types/types';
 import { inputDialog, triggerServerCallback, registerContext, showContext, hideContext, onServerCallback } from '@overextended/ox_lib/client';
 import { generateUUid } from '@shared/utils';
 
@@ -145,6 +146,7 @@ RegisterCommand('registerBusiness', async (source: any, args: any[]) => {
         }));
     });
 }, true);
+emit('chat:addSuggestion', '/registerBusiness', 'Register a New Business.', []);
 
 RegisterCommand('updateBusiness', async (source: any, args: any[]) => {
     const businessNames = await triggerServerCallback('getBusinessNames', 1);
@@ -166,6 +168,7 @@ RegisterCommand('updateBusiness', async (source: any, args: any[]) => {
     })
     showContext('updateBusinessMenu');
 }, true);
+emit('chat:addSuggestion', '/updateBusiness', 'Update Business Details which is already registerd.', []);
 
 RegisterCommand('deleteBusiness', async (source: any, args: any[]) => {
     const businessNames = await triggerServerCallback('getBusinessNames', 1);
@@ -187,6 +190,7 @@ RegisterCommand('deleteBusiness', async (source: any, args: any[]) => {
     })
     showContext('deleteBusinessMenu');
 }, true);
+emit('chat:addSuggestion', '/deleteBusiness', 'Delete Business which is Registerd.', []);
 
 on('phone:client:updateBusiness', async (name: string) => {
     const selectedBusiness = name;
@@ -358,7 +362,7 @@ onNet('summit_phone:client:refreshEmpData', async (data: string) => {
     const employees: any = await triggerServerCallback('summit_phone:server:getEmployees', 1, data);
     NUI.sendReactMessage('updateEmployees', employees);
     NUI.sendReactMessage('phone:contextMenu:close', {});
-})
+});
 
 on('summit_phone:server:promoteEmployee', (targetCitizenid: string) => {
     const PlayerData = FrameWork.Functions.GetPlayerData();
@@ -375,4 +379,304 @@ on('summit_phone:server:promoteEmployee', (targetCitizenid: string) => {
         })
     });
     NUI.sendReactMessage('phone:contextMenu', sendingData);
-})
+});
+
+let businessData: { [key: string]: any } = {};
+const grades: any[] = [];
+
+interface InputField {
+    label: string;
+    type: string;
+    placeholder?: string;
+    required: boolean;
+    default?: string;
+    options?: { value: string; label: string }[];
+}
+
+RegisterCommand('registerJobs', async (source: any, args: any[]) => {
+    const numberOfRanks = Number(args[0]);
+
+    const inputData: InputField[] = [
+        {
+            label: 'Job Name',
+            type: 'input',
+            placeholder: "It's a Variable to set the Jobs",
+            required: true,
+        },
+        {
+            label: "Job Label",
+            type: 'input',
+            placeholder: 'Enter Job Label',
+            required: true
+        },
+        {
+            label: "Default Duty",
+            type: 'select',
+            default: 'false',
+            options: [
+                { value: 'true', label: 'On Duty' },
+                { value: 'false', label: 'Off Duty' },
+            ],
+            required: true
+        },
+        {
+            label: "Should Players Get OffDuty PayChecks?",
+            type: 'select',
+            default: 'false',
+            options: [
+                { value: 'true', label: 'Yes' },
+                { value: 'false', label: 'No' },
+            ],
+            required: true
+        },
+        {
+            label: "What is the type of Job?",
+            type: 'input',
+            placeholder: 'Enter Job Type (leo, civ, ...)',
+            required: true
+        }
+    ];
+
+    const gradesData: InputField[] = Array.from({ length: numberOfRanks }, (_, i) => {
+        const gradeNum = i + 1;
+        return [
+            {
+                label: `Grade ${gradeNum} Label`,
+                type: 'input',
+                placeholder: `Enter Grade ${gradeNum} Label`,
+                required: true
+            },
+            {
+                label: `Grade ${gradeNum} Payment`,
+                type: 'number',
+                placeholder: `Enter Grade ${gradeNum} Payment`,
+                required: true
+            },
+            {
+                label: `Grade ${gradeNum} isBoss`,
+                type: 'select',
+                default: 'false',
+                options: [
+                    { value: 'true', label: 'Yes' },
+                    { value: 'false', label: 'No' },
+                ],
+                required: true
+            },
+            {
+                label: `Grade ${gradeNum} isBankAuth`,
+                type: 'select',
+                default: 'false',
+                options: [
+                    { value: 'true', label: 'Yes' },
+                    { value: 'false', label: 'No' },
+                ],
+                required: true
+            }
+        ];
+    }).flat();
+
+    try {
+        //@ts-ignore
+        const jobInput: any = await inputDialog('Register New Jobs', inputData, {});
+        const jobName = jobInput[0];
+        const jobLabel = jobInput[1];
+        const defaultDuty = jobInput[2] === 'true';
+        const offDutyPaychecks = jobInput[3] === 'true';
+        const jobType = jobInput[4];
+
+        businessData[jobName] = {
+            _id: jobName,
+            label: jobLabel,
+            defaultDuty: defaultDuty,
+            offDutyPay: offDutyPaychecks,
+            type: jobType,
+            grades: {}
+        };
+
+        //@ts-ignore
+        const gradesInput: any = await inputDialog('Register Grades', gradesData, {});
+
+        // Process grades data - each grade has 4 fields
+        for (let i = 0; i < numberOfRanks; i++) {
+            const baseIndex = i * 4;
+            const gradeLabel = gradesInput[baseIndex];
+            const gradePayment = Number(gradesInput[baseIndex + 1]);
+            const isBoss = gradesInput[baseIndex + 2] === 'true';
+            const isBankAuth = gradesInput[baseIndex + 3] === 'true';
+
+            businessData[jobName].grades[i] = {
+                name: gradeLabel,
+                payment: gradePayment,
+                isBoss: isBoss,
+                isBankAuth: isBankAuth
+            };
+        }
+
+        await triggerServerCallback('registerJobs', 1, JSON.stringify(businessData[jobName]));
+    } catch (error) {
+        console.error('Error registering job:', error);
+    }
+}, true);
+
+emit('chat:addSuggestion', '/registerJobs', 'First Register the Job, Before Registering Business.', [{
+    name: "Number of Ranks",
+    help: "Enter Number of Ranks"
+}]);
+
+RegisterCommand('updateJobs', async (source: any, args: any[]) => {
+    const jobName = String(args[0]);
+    const jobData = await triggerServerCallback('getJobData', 1, jobName);
+    const parsedData: JobData = JSON.parse(jobData as string);
+
+    const inputData: InputField[] = [
+        {
+            label: 'Job Name',
+            type: 'input',
+            placeholder: "It's a Variable to set the Jobs",
+            required: true,
+            default: parsedData._id,
+        },
+        {
+            label: "Job Label",
+            type: 'input',
+            placeholder: 'Enter Job Label',
+            required: true,
+            default: parsedData.label
+        },
+        {
+            label: "Default Duty",
+            type: 'select',
+            default: parsedData.defaultDuty ? 'true' : 'false',
+            options: [
+                { value: 'true', label: 'On Duty' },
+                { value: 'false', label: 'Off Duty' },
+            ],
+            required: true
+        },
+        {
+            label: "Should Players Get OffDuty PayChecks?",
+            type: 'select',
+            default: parsedData.offDutyPay ? 'true' : 'false',
+            options: [
+                { value: 'true', label: 'Yes' },
+                { value: 'false', label: 'No' },
+            ],
+            required: true
+        },
+        {
+            label: "What is the type of Job?",
+            type: 'input',
+            placeholder: 'Enter Job Type (leo, civ, ...)',
+            required: true,
+            default: parsedData.type
+        }
+    ];
+    const gradesData: any = Object.values(parsedData.grades).map((grade, i) => {
+        console.log(grade.payment);
+        return [
+            {
+                label: `Grade ${i + 1} Label`,
+                type: 'input',
+                placeholder: `Enter Grade ${i + 1} Label`,
+                required: true,
+                default: grade.name
+            },
+            {
+                label: `Grade ${i + 1} Payment`,
+                type: 'number',
+                placeholder: `Enter Grade ${i + 1} Payment`,
+                required: true,
+                default: grade.payment
+            },
+            {
+                label: `Grade ${i + 1} isBoss`,
+                type: 'select',
+                default: grade.isBoss ? 'true' : 'false',
+                options: [
+                    { value: 'true', label: 'Yes' },
+                    { value: 'false', label: 'No' },
+                ],
+                required: true
+            },
+            {
+                label: `Grade ${i + 1} isBankAuth`,
+                type: 'select',
+                default: grade.isBankAuth ? 'true' : 'false',
+                options: [
+                    { value: 'true', label: 'Yes' },
+                    { value: 'false', label: 'No' },
+                ],
+                required: true
+            }
+        ];
+    }).flat();
+
+    try {
+        //@ts-ignore
+        const jobInput: any = await inputDialog('Update Jobs', inputData, {});
+        const jobName = jobInput[0];
+        const jobLabel = jobInput[1];
+        const defaultDuty = jobInput[2] === 'true';
+        const offDutyPaychecks = jobInput[3] === 'true';
+        const jobType = jobInput[4];
+
+        businessData[jobName] = {
+            _id: jobName,
+            label: jobLabel,
+            defaultDuty: defaultDuty,
+            offDutyPay: offDutyPaychecks,
+            type: jobType,
+            grades: {}
+        };
+
+        //@ts-ignore
+        const gradesInput: any = await inputDialog('Update Grades', gradesData, {});
+
+        // Process grades data - each grade has 4 fields
+        for (let i = 0; i < gradesInput.length; i += 4) {
+            const gradeLabel = gradesInput[i];
+            const gradePayment = Number(gradesInput[i + 1]);
+            const isBoss = gradesInput[i + 2] === 'true';
+            const isBankAuth = gradesInput[i + 3] === 'true';
+
+            businessData[jobName].grades[i / 4] = {
+                name: gradeLabel,
+                payment: gradePayment,
+                isBoss: isBoss,
+                isBankAuth: isBankAuth
+            };
+        }
+
+        await triggerServerCallback('updateJobs', 1, JSON.stringify(businessData[jobName]));
+    } catch (error) {
+        console.error('Error updating job:', error);
+    }
+}, true);
+
+emit('chat:addSuggestion', '/updateJobs', 'Update the Job Details.', [{
+    name: "Job Name",
+    help: "Enter Job Name"
+}]);
+
+RegisterCommand('deleteJobs', async (source: any, args: any[]) => {
+    const res = await triggerServerCallback('getIndexOfAllJobs', 1);
+    const parsedData = JSON.parse(res as string);
+    registerContext({
+        id: 'deleteJobsMenu',
+        title: 'Select Job to Delete',
+        options: [
+            ...parsedData.map((jobName: string) => {
+                return {
+                    title: jobName,
+                    onSelect: async () => {
+                        await triggerServerCallback('deleteJobs', 1, jobName);
+                        hideContext(true);
+                    }
+                }
+            })
+        ]
+    })
+    showContext('deleteJobsMenu');
+}, true);
+
+emit('chat:addSuggestion', '/deleteJobs', 'Delete the Job.', []);

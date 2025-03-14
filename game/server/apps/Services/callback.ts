@@ -352,3 +352,42 @@ onClientCallback('summit_phone:server:hireEmployee', async (client, targetSource
         }));
     }
 });
+
+onClientCallback('getIndexOfAllJobs', async (client) => {
+    const jobs = await MongoDB.findMany('summit_jobs', {});
+    return JSON.stringify(jobs.map((job: any) => job._id));
+});
+
+onClientCallback('registerJobs', async (client, data: string) => {
+    const jobs = JSON.parse(data);
+    await MongoDB.insertOne('summit_jobs', jobs);
+    const { _id, ...rest } = jobs;
+    exports['qb-core'].AddJob(_id, rest);
+});
+
+onClientCallback('getJobData', async (client, data: string) => {
+    const job = await MongoDB.findOne('summit_jobs', { _id: data });
+    return JSON.stringify(job);
+});
+
+onClientCallback('updateJobs', async (client, data: string) => {
+    const jobs = JSON.parse(data);
+    await MongoDB.updateOne('summit_jobs', { _id: jobs._id }, jobs);
+    const { _id, ...rest } = jobs;
+    exports['qb-core'].UpdateJob(_id, rest);
+});
+
+onClientCallback('deleteJobs', async (client, data: string) => {
+    const job = await MongoDB.findOne('summit_jobs', { _id: data });
+    if (!job) {
+        return emitNet('phone:addnotiFication', client, JSON.stringify({
+            id: generateUUid(),
+            title: "System",
+            description: `Job does not exist.`,
+            app: "services",
+            timeout: 5000,
+        }));
+    }
+    await MongoDB.deleteOne('summit_jobs', { _id: data });
+    exports['qb-core'].RemoveJob(data);
+});

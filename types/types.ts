@@ -146,4 +146,22 @@ type PhoneBusiness = {
     _id: string
 }
 
-export type { PhoneSettings, PhoneMail, PhoneLocation, PhoneContacts, PhoneCallHistory, Notification, PhonePlayerCard, PhoneBusiness, PhoneMailMessage };
+type JobData = {
+    _id: string;
+    label: string;
+    defaultDuty: boolean;
+    offDutyPay: boolean;
+    type: string;
+    grades: JobGrades;
+}
+
+type JobGrades = {
+    [key: string]: {
+        name: string;
+        payment: number;
+        isBoss?: boolean;
+        isBankAuth?: boolean;
+    }
+}
+
+export type { PhoneSettings, PhoneMail, PhoneLocation, PhoneContacts, PhoneCallHistory, Notification, PhonePlayerCard, PhoneBusiness, PhoneMailMessage, JobData, JobGrades };
