@@ -35,6 +35,7 @@ import Camera from './routers/apps/Camera/Camera';
 import CameraAdapter from './routers/apps/Camera/Camera';
 import Photos from './routers/apps/Photos/Photos';
 import { Image } from '@mantine/core';
+import DarkChat from './routers/apps/DarkChat/DarkChat';
 
 debugData([
   {
@@ -149,6 +150,7 @@ export default function App() {
   const [calculatorEnter, setCalculatorEnter] = useState(false);
   const [cameraEnter, setCameraEnter] = useState(false);
   const [photosEnter, setPhotosEnter] = useState(false);
+  const [darkChatEnter, setDarkChatEnter] = useState(false);
 
   return (
     <div style={{
@@ -166,7 +168,6 @@ export default function App() {
       transform: location.page.camera === 'landscape' ? 'rotate(-90deg)' : 'rotate(0deg)',
       marginRight: location.page.camera === 'landscape' ? '9vw' : '0vw',
     }}>
-      
       <div className="innerFrame" style={{
         backgroundImage: `url(${phoneSettings.background.current ? phoneSettings.background.current : phoneBg})`,
         backgroundRepeat: 'no-repeat',
@@ -250,6 +251,15 @@ export default function App() {
             setPhotosEnter(false);
           }} onEnter={() => {
             setPhotosEnter(true);
+          }} />
+        </div>
+        <div className='fuckerMessager' id='fuckerMessager' style={{
+          visibility: darkChatEnter ? 'visible' : 'hidden',
+        }}>
+          <DarkChat onExit={() => {
+            setDarkChatEnter(false);
+          }} onEnter={() => {
+            setDarkChatEnter(true);
           }} />
         </div>
         <div className="backButton" onClick={() => {
