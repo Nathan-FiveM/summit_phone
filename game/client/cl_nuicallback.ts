@@ -73,3 +73,13 @@ RegisterNuiCallbackType('selfiMode');
 on('__cfx_nui:selfiMode', (data: boolean) => {
   
 });
+
+RegisterNuiCallbackType('cameraAppOpen');
+on('__cfx_nui:cameraAppOpen', (data: boolean) => {
+
+});
+
+RegisterNuiCallbackType('cameraMode');
+on('__cfx_nui:cameraMode', (data: string) => {
+
+});

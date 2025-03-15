@@ -44,6 +44,7 @@ export default function Camera(props: { onExit: () => void; onEnter: () => void 
             mountOnEnter
             onEntering={() => {
                 props.onEnter();
+                fetchNui('cameraAppOpen', true);
                 MainRender.initializeAgain();
                 MainRender.renderToTarget();
                 MainRender.resize(false);
@@ -55,6 +56,7 @@ export default function Camera(props: { onExit: () => void; onEnter: () => void 
             }}
             onExiting={() => {
                 MainRender.stop();
+                fetchNui('cameraAppOpen', false);
             }}
             onExited={props.onExit}
         >
@@ -107,6 +109,7 @@ export default function Camera(props: { onExit: () => void; onEnter: () => void 
                                     camera: 'landscape',
                                 }
                             });
+                            fetchNui('cameraMode', 'landscape');
                             MainRender.resize(true);
                         } else {
                             setLocation({
@@ -116,6 +119,7 @@ export default function Camera(props: { onExit: () => void; onEnter: () => void 
                                     camera: 'portrait',
                                 }
                             });
+                            fetchNui('cameraMode', 'potrait');
                             MainRender.resize(false);
                         }
                     }} style={{
