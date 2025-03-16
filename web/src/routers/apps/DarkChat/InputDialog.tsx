@@ -1,8 +1,8 @@
 import { NumberInput, TextInput, Transition } from '@mantine/core';
 import { useState } from 'react';
 import { fetchNui } from '../../../hooks/fetchNui';
-export default function InputDialog(props: { show: boolean, title: string, description: string, placeholder: string, onConfirm: (value: number) => void, onCancel: () => void }) {
-    const [value, setValue] = useState(0);
+export default function InputDialog(props: { show: boolean, title: string, description: string, placeholder: string, onConfirm: (value: string) => void, onCancel: () => void }) {
+    const [value, setValue] = useState('');
     return (
         <Transition
             mounted={props.show}
@@ -57,7 +57,7 @@ export default function InputDialog(props: { show: boolean, title: string, descr
                     }}>
                         {props.description}
                     </div>
-                    <NumberInput onFocus={() => fetchNui("disableControls", true)} onBlur={() => fetchNui("disableControls", false)} placeholder={props.placeholder} style={{ width: '80%', marginTop: '1.3vw' }} styles={{
+                    <TextInput onFocus={() => fetchNui("disableControls", true)} onBlur={() => fetchNui("disableControls", false)} placeholder={props.placeholder} style={{ width: '80%', marginTop: '1.3vw' }} styles={{
                         root: {
                             minHeight: '0vw',
                             height: '1.3vw',
@@ -71,7 +71,7 @@ export default function InputDialog(props: { show: boolean, title: string, descr
                             borderRadius: '0.2604166666666667vw',
                             textAlign: 'center',
                         },
-                    }} value={value} onChange={(e: number) => setValue(e)}  rightSection/>
+                    }} value={value} onChange={(e) => setValue(e.currentTarget.value)} />
                     <div style={{
                         width: '100%',
                         height: '1.9vw',
@@ -94,7 +94,7 @@ export default function InputDialog(props: { show: boolean, title: string, descr
                             cursor: 'pointer',
                         }} onClick={() => {
                             props.onCancel();
-                            setValue(0);
+                            setValue('');
                         }}>
                             Cancel
                         </div>
@@ -111,7 +111,7 @@ export default function InputDialog(props: { show: boolean, title: string, descr
                             cursor: 'pointer',
                         }} onClick={() => {
                             props.onConfirm(value);
-                            setValue(0);
+                            setValue('');
                         }}>
                             {props.title}
                         </div>

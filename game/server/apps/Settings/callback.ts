@@ -18,6 +18,7 @@ onClientCallback('GetClientSettings', async (client) => {
         useFaceId: Settings.useFaceId.get(citizenId),
         faceIdIdentifier: Settings.faceIdIdentifier.get(citizenId),
         smrtId: Settings.smrtId.get(citizenId),
+        darkMailIdAttached: Settings.darkMailIdAttached.get(citizenId),
         smrtPassword: Settings.smrtPassword.get(citizenId),
         isFlightMode: Settings.isFlightMode.get(citizenId),
         phoneNumber: Settings.phoneNumber.get(citizenId),
@@ -38,6 +39,7 @@ onClientCallback('SetClientSettings', async (client, data: string) => {
         useFaceId: boolean;
         faceIdIdentifier: string;
         smrtId: string;
+        darkMailIdAttached: string;
         smrtPassword: string;
         isFlightMode: boolean;
         phoneNumber: string;
@@ -55,6 +57,7 @@ onClientCallback('SetClientSettings', async (client, data: string) => {
     Settings.smrtId.set(citizenId, parsedData.smrtId);
     Settings.smrtPassword.set(citizenId, parsedData.smrtPassword);
     Settings.isFlightMode.set(citizenId, parsedData.isFlightMode);
+    Settings.darkMailIdAttached.set(citizenId, parsedData.darkMailIdAttached);
     Settings.phoneNumber.set(citizenId, parsedData.phoneNumber);
     await Settings.SavePlayerSettings(citizenId);
     return true;

@@ -2,7 +2,8 @@ import { onClientCallback } from "@overextended/ox_lib/server";
 import { MailClass } from "./class";
 
 onClientCallback('summit_phone:getEmailMessages', async (source: number, email: string, password: string) => {
-    return await MailClass.getMailMessages(email, password);
+    const data = await MailClass.getMailMessages(email, password)
+    return data;
 });
 
 onClientCallback('summit_phone:sendEmail', async (source: number, email: string, to: string, subject: string, message: string, images: string[]) => {

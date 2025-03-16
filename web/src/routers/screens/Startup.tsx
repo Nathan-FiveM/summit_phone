@@ -82,7 +82,7 @@ export default function Startup() {
         return () => {
 
         }
-    }, [pin.length]);
+    }, [pin.length]); 
 
     useEffect(() => {
         if (confirmPin.length === 6) {

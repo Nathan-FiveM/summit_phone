@@ -90,6 +90,7 @@ export const usePhone = create<State & Actions>()(
             useFaceId: false,
             faceIdIdentifier: '',
             smrtId: '',
+            darkMailIdAttached: '',
             smrtPassword: '',
             isFlightMode: false,
             phoneNumber: '',

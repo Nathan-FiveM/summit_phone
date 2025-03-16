@@ -7,7 +7,6 @@ import { fetchNui } from "../../../hooks/fetchNui";
 import Navigation from "./Navigation";
 import { PhoneBusiness } from "../../../../../types/types";
 import { Avatar, NumberFormatter } from "@mantine/core";
-import { useLocalStorage } from "@mantine/hooks";
 import InputDialog from "./InputDialog";
 import { useNuiEvent } from "../../../hooks/useNuiEvent";
 

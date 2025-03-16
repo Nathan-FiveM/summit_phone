@@ -39,9 +39,7 @@ export default function Photos(props: { onExit: () => void; onEnter: () => void 
         setPhotos(photos.filter((photo) => photo._id !== data));
         await fetchNui('phone:contextMenu:close', "Ok");
     });
-
-    const container = document.createElement('div');
-    document.body.appendChild(container);
+    let container = null;
 
     return (
         <CSSTransition
@@ -53,6 +51,8 @@ export default function Photos(props: { onExit: () => void; onEnter: () => void 
             mountOnEnter
             onEntering={async () => {
                 props.onEnter();
+                container = document.createElement('div');
+                document.body.appendChild(container);
                 const res = await fetchNui('getPhotos', "Ok");
                 const parsedRes = JSON.parse(res as string);
                 setPhotos(parsedRes);

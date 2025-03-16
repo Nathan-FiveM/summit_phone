@@ -25,6 +25,7 @@ type PhoneSettings = {
     smrtId: string;
     smrtPassword: string;
     isFlightMode: boolean;
+    darkMailIdAttached: string;
     phoneNumber: string;
 }
 
@@ -164,4 +165,24 @@ type JobGrades = {
     }
 }
 
-export type { PhoneSettings, PhoneMail, PhoneLocation, PhoneContacts, PhoneCallHistory, Notification, PhonePlayerCard, PhoneBusiness, PhoneMailMessage, JobData, JobGrades };
+type DarkChatChannel = {
+    _id: string;
+    name: string;
+    members: string[];
+    creator: string;
+    createdAt: string;
+    messages: {
+        from: string;
+        message: string;
+        date: string;
+    }[];
+}
+
+type DarkChatProfile = {
+    _id: string;
+    email: string;
+    password: string;
+    avatar: string;
+}
+
+export type { PhoneSettings, PhoneMail, PhoneLocation, PhoneContacts, PhoneCallHistory, Notification, PhonePlayerCard, PhoneBusiness, PhoneMailMessage, JobData, JobGrades, DarkChatProfile, DarkChatChannel };

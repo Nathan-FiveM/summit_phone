@@ -4,12 +4,9 @@ import { usePhone } from "../../../store/store";
 import { dataURItoBlob, MainRender } from "./CameraAdapter";
 import { fetchNui } from "../../../hooks/fetchNui";
 
-
-
 export default function Camera(props: { onExit: () => void; onEnter: () => void }) {
     const nodeRef = useRef(null);
     const { location, setLocation } = usePhone();
-    const canvasE = useRef<HTMLCanvasElement>(null);
     const [landscape, setLandscape] = useState(false);
     const localVideoRef = useRef<HTMLVideoElement>(null);
     const [selfiMode, setSelfiMode] = useState(false);

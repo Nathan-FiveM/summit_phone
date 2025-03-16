@@ -17,6 +17,7 @@ class Setting {
     public smrtPassword = new Map<string, string>();
     public isFlightMode = new Map<string, boolean>();
     public phoneNumber = new Map<string, string>();
+    public darkMailIdAttached = new Map<string, string>();
 
     public async load() {
         try {
@@ -33,6 +34,7 @@ class Setting {
                 this.usePin.set(data._id, data.usePin);
                 this.useFaceId.set(data._id, data.useFaceId);
                 this.faceIdIdentifier.set(data._id, data.faceIdIdentifier);
+                this.darkMailIdAttached.set(data._id, data.darkMailIdAttached);
                 this.smrtId.set(data._id, data.smrtId);
                 this.smrtPassword.set(data._id, data.smrtPassword);
                 this.isFlightMode.set(data._id, data.isFlightMode);
@@ -59,6 +61,7 @@ class Setting {
                     usePin: this.usePin.get(key),
                     useFaceId: this.useFaceId.get(key),
                     faceIdIdentifier: this.faceIdIdentifier.get(key),
+                    darkMailIdAttached: this.darkMailIdAttached.get(key),
                     smrtId: this.smrtId.get(key),
                     smrtPassword: this.smrtPassword.get(key),
                     isFlightMode: this.isFlightMode.get(key),
@@ -87,6 +90,7 @@ class Setting {
                 usePin: this.usePin.get(citizenId),
                 useFaceId: this.useFaceId.get(citizenId),
                 faceIdIdentifier: this.faceIdIdentifier.get(citizenId),
+                darkMailIdAttached: this.darkMailIdAttached.get(citizenId),
                 smrtId: this.smrtId.get(citizenId),
                 smrtPassword: this.smrtPassword.get(citizenId),
                 isFlightMode: this.isFlightMode.get(citizenId),
