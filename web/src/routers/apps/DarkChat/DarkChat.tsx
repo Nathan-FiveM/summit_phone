@@ -28,6 +28,17 @@ export default function DarkChat(props: { onExit: () => void; onEnter: () => voi
     const [inputPlaceholder, setInputPlaceholder] = useState('');
     const [inputShow, setInputShow] = useState(false);
 
+    useNuiEvent('phone:receiveDarkChatMessage', (res: string) => {
+        console.log(res);
+        const parsedRes = JSON.parse(res as string);
+        setChannelData(channelData.map((channel) => {
+            if (channel._id === parsedRes._id) {
+                return parsedRes;
+            }
+            return channel;
+        }));
+    });
+
     function formatedDate(date: string) {
         const today = new Date();
         const yesterday = new Date(today);
@@ -87,6 +98,16 @@ export default function DarkChat(props: { onExit: () => void; onEnter: () => voi
         setInputDescription('Update your password for secure communication.');
         setInputPlaceholder('Enter Password.');
         await fetchNui('phone:contextMenu:close', "Ok");
+    });
+
+    useNuiEvent('phone:logoutDark', () => {
+        const dataX = {
+            ...phoneSettings,
+            darkMailIdAttached: '',
+        }
+        setPhoneSettings(dataX);
+        fetchNui('setSettings', JSON.stringify(dataX));
+        fetchNui('phone:contextMenu:close', "Ok");
     });
 
     return (
@@ -219,7 +240,14 @@ export default function DarkChat(props: { onExit: () => void; onEnter: () => voi
                                             darkMailIdAttached: email,
                                         }
                                         setPhoneSettings(dataX);
-                                        await fetchNui('setSettings', JSON.stringify(dataX));
+                                        const resXX = await fetchNui('setSettings', JSON.stringify(dataX));
+                                        const resX = await fetchNui('getDarkChatChannels', "Ok");
+                                        const parsedRes = JSON.parse(resX as string);
+                                        setChannelData(parsedRes);
+
+                                        const resXA = await fetchNui('getDarkChatProfile', email);
+                                        const parsedResX = JSON.parse(resXA as string);
+                                        setChannelProfile(parsedResX);
                                     }
                                 }}
                             >
@@ -418,7 +446,7 @@ export default function DarkChat(props: { onExit: () => void; onEnter: () => voi
                                 await fetchNui('updateProfileoptions', {
                                     email: channelProfile.email,
                                 })
-                            }} size="1.8vw" src={channelProfile.avatar} />
+                            }} size="1.8vw" src={channelProfile?.avatar} />
                         </div>
                     </div>
                     <Searchbar mt="0.2vw" value={searchValue} onChange={(e) => setSearchValue(e)} />
@@ -431,9 +459,7 @@ export default function DarkChat(props: { onExit: () => void; onEnter: () => voi
                         display: 'flex',
                         flexDirection: 'column',
                     }}>
-                        {channelData.sort((a, b) => {
-                            return new Date(b.messages[b.messages.length - 1]?.date).getTime() - new Date(a.messages[a.messages.length - 1]?.date).getTime();
-                        }).filter((a) => {
+                        {channelData && channelData.filter((a) => {
                             return a.name.toLowerCase().includes(searchValue.toLowerCase());
                         }).map((channel, i) => {
                             return (
@@ -489,8 +515,17 @@ export default function DarkChat(props: { onExit: () => void; onEnter: () => voi
                         })}
                     </div>
                 </div>}
-                <DarkChatDetails show={location.app === 'darkchat' && location.page.darkchat.split('/')[0] === 'details'} messages={channelData[seleectedId] && channelData[seleectedId].messages} onSend={(_message) => {
-
+                <DarkChatDetails show={location.app === 'darkchat' && location.page.darkchat.split('/')[0] === 'details'} channelName={channelData[seleectedId]?.name} channelId={channelData[seleectedId]?._id} messages={channelData[seleectedId] && channelData[seleectedId].messages} onSend={(message) => {
+                    const newMessage = {
+                        message: message,
+                        date: new Date().toISOString(),
+                        from: phoneSettings._id,
+                    }
+                    channelData[seleectedId].messages.push(newMessage);
+                    fetchNui('setDarkChatMessages', JSON.stringify({
+                        data: channelData[seleectedId],
+                        channel: channelData[seleectedId]._id
+                    }))
                 }} onClose={() => {
                     setLocation({
                         app: 'darkchat',

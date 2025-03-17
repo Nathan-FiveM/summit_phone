@@ -16,6 +16,7 @@ on('__cfx_nui:registerNewDarkMailAccount', async (data: string, cb: Function) =>
 RegisterNuiCallbackType('loginDarkMailAccount');
 on('__cfx_nui:loginDarkMailAccount', async (data: string, cb: Function) => {
     const response = await triggerServerCallback('LoginDarkMailAccount', 1, data)
+    console.log(response)
     cb(response);
 });
 
@@ -57,6 +58,12 @@ on('__cfx_nui:updateProfileoptions', async (data: { email: string }, cb: Functio
             event: 'summit_phone:server:changePasswordDark',
             isServer: false,
             args: data.email
+        },
+        {
+            name: "Logout",
+            event: "summit_phone:server:logoutDark",
+            isServer: false,
+            args: data.email
         }
     ]
     NUI.sendReactMessage('phone:contextMenu', dataX);
@@ -71,5 +78,11 @@ on('__cfx_nui:updateDarkAvatar', async (data: string, cb: Function) => {
 RegisterNuiCallbackType('updateDarkPassword');
 on('__cfx_nui:updateDarkPassword', async (data: string, cb: Function) => {
     const response = await triggerServerCallback('UpdateDarkPassword', 1, data)
+    cb(response);
+});
+
+RegisterNuiCallbackType('setDarkChatMessages');
+on('__cfx_nui:setDarkChatMessages', async (data: string, cb: Function) => {
+    const response = await triggerServerCallback('SetDarkChatMessages', 1, data)
     cb(response);
 });

@@ -2,6 +2,7 @@ import { onClientCallback } from "@overextended/ox_lib/server";
 import { MongoDB } from "@server/sv_main";
 import { generateUUid } from "@shared/utils";
 import { DarkChatChannel } from "../../../../types/types";
+import { Utils } from "@server/classes/Utils";
 
 onClientCallback('SearchDarkChatEmail', async (client, data: string) => {
     const res = await MongoDB.findMany('phone_darkchat_mail', { _id: data });
@@ -88,5 +89,24 @@ onClientCallback('UpdateDarkPassword', async (client, data: string) => {
     const res = await MongoDB.findOne('phone_darkchat_mail', { _id: email });
     res.password = password;
     await MongoDB.updateOne('phone_darkchat_mail', { _id: email }, res);
+    return true;
+});
+
+onClientCallback('SetDarkChatMessages', async (client, dataX: string) => {
+    const { channel, data } = JSON.parse(dataX);
+    const res = await MongoDB.updateOne('phone_darkchat_channels', { _id: channel }, data);
+    data.members.forEach(async (member: string) => {
+        const res = await Utils.GetSourceFromCitizenId(member);
+        emitNet('summit_phone:client:receiveDarkChatMessage', res, JSON.stringify(data));
+        if (res !== client) {
+            emitNet('phone:addnotiFication', res, JSON.stringify({
+                id: generateUUid(),
+                title: 'DarkChat',
+                description: `You have a new message in ${data.name}.`,
+                app: 'settings',
+                timeout: 5000
+            }));
+        }
+    });
     return true;
 });

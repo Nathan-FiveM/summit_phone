@@ -3,7 +3,6 @@ import "./Contacts/events";
 import "./DarkChat/callback";
 import "./DarkChat/events";
 import "./Mail/callback";
-import "./Mail/events";
 import "./Messages/callback";
 import "./Messages/events";
 import "./Phone/callback";

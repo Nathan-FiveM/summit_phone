@@ -166,7 +166,7 @@ export const iconList = [
     'notes',
     'housing',
     'bluepage',
-    'pixie',
+    /* 'pixie', */
     'groups',
     'services'
 ]
@@ -267,19 +267,19 @@ export const fullIconsDetails = [
         description: 'Blue page is a place where you can sell your things.',
         id: 12,
     },
-    {
+    /* {
         icon: pixieIcon,
         name: 'Pixie',
         link: 'pixie',
         description: 'A place where you show off your stuffs.',
         id: 13,
-    },
+    }, */
     {
         icon: groupsIcon,
         name: 'Groups',
         link: 'groups',
         description: 'A place where you can create or join groups.',
-        id: 14,
+        id: 13,
     },
     {
         icon: phoneIcon,

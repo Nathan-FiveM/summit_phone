@@ -92,6 +92,11 @@ export default function App() {
     }
   }, []);
 
+  useNuiEvent('setSettings', (data: string) => {
+    const settings: PhoneSettings = JSON.parse(data);
+    setPhoneSettings(settings);
+  });
+
   useEffect(() => {
     if (!visible) return;
     settingsCallback(visible);

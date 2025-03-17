@@ -6,7 +6,7 @@ import { generateUUid } from "@shared/utils";
 import { triggerServerCallback } from "@overextended/ox_lib/client";
 
 export let FrameWork = exports['qb-core'].GetCoreObject();
-on('QBCore:Client:UpdateObject', ()=>{
+on('QBCore:Client:UpdateObject', () => {
     FrameWork = exports['qb-core'].GetCoreObject();
 })
 
@@ -79,32 +79,7 @@ exports.ox_target.addGlobalPlayer([
     }
 ]);
 
-/* on('phone:client:buttonClicked', (id: string) => {
-    
+on('QBCore:Client:OnPlayerLoaded', async (resource: string) => {
+    const response: any = await triggerServerCallback('GetClientSettings', 1)
+    NUI.sendReactMessage('setSettings', response);
 });
-on('phone:client:buttonClicked1', (id: string) => {
-    NUI.sendReactMessage('removeActionNotification', id);
-}); */
-
-/*
-
-RegisterCommand('phoneclose', () => {
-    NUI.closeUI();
-}, false);
- */
-/* let tick: any;
-
-RegisterCommand('gfetTime', () => {
-
-    tick = setTick(() => {
-        let hours = GetClockHours();
-        const minutes = GetClockMinutes();
-
-        NUI.sendReactMessage('sendTime', `${hours}:${minutes}`);
-    });
-
-}, false);
-
-RegisterCommand('stopTime', () => {
-    clearTick(tick);
-}, false); */
