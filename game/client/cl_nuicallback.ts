@@ -96,13 +96,16 @@ const speed_lr: number = 0.2;           // Rotation speed for left/right
 
 // Function to toggle the front-facing cell phone camera effect
 function cellCamActivate(p0: boolean, p1: boolean): void {
-  Citizen.invokeNative('0xFDE8F069C542D126', p0, p1); // _CELL_CAM_ACTIVATE
-  console.log(`Cell camera effect activated: ${p0}, ${p1}`);
-  if (p0 && p1) {
-    Animation.EndAnimation();
-  } else {
-    // Animation.StatAnimation('prop_aphone_blue');
-  }
+    Citizen.invokeNative('0xFDE8F069C542D126', p0, p1); // _CELL_CAM_ACTIVATE
+    console.log(`Cell camera effect activated: ${p0}, ${p1}`);
+    if (p0 && p1) {
+      CreateMobilePhone(0); // Create phone model
+      Citizen.invokeNative('0x2491A93618B7D838', true); // _DISPLAY_RADAR
+    } else {
+      DestroyMobilePhone(); // Destroy phone model
+      Citizen.invokeNative('0x2491A93618B7D838', false); // _DISPLAY_RADAR
+      // Animation.StatAnimation('prop_aphone_blue');
+    }
 }
 
 // Callback to open or close the camera app
@@ -214,34 +217,28 @@ on('__cfx_nui:selfiMode', (data: boolean) => {
   }
 });
 
-// Tick function for camera rotation using the right analog stick
-// setTick(() => {
-//     if (camOpen) {
-//         const activeCam = isSelfieMode ? selfieCam : normalCam;
-//         if (activeCam) {
-//             const rightAxisX: number = GetControlNormal(0, 1); // Right stick X-axis
-//             const rightAxisY: number = GetControlNormal(0, 2); // Right stick Y-axis
-//             const rotation: number[] = GetCamRot(activeCam, 2); // Current rotation
+setTick(() => {
+  if (!camOpen) return;
 
-//             // Update rotation based on stick input
-//             if (rightAxisX !== 0.0 || rightAxisY !== 0.0) {
-//                 const newZ: number = rotation[2] + rightAxisX * -1.0 * speed_ud;
-//                 const newX: number = Math.max(
-//                     Math.min(50.0, rotation[0] + rightAxisY * -1.0 * speed_lr),
-//                     -89.5
-//                 ); // Clamp pitch
-//                 SetCamRot(activeCam, newX, 0.0, newZ, 2);
-//                 if (!isSelfieMode) {
-//                     SetEntityHeading(PlayerPedId(), newZ); // Sync player heading in normal mode
-//                 } else {
-//                     const lPed = PlayerPedId();
-//                     const heading = GetEntityHeading(lPed);
-//                     SetCamRot(activeCam, newX, 0.0, (heading + 180.0) % 360.0, 2); // Keep selfie cam facing player
-//                 }
-//             }
-//         }
-//     }
-// });
+  const activeCam = isSelfieMode ? selfieCam : normalCam;
+  if (!activeCam) return;
+
+  const rightAxisX = GetControlNormal(0, 220); // Right stick X-axis
+  const rightAxisY = GetControlNormal(0, 221); // Right stick Y-axis
+  const rotation = GetCamRot(activeCam, 2);    // Current rotation
+  const faceCheck = CellCamIsCharVisibleNoFaceCheck(PlayerPedId());
+
+  if (!isSelfieMode) {
+      if (!faceCheck) {
+          SetCamRot(activeCam, 0.0, 0.0, GetEntityHeading(PlayerPedId()), 2);
+      } else if (rightAxisX !== 0.0 || rightAxisY !== 0.0) {
+          const newZ = rotation[2] + rightAxisX * -1.0 * speed_ud;
+          const newX = Math.max(Math.min(50.0, rotation[0] + rightAxisY * -1.0 * speed_lr), -89.5);
+          SetCamRot(activeCam, newX, 0.0, newZ, 2);
+          SetEntityHeading(PlayerPedId(), newZ);
+      }
+  }
+});
 let sl = false;
 RegisterCommand('selfie', () => {
   sl = !sl;
