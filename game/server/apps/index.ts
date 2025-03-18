@@ -12,3 +12,4 @@ import "./Services/callback";
 import "./Services/events";
 import "./Settings/callback";
 import "./Settings/events";
+import "./Pigeon/callback";
