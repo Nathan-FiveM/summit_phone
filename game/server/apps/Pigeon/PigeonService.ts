@@ -265,21 +265,21 @@ class PigeonService {
         };
     }
 
-    /** Retrieves tweets from a specific user. */
+    /** Retrieves tweets from a specific user with pagination. */
     getUserTweets() {
-        return async (client: number, targetUsername: string) => {
+        return async (client: number, data: string) => {
             try {
+                const { targetUsername, page = 1, limit = 20 } = JSON.parse(data);
                 const targetUser = await this.mongoDB.findOne("pigeon_users", { username: targetUsername });
                 if (!targetUser) {
                     return { error: "User not found" };
                 }
-
+                const skip = (page - 1) * limit;
                 const tweets = await this.mongoDB.findMany(
                     "pigeon_tweets",
                     { userId: targetUser._id },
-                    { sort: { createdAt: -1 }, limit: 20 }
+                    { sort: { createdAt: -1 }, skip, limit }
                 );
-
                 const citizenId = await this.getCitizenId(client);
                 const tweetIds = tweets.map((t: any) => t._id);
                 const likes = await this.mongoDB.findMany("pigeon_likes", {
@@ -291,7 +291,6 @@ class PigeonService {
                     t.likedByMe = likedTweetIds.has(t._id);
                     t.retweetCount = t.retweetCount || 0;
                 });
-
                 return tweets;
             } catch (error) {
                 console.error("Error in getUserTweets:", error);
@@ -300,27 +299,25 @@ class PigeonService {
         };
     }
 
-    /** Retrieves the user's feed (tweets from followed users). */
+    /** Retrieves the user's feed with pagination. */
     getFeed() {
-        return async (client: number, options: string) => {
+        return async (client: number, data: string) => {
             try {
-                const { since } = JSON.parse(options || "{}");
+                const { since, page = 1, limit = 20 } = JSON.parse(data || "{}");
                 const citizenId = await this.getCitizenId(client);
                 if (!(await this.hasProfile(citizenId))) {
                     return { error: "Profile not set" };
                 }
-
                 const follows = await this.mongoDB.findMany("pigeon_follows", { followerId: citizenId });
                 const followedUserIds: string[] = follows.map((f: { followeeId: string }) => f.followeeId);
-
                 const query: any = { userId: { $in: followedUserIds } };
                 if (since) query.createdAt = { $gt: since };
-
+                const skip = (page - 1) * limit;
                 const tweets = await this.mongoDB.findMany("pigeon_tweets", query, {
                     sort: { createdAt: -1 },
-                    limit: 20,
+                    skip,
+                    limit,
                 });
-
                 const tweetIds: string[] = tweets.map((t: { _id: string }) => t._id);
                 const likes = await this.mongoDB.findMany("pigeon_likes", {
                     tweetId: { $in: tweetIds },
@@ -331,7 +328,6 @@ class PigeonService {
                     t.likedByMe = likedTweetIds.has(t._id);
                     t.retweetCount = t.retweetCount || 0;
                 });
-
                 return tweets;
             } catch (error) {
                 console.error("Error in getFeed:", error);
@@ -500,12 +496,18 @@ class PigeonService {
         };
     }
 
-    /** Searches for users by partial username match. */
+    /** Searches for users by partial username match with pagination. */
     searchUsers() {
-        return async (client: number, searchTerm: string) => {
+        return async (client: number, data: string) => {
             try {
+                const { searchTerm, page = 1, limit = 20 } = JSON.parse(data);
                 const regex = new RegExp(searchTerm, "i"); // Case-insensitive search
-                const users = await this.mongoDB.findMany("pigeon_users", { username: { $regex: regex } });
+                const skip = (page - 1) * limit;
+                const users = await this.mongoDB.findMany(
+                    "pigeon_users",
+                    { username: { $regex: regex } },
+                    { skip, limit }
+                );
                 return users;
             } catch (error) {
                 console.error("Error in searchUsers:", error);
@@ -514,14 +516,16 @@ class PigeonService {
         };
     }
 
-    /** Retrieves tweets by hashtag. */
+    /** Retrieves tweets by hashtag with pagination. */
     getTweetsByHashtag() {
-        return async (client: number, hashtag: string) => {
+        return async (client: number, data: string) => {
             try {
+                const { hashtag, page = 1, limit = 20 } = JSON.parse(data);
+                const skip = (page - 1) * limit;
                 const tweets = await this.mongoDB.findMany(
                     "pigeon_tweets",
                     { hashtags: hashtag },
-                    { sort: { createdAt: -1 }, limit: 20 }
+                    { sort: { createdAt: -1 }, skip, limit }
                 );
                 const citizenId = await this.getCitizenId(client);
                 const tweetIds = tweets.map((t: any) => t._id);
