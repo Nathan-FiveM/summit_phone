@@ -37,6 +37,7 @@ import Photos from './routers/apps/Photos/Photos';
 import { Image } from '@mantine/core';
 import DarkChat from './routers/apps/DarkChat/DarkChat';
 import Housing from './routers/apps/Housing/Housing';
+import Pigeon from './routers/apps/Pigeon/Pigeon';
 
 debugData([
   {
@@ -158,6 +159,7 @@ export default function App() {
   const [photosEnter, setPhotosEnter] = useState(false);
   const [darkChatEnter, setDarkChatEnter] = useState(false);
   const [housingEnter, setHousingEnter] = useState(false);
+  const [pigeonEnter, setPigeonEnter] = useState(false);
 
   return (
     <div style={{
@@ -276,6 +278,15 @@ export default function App() {
             setHousingEnter(false);
           }} onEnter={() => {
             setHousingEnter(true);
+          }} />
+        </div>
+        <div className='fuckerMessager' id='fuckerMessager' style={{
+          visibility: pigeonEnter ? 'visible' : 'hidden',
+        }}>
+          <Pigeon onExit={() => {
+            setPigeonEnter(false);
+          }} onEnter={() => {
+            setPigeonEnter(true);
           }} />
         </div>
         <div className="backButton" onClick={() => {
