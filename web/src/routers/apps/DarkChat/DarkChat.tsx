@@ -473,15 +473,6 @@ export default function DarkChat(props: { onExit: () => void; onEnter: () => voi
                                     alignItems: 'center',
                                     marginTop: i === 0 ? '' : '0.5vw',
                                     cursor: 'pointer',
-                                }} onClick={async () => {
-                                    setLocation({
-                                        app: 'darkchat',
-                                        page: {
-                                            ...location.page,
-                                            darkchat: `details/${channel._id}`,
-                                        }
-                                    })
-                                    setSelectedId(i);
                                 }}>
                                     <div style={{
                                         display: 'flex',
@@ -494,7 +485,16 @@ export default function DarkChat(props: { onExit: () => void; onEnter: () => voi
                                         </svg>
                                         <div style={{ fontSize: '0.5vw' }}>{channel.members.length}</div>
                                     </div>
-                                    <div style={{ marginLeft: '1vw', width: '60%', height: '1.8vw' }}>
+                                    <div style={{ marginLeft: '1vw', width: '60%', height: '1.8vw' }} onClick={async () => {
+                                        setLocation({
+                                            app: 'darkchat',
+                                            page: {
+                                                ...location.page,
+                                                darkchat: `details/${channel._id}`,
+                                            }
+                                        })
+                                        setSelectedId(i);
+                                    }}>
                                         <div style={{ fontSize: '0.8vw', lineHeight: '0.8vw', width: '100%', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{channel.name}</div>
                                         <div style={{ fontSize: '0.6vw', color: '#8C8C8C', width: '100%', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{channel.messages[channel.messages.length - 1]?.message}</div>
                                     </div>

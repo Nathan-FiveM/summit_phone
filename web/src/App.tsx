@@ -36,6 +36,7 @@ import CameraAdapter from './routers/apps/Camera/Camera';
 import Photos from './routers/apps/Photos/Photos';
 import { Image } from '@mantine/core';
 import DarkChat from './routers/apps/DarkChat/DarkChat';
+import Housing from './routers/apps/Housing/Housing';
 
 debugData([
   {
@@ -156,6 +157,7 @@ export default function App() {
   const [cameraEnter, setCameraEnter] = useState(false);
   const [photosEnter, setPhotosEnter] = useState(false);
   const [darkChatEnter, setDarkChatEnter] = useState(false);
+  const [housingEnter, setHousingEnter] = useState(false);
 
   return (
     <div style={{
@@ -265,6 +267,15 @@ export default function App() {
             setDarkChatEnter(false);
           }} onEnter={() => {
             setDarkChatEnter(true);
+          }} />
+        </div>
+        <div className='fuckerMessager' id='fuckerMessager' style={{
+          visibility: housingEnter ? 'visible' : 'hidden',
+        }}>
+          <Housing onExit={() => {
+            setHousingEnter(false);
+          }} onEnter={() => {
+            setHousingEnter(true);
           }} />
         </div>
         <div className="backButton" onClick={() => {

@@ -185,4 +185,24 @@ type DarkChatProfile = {
     avatar: string;
 }
 
-export type { PhoneSettings, PhoneMail, PhoneLocation, PhoneContacts, PhoneCallHistory, Notification, PhonePlayerCard, PhoneBusiness, PhoneMailMessage, JobData, JobGrades, DarkChatProfile, DarkChatChannel };
+type ApartMentData = {
+    property_id: number,
+    owner_citizenid: string,
+    street: string,
+    description: string,
+    has_access: string,
+    apartment: string,
+    door_data: string
+}
+
+type HouseData = {
+    property_id: number,
+    owner_citizenid: string,
+    street: string,
+    description: string,
+    has_access: string,
+    shell: string,
+    door_data: string
+}
+
+export type { PhoneSettings, PhoneMail, PhoneLocation, PhoneContacts, PhoneCallHistory, Notification, PhonePlayerCard, PhoneBusiness, PhoneMailMessage, JobData, JobGrades, DarkChatProfile, DarkChatChannel, ApartMentData, HouseData };

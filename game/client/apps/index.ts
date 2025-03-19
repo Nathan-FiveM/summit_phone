@@ -12,3 +12,4 @@ import "./Photos/nui";
 import "./Services/events";
 import "./Services/nui";
 import "./Settings/nui";
+import "./Hosuing/nui";
