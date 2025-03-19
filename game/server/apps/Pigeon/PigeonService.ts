@@ -112,11 +112,7 @@ class PigeonService {
                     return { error: "Not logged in" };
                 }
                 const { displayName } = JSON.parse(data);
-                await this.mongoDB.updateOne(
-                    "phone_pigeon_users",
-                    { _id: citizenId },
-                    { $set: { displayName } }
-                );
+                await this.mongoDB.updateOne("phone_pigeon_users", { _id: citizenId }, { $set: { displayName } });
                 return true;
             } catch (error) {
                 console.error("Error in setProfile:", error);
