@@ -32,26 +32,100 @@ class PigeonService {
         return matches ? matches.map((m) => m.slice(1)) : [];
     }
 
-    /** Sets or updates a user's Pigeon profile. */
+    /** Checks if the user is logged in. */
+    private async isLoggedIn(citizenId: string): Promise<boolean> {
+        const user = await this.mongoDB.findOne("pigeon_users", { _id: citizenId });
+        return user && user.loggedIn;
+    }
+
+    /** Signs up a new user with username and password. */
+    signup() {
+        return async (client: number, data: string) => {
+            try {
+                const citizenId = await this.getCitizenId(client);
+                const existingProfile = await this.mongoDB.findOne("pigeon_users", { _id: citizenId });
+                if (existingProfile) {
+                    return { error: "Profile already exists for this citizenId" };
+                }
+                const { username, password } = JSON.parse(data);
+                const existingUsername = await this.mongoDB.findOne("pigeon_users", { username });
+                if (existingUsername) {
+                    return { error: "Username already taken" };
+                }
+                await this.mongoDB.insertOne("pigeon_users", {
+                    _id: citizenId,
+                    username,
+                    password, // Stored in plain text as per requirement (Note: Use hashing in production)
+                    loggedIn: false,
+                    displayName: username, // Default display name to username
+                    avatar: "",
+                    notificationsEnabled: true,
+                });
+                return true;
+            } catch (error) {
+                console.error("Error in signup:", error);
+                return { error: "An error occurred" };
+            }
+        };
+    }
+
+    /** Logs in the user if credentials are correct. */
+    login() {
+        return async (client: number, data: string) => {
+            try {
+                const citizenId = await this.getCitizenId(client);
+                const { username, password } = JSON.parse(data);
+                const user = await this.mongoDB.findOne("pigeon_users", { username, _id: citizenId });
+                if (!user) {
+                    return { error: "User not found" };
+                }
+                if (user.password !== password) {
+                    return { error: "Invalid password" };
+                }
+                await this.mongoDB.updateOne(
+                    "pigeon_users",
+                    { _id: citizenId },
+                    { $set: { loggedIn: true } }
+                );
+                return true;
+            } catch (error) {
+                console.error("Error in login:", error);
+                return { error: "An error occurred" };
+            }
+        };
+    }
+
+    /** Logs out the user. */
+    logout() {
+        return async (client: number) => {
+            try {
+                const citizenId = await this.getCitizenId(client);
+                await this.mongoDB.updateOne(
+                    "pigeon_users",
+                    { _id: citizenId },
+                    { $set: { loggedIn: false } }
+                );
+                return true;
+            } catch (error) {
+                console.error("Error in logout:", error);
+                return { error: "An error occurred" };
+            }
+        };
+    }
+
+    /** Sets or updates a user's Pigeon profile. Requires login. */
     setProfile() {
         return async (client: number, data: string) => {
             try {
                 const citizenId = await this.getCitizenId(client);
-                const { username, displayName } = JSON.parse(data);
-
-                const existingUser = await this.mongoDB.findOne("pigeon_users", {
-                    username,
-                    _id: { $ne: citizenId },
-                });
-                if (existingUser) {
-                    return { error: "Username already taken" };
+                if (!(await this.isLoggedIn(citizenId))) {
+                    return { error: "Not logged in" };
                 }
-
+                const { displayName } = JSON.parse(data);
                 await this.mongoDB.updateOne(
                     "pigeon_users",
                     { _id: citizenId },
-                    { $set: { username, displayName, avatar: "", notificationsEnabled: true } },
-                    { upsert: true }
+                    { $set: { displayName } }
                 );
                 return true;
             } catch (error) {
@@ -61,11 +135,14 @@ class PigeonService {
         };
     }
 
-    /** Retrieves the current user's Pigeon profile. */
+    /** Retrieves the current user's Pigeon profile. Requires login. */
     getMyProfile() {
         return async (client: number) => {
             try {
                 const citizenId = await this.getCitizenId(client);
+                if (!(await this.isLoggedIn(citizenId))) {
+                    return { error: "Not logged in" };
+                }
                 const profile = await this.mongoDB.findOne("pigeon_users", { _id: citizenId });
                 return profile || null;
             } catch (error) {
@@ -91,11 +168,14 @@ class PigeonService {
         };
     }
 
-    /** Toggles notifications for the user. */
+    /** Toggles notifications for the user. Requires login. */
     toggleNotifications() {
         return async (client: number) => {
             try {
                 const citizenId = await this.getCitizenId(client);
+                if (!(await this.isLoggedIn(citizenId))) {
+                    return { error: "Not logged in" };
+                }
                 const user = await this.mongoDB.findOne("pigeon_users", { _id: citizenId });
                 if (!user) {
                     return { error: "Profile not set" };
@@ -114,11 +194,14 @@ class PigeonService {
         };
     }
 
-    /** Posts a new tweet for the user. */
+    /** Posts a new tweet for the user. Requires login. */
     postTweet() {
         return async (client: number, content: string) => {
             try {
                 const citizenId = await this.getCitizenId(client);
+                if (!(await this.isLoggedIn(citizenId))) {
+                    return { error: "Not logged in" };
+                }
                 if (!(await this.hasProfile(citizenId))) {
                     return { error: "Profile not set" };
                 }
@@ -158,12 +241,15 @@ class PigeonService {
         };
     }
 
-    /** Posts a reply to an existing tweet. */
+    /** Posts a reply to an existing tweet. Requires login. */
     postReply() {
         return async (client: number, data: string) => {
             try {
-                const { parentTweetId, content } = JSON.parse(data);
                 const citizenId = await this.getCitizenId(client);
+                if (!(await this.isLoggedIn(citizenId))) {
+                    return { error: "Not logged in" };
+                }
+                const { parentTweetId, content } = JSON.parse(data);
                 if (!(await this.hasProfile(citizenId))) {
                     return { error: "Profile not set" };
                 }
@@ -185,7 +271,6 @@ class PigeonService {
                 };
                 await this.mongoDB.insertOne("pigeon_tweets", reply);
 
-                // Notify the original tweet's author if notifications are enabled
                 const parentUser = await this.mongoDB.findOne("pigeon_users", { _id: parentTweet.userId });
                 if (parentUser && parentUser.notificationsEnabled) {
                     const parentSource = await global.exports["qb-core"].GetSourceByCitizenId(parentTweet.userId);
@@ -205,11 +290,14 @@ class PigeonService {
         };
     }
 
-    /** Retweets an existing tweet. */
+    /** Retweets an existing tweet. Requires login. */
     retweet() {
         return async (client: number, originalTweetId: string) => {
             try {
                 const citizenId = await this.getCitizenId(client);
+                if (!(await this.isLoggedIn(citizenId))) {
+                    return { error: "Not logged in" };
+                }
                 if (!(await this.hasProfile(citizenId))) {
                     return { error: "Profile not set" };
                 }
@@ -227,7 +315,7 @@ class PigeonService {
                     isRetweet: true,
                     originalTweetId: originalTweetId,
                     hashtags: originalTweet.hashtags || [],
-                    parentTweetId: null, // Retweets are not replies
+                    parentTweetId: null,
                 };
                 await this.mongoDB.insertOne("pigeon_tweets", retweet);
                 await this.mongoDB.updateOne(
@@ -243,11 +331,14 @@ class PigeonService {
         };
     }
 
-    /** Deletes a tweet. */
+    /** Deletes a tweet. Requires login. */
     deleteTweet() {
         return async (client: number, tweetId: string) => {
             try {
                 const citizenId = await this.getCitizenId(client);
+                if (!(await this.isLoggedIn(citizenId))) {
+                    return { error: "Not logged in" };
+                }
                 const tweet = await this.mongoDB.findOne("pigeon_tweets", { _id: tweetId });
                 if (!tweet) {
                     return { error: "Tweet not found" };
@@ -265,10 +356,14 @@ class PigeonService {
         };
     }
 
-    /** Retrieves tweets from a specific user with pagination. */
+    /** Retrieves tweets from a specific user with pagination. Requires login. */
     getUserTweets() {
         return async (client: number, data: string) => {
             try {
+                const citizenId = await this.getCitizenId(client);
+                if (!(await this.isLoggedIn(citizenId))) {
+                    return { error: "Not logged in" };
+                }
                 const { targetUsername, page = 1, limit = 20 } = JSON.parse(data);
                 const targetUser = await this.mongoDB.findOne("pigeon_users", { username: targetUsername });
                 if (!targetUser) {
@@ -280,7 +375,6 @@ class PigeonService {
                     { userId: targetUser._id },
                     { sort: { createdAt: -1 }, skip, limit }
                 );
-                const citizenId = await this.getCitizenId(client);
                 const tweetIds = tweets.map((t: any) => t._id);
                 const likes = await this.mongoDB.findMany("pigeon_likes", {
                     tweetId: { $in: tweetIds },
@@ -299,15 +393,18 @@ class PigeonService {
         };
     }
 
-    /** Retrieves the user's feed with pagination. */
+    /** Retrieves the user's feed with pagination. Requires login. */
     getFeed() {
         return async (client: number, data: string) => {
             try {
-                const { since, page = 1, limit = 20 } = JSON.parse(data || "{}");
                 const citizenId = await this.getCitizenId(client);
+                if (!(await this.isLoggedIn(citizenId))) {
+                    return { error: "Not logged in" };
+                }
                 if (!(await this.hasProfile(citizenId))) {
                     return { error: "Profile not set" };
                 }
+                const { since, page = 1, limit = 20 } = JSON.parse(data || "{}");
                 const follows = await this.mongoDB.findMany("pigeon_follows", { followerId: citizenId });
                 const followedUserIds: string[] = follows.map((f: { followeeId: string }) => f.followeeId);
                 const query: any = { userId: { $in: followedUserIds } };
@@ -336,11 +433,14 @@ class PigeonService {
         };
     }
 
-    /** Follows another user. */
+    /** Follows another user. Requires login. */
     followUser() {
         return async (client: number, targetUsername: string) => {
             try {
                 const citizenId = await this.getCitizenId(client);
+                if (!(await this.isLoggedIn(citizenId))) {
+                    return { error: "Not logged in" };
+                }
                 const targetUser = await this.mongoDB.findOne("pigeon_users", { username: targetUsername });
                 if (!targetUser) {
                     return { error: "User not found" };
@@ -377,11 +477,14 @@ class PigeonService {
         };
     }
 
-    /** Unfollows a user. */
+    /** Unfollows a user. Requires login. */
     unfollowUser() {
         return async (client: number, targetUsername: string) => {
             try {
                 const citizenId = await this.getCitizenId(client);
+                if (!(await this.isLoggedIn(citizenId))) {
+                    return { error: "Not logged in" };
+                }
                 const targetUser = await this.mongoDB.findOne("pigeon_users", { username: targetUsername });
                 if (!targetUser) {
                     return { error: "User not found" };
@@ -398,11 +501,14 @@ class PigeonService {
         };
     }
 
-    /** Likes a tweet. */
+    /** Likes a tweet. Requires login. */
     likeTweet() {
         return async (client: number, tweetId: string) => {
             try {
                 const citizenId = await this.getCitizenId(client);
+                if (!(await this.isLoggedIn(citizenId))) {
+                    return { error: "Not logged in" };
+                }
                 const tweet = await this.mongoDB.findOne("pigeon_tweets", { _id: tweetId });
                 if (!tweet) {
                     return { error: "Tweet not found" };
@@ -439,11 +545,14 @@ class PigeonService {
         };
     }
 
-    /** Unlikes a tweet. */
+    /** Unlikes a tweet. Requires login. */
     unlikeTweet() {
         return async (client: number, tweetId: string) => {
             try {
                 const citizenId = await this.getCitizenId(client);
+                if (!(await this.isLoggedIn(citizenId))) {
+                    return { error: "Not logged in" };
+                }
                 const like = await this.mongoDB.findOne("pigeon_likes", { tweetId, userId: citizenId });
                 if (!like) {
                     return { error: "Not liked" };
@@ -458,10 +567,14 @@ class PigeonService {
         };
     }
 
-    /** Retrieves the list of followers for a user. */
+    /** Retrieves the list of followers for a user. Requires login. */
     getFollowers() {
         return async (client: number, targetUsername: string) => {
             try {
+                const citizenId = await this.getCitizenId(client);
+                if (!(await this.isLoggedIn(citizenId))) {
+                    return { error: "Not logged in" };
+                }
                 const targetUser = await this.mongoDB.findOne("pigeon_users", { username: targetUsername });
                 if (!targetUser) {
                     return { error: "User not found" };
@@ -477,10 +590,14 @@ class PigeonService {
         };
     }
 
-    /** Retrieves the list of users a target user is following. */
+    /** Retrieves the list of users a target user is following. Requires login. */
     getFollowing() {
         return async (client: number, targetUsername: string) => {
             try {
+                const citizenId = await this.getCitizenId(client);
+                if (!(await this.isLoggedIn(citizenId))) {
+                    return { error: "Not logged in" };
+                }
                 const targetUser = await this.mongoDB.findOne("pigeon_users", { username: targetUsername });
                 if (!targetUser) {
                     return { error: "User not found" };
@@ -496,12 +613,16 @@ class PigeonService {
         };
     }
 
-    /** Searches for users by partial username match with pagination. */
+    /** Searches for users by partial username match with pagination. Requires login. */
     searchUsers() {
         return async (client: number, data: string) => {
             try {
+                const citizenId = await this.getCitizenId(client);
+                if (!(await this.isLoggedIn(citizenId))) {
+                    return { error: "Not logged in" };
+                }
                 const { searchTerm, page = 1, limit = 20 } = JSON.parse(data);
-                const regex = new RegExp(searchTerm, "i"); // Case-insensitive search
+                const regex = new RegExp(searchTerm, "i");
                 const skip = (page - 1) * limit;
                 const users = await this.mongoDB.findMany(
                     "pigeon_users",
@@ -516,10 +637,14 @@ class PigeonService {
         };
     }
 
-    /** Retrieves tweets by hashtag with pagination. */
+    /** Retrieves tweets by hashtag with pagination. Requires login. */
     getTweetsByHashtag() {
         return async (client: number, data: string) => {
             try {
+                const citizenId = await this.getCitizenId(client);
+                if (!(await this.isLoggedIn(citizenId))) {
+                    return { error: "Not logged in" };
+                }
                 const { hashtag, page = 1, limit = 20 } = JSON.parse(data);
                 const skip = (page - 1) * limit;
                 const tweets = await this.mongoDB.findMany(
@@ -527,7 +652,6 @@ class PigeonService {
                     { hashtags: hashtag },
                     { sort: { createdAt: -1 }, skip, limit }
                 );
-                const citizenId = await this.getCitizenId(client);
                 const tweetIds = tweets.map((t: any) => t._id);
                 const likes = await this.mongoDB.findMany("pigeon_likes", {
                     tweetId: { $in: tweetIds },
@@ -546,10 +670,14 @@ class PigeonService {
         };
     }
 
-    /** Retrieves trending hashtags. */
+    /** Retrieves trending hashtags. Requires login. */
     getTrendingHashtags() {
         return async (client: number) => {
             try {
+                const citizenId = await this.getCitizenId(client);
+                if (!(await this.isLoggedIn(citizenId))) {
+                    return { error: "Not logged in" };
+                }
                 const trending = await this.mongoDB.aggregate("pigeon_tweets", [
                     { $unwind: "$hashtags" },
                     { $group: { _id: "$hashtags", count: { $sum: 1 } } },

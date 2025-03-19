@@ -4,6 +4,9 @@ import PigeonService from "./PigeonService";
 
 const pigeonService = new PigeonService(MongoDB);
 
+onClientCallback("pigeon:signup", pigeonService.signup());
+onClientCallback("pigeon:login", pigeonService.login());
+onClientCallback("pigeon:logout", pigeonService.logout());
 onClientCallback("pigeon:setProfile", pigeonService.setProfile());
 onClientCallback("pigeon:toggleNotifications", pigeonService.toggleNotifications());
 onClientCallback("pigeon:postTweet", pigeonService.postTweet());
