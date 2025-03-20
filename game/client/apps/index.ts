@@ -13,3 +13,5 @@ import "./Services/events";
 import "./Services/nui";
 import "./Settings/nui";
 import "./Hosuing/nui";
+import "./Pigeon/nui";
+import "./Pigeon/callback";

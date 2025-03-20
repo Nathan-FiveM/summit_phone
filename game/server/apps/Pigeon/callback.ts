@@ -4,7 +4,7 @@ import PigeonService from "./PigeonService";
 
 const pigeonService = new PigeonService(MongoDB);
 
-onClientCallback("pigeon:signup", pigeonService.signup);
+/* onClientCallback("pigeon:signup", pigeonService.signup);
 onClientCallback("pigeon:login", pigeonService.login);
 onClientCallback("pigeon:logout", pigeonService.logout);
 onClientCallback("pigeon:setProfile", pigeonService.setProfile);
@@ -19,8 +19,8 @@ onClientCallback("pigeon:unfollowUser", pigeonService.unfollowUser);
 onClientCallback("pigeon:likeTweet", pigeonService.likeTweet);
 onClientCallback("pigeon:unlikeTweet", pigeonService.unlikeTweet);
 onClientCallback("pigeon:getFollowers", pigeonService.getFollowers);
-onClientCallback("pigeon:getFollowing", pigeonService.getFollowing);
+onClientCallback("pigeon:getFollowing", pigeonService.getFollowing); */
 onClientCallback("pigeon:searchUsers", pigeonService.searchUsers);
-onClientCallback("pigeon:getTweetsByHashtag", pigeonService.getTweetsByHashtag);
+/* onClientCallback("pigeon:getTweetsByHashtag", pigeonService.getTweetsByHashtag);
 onClientCallback("pigeon:getTrendingHashtags", pigeonService.getTrendingHashtags);
-onClientCallback("pigeon:postReply", pigeonService.postReply);
+onClientCallback("pigeon:postReply", pigeonService.postReply); */

@@ -77,7 +77,7 @@ class PigeonService {
                 await this.mongoDB.updateOne(
                     "phone_pigeon_users",
                     { _id: citizenId },
-                    { $set: { loggedIn: true } }
+                    { "$set": { loggedIn: true } }
                 );
                 return true;
             } catch (error) {
@@ -594,11 +594,7 @@ class PigeonService {
                 const { searchTerm, page = 1, limit = 20 } = JSON.parse(data);
                 const regex = new RegExp(searchTerm, "i");
                 const skip = (page - 1) * limit;
-                const users = await this.mongoDB.findMany(
-                    "phone_pigeon_users",
-                    { username: { $regex: regex } },
-                    { skip, limit }
-                );
+                const users = await this.mongoDB.findMany("phone_pigeon_users",{ username: { $regex: regex } }, { skip, limit });
                 return users;
             } catch (error) {
                 console.error("Error in searchUsers:", error);
