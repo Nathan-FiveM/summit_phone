@@ -26,6 +26,7 @@ type PhoneSettings = {
     smrtPassword: string;
     isFlightMode: boolean;
     darkMailIdAttached: string;
+    pigeonIdAttached: string;
     phoneNumber: string;
 }
 

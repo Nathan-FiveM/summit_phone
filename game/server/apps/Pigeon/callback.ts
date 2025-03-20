@@ -1,11 +1,11 @@
 import { onClientCallback } from "@overextended/ox_lib/server";
-import { MongoDB } from "@server/sv_main";
-import PigeonService from "./PigeonService";
+import { pigeonService } from "./PigeonService";
 
-const pigeonService = new PigeonService(MongoDB);
-
-/* onClientCallback("pigeon:signup", pigeonService.signup);
+onClientCallback("pigeon:searchUsers", pigeonService.searchUsers);
 onClientCallback("pigeon:login", pigeonService.login);
+onClientCallback("pigeon:signup", pigeonService.signup);
+
+/* 
 onClientCallback("pigeon:logout", pigeonService.logout);
 onClientCallback("pigeon:setProfile", pigeonService.setProfile);
 onClientCallback("pigeon:toggleNotifications", pigeonService.toggleNotifications);
@@ -20,7 +20,6 @@ onClientCallback("pigeon:likeTweet", pigeonService.likeTweet);
 onClientCallback("pigeon:unlikeTweet", pigeonService.unlikeTweet);
 onClientCallback("pigeon:getFollowers", pigeonService.getFollowers);
 onClientCallback("pigeon:getFollowing", pigeonService.getFollowing); */
-onClientCallback("pigeon:searchUsers", pigeonService.searchUsers);
 /* onClientCallback("pigeon:getTweetsByHashtag", pigeonService.getTweetsByHashtag);
 onClientCallback("pigeon:getTrendingHashtags", pigeonService.getTrendingHashtags);
 onClientCallback("pigeon:postReply", pigeonService.postReply); */

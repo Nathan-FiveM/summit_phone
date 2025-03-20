@@ -92,6 +92,7 @@ export const usePhone = create<State & Actions>()(
             smrtId: '',
             darkMailIdAttached: '',
             smrtPassword: '',
+            pigeonIdAttached: '',
             isFlightMode: false,
             phoneNumber: '',
         },

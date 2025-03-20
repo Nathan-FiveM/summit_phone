@@ -18,6 +18,7 @@ class Setting {
     public isFlightMode = new Map<string, boolean>();
     public phoneNumber = new Map<string, string>();
     public darkMailIdAttached = new Map<string, string>();
+    public pigeonIdAttached = new Map<string, string>();
 
     public async load() {
         try {
@@ -39,6 +40,7 @@ class Setting {
                 this.smrtPassword.set(data._id, data.smrtPassword);
                 this.isFlightMode.set(data._id, data.isFlightMode);
                 this.phoneNumber.set(data._id, data.phoneNumber);
+                this.pigeonIdAttached.set(data._id, data.pigeonIdAttached);
             }
             LOGGER(`[Settings] Loaded.`);
         } catch (error: any) {
@@ -66,6 +68,7 @@ class Setting {
                     smrtPassword: this.smrtPassword.get(key),
                     isFlightMode: this.isFlightMode.get(key),
                     phoneNumber: this.phoneNumber.get(key),
+                    pigeonIdAttached: this.pigeonIdAttached.get(key),
                 });
             }
             LOGGER(`[Settings] Saved successfully.`);
@@ -95,6 +98,7 @@ class Setting {
                 smrtPassword: this.smrtPassword.get(citizenId),
                 isFlightMode: this.isFlightMode.get(citizenId),
                 phoneNumber: this.phoneNumber.get(citizenId),
+                pigeonIdAttached: this.pigeonIdAttached.get(citizenId),
             });
             LOGGER(`[Settings] Saved player settings for ${citizenId} successfully.`);
             return true;

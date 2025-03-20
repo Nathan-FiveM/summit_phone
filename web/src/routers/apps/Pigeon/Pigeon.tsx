@@ -13,25 +13,23 @@ export default function Pigeon(props: { onExit: () => void; onEnter: () => void 
     const [emailError, setEmailError] = useState(false);
 
     const handleValidateEmail = useDebouncedCallback(async (email: string) => {
-        const res: string = await fetchNui('searchPigeonEmail', `${email}`);
-        const parsedRes = JSON.parse(res);
-        if (parsedRes.length > 0) {
+        const res: boolean = await fetchNui('searchPigeonEmail', `${email}`);
+        if (res) {
             setEmailError(false);
         } else {
             setEmailError(true);
         }
-        return parsedRes;
+        return res;
     }, 500);
 
     const handleSearchEmail = useDebouncedCallback(async (email: string) => {
-        const res: string = await fetchNui('searchPigeonEmail', `${email}@smrt.com`);
-        const parsedRes = JSON.parse(res);
-        if (parsedRes.length === 0) {
-            setEmailError(false);
-        } else {
+        const res: boolean = await fetchNui('searchPigeonEmail', `${email}@smrt.com`);
+        if (res) {
             setEmailError(true);
+        } else {
+            setEmailError(false);
         }
-        return parsedRes;
+        return res;
     }, 500);
 
     return (
@@ -59,7 +57,7 @@ export default function Pigeon(props: { onExit: () => void; onEnter: () => void 
                 }}
                 className="settings"
             >
-                {!signUp ? (
+                {!phoneSettings.pigeonIdAttached ? !signUp ? (
                     <div style={{
                         width: '100%',
                         height: '100%',
@@ -150,14 +148,14 @@ export default function Pigeon(props: { onExit: () => void; onEnter: () => void 
                             className="clickanimation"
                             onClick={async () => {
                                 if (emailError || !email.includes('@') || !email || !password) return;
-                                const res: boolean = await fetchNui('loginDarkMailAccount', JSON.stringify({
+                                const res: boolean = await fetchNui('loginPegionEmail', JSON.stringify({
                                     email: email,
                                     password: password
                                 }));
                                 if (res) {
                                     const dataX = {
                                         ...phoneSettings,
-                                        darkMailIdAttached: email,
+                                        pigeonIdAttached: email,
                                     }
                                     setPhoneSettings(dataX);
                                     const resXX = await fetchNui('setSettings', JSON.stringify(dataX));
@@ -301,13 +299,19 @@ export default function Pigeon(props: { onExit: () => void; onEnter: () => void 
                             }}
                             className="clickanimation"
                             onClick={async () => {
-                                if (emailError || !email.includes('@') || !email || !password) return;
-                                const res = await fetchNui('registerNewDarkMailAccount', JSON.stringify({
-                                    email: `${email}@onion.duck`,
-                                    password: password
+                                if (emailError || email.includes('@') || !email || !password) return;
+                                const res = await fetchNui('signupPegionEmail', JSON.stringify({
+                                    email: `${email}@smrt.com`,
+                                    password
                                 }));
                                 if (res) {
                                     setSignUp(false);
+                                    const dataX = {
+                                        ...phoneSettings,
+                                        pigeonIdAttached: `${email}@smrt.com`,
+                                    }
+                                    setPhoneSettings(dataX);
+                                    await fetchNui('setSettings', JSON.stringify(dataX));
                                 }
                             }}
                         >
@@ -334,6 +338,10 @@ export default function Pigeon(props: { onExit: () => void; onEnter: () => void 
                                 Login
                             </span>
                         </div>
+                    </div>
+                ): (
+                    <div>
+
                     </div>
                 )}
             </div>

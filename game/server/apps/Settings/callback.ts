@@ -22,6 +22,7 @@ onClientCallback('GetClientSettings', async (client) => {
         smrtPassword: Settings.smrtPassword.get(citizenId),
         isFlightMode: Settings.isFlightMode.get(citizenId),
         phoneNumber: Settings.phoneNumber.get(citizenId),
+        pigeonIdAttached: Settings.pigeonIdAttached.get(citizenId),
     });
 });
 
@@ -43,6 +44,7 @@ onClientCallback('SetClientSettings', async (client, data: string) => {
         smrtPassword: string;
         isFlightMode: boolean;
         phoneNumber: string;
+        pigeonIdAttached: string;
     } = JSON.parse(data);
     Settings.background.set(citizenId, parsedData.background);
     Settings.lockscreen.set(citizenId, parsedData.lockscreen);
@@ -59,6 +61,7 @@ onClientCallback('SetClientSettings', async (client, data: string) => {
     Settings.isFlightMode.set(citizenId, parsedData.isFlightMode);
     Settings.darkMailIdAttached.set(citizenId, parsedData.darkMailIdAttached);
     Settings.phoneNumber.set(citizenId, parsedData.phoneNumber);
+    Settings.pigeonIdAttached.set(citizenId, parsedData.pigeonIdAttached);
     await Settings.SavePlayerSettings(citizenId);
     return true;
 });

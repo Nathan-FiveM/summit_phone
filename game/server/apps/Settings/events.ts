@@ -49,6 +49,7 @@ async function GeneratePlayerPhoneNumber(citizenId: string) {
         useFaceId: false,
         faceIdIdentifier: citizenId,
         darkMailIdAttached: '',
+        pigeonIdAttached: '',
         smrtId: '',
         smrtPassword: '',
         isFlightMode: false,
