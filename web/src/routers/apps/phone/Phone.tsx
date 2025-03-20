@@ -154,7 +154,7 @@ export default function Phone() {
                                             display: 'flex',
                                             alignItems: 'center',
                                         }}>
-                                            <Avatar src={contactData?.image} size={'1.875vw'} />
+                                            <Avatar src={contactData?.image ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} size={'1.875vw'} />
                                             <div className="" style={{
                                                 display: 'flex',
                                                 flexDirection: 'column',
@@ -331,7 +331,7 @@ export default function Phone() {
                                 }
                             })
                         }}>
-                            <Avatar src={playerPhoneCard?.avatar} w={'2.74375vw'} h={'2.74375vw  '} />
+                            <Avatar src={playerPhoneCard?.avatar ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} w={'2.74375vw'} h={'2.74375vw  '} />
                             <div className="details">
                                 <div className="FullName">
                                     {playerPhoneCard.firstName} {playerPhoneCard.lastName}
@@ -517,7 +517,7 @@ export default function Phone() {
                                                         flexGrow: 0,
                                                         marginTop: index === 0 ? '0vw' : '0.4125vw',
                                                     }} key={index + '__+'}>
-                                                        <Avatar src={contact?.image} size={'2.2395833333333335vw'} style={{ minHeight: '2.2395833333333335vw' }} radius={'50vw'} />
+                                                        <Avatar src={contact?.image ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} size={'2.2395833333333335vw'} style={{ minHeight: '2.2395833333333335vw' }} radius={'50vw'} />
                                                         <div style={{
                                                             display: 'flex',
                                                             flexDirection: 'column',

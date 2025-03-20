@@ -98,7 +98,7 @@ export default function Services(props: { onExit: () => void, onEnter: () => voi
                                 <div className="containerXSa" key={index}>
                                     <div className="innerContXassda">
                                         <div className="moreInnerContX">
-                                            <Avatar size="1.71875vw" src={business.businessLogo} radius="xl" />
+                                            <Avatar size="1.71875vw" src={business.businessLogo ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} radius="xl" />
                                             <div className="moreInnerContX2">
                                                 <div className="title">{business.businessName}</div>
                                                 <div style={{

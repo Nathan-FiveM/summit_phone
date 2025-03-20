@@ -176,7 +176,7 @@ export default function FilteredPage() {
                                         page: data
                                     })
                                 }}>
-                                    <Avatar size="1.9791666666666667vw" src={channel.avatar} alt="" />
+                                    <Avatar size="1.9791666666666667vw" src={channel.avatar ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} alt="" />
                                     <div className="messageCont">
                                         <div className="title">
                                             <div className="name">{channel.name}</div>

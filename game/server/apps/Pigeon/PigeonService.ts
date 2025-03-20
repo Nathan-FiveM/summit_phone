@@ -1,5 +1,6 @@
 import { MongoDB } from "@server/sv_main";
 import { generateUUid } from "@shared/utils";
+import { TweetData } from "../../../../types/types";
 
 interface Tweet {
     _id: string;
@@ -16,6 +17,14 @@ interface Tweet {
 }
 
 class PigeonService {
+    //@ts-ignore
+    public static tweetData: TweetData[];
+
+    /*  public async registerFeeds() {
+         const res = await MongoDB.findMany("phone_pigeon_tweets", {}, null, false, { sort: { createdAt: -1 } })
+         PigeonService.tweetData = res;
+     } */
+
     private async getCitizenId(client: number): Promise<string> {
         return await global.exports["qb-core"].GetPlayerCitizenIdBySource(client);
     }
@@ -46,6 +55,7 @@ class PigeonService {
             _id: generateUUid(),
             email,
             password,
+            verified: false,
             username: email, // Assuming username is set to email for consistency
             displayName: email,
             avatar: "",
@@ -75,144 +85,80 @@ class PigeonService {
         return user && user.loggedIn;
     }
 
-    logout() {
-        return async (client: number) => {
-            try {
-                const citizenId = await this.getCitizenId(client);
-                await MongoDB.updateOne(
-                    "phone_pigeon_users",
-                    { _id: citizenId },
-                    { $set: { loggedIn: false } }
-                );
-                return true;
-            } catch (error) {
-                console.error("Error in logout:", error);
-                return { error: "An error occurred" };
-            }
-        };
+    public async setProfile() {
+
     }
 
-    setProfile() {
-        return async (client: number, data: string) => {
-            try {
-                const citizenId = await this.getCitizenId(client);
-                if (!(await this.isLoggedIn(citizenId))) {
-                    return { error: "Not logged in" };
-                }
-                const { displayName } = JSON.parse(data);
-                await MongoDB.updateOne(
-                    "phone_pigeon_users",
-                    { _id: citizenId },
-                    { $set: { displayName } }
-                );
-                return true;
-            } catch (error) {
-                console.error("Error in setProfile:", error);
-                return { error: "An error occurred" };
-            }
-        };
+    public async getMyProfile() {
+
     }
 
-    getMyProfile() {
-        return async (client: number) => {
-            try {
-                const citizenId = await this.getCitizenId(client);
-                if (!(await this.isLoggedIn(citizenId))) {
-                    return { error: "Not logged in" };
-                }
-                const profile = await MongoDB.findOne("phone_pigeon_users", { _id: citizenId });
-                return profile || null;
-            } catch (error) {
-                console.error("Error in getMyProfile:", error);
-                return { error: "An error occurred" };
-            }
-        };
+    public async getProfile(client: number, email: string): Promise<any> {
+        const user = await MongoDB.findOne("phone_pigeon_users", { email });
+        if (user) {
+            return JSON.stringify(user);
+        } else {
+            return "User not found";
+        }
     }
 
-    getProfile() {
-        return async (client: number, targetUsername: string) => {
-            try {
-                const targetUser = await MongoDB.findOne("phone_pigeon_users", { username: targetUsername });
-                if (!targetUser) {
-                    return { error: "User not found" };
-                }
-                return targetUser;
-            } catch (error) {
-                console.error("Error in getProfile:", error);
-                return { error: "An error occurred" };
-            }
-        };
+    public async toggleNotifications(client: number, email: string) {
+        const res = await MongoDB.findOne("phone_pigeon_users", { email });
+        if (res) {
+            res.notificationsEnabled = !res.notificationsEnabled;
+            await MongoDB.updateOne("phone_pigeon_users", { email }, res);
+            return true;
+        }
+        return false;
     }
 
-    toggleNotifications() {
-        return async (client: number) => {
-            try {
-                const citizenId = await this.getCitizenId(client);
-                if (!(await this.isLoggedIn(citizenId))) {
-                    return { error: "Not logged in" };
-                }
-                const user = await MongoDB.findOne("phone_pigeon_users", { _id: citizenId });
-                if (!user) {
-                    return { error: "Profile not set" };
-                }
-                const newStatus = !user.notificationsEnabled;
-                await MongoDB.updateOne(
-                    "phone_pigeon_users",
-                    { _id: citizenId },
-                    { $set: { notificationsEnabled: newStatus } }
-                );
-                return { notificationsEnabled: newStatus };
-            } catch (error) {
-                console.error("Error in toggleNotifications:", error);
-                return { error: "An error occurred" };
-            }
-        };
+    public async postTweet(client: number, email: string, data: string): Promise<any> {
+        const { content, attachments } = JSON.parse(data);
+        try {
+            const res = await MongoDB.findOne("phone_pigeon_users", { email });
+            if (!res) return { error: "User not found" };
+
+            const tweet = {
+                _id: generateUUid(),
+                username: res.displayName,
+                avatar: res.avatar,
+                verified: res.verified,
+                content,
+                attachments,
+                createdAt: new Date().toISOString(),
+                likeCount: 0,
+                retweetCount: 0,
+                isRetweet: false,
+                originalTweetId: null,
+                hashtags: content.match(/#\w+/g) || [],
+                parentTweetId: null,
+            };
+            await MongoDB.insertOne("phone_pigeon_tweets", tweet);
+
+
+        } catch (error) {
+            console.error("Error in postTweet:", error);
+            return { error: "An error occurred" };
+        }
     }
 
-    postTweet() {
-        return async (client: number, content: string) => {
-            try {
-                const citizenId = await this.getCitizenId(client);
-                if (!(await this.isLoggedIn(citizenId))) {
-                    return { error: "Not logged in" };
-                }
-                if (!(await this.hasProfile(citizenId))) {
-                    return { error: "Profile not set" };
-                }
+    public async getAllFeed(client: number, data: string): Promise<any> {
+        try {
+            const { start = 1, end = 20 } = JSON.parse(data);
+            const res = await MongoDB.findMany("phone_pigeon_tweets", {}, null, false, {
+                skip: start - 1,
+                limit: end,
+                sort: { createdAt: -1 }
+            });
 
-                const tweet = {
-                    _id: generateUUid(),
-                    userId: citizenId,
-                    content,
-                    createdAt: new Date().toISOString(),
-                    likeCount: 0,
-                    retweetCount: 0,
-                    isRetweet: false,
-                    originalTweetId: null,
-                    hashtags: content.match(/#\w+/g) || [],
-                    parentTweetId: null,
-                };
-                await MongoDB.insertOne("phone_pigeon_tweets", tweet);
-
-                const mentions = this.parseMentions(content);
-                for (const username of mentions) {
-                    const mentionedUser = await MongoDB.findOne("phone_pigeon_users", { username });
-                    if (mentionedUser && mentionedUser.notificationsEnabled) {
-                        const mentionedSource = await global.exports["qb-core"].GetSourceByCitizenId(mentionedUser._id);
-                        if (mentionedSource) {
-                            emitNet("pigeon:notifyMention", mentionedSource, {
-                                tweetId: tweet._id,
-                                content: tweet.content,
-                            });
-                        }
-                    }
-                }
-                return tweet;
-            } catch (error) {
-                console.error("Error in postTweet:", error);
-                return { error: "An error occurred" };
-            }
-        };
+            return JSON.stringify({
+                data: res,
+                length: res.length,
+            });
+        } catch (error) {
+            console.error("Error in getFeed:", error);
+            return { error: "An error occurred" };
+        }
     }
 
     postReply() {
@@ -361,42 +307,7 @@ class PigeonService {
         };
     }
 
-    getFeed() {
-        return async (client: number, data: string) => {
-            try {
-                const citizenId = await this.getCitizenId(client);
-                if (!(await this.isLoggedIn(citizenId))) {
-                    return { error: "Not logged in" };
-                }
-                if (!(await this.hasProfile(citizenId))) {
-                    return { error: "Profile not set" };
-                }
-                const { since, page = 1, limit = 20 } = JSON.parse(data || "{}");
-                const follows = await MongoDB.findMany("phone_pigeon_follows", { followerId: citizenId });
-                const followedUserIds: string[] = follows.map((f: { followeeId: string }) => f.followeeId);
-                const query: { userId: { $in: string[] }, createdAt?: { $gt: string } } = { userId: { $in: followedUserIds } };
-                if (since) query.createdAt = { $gt: since };
-                const allTweets = await MongoDB.findMany("phone_pigeon_tweets", query);
-                const sortedTweets: Tweet[] = allTweets.sort((a: Tweet, b: Tweet) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-                const skip = (page - 1) * limit;
-                const tweets = sortedTweets.slice(skip, skip + limit);
-                const tweetIds = tweets.map(t => t._id);
-                const likes = await MongoDB.findMany("phone_pigeon_likes", {
-                    tweetId: { $in: tweetIds },
-                    userId: citizenId,
-                });
-                const likedTweetIds: Set<string> = new Set(likes.map((l: { tweetId: string }) => l.tweetId));
-                tweets.forEach(t => {
-                    t.likedByMe = likedTweetIds.has(t._id);
-                    t.retweetCount = t.retweetCount || 0;
-                });
-                return tweets;
-            } catch (error) {
-                console.error("Error in getFeed:", error);
-                return { error: "An error occurred" };
-            }
-        };
-    }
+
 
     followUser() {
         return async (client: number, targetUsername: string) => {

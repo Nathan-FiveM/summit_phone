@@ -431,7 +431,7 @@ export default function Housing(props: { onExit: () => void; onEnter: () => void
                                         setInputDescription(`Remove Access From ${accessNames[accessName]}`);
                                         setInputPlaceholder('Type Yes To Confirm');
                                     }}>
-                                        <Avatar src="" alt="" />
+                                        <Avatar src="https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg" alt="" />
                                         <div style={{
                                             display: 'flex',
                                             flexDirection: 'column',

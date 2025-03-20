@@ -3,10 +3,14 @@ import { CSSTransition } from "react-transition-group";
 import { usePhone } from "../../../store/store";
 import { fetchNui } from "../../../hooks/fetchNui";
 import { useDebouncedCallback } from "@mantine/hooks";
+import { Avatar } from "@mantine/core";
+import Searchbar from "./SearchBar";
+import Navigation from "./Navigation";
+import Home from "./Home";
 
 export default function Pigeon(props: { onExit: () => void; onEnter: () => void }) {
     const nodeRef = useRef(null);
-    const { location, phoneSettings, setPhoneSettings } = usePhone();
+    const { location, phoneSettings, setLocation, setPhoneSettings } = usePhone();
     const [signUp, setSignUp] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -32,6 +36,23 @@ export default function Pigeon(props: { onExit: () => void; onEnter: () => void 
         return res;
     }, 500);
 
+
+    const [profileData, setProfileData] = useState<{
+        _id: string;
+        email: string;
+        password: string;
+        displayName: string;
+        avatar: string;
+        notificationsEnabled: boolean;
+    }>({
+        _id: '',
+        email: '',
+        password: '',
+        displayName: '',
+        avatar: '',
+        notificationsEnabled: false,
+    });
+
     return (
         <CSSTransition
             nodeRef={nodeRef}
@@ -42,8 +63,28 @@ export default function Pigeon(props: { onExit: () => void; onEnter: () => void 
             mountOnEnter
             onEntering={async () => {
                 props.onEnter();
+                if (phoneSettings.pigeonIdAttached) {
+                    const res = await fetchNui('getPlayerspigeonProfile', phoneSettings.pigeonIdAttached);
+                    setProfileData(JSON.parse(res as string));
+                    setLocation({
+                        app: 'pigeon',
+                        page: {
+                            ...location.page,
+                            pigeon: "home"
+                        }
+                    })
+                }
             }}
-            onExited={props.onExit}
+            onExited={()=>{
+                props.onExit();
+                setLocation({
+                    app: location.app,
+                    page: {
+                        ...location.page,
+                        pigeon: ""
+                    }
+                })
+            }}
         >
             <div
                 ref={nodeRef}
@@ -339,12 +380,24 @@ export default function Pigeon(props: { onExit: () => void; onEnter: () => void 
                             </span>
                         </div>
                     </div>
-                ): (
-                    <div>
-
+                ) : (
+                    <div style={{
+                        width: '100%',
+                        height: '100%',
+                    }}>
+                        <Home location={location.page.pigeon} profileData={profileData}/>
+                        <Navigation location={location.page.pigeon} onClick={(e) => {
+                            setLocation({
+                                app: 'pigeon',
+                                page: {
+                                    ...location.page,
+                                    pigeon: e,
+                                },
+                            })
+                        }} />
                     </div>
                 )}
             </div>
-        </CSSTransition>
+        </CSSTransition >
     );
 }

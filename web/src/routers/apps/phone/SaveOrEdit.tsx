@@ -62,7 +62,7 @@ export default function SaveOrEdit(props: { data: PhoneContacts, onCancel(): voi
                         </div>
                     </div>
                     <Avatar
-                        src={image}
+                        src={image ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"}
                         size={'6.614583333333333vw'}
                         mt={'1.0416666666666667vw'}
                     />

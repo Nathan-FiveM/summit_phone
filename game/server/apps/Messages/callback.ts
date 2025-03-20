@@ -3,31 +3,6 @@ import { Utils } from "@server/classes/Utils";
 import { MongoDB } from "@server/sv_main";
 import { generateUUid } from "@shared/utils";
 
-type databaseSchema = {
-    _id: string,
-    citizenId: string,
-    messages: {
-        type: "private" | "group",
-        name: string,
-        phoneNumber?: string,
-        groupId?: string,
-        members?: string[],
-        memberPhoneNumbers?: string[],
-        creatorId?: string, // New field for group creator (admin)
-        messages: {
-            message: string,
-            read: boolean,
-            page: number,
-            timestamp: Date,
-            senderId: string,
-            attachments: {
-                type: string,
-                url: string
-            }[]
-        }[]
-    }[]
-};
-
 onClientCallback('phone_message:sendMessage', async (client, data: string) => {
     const { type, phoneNumber, groupId, messageData } = JSON.parse(data);
     const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);

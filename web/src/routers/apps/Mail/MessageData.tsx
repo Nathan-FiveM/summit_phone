@@ -65,7 +65,7 @@ export default function MessageData(props: { show: boolean, message: PhoneMailMe
                     </svg>
                 </div>
                 <div className="mailMessageheader" style={{ marginTop: '0.2vw' }}>
-                    <Avatar size={'1.8229166666666667vw'} src={props.message.avatar} />
+                    <Avatar size={'1.8229166666666667vw'} src={props.message.avatar ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} />
                     <div className="semicontexsa">
                         <div className="titleCont">
                             <div className="title">{props.message.subject}</div>

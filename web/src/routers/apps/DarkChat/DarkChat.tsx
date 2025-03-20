@@ -446,7 +446,7 @@ export default function DarkChat(props: { onExit: () => void; onEnter: () => voi
                                 await fetchNui('updateProfileoptions', {
                                     email: channelProfile.email,
                                 })
-                            }} size="1.8vw" src={channelProfile?.avatar} />
+                            }} size="1.8vw" src={channelProfile?.avatar ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} />
                         </div>
                     </div>
                     <Searchbar mt="0.2vw" value={searchValue} onChange={(e) => setSearchValue(e)} />

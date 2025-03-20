@@ -175,7 +175,7 @@ export default function FilteredMessage(props: { show: boolean, messages: any, o
                                 <div className="mainMailBox" key={index} onClick={() => {
                                     props.onMessageClick(message);
                                 }}>
-                                    <Avatar src={message.avatar} size="1.8229166666666667vw" radius="lg" />
+                                    <Avatar src={message.avatar ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} size="1.8229166666666667vw" radius="lg" />
                                     <div className="mailsemiContainer">
                                         <div className="titleCont">
                                             <div className="title">{message.subject}</div>
