@@ -1,8 +1,10 @@
-import { Avatar, SegmentedControl, Transition } from "@mantine/core";
+import { Avatar, Image, SegmentedControl, Transition } from "@mantine/core";
 import { fetchNui } from "../../../hooks/fetchNui";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TweetData } from "../../../../../types/types";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { usePhone } from "../../../store/store";
+import { useNuiEvent } from "../../../hooks/useNuiEvent";
 
 export default function Home(props: {
     location: string, profileData: {
@@ -14,10 +16,71 @@ export default function Home(props: {
         notificationsEnabled: boolean;
     }
 }) {
+    const { phoneSettings } = usePhone();
 
+    function formatedDate(date: string) {
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(today.getDate() - 1);
+        yesterday.setHours(0, 0, 0, 0);
+        const newDate = new Date(date);
+        const timeDiff = today.getTime() - newDate.getTime();
+        if (newDate > yesterday && timeDiff < 900000) {
+            return 'Just Now';
+        } else if (newDate > yesterday && timeDiff < 3600000) {
+            return `${Math.floor(timeDiff / 60000)} minutes ago`;
+        } else if (newDate > yesterday && timeDiff < 7200000) {
+            return '1 hour ago';
+        } else if (newDate > yesterday && timeDiff < 86400000) {
+            return `${Math.floor(timeDiff / 3600000)} hours ago`;
+        } else if (newDate > yesterday) {
+            return 'Yesterday';
+        } else {
+            return `${newDate.getDate().toString().padStart(2, '0')}/${(newDate.getMonth() + 1).toString().padStart(2, '0')}/${newDate.getFullYear()}`;
+        }
+    };
+
+    useNuiEvent('pigeonRefreshTweet', (data: string) => {
+        const tweetData: TweetData = JSON.parse(data);
+        setTweets(prev => [tweetData, ...prev]);
+    });
+
+    const [start, setStart] = useState(1);
+    const [end, setEnd] = useState(20);
     const [filter, setFilter] = useState('all');
     const [tweets, setTweets] = useState<TweetData[]>([]);
-    
+    const [hasMore, setHasMore] = useState(true);
+
+    const fetchTweets = async (startVal: number, endVal: number) => {
+        const res = await fetchNui('getAllTweets', JSON.stringify({
+            start: startVal,
+            end: endVal,
+        }));
+        const parsedRes = JSON.parse(res as string);
+
+        if (parsedRes.data.length === 0) {
+            setHasMore(false);
+        } else {
+            setTweets(prev => [...prev, ...parsedRes.data]);
+            setHasMore(true);
+        }
+    };
+
+    useEffect(() => {
+        setTweets([]);
+        fetchTweets(1, 20);
+        setStart(1);
+        setEnd(20);
+    }, [filter]);
+
+    const loadMore = () => {
+        const newStart = end + 1;
+        const newEnd = end + 20;
+        setStart(newStart);
+        setEnd(newEnd);
+        fetchTweets(newStart, newEnd);
+    };
+
     return (
         <Transition
             mounted={props.location === "home"}
@@ -26,8 +89,8 @@ export default function Home(props: {
             timingFunction="ease"
             onEnter={async () => {
                 const res = await fetchNui('getAllTweets', JSON.stringify({
-                    start: 1,
-                    end: 20,
+                    start,
+                    end,
                 }))
                 const parsedRes = JSON.parse(res as string);
                 setTweets([...parsedRes.data]);
@@ -85,80 +148,168 @@ export default function Home(props: {
                     overflowY: 'scroll',
                     overflowX: 'hidden',
                 }} id="scrollableDivx">
-                    <InfiniteScroll scrollableTarget="scrollableDivx" dataLength={tweets.length} next={async () => {
-                        const res = await fetchNui('getAllTweets', JSON.stringify({
-                            start: tweets.length + 1,
-                            end: tweets.length + 20,
-                        }))
-                        const parsedRes = JSON.parse(res as string);
-                        setTweets([...tweets, ...parsedRes.data]);
-                    }} hasMore={true} loader={<h4>Loading...</h4>}>
+                    <InfiniteScroll
+                        scrollableTarget="scrollableDivx"
+                        dataLength={tweets.length}
+                        next={loadMore}
+                        hasMore={hasMore}
+                        loader={<></>}
+                        endMessage={<></>}
+                    >
                         {tweets && tweets.map((tweet, index) => {
-                            return <div key={index} style={{
-                                width: '90%',
-                                height: 'auto',
-                                backgroundColor: 'rgba(255, 255, 255, 0.19)',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                padding: '1vw',
-                                borderRadius: '1vw',
-                                marginTop: '1vw',
-                            }}>
-                                <div style={{
-                                    width: '100%',
+                            return (
+                                <div key={index} style={{
+                                    width: '16.2vw',
+                                    height: 'auto',
+                                    backgroundColor: 'rgba(255, 255, 255, 0.19)',
                                     display: 'flex',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center',
+                                    alignItems: 'start',
+                                    padding: '0.5vw',
+                                    borderRadius: '0.5vw',
+                                    marginTop: '1vw',
                                 }}>
-                                    <Avatar size={"1.6vw"} src={tweet.avatar.length > 0 ? tweet.avatar : 'https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg'} />
+                                    <Avatar mt={'0.2vw'} size={"1.4vw"} src={tweet.avatar.length > 0 ? tweet.avatar : 'https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg'} />
                                     <div style={{
-                                        width: '60%',
+                                        width: '100%',
                                         display: 'flex',
-                                        justifyContent: 'space-between',
-                                        alignItems: 'center',
+                                        flexDirection: 'column',
+                                        justifyContent: 'center',
+                                        alignItems: 'flex-start',
                                     }}>
                                         <div style={{
-                                            fontWeight: '500',
-                                            fontSize: '0.75vw',
-                                            letterSpacing: '0.05vw',
-                                        }}>{tweet.username}</div>
+                                            width: '95%',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            position: 'relative',
+                                            backgroundColor: 'rgba(255, 255, 255, 0)',
+                                            marginLeft: '3%',
+                                        }}>
+                                            <div style={{
+                                                fontWeight: '500',
+                                                fontSize: '0.75vw',
+                                                letterSpacing: '0.05vw',
+                                                lineHeight: '1vw',
+                                            }}>{tweet.username}</div>
+
+                                            {tweet.verified && <svg style={{
+                                                marginTop: '0.05vw',
+                                                marginLeft: '0.2vw'
+                                            }} width="0.8333333333333334vw" height="0.78125vw" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M15.406 5.87311C15.276 5.67418 15.1674 5.46273 15.082 5.24212C15.0074 5.01543 14.9608 4.78092 14.9431 4.54352C14.933 3.96903 14.7623 3.4081 14.4494 2.92096C14.0667 2.47923 13.5681 2.14691 13.0067 1.95944C12.7776 1.87335 12.558 1.76514 12.351 1.63644C12.1715 1.48596 12.0062 1.32002 11.8573 1.14065C11.5029 0.672114 11.0223 0.308145 10.4687 0.0889966C9.90811 -0.0399779 9.32245 -0.021833 8.77146 0.141579C8.27928 0.254203 7.767 0.254203 7.27483 0.141579C6.71421 -0.0272828 6.11713 -0.0454511 5.54677 0.0889966C4.98752 0.305753 4.50133 0.669916 4.14272 1.14065C3.98889 1.32069 3.81846 1.48665 3.63356 1.63644C3.4266 1.76514 3.20692 1.87335 2.97782 1.95944C2.41364 2.1457 1.91224 2.47811 1.52748 2.92096C1.22272 3.41038 1.06008 3.97116 1.05689 4.54352C1.03919 4.78092 0.992574 5.01543 0.918033 5.24212C0.831614 5.45755 0.723059 5.66392 0.594021 5.85809C0.246194 6.34091 0.0407607 6.90724 0 7.49567C0.0435188 8.07891 0.248827 8.63971 0.594021 9.11823C0.726029 9.31072 0.834754 9.51741 0.918033 9.7342C0.985154 9.96684 1.02399 10.2064 1.03375 10.4478C1.04312 11.0224 1.21387 11.5836 1.52748 12.0704C1.91012 12.5121 2.40872 12.8444 2.97011 13.0319C3.19921 13.118 3.41888 13.2262 3.62584 13.3549C3.81074 13.5047 3.98117 13.6706 4.135 13.8507C4.48704 14.3215 4.96836 14.686 5.52363 14.9023C5.7412 14.9668 5.96736 14.9997 6.19479 15C6.54319 14.9892 6.88956 14.9439 7.22854 14.8648C7.71986 14.7452 8.23385 14.7452 8.72517 14.8648C9.28715 15.0272 9.88313 15.0427 10.4532 14.9099C11.0085 14.6935 11.4898 14.329 11.8419 13.8582C11.9957 13.6782 12.1661 13.5122 12.351 13.3624C12.558 13.2337 12.7776 13.1255 13.0067 13.0394C13.5681 12.8519 14.0667 12.5196 14.4494 12.0779C14.763 11.5911 14.9337 11.0299 14.9431 10.4553C14.9529 10.2139 14.9917 9.97436 15.0588 9.74171C15.1452 9.52628 15.2538 9.31991 15.3828 9.12574C15.7376 8.64746 15.951 8.08371 16 7.49567C15.9565 6.91243 15.7512 6.35164 15.406 5.87311Z" fill="#0A84FF" />
+                                                <path d="M7.22854 10.5004C7.12701 10.501 7.02637 10.482 6.93238 10.4446C6.83838 10.4073 6.75289 10.3522 6.68081 10.2826L4.36644 8.02901C4.29451 7.95897 4.23745 7.87582 4.19853 7.78431C4.1596 7.6928 4.13956 7.59472 4.13956 7.49567C4.13956 7.29563 4.22117 7.10378 4.36644 6.96233C4.51171 6.82088 4.70874 6.74141 4.91418 6.74141C5.11962 6.74141 5.31664 6.82088 5.46191 6.96233L7.22854 8.69005L10.5381 5.45996C10.6834 5.31851 10.8804 5.23905 11.0858 5.23905C11.2913 5.23905 11.4883 5.31851 11.6336 5.45996C11.7788 5.60141 11.8604 5.79326 11.8604 5.9933C11.8604 6.19334 11.7788 6.38519 11.6336 6.52664L7.77628 10.2826C7.70419 10.3522 7.6187 10.4073 7.52471 10.4446C7.43072 10.482 7.33007 10.501 7.22854 10.5004Z" fill="white" />
+                                            </svg>}
+
+                                            <div style={{
+                                                fontWeight: '500',
+                                                fontSize: '0.45vw',
+                                                letterSpacing: '0.05vw',
+                                                position: 'absolute',
+                                                right: '0',
+                                                marginTop: '0.05vw',
+                                            }}>{formatedDate(tweet.createdAt)}</div>
+                                        </div>
+
                                         <div style={{
-                                            fontWeight: '500',
+                                            width: '95%',
                                             fontSize: '0.75vw',
+                                            marginLeft: '3%',
+                                            lineHeight: '1vw',
                                             letterSpacing: '0.05vw',
-                                        }}>{tweet.createdAt}</div>
+                                        }}>{tweet.isRetweet ? "ReTweet" : ""} {tweet.content}</div>
+
+                                        {tweet.attachments.length > 0 && <div style={{
+                                            width: '100%',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            marginTop: '1vw',
+                                        }}>
+                                            {tweet.attachments.map((attachment, index) => {
+                                                return <img key={index} src={attachment} style={{
+                                                    width: '100%',
+                                                    height: 'auto',
+                                                    borderRadius: '0.5vw',
+                                                    objectFit: 'cover',
+                                                    maxHeight: '20vw',
+                                                    maxWidth: '20vw',
+                                                    marginBottom: '0.5vw',
+                                                    boxShadow: '0px 0px 0.5vw rgba(0, 0, 0, 0.5)'
+                                                }} />
+                                            })}
+                                        </div>}
+
+                                        <div style={{
+                                            marginBottom: '-0.3vw',
+                                            display: 'flex',
+                                            gap: '3vw',
+                                        }}>
+                                            <div style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '0.3vw',
+                                            }}>
+                                                <svg className='clickanimationXl' width="0.78125vw" height="0.78125vw" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path fillRule="evenodd" clipRule="evenodd" d="M7.46822 0C2.99976 0 -0.551448 3.8453 0.0710452 8.34385C0.467791 11.2104 2.64202 13.6172 5.48974 14.3762C6.55023 14.659 7.64522 14.7189 8.74471 14.5292C9.6627 14.3702 10.6047 14.4414 11.5039 14.6664L12.5967 14.9394C14.0134 15.2942 15.3004 14.0334 14.9381 12.6444C14.9381 12.6444 14.7356 11.8674 14.7296 11.8426C14.5031 10.9726 14.4544 10.0539 14.6884 9.1861C14.9779 8.11659 15.0266 6.95182 14.7664 5.74505C14.0779 2.56126 11.1544 0 7.46822 0ZM7.46822 1.50002C10.4322 1.50002 12.7534 3.53255 13.3002 6.06233C13.5004 6.98934 13.4802 7.90811 13.2409 8.79462C12.2284 12.5387 15.1886 14.0417 11.8677 13.2107C10.7629 12.9347 9.6117 12.8567 8.48896 13.0509C7.62272 13.2009 6.74523 13.1582 5.87599 12.9272C3.60576 12.3219 1.86953 10.3974 1.55678 8.13836C1.05353 4.49782 3.9515 1.50002 7.46822 1.50002Z" fill={tweet.repliesCount.includes(phoneSettings._id) ? "#0A84FF" : "#828282"} />
+                                                </svg>
+                                                <div style={{ fontSize: '0.7vw', fontWeight: 500 }}>{tweet.repliesCount.length}</div>
+                                            </div>
+                                            <div style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '0.3vw',
+                                            }} onClick={async () => {
+                                                if (!tweet.retweetCount.includes(phoneSettings._id)) {
+                                                    setTweets(tweets.map((t, i) => {
+                                                        if (i === index) {
+                                                            return {
+                                                                ...t,
+                                                                retweetCount: [...t.retweetCount, phoneSettings._id]
+                                                            }
+                                                        }
+                                                        return t;
+                                                    }))
+                                                    await fetchNui('retweetTweet', JSON.stringify({
+                                                        tweetId: tweet._id,
+                                                        retweet: true,
+                                                        pigeonId: phoneSettings.pigeonIdAttached
+                                                    }))
+                                                }
+                                            }}>
+                                                <svg className='clickanimationXl' width="1.1458333333333333vw" height="0.625vw" viewBox="0 0 25 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M6.25 0C5.58696 0 4.95107 0.263392 4.48223 0.732233C4.01339 1.20107 3.75 1.83696 3.75 2.5V10H0L5 15L10 10H6.25V2.5H15L17.5 0H6.25ZM18.75 5H15L20 0L25 5H21.25V12.5C21.25 13.163 20.9866 13.7989 20.5178 14.2678C20.0489 14.7366 19.413 15 18.75 15H7.5L10 12.5H18.75V5Z" fill={tweet.retweetCount.includes(phoneSettings._id) ? "#0A84FF" : "#828282"} />
+                                                </svg>
+                                                <div style={{ fontSize: '0.7vw', fontWeight: 500 }}>{tweet.retweetCount.length}</div>
+                                            </div>
+                                            <div style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '0.3vw',
+                                            }} onClick={async () => {
+                                                setTweets(tweets.map((t, i) => {
+                                                    if (i === index) {
+                                                        return {
+                                                            ...t,
+                                                            likeCount: t.likeCount.includes(phoneSettings._id) ? t.likeCount.filter((id) => id !== phoneSettings._id) : [...t.likeCount, phoneSettings._id]
+                                                        }
+                                                    }
+                                                    return t;
+                                                }))
+                                                await fetchNui('likeTweet', JSON.stringify({
+                                                    tweetId: tweet._id,
+                                                    like: !tweet.likeCount.includes(phoneSettings._id)
+                                                }))
+                                            }}>
+                                                <svg className='clickanimationXl' width="0.8333333333333334vw" height="0.78125vw" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M11.3333 0C10.0275 0 8.84701 0.603333 8 1.57571C7.15308 0.603424 5.97249 0 4.66667 0C2.08936 0 0 2.35052 0 5.25C0 8.14948 2.66667 10.5 8 15C13.3333 10.5 16 8.14948 16 5.25C16 2.35052 13.9106 0 11.3333 0Z" fill={tweet.likeCount.includes(phoneSettings._id) ? "#E22514" : "#828282"} />
+                                                </svg>
+                                                <div style={{ fontSize: '0.7vw', fontWeight: 500 }}>{tweet.likeCount.length}</div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div style={{
-                                    width: '100%',
-                                    marginTop: '1vw',
-                                    fontSize: '0.75vw',
-                                    letterSpacing: '0.05vw',
-                                }}>{tweet.content}</div>
-                                {tweet.attachments.length > 0 && <div style={{
-                                    width: '100%',
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    marginTop: '1vw',
-                                }}>
-                                    {tweet.attachments.map((attachment, index) => {
-                                        return <img key={index} src={attachment} style={
-                                            {
-                                                width: '10vw',
-                                                height: '10vw',
-                                                objectFit: 'cover',
-                                                borderRadius: '1vw',
-                                                marginRight: '1vw',
-                                            }
-                                        } />
-                                    }
-                                    )}
-                                </div>}
-                            </div>
-                        }
-                        )}
+                            )
+                        })}
                     </InfiniteScroll>
                 </div>
             </div>}
