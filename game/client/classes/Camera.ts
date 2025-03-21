@@ -128,7 +128,6 @@ class Camera {
      */
     public handleCameraControls(): void {
         if (!this.camOpen) return;
-        if (IsNuiFocused()) return;
         const lPed = PlayerPedId();
         const activeCam = this.isSelfieMode ? this.selfieCam : this.normalCam;
         if (!activeCam) return;
@@ -136,13 +135,12 @@ class Camera {
         const rightAxisY = GetControlNormal(0, 221); // Right stick Y-axis
         const rotation = GetCamRot(activeCam, 2);
         if (!this.isSelfieMode) {
-            if (rightAxisX !== 0.0 || rightAxisY !== 0.0) {
-                const newZ = rotation[2] + rightAxisX * -1.0 * this.speed_ud;
-                const newX = Math.max(Math.min(50.0, rotation[0] + rightAxisY * -1.0 * this.speed_lr), -89.5);
-                SetEntityHeading(lPed, newZ);
-                SetCamRot(activeCam, newX, 0.0, GetEntityHeading(lPed), 2);
-            }
-        }
+            const newZ = rotation[2] + rightAxisX * -1.0 * this.speed_ud;
+            const newX = Math.max(Math.min(50.0, rotation[0] + rightAxisY * -1.0 * this.speed_lr), -89.5);
+            SetEntityHeading(lPed, newZ);
+            if (IsNuiFocused()) return;
+            SetCamRot(activeCam, newX, 0.0, GetEntityHeading(lPed), 2);
+        } 
     }
 }
 
