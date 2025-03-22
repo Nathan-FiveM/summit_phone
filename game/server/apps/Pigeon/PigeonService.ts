@@ -118,6 +118,7 @@ class PigeonService {
                 parentTweetId: null,
             };
             await MongoDB.insertOne("phone_pigeon_tweets", tweet);
+            await triggerClientCallback("pigeon:refreshTweet", -1, JSON.stringify(tweet));
         } catch (error) {
             console.error("Error in postTweet:", error);
             return { error: "An error occurred" };
@@ -247,7 +248,7 @@ class PigeonService {
     }
 
     public async deleteTweet(client: number, tweetId: string) {
-        /* await MongoDB.deleteOne("phone_pigeon_tweets", { _id: tweetId }); */
+        await MongoDB.deleteOne("phone_pigeon_tweets", { _id: tweetId });
     }
 
     getUserTweets() {

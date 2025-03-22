@@ -15,9 +15,9 @@ onClientCallback("pigeon:getProfile", pigeonService.getProfile);
 onClientCallback("pigeon:getAllFeed", pigeonService.getAllFeed);
 onClientCallback("pigeon:likeTweet", pigeonService.likeTweet);
 onClientCallback("pigeon:retweetTweet", pigeonService.retweet);
-/* 
 onClientCallback("pigeon:deleteTweet", pigeonService.deleteTweet);
-onClientCallback("pigeon:getUserTweets", pigeonService.getUserTweets);
+
+/* onClientCallback("pigeon:getUserTweets", pigeonService.getUserTweets);
 onClientCallback("pigeon:getFeed", pigeonService.getFeed);
 onClientCallback("pigeon:followUser", pigeonService.followUser);
 onClientCallback("pigeon:unfollowUser", pigeonService.unfollowUser);

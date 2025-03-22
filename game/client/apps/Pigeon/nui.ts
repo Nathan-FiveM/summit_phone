@@ -42,6 +42,12 @@ on('__cfx_nui:retweetTweet', async (data: string, cb: Function) => {
     cb(res);
 });
 
+RegisterNuiCallbackType('deleteTweet');
+on('__cfx_nui:deleteTweet', async (data: string, cb: Function) => {
+    const res = await triggerServerCallback('pigeon:deleteTweet', 1, data);
+    cb(res);
+});
+
 RegisterCommand('postTweet', async (source: number, args: string[], raw: string) => {
     for (let i = 0; i < 40; i++) {
         const res = await triggerServerCallback('pigeon:postTweet', 1, "test@smrt.com", JSON.stringify({
