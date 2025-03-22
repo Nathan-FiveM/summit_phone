@@ -1,4 +1,4 @@
-import { Avatar, Image, SegmentedControl, Transition } from "@mantine/core";
+import { Avatar, Transition } from "@mantine/core";
 import { fetchNui } from "../../../hooks/fetchNui";
 import { useEffect, useState } from "react";
 import { TweetData } from "../../../../../types/types";
@@ -6,6 +6,8 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { usePhone } from "../../../store/store";
 import { useNuiEvent } from "../../../hooks/useNuiEvent";
 import dayjs from "dayjs";
+import CreateNewReply from "./CreateNewReply";
+import Profile from "./Profile";
 
 export default function Home(props: {
     location: string, profileData: {
@@ -17,7 +19,7 @@ export default function Home(props: {
         notificationsEnabled: boolean;
     }
 }) {
-    const { phoneSettings } = usePhone();
+    const { phoneSettings, location, setLocation } = usePhone();
 
     function formatedDate(date: string) {
         const today = new Date();
@@ -66,10 +68,6 @@ export default function Home(props: {
                     repliesCount: [...prev.repliesCount, phoneSettings._id]
                 };
             });
-
-            fetchNui('increaseRepliesCount', JSON.stringify({
-                tweetId: tweetData.originalTweetId,
-            }));
         }
     });
 
@@ -140,6 +138,7 @@ export default function Home(props: {
     const handleDeletePostTweet = async (tweet: TweetData) => {
         if (tweet.email === phoneSettings.pigeonIdAttached) {
             if (tweet.isRetweet && tweet.parentTweetId) {
+                console.log("Delete 1");
                 setPostRepliesData(prevTweets => {
                     return prevTweets.map(t => {
                         if (t._id === tweet.parentTweetId) {
@@ -203,6 +202,7 @@ export default function Home(props: {
                     }));
                 }
             } else {
+                console.log("Delete 2");
                 await fetchNui('deleteRepliesTweet', tweet._id);
                 setPostRepliesData(prev => prev.filter(t => t._id !== tweet._id));
 
@@ -264,6 +264,9 @@ export default function Home(props: {
         hashtags: [],
         parentTweetId: '',
     });
+    const [showCreateNewReply, setShowCreateNewReply] = useState(false);
+    const [showProfile, setShowProfile] = useState(false);
+    const [selectedEmail, setSelectedEmail] = useState('');
 
     return (
         <Transition
@@ -302,6 +305,9 @@ export default function Home(props: {
                         position: 'absolute',
                         left: '3%',
                         bottom: '25%',
+                    }} className='clickanimation' onClick={() => {
+                        setSelectedEmail(phoneSettings.pigeonIdAttached);
+                        setShowProfile(true);
                     }} />
                     <svg style={{ marginBottom: '4%' }} width="1.5vw" height="1.5vw" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M31.3459 2.24898C31.064 2.03273 30.6701 1.65301 30.461 1.36536C30.053 0.806071 29.2755 0.0164045 28.128 0.000319091C26.3478 -0.0260636 23.7767 1.58289 23.5791 5.07759C23.3809 8.57222 21.1399 13.7145 19.4911 14.8356C17.8422 15.9554 15.0079 19.8459 10.8542 21.1646C6.70049 22.4827 1.49198 23.3399 1.5576 24.7236C1.61037 25.8364 5.70165 25.6298 7.31194 25.5056C7.66656 25.4779 7.68264 25.5481 7.35057 25.6755C5.57687 26.3506 0.491254 28.383 0.436537 29.4713C0.370849 30.79 6.76618 27.361 11.6452 27.0984C16.5242 26.8345 19.1938 26.5378 20.5788 28.9107C20.5788 28.9107 20.8511 29.3496 21.3492 29.8484C21.3492 29.8484 21.5556 30.1423 21.5793 30.1842L21.6292 30.3072C21.7469 30.5978 21.7578 30.9208 21.66 31.2187C21.3659 31.267 21.0551 31.3325 20.7982 31.4433C20.4713 31.5843 20.5067 31.8005 20.7435 31.7451C20.9804 31.6911 21.1722 31.7502 21.1722 31.877C21.1722 32.0051 21.4289 31.9762 21.7566 31.8378C22.1459 31.673 22.6221 31.5083 22.8204 31.5804C22.9492 31.6267 23.0482 31.7072 23.1236 31.7915C23.2606 31.9434 23.0264 32.0791 22.6718 32.1056C22.3731 32.1281 22.0217 32.1886 21.734 32.3341C21.4174 32.4962 21.5526 32.7048 21.9027 32.6442C22.4684 32.549 23.2567 32.448 23.5785 32.569C24.1056 32.7666 25.5234 33.1952 26.6117 32.8985C27.3647 32.6938 28.1338 32.4725 28.711 32.3554C29.0593 32.2852 29.6038 31.9769 29.3205 31.8817C29.2112 31.845 29.0413 31.8185 28.787 31.8115C27.9169 31.7864 27.2154 32.0992 26.5693 32.0703C26.214 32.0542 26.1387 31.6828 26.4361 31.4884C26.6504 31.3475 26.9355 31.2059 27.292 31.1242C27.6389 31.045 27.7348 30.8171 27.3918 30.7232C27.115 30.6466 26.7147 30.6228 26.1496 30.7573C25.1605 30.9916 24.3283 30.9852 23.7504 30.6775C23.2676 30.2638 22.9387 29.7055 22.7636 29.0942C22.7435 29.0241 22.7285 28.9773 22.7222 28.9699C22.6662 27.8842 23.2362 26.3577 24.995 24.9547C27.5997 22.8779 29.9069 21.6904 30.6322 18.7235C31.3575 15.7572 29.3464 7.61397 29.3464 7.61397C29.3464 7.61397 29.0149 6.31071 29.1752 5.10976C29.2221 4.7577 29.47 4.23125 29.7525 4.01629C30.1161 3.73826 30.7262 3.45962 31.6492 3.56643C32.0025 3.60762 32.2335 3.4004 32.0662 3.08764C31.9303 2.83075 31.707 2.52505 31.3459 2.24898Z" fill="white" />
@@ -352,7 +358,10 @@ export default function Home(props: {
                                     borderRadius: '0.5vw',
                                     marginTop: '1vw',
                                 }}>
-                                    <Avatar mt={'0.2vw'} size={"1.4vw"} src={tweet.avatar.length > 0 ? tweet.avatar : 'https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg'} />
+                                    <Avatar className='clickanimation' mt={'0.2vw'} size={"1.4vw"} src={tweet.avatar.length > 0 ? tweet.avatar : 'https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg'} onClick={() => {
+                                        setSelectedEmail(tweet.email);
+                                        setShowProfile(true);
+                                    }} />
                                     <div style={{
                                         width: '100%',
                                         display: 'flex',
@@ -517,6 +526,8 @@ export default function Home(props: {
                     position: 'absolute',
                     width: '100%',
                     height: '100%',
+                    overflowY: 'scroll',
+                    overflowX: 'hidden',
                     marginTop: '0%',
                     display: 'flex',
                     flexDirection: 'column',
@@ -568,7 +579,10 @@ export default function Home(props: {
                             display: 'flex',
                             alignItems: 'center',
                         }}>
-                            <Avatar size={"1.5vw"} src={selectedPost.avatar.length > 0 ? selectedPost.avatar : 'https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg'} mt={'0.3vw'} />
+                            <Avatar className='clickanimation' size={"1.5vw"} src={selectedPost.avatar.length > 0 ? selectedPost.avatar : 'https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg'} mt={'0.3vw'} onClick={() => {
+                                setSelectedEmail(selectedPost.email);
+                                setShowProfile(true);
+                            }} />
                             <div style={{ marginLeft: '0.2vw', marginTop: '0.3vw' }}>
                                 <div style={{ fontWeight: '500', fontSize: '0.75vw', letterSpacing: '0.05vw', lineHeight: '1vw' }}>{selectedPost.username} {
                                     selectedPost.verified && <svg style={{
@@ -631,7 +645,7 @@ export default function Home(props: {
                                     alignItems: 'center',
                                     gap: '0.3vw',
                                 }} onClick={async () => {
-
+                                    setShowCreateNewReply(true);
                                 }}>
                                     <svg className='clickanimationXl' width="0.78125vw" height="0.78125vw" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path fillRule="evenodd" clipRule="evenodd" d="M7.46822 0C2.99976 0 -0.551448 3.8453 0.0710452 8.34385C0.467791 11.2104 2.64202 13.6172 5.48974 14.3762C6.55023 14.659 7.64522 14.7189 8.74471 14.5292C9.6627 14.3702 10.6047 14.4414 11.5039 14.6664L12.5967 14.9394C14.0134 15.2942 15.3004 14.0334 14.9381 12.6444C14.9381 12.6444 14.7356 11.8674 14.7296 11.8426C14.5031 10.9726 14.4544 10.0539 14.6884 9.1861C14.9779 8.11659 15.0266 6.95182 14.7664 5.74505C14.0779 2.56126 11.1544 0 7.46822 0ZM7.46822 1.50002C10.4322 1.50002 12.7534 3.53255 13.3002 6.06233C13.5004 6.98934 13.4802 7.90811 13.2409 8.79462C12.2284 12.5387 15.1886 14.0417 11.8677 13.2107C10.7629 12.9347 9.6117 12.8567 8.48896 13.0509C7.62272 13.2009 6.74523 13.1582 5.87599 12.9272C3.60576 12.3219 1.86953 10.3974 1.55678 8.13836C1.05353 4.49782 3.9515 1.50002 7.46822 1.50002Z" fill={tweets.length > 0 && selectedPost.repliesCount.includes(phoneSettings._id) ? "#0A84FF" : "#828282"} />
@@ -729,9 +743,7 @@ export default function Home(props: {
                     <div className="divider" style={{ backgroundColor: 'rgba(255,255,255,0.3)', marginTop: '0.5vw', width: '100%' }} />
                     <div style={{
                         width: '100%',
-                        maxHeight: '31%',
-                        overflowY: 'auto',
-                        overflowX: 'hidden',
+                        height: 'auto',
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
@@ -748,7 +760,10 @@ export default function Home(props: {
                                     borderRadius: '0.5vw',
                                     marginTop: index === 0 ? '0.5vw' : '0.5vw',
                                 }}>
-                                    <Avatar mt={'0.2vw'} size={"1.4vw"} src={data.avatar.length > 0 ? data.avatar : 'https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg'} />
+                                    <Avatar className='clickanimation' mt={'0.2vw'} size={"1.4vw"} src={data.avatar.length > 0 ? data.avatar : 'https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg'} onClick={() => {
+                                        setSelectedEmail(data.email);
+                                        setShowProfile(true);
+                                    }} />
                                     <div style={{
                                         width: '100%',
                                         display: 'flex',
@@ -822,24 +837,9 @@ export default function Home(props: {
                                         <div style={{
                                             marginBottom: '-0.3vw',
                                             display: 'flex',
-                                            gap: '2vw',
+                                            width: '80%',
+                                            justifyContent: 'space-between',
                                         }}>
-                                            <div style={{
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: '0.3vw',
-                                            }} onClick={async () => {
-                                                const res = await fetchNui('getReplies', data._id);
-                                                setSelectedPost(data);
-                                                if (res) {
-                                                    setPostRepliesData(JSON.parse(res as string));
-                                                }
-                                            }}>
-                                                <svg className='clickanimationXl' width="0.78125vw" height="0.78125vw" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path fillRule="evenodd" clipRule="evenodd" d="M7.46822 0C2.99976 0 -0.551448 3.8453 0.0710452 8.34385C0.467791 11.2104 2.64202 13.6172 5.48974 14.3762C6.55023 14.659 7.64522 14.7189 8.74471 14.5292C9.6627 14.3702 10.6047 14.4414 11.5039 14.6664L12.5967 14.9394C14.0134 15.2942 15.3004 14.0334 14.9381 12.6444C14.9381 12.6444 14.7356 11.8674 14.7296 11.8426C14.5031 10.9726 14.4544 10.0539 14.6884 9.1861C14.9779 8.11659 15.0266 6.95182 14.7664 5.74505C14.0779 2.56126 11.1544 0 7.46822 0ZM7.46822 1.50002C10.4322 1.50002 12.7534 3.53255 13.3002 6.06233C13.5004 6.98934 13.4802 7.90811 13.2409 8.79462C12.2284 12.5387 15.1886 14.0417 11.8677 13.2107C10.7629 12.9347 9.6117 12.8567 8.48896 13.0509C7.62272 13.2009 6.74523 13.1582 5.87599 12.9272C3.60576 12.3219 1.86953 10.3974 1.55678 8.13836C1.05353 4.49782 3.9515 1.50002 7.46822 1.50002Z" fill={data.repliesCount.includes(phoneSettings._id) ? "#0A84FF" : "#828282"} />
-                                                </svg>
-                                                <div style={{ fontSize: '0.7vw', fontWeight: 500 }}>{data.repliesCount.length}</div>
-                                            </div>
                                             <div style={{
                                                 display: 'flex',
                                                 alignItems: 'center',
@@ -855,25 +855,6 @@ export default function Home(props: {
                                                         }
                                                         return t;
                                                     }));
-                                                    if (tweets.length > 0 && tweets.find((t) => t._id === data.originalTweetId)) {
-                                                        setTweets(tweets.map((t) => {
-                                                            if (t._id === data.originalTweetId) {
-                                                                return {
-                                                                    ...t,
-                                                                    repliesCount: [...t.repliesCount, phoneSettings._id]
-                                                                }
-                                                            }
-                                                            return t;
-                                                        }));
-                                                        setSelectedPost({
-                                                            ...selectedPost,
-                                                            repliesCount: [...selectedPost.repliesCount, phoneSettings._id]
-                                                        });
-                                                        await fetchNui('increaseRepliesCount', JSON.stringify({
-                                                            tweetId: data.originalTweetId,
-                                                            pigeonId: phoneSettings.pigeonIdAttached
-                                                        }));
-                                                    }
                                                     await fetchNui('retweetRepostTweet', JSON.stringify({
                                                         tweetId: data._id,
                                                         retweet: true,
@@ -928,6 +909,27 @@ export default function Home(props: {
                         })}
                     </div>
                 </div>}
+                <svg style={{ position: 'fixed', bottom: '0.5vw', right: '0.5vw' }} className='clickanimation' onClick={() => {
+                    setLocation({
+                        app: 'pigeon',
+                        page: {
+                            ...location.page,
+                            pigeon: 'createnew'
+                        }
+                    })
+                }} width="2.8645833333333335vw" height="2.8645833333333335vw" viewBox="0 0 55 55" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M55 27.5C55 42.6878 42.6878 55 27.5 55C12.3122 55 0 42.6878 0 27.5C0 12.3122 12.3122 0 27.5 0C42.6878 0 55 12.3122 55 27.5Z" fill="#0A84FF" />
+                    <path d="M36.9201 16.7538L32.2727 18.1167L34.1543 16.8325C32.9664 17.1031 31.4656 17.6326 29.5795 18.487L26.5008 21.7235L27.5935 19.4627C26.5371 20.0552 25.4172 20.8319 24.3381 21.7417L23.6217 24.6814L23.4675 22.5052C22.402 23.4928 21.4 24.59 20.5703 25.7467C19.6984 26.9582 19.0169 28.2384 18.6755 29.5139L17.4005 28.6544C17.5148 29.7379 17.868 30.6797 18.4474 31.5438L16.9231 31.0729C17.2695 32.1473 17.8358 32.8422 18.7934 33.4046C18.257 34.927 18.0054 36.518 17.7351 38.1044L18.5694 38.2462C19.537 28.5218 26.3648 22.3224 32.5357 19.5756L32.8485 20.3702C27.3306 22.8619 23.0413 27.068 20.797 33.1302C21.6176 33.1348 22.4202 33.0342 23.1638 32.8422L23.3859 30.058L23.9799 32.5953C24.4741 32.4125 24.9275 32.193 25.331 31.937L24.3925 29.9482L25.8797 31.5392C26.2424 31.2466 26.5416 30.9175 26.7683 30.5563C28.1467 28.3847 29.5885 26.2267 32.4269 24.4209L30.3548 23.6802L33.5332 23.7762C34.05 23.5111 34.5941 23.1865 35.0067 22.8801L32.7533 22.6973L36.1402 21.8926C36.4032 21.6274 36.6481 21.3486 36.8702 21.0697C37.6546 20.0666 38.1851 19.0224 38.0582 18.0728C37.9992 17.5978 37.7181 17.1511 37.2602 16.9011C37.1468 16.8416 37.0244 16.789 36.9201 16.7538Z" fill="white" />
+                    <path d="M30.2923 30.1231C30.5861 30.1231 30.8242 30.3612 30.8242 30.6549V33.3143H33.4835C33.7773 33.3143 34.0154 33.5524 34.0154 33.8462C34.0154 34.1399 33.7773 34.378 33.4835 34.378H30.8242V37.0374C30.8242 37.3311 30.5861 37.5692 30.2923 37.5692C29.9986 37.5692 29.7604 37.3311 29.7604 37.0374V34.378H27.1011C26.8074 34.378 26.5692 34.1399 26.5692 33.8462C26.5692 33.5524 26.8074 33.3143 27.1011 33.3143H29.7604V30.6549C29.7604 30.3612 29.9986 30.1231 30.2923 30.1231Z" fill="white" />
+                </svg>
+                <CreateNewReply show={showCreateNewReply} tweetId={selectedPost._id} isReply={false} onSend={() => {
+                    setShowCreateNewReply(false);
+                }} onCancel={() => {
+                    setShowCreateNewReply(false);
+                }} />
+                <Profile show={showProfile} email={selectedEmail} onClose={() => {
+                    setShowProfile(false);
+                }} />
             </div>}
         </Transition>
     )

@@ -3,10 +3,9 @@ import { CSSTransition } from "react-transition-group";
 import { usePhone } from "../../../store/store";
 import { fetchNui } from "../../../hooks/fetchNui";
 import { useDebouncedCallback } from "@mantine/hooks";
-import { Avatar } from "@mantine/core";
-import Searchbar from "./SearchBar";
 import Navigation from "./Navigation";
 import Home from "./Home";
+import CreateNew from "./CreateNew";
 
 export default function Pigeon(props: { onExit: () => void; onEnter: () => void }) {
     const nodeRef = useRef(null);
@@ -386,6 +385,7 @@ export default function Pigeon(props: { onExit: () => void; onEnter: () => void 
                         height: '100%',
                     }}>
                         <Home location={location.page.pigeon} profileData={profileData}/>
+                        <CreateNew location={location.page.pigeon} />
                         <Navigation location={location.page.pigeon} onClick={(e) => {
                             setLocation({
                                 app: 'pigeon',

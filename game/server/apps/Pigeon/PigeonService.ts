@@ -42,27 +42,6 @@ class PigeonService {
         return true;
     }
 
-    private async hasProfile(citizenId: string): Promise<boolean> {
-        const user = await MongoDB.findOne("phone_pigeon_users", { _id: citizenId });
-        return !!user;
-    }
-
-    private async getUsernameByCitizenId(citizenId: string): Promise<string | null> {
-        const user = await MongoDB.findOne("phone_pigeon_users", { _id: citizenId });
-        return user ? user.username : null;
-    }
-
-    private parseMentions(content: string): string[] {
-        const mentionRegex = /@(\w+)/g;
-        const matches = content.match(mentionRegex);
-        return matches ? matches.map((m) => m.slice(1)) : [];
-    }
-
-    private async isLoggedIn(citizenId: string): Promise<boolean> {
-        const user = await MongoDB.findOne("phone_pigeon_users", { _id: citizenId });
-        return user && user.loggedIn;
-    }
-
     public async getProfile(client: number, email: string): Promise<any> {
         const user = await MongoDB.findOne("phone_pigeon_users", { email });
         if (user) {
@@ -258,11 +237,14 @@ class PigeonService {
             if (retweet) {
                 const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(client);
                 const originalTweet = await MongoDB.findOne("phone_pigeon_tweets_replies", { _id: tweetId });
+                const ogTweet = await MongoDB.findOne("phone_pigeon_tweets", { _id: originalTweet.originalTweetId });
                 const retWeetuser = await MongoDB.findOne("phone_pigeon_users", { email: pigeonId });
                 if (!originalTweet) {
                     return { error: "Original tweet not found" };
                 }
                 originalTweet.retweetCount.push(citizenId);
+                ogTweet.repliesCount.push(citizenId);
+                await MongoDB.updateOne("phone_pigeon_tweets", { _id: originalTweet.originalTweetId }, ogTweet);
                 await MongoDB.updateOne("phone_pigeon_tweets_replies", { _id: tweetId }, originalTweet);
 
                 const retweetData: TweetData = {

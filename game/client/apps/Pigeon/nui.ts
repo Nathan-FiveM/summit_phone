@@ -83,7 +83,26 @@ on('__cfx_nui:getReplies', async (data: string, cb: Function) => {
     cb(res);
 });
 
-RegisterCommand('postTweet', async (source: number, args: string[], raw: string) => {
+RegisterNuiCallbackType('getProfile');
+on('__cfx_nui:getProfile', async (data: string, cb: Function) => {
+    const res = await triggerServerCallback('pigeon:getProfile', 1, data);
+    cb(res);
+});
+
+RegisterNuiCallbackType('postTweet');
+on('__cfx_nui:postTweet', async (data: string, cb: Function) => {
+    const { email } = JSON.parse(data);
+    const res = await triggerServerCallback('pigeon:postTweet', 1, email, data);
+    cb(res);
+});
+
+RegisterNuiCallbackType('postReply');
+on('__cfx_nui:postReply', async (data: string, cb: Function) => {
+    const res = await triggerServerCallback('pigeon:postReply', 1, data);
+    cb(res);
+});
+
+/* RegisterCommand('postTweet', async (source: number, args: string[], raw: string) => {
     for (let i = 0; i < 40; i++) {
         const res = await triggerServerCallback('pigeon:postTweet', 1, "test@smrt.com", JSON.stringify({
             content: "Test Tweet " + i,
@@ -99,4 +118,4 @@ RegisterCommand('postReply', async (source: number, args: string[], raw: string)
         email: "test@smrt.com",
         attachments: []
     }));
-}, false);
+}, false); */

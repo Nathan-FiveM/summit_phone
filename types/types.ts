@@ -206,6 +206,16 @@ type HouseData = {
     door_data: string
 }
 
+type TweetProfileData = {
+    _id: string,
+    email: string,
+    password: string,
+    displayName: string,
+    avatar: string,
+    verified: boolean,
+    notificationsEnabled: boolean
+}
+
 type TweetData = {
     _id: string,
     username: string,
@@ -224,4 +234,4 @@ type TweetData = {
     parentTweetId: any,
 }
 
-export type { PhoneSettings, PhoneMail, PhoneLocation, PhoneContacts, PhoneCallHistory, Notification, PhonePlayerCard, PhoneBusiness, PhoneMailMessage, JobData, JobGrades, DarkChatProfile, DarkChatChannel, ApartMentData, HouseData, TweetData };
+export type { PhoneSettings, PhoneMail, PhoneLocation, PhoneContacts, PhoneCallHistory, Notification, PhonePlayerCard, PhoneBusiness, PhoneMailMessage, JobData, JobGrades, DarkChatProfile, DarkChatChannel, ApartMentData, HouseData, TweetData, TweetProfileData };

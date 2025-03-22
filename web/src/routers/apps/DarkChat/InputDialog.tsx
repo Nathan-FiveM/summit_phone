@@ -1,4 +1,4 @@
-import { NumberInput, TextInput, Transition } from '@mantine/core';
+import { TextInput, Transition } from '@mantine/core';
 import { useState } from 'react';
 import { fetchNui } from '../../../hooks/fetchNui';
 export default function InputDialog(props: { show: boolean, title: string, description: string, placeholder: string, onConfirm: (value: string) => void, onCancel: () => void }) {
