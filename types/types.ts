@@ -221,7 +221,7 @@ type TweetData = {
     isRetweet: boolean,
     originalTweetId: any,
     hashtags: [],
-    parentTweetId: any
+    parentTweetId: any,
 }
 
 export type { PhoneSettings, PhoneMail, PhoneLocation, PhoneContacts, PhoneCallHistory, Notification, PhonePlayerCard, PhoneBusiness, PhoneMailMessage, JobData, JobGrades, DarkChatProfile, DarkChatChannel, ApartMentData, HouseData, TweetData };

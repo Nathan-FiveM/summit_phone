@@ -116,6 +116,7 @@ class PigeonService {
                 originalTweetId: null,
                 hashtags: content.match(/#\w+/g) || [],
                 parentTweetId: null,
+
             };
             await MongoDB.insertOne("phone_pigeon_tweets", tweet);
             await triggerClientCallback("pigeon:refreshTweet", -1, JSON.stringify(tweet));
@@ -144,52 +145,33 @@ class PigeonService {
         }
     }
 
-    postReply() {
-        return async (client: number, data: string) => {
-            try {
-                const citizenId = await this.getCitizenId(client);
-                if (!(await this.isLoggedIn(citizenId))) {
-                    return { error: "Not logged in" };
-                }
-                const { parentTweetId, content } = JSON.parse(data);
-                if (!(await this.hasProfile(citizenId))) {
-                    return { error: "Profile not set" };
-                }
-                const parentTweet = await MongoDB.findOne("phone_pigeon_tweets", { _id: parentTweetId });
-                if (!parentTweet) {
-                    return { error: "Parent tweet not found" };
-                }
-                const reply = {
-                    _id: generateUUid(),
-                    userId: citizenId,
-                    content,
-                    createdAt: new Date().toISOString(),
-                    likeCount: 0,
-                    retweetCount: 0,
-                    isRetweet: false,
-                    originalTweetId: null,
-                    hashtags: content.match(/#\w+/g) || [],
-                    parentTweetId,
-                };
-                await MongoDB.insertOne("phone_pigeon_tweets", reply);
-
-                const parentUser = await MongoDB.findOne("phone_pigeon_users", { _id: parentTweet.userId });
-                if (parentUser && parentUser.notificationsEnabled) {
-                    const parentSource = await global.exports["qb-core"].GetSourceByCitizenId(parentTweet.userId);
-                    if (parentSource) {
-                        emitNet("pigeon:notifyReply", parentSource, {
-                            replyId: reply._id,
-                            content: reply.content,
-                            parentTweetId,
-                        });
-                    }
-                }
-                return reply;
-            } catch (error) {
-                console.error("Error in postReply:", error);
-                return { error: "An error occurred" };
-            }
+    public async postReply(client: number, data: string): Promise<any> {
+        const { tweetId, content, email, attachments } = JSON.parse(data);
+        const citizenId = await exports["qb-core"].GetPlayerCitizenIdBySource(client);
+        const user = await MongoDB.findOne("phone_pigeon_users", { email });
+        const tweet: TweetData = await MongoDB.findOne("phone_pigeon_tweets", { _id: tweetId });
+        if (!tweet) return { error: "Tweet not found" };
+        const reply = {
+            _id: generateUUid(),
+            username: user.displayName,
+            email: user.email,
+            avatar: user.avatar,
+            verified: user.verified,
+            content,
+            attachments,
+            createdAt: new Date().toISOString(),
+            likeCount: [],
+            repliesCount: [],
+            retweetCount: [],
+            isRetweet: false,
+            originalTweetId: tweetId,
+            hashtags: content.match(/#\w+/g) || [],
+            parentTweetId: null
         };
+        tweet.repliesCount.push(citizenId);
+        await MongoDB.updateOne("phone_pigeon_tweets", { _id: tweetId }, tweet);
+        await MongoDB.insertOne("phone_pigeon_tweets_replies", reply);
+
     }
 
     public async likeTweet(client: number, data: string) {
@@ -207,15 +189,15 @@ class PigeonService {
     }
 
     public async retweet(client: number, data: string) {
-        const { tweetId, retweet, pigeonId } = JSON.parse(data);
+        const { tweetId, retweet, pigeonId, ogTweetId } = JSON.parse(data);
         try {
-            const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(client);
-            const originalTweet = await MongoDB.findOne("phone_pigeon_tweets", { _id: tweetId });
-            const retWeetuser = await MongoDB.findOne("phone_pigeon_users", { email: pigeonId });
-            if (!originalTweet) {
-                return { error: "Original tweet not found" };
-            }
             if (retweet) {
+                const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(client);
+                const originalTweet = await MongoDB.findOne("phone_pigeon_tweets", { _id: tweetId });
+                const retWeetuser = await MongoDB.findOne("phone_pigeon_users", { email: pigeonId });
+                if (!originalTweet) {
+                    return { error: "Original tweet not found" };
+                }
                 originalTweet.retweetCount.push(citizenId);
                 await MongoDB.updateOne("phone_pigeon_tweets", { _id: tweetId }, originalTweet);
 
@@ -235,9 +217,21 @@ class PigeonService {
                     originalTweetId: tweetId,
                     hashtags: originalTweet.hashtags,
                     parentTweetId: null,
+
                 };
                 await MongoDB.insertOne("phone_pigeon_tweets", retweet);
                 await triggerClientCallback("pigeon:refreshTweet", -1, JSON.stringify(retweet));
+                return true;
+            } else if (!retweet) {
+                const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(client);
+                const originalTweet = await MongoDB.findOne("phone_pigeon_tweets", { _id: ogTweetId });
+                const retweet = await MongoDB.findOne("phone_pigeon_tweets", { _id: tweetId });
+                if (!originalTweet || !retweet) {
+                    return { error: "Original tweet not found" };
+                }
+                originalTweet.retweetCount = originalTweet.retweetCount.filter((l: any) => l !== citizenId);
+                await MongoDB.updateOne("phone_pigeon_tweets", { _id: ogTweetId }, originalTweet);
+                await MongoDB.deleteOne("phone_pigeon_tweets", { _id: tweetId });
                 return true;
             }
             return true;
@@ -251,41 +245,10 @@ class PigeonService {
         await MongoDB.deleteOne("phone_pigeon_tweets", { _id: tweetId });
     }
 
-    getUserTweets() {
-        /* return async (client: number, data: string) => {
-            try {
-                const citizenId = await this.getCitizenId(client);
-                if (!(await this.isLoggedIn(citizenId))) {
-                    return { error: "Not logged in" };
-                }
-                const { targetUsername, page = 1, limit = 20 } = JSON.parse(data);
-                const targetUser = await MongoDB.findOne("phone_pigeon_users", { username: targetUsername });
-                if (!targetUser) {
-                    return { error: "User not found" };
-                }
-                const allTweets = await MongoDB.findMany("phone_pigeon_tweets", { userId: targetUser._id });
-                const sortedTweets: TweetData[] = allTweets.sort((a: Tweet, b: Tweet) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-                const skip = (page - 1) * limit;
-                const tweets = sortedTweets.slice(skip, skip + limit);
-                const tweetIds = tweets.map(t => t._id);
-                const likes = await MongoDB.findMany("phone_pigeon_likes", {
-                    tweetId: { $in: tweetIds },
-                    userId: citizenId,
-                });
-                const likedTweetIds: Set<string> = new Set(likes.map((l: { tweetId: string }) => l.tweetId));
-                tweets.forEach(t => {
-                    t.likedByMe = likedTweetIds.has(t._id);
-                    t.retweetCount = t.retweetCount || 0;
-                });
-                return tweets;
-            } catch (error) {
-                console.error("Error in getUserTweets:", error);
-                return { error: "An error occurred" };
-            }
-        }; */
+    public async getPostReplies(client: number, tweetId: string) {
+        const replies = await MongoDB.findMany("phone_pigeon_tweets_replies", { originalTweetId: tweetId });
+        return JSON.stringify(replies);
     }
-
-
 
     followUser() {
         return async (client: number, targetUsername: string) => {
@@ -469,10 +432,7 @@ class PigeonService {
                         });
                     }
                 });
-                const trending = Object.entries(hashtagCounts)
-                    .sort((a, b) => b[1] - a[1])
-                    .slice(0, 10)
-                    .map(entry => entry[0]);
+                const trending = Object.entries(hashtagCounts).sort((a, b) => b[1] - a[1]).slice(0, 10).map(entry => entry[0]);
                 return trending;
             } catch (error) {
                 console.error("Error in getTrendingHashtags:", error);

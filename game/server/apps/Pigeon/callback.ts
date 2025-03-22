@@ -16,16 +16,16 @@ onClientCallback("pigeon:getAllFeed", pigeonService.getAllFeed);
 onClientCallback("pigeon:likeTweet", pigeonService.likeTweet);
 onClientCallback("pigeon:retweetTweet", pigeonService.retweet);
 onClientCallback("pigeon:deleteTweet", pigeonService.deleteTweet);
+onClientCallback("pigeon:postReply", pigeonService.postReply);
+onClientCallback("pigeon:getReplies", pigeonService.getPostReplies);
 
 /* onClientCallback("pigeon:getUserTweets", pigeonService.getUserTweets);
 onClientCallback("pigeon:getFeed", pigeonService.getFeed);
 onClientCallback("pigeon:followUser", pigeonService.followUser);
 onClientCallback("pigeon:unfollowUser", pigeonService.unfollowUser);
 
-onClientCallback("pigeon:unlikeTweet", pigeonService.unlikeTweet);
 onClientCallback("pigeon:getFollowers", pigeonService.getFollowers);
 onClientCallback("pigeon:getFollowing", pigeonService.getFollowing);
 onClientCallback("pigeon:getTweetsByHashtag", pigeonService.getTweetsByHashtag);
 onClientCallback("pigeon:getTrendingHashtags", pigeonService.getTrendingHashtags);
-onClientCallback("pigeon:postReply", pigeonService.postReply);
 onClientCallback("pigeon:searchUserExist", pigeonService.searchUserExist); */
