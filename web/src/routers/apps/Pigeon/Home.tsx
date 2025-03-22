@@ -46,13 +46,38 @@ export default function Home(props: {
         setTweets(prev => [tweetData, ...prev]);
     });
 
+    useNuiEvent('pigeonRefreshRepost', (data: string) => {
+        const tweetData: TweetData = JSON.parse(data);
+        setPostRepliesData(prev => [tweetData, ...prev]);
+        if (tweetData.originalTweetId) {
+            setTweets(prev => prev.map(t => {
+                if (t._id === tweetData.originalTweetId) {
+                    return {
+                        ...t,
+                        repliesCount: [...t.repliesCount, phoneSettings._id]
+                    };
+                }
+                return t;
+            }));
+
+            setSelectedPost(prev => {
+                return {
+                    ...prev,
+                    repliesCount: [...prev.repliesCount, phoneSettings._id]
+                };
+            });
+
+            fetchNui('increaseRepliesCount', JSON.stringify({
+                tweetId: tweetData.originalTweetId,
+            }));
+        }
+    });
+
     const [start, setStart] = useState(1);
     const [end, setEnd] = useState(20);
     const [filter, setFilter] = useState('all');
     const [tweets, setTweets] = useState<TweetData[]>([]);
     const [hasMore, setHasMore] = useState(true);
-
-    const [selectedIdforReply, setSelectedIdforReply] = useState('');
 
     const fetchTweets = async (startVal: number, endVal: number) => {
         const res = await fetchNui('getAllTweets', JSON.stringify({
@@ -109,6 +134,115 @@ export default function Home(props: {
 
             await fetchNui('deleteTweet', tweet._id);
             setTweets(prev => prev.filter(t => t._id !== tweet._id));
+        }
+    };
+
+    const handleDeletePostTweet = async (tweet: TweetData) => {
+        if (tweet.email === phoneSettings.pigeonIdAttached) {
+            if (tweet.isRetweet && tweet.parentTweetId) {
+                setPostRepliesData(prevTweets => {
+                    return prevTweets.map(t => {
+                        if (t._id === tweet.parentTweetId) {
+                            let removed = false;
+                            return {
+                                ...t,
+                                retweetCount: t.retweetCount.filter(id => {
+                                    if (id === phoneSettings._id && !removed) {
+                                        removed = true;
+                                        return false;
+                                    }
+                                    return true;
+                                })
+                            };
+                        }
+                        return t;
+                    }).filter(t => t._id !== tweet._id);
+                });
+
+                await fetchNui('retweetRepostTweet', JSON.stringify({
+                    ogTweetId: tweet.parentTweetId,
+                    tweetId: tweet._id,
+                    retweet: false,
+                    pigeonId: phoneSettings.pigeonIdAttached
+                }));
+
+                if (tweets.length > 0 && tweets.find(t => t._id === tweet.originalTweetId)) {
+                    setSelectedPost(prev => {
+                        let removed = false;
+                        return {
+                            ...prev,
+                            repliesCount: prev.repliesCount.filter(id => {
+                                if (id === phoneSettings._id && !removed) {
+                                    removed = true;
+                                    return false;
+                                }
+                                return true;
+                            })
+                        };
+                    });
+
+                    setTweets(prev => prev.map(t => {
+                        if (t._id === tweet.originalTweetId) {
+                            let removed = false;
+                            return {
+                                ...t,
+                                repliesCount: t.repliesCount.filter(id => {
+                                    if (id === phoneSettings._id && !removed) {
+                                        removed = true;
+                                        return false;
+                                    }
+                                    return true;
+                                })
+                            };
+                        }
+                        return t;
+                    }));
+
+                    await fetchNui('decreaseRepliesCount', JSON.stringify({
+                        tweetId: tweet.originalTweetId,
+                    }));
+                }
+            } else {
+                await fetchNui('deleteRepliesTweet', tweet._id);
+                setPostRepliesData(prev => prev.filter(t => t._id !== tweet._id));
+
+                if (tweets.length > 0 && tweets.find(t => t._id === tweet.originalTweetId)) {
+                    setSelectedPost(prev => {
+                        let removed = false;
+                        return {
+                            ...prev,
+                            repliesCount: prev.repliesCount.filter(id => {
+                                if (id === phoneSettings._id && !removed) {
+                                    removed = true;
+                                    return false;
+                                }
+                                return true;
+                            })
+                        };
+                    });
+
+                    setTweets(prev => prev.map(t => {
+                        if (t._id === tweet.originalTweetId) {
+                            let removed = false;
+                            return {
+                                ...t,
+                                repliesCount: t.repliesCount.filter(id => {
+                                    if (id === phoneSettings._id && !removed) {
+                                        removed = true;
+                                        return false;
+                                    }
+                                    return true;
+                                })
+                            };
+                        }
+                        return t;
+                    }));
+
+                    await fetchNui('decreaseRepliesCount', JSON.stringify({
+                        tweetId: tweet.originalTweetId,
+                    }));
+                }
+            }
         }
     };
 
@@ -303,7 +437,6 @@ export default function Home(props: {
                                                 setSelectedPost(tweet);
                                                 if (res) {
                                                     setPostRepliesData(JSON.parse(res as string));
-                                                    setSelectedIdforReply(tweet._id);
                                                 }
                                             }}>
                                                 <svg className='clickanimationXl' width="0.78125vw" height="0.78125vw" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -317,8 +450,8 @@ export default function Home(props: {
                                                 gap: '0.3vw',
                                             }} onClick={async () => {
                                                 if (!tweet.retweetCount.includes(phoneSettings._id)) {
-                                                    setTweets(tweets.map((t, i) => {
-                                                        if (i === index) {
+                                                    setTweets(tweets.map((t) => {
+                                                        if (t._id === tweet._id) {
                                                             return {
                                                                 ...t,
                                                                 retweetCount: [...t.retweetCount, phoneSettings._id]
@@ -343,8 +476,8 @@ export default function Home(props: {
                                                 alignItems: 'center',
                                                 gap: '0.3vw',
                                             }} onClick={async () => {
-                                                setTweets(tweets.map((t, i) => {
-                                                    if (i === index) {
+                                                setTweets(tweets.map((t) => {
+                                                    if (t._id === tweet._id) {
                                                         return {
                                                             ...t,
                                                             likeCount: t.likeCount.includes(phoneSettings._id) ? t.likeCount.filter((id) => id !== phoneSettings._id) : [...t.likeCount, phoneSettings._id]
@@ -453,7 +586,7 @@ export default function Home(props: {
                         <div style={{
                             marginTop: '0.5vw',
                         }}>
-                            {selectedPost.isRetweet && "ReTweet"} {tweets.length > 0 && selectedIdforReply && selectedPost.content}
+                            {selectedPost.isRetweet && "ReTweet"} {tweets.length > 0 && selectedPost.content}
                             {selectedPost.attachments.length > 0 && <div style={{
                                 width: '100%',
                                 display: 'flex',
@@ -510,7 +643,11 @@ export default function Home(props: {
                                     alignItems: 'center',
                                     gap: '0.3vw',
                                 }} onClick={async () => {
-                                    if (tweets.length > 0 && !selectedPost.retweetCount.includes(phoneSettings._id)) {
+                                    if (tweets.length > 0 && tweets.find((t) => t._id === selectedPost._id) && !selectedPost.retweetCount.includes(phoneSettings._id)) {
+                                        setSelectedPost({
+                                            ...selectedPost,
+                                            retweetCount: selectedPost.retweetCount.includes(phoneSettings._id) ? selectedPost.retweetCount.filter((id) => id !== phoneSettings._id) : [...selectedPost.retweetCount, phoneSettings._id]
+                                        });
                                         setTweets(tweets.map((t) => {
                                             if (t._id === selectedPost._id) {
                                                 return {
@@ -521,10 +658,29 @@ export default function Home(props: {
                                             return t;
                                         }))
                                         await fetchNui('retweetTweet', JSON.stringify({
-                                            tweetId: selectedIdforReply,
+                                            tweetId: selectedPost._id,
                                             retweet: true,
                                             pigeonId: phoneSettings.pigeonIdAttached
                                         }))
+                                    } else if (!selectedPost.retweetCount.includes(phoneSettings._id)) {
+                                        setSelectedPost({
+                                            ...selectedPost,
+                                            retweetCount: selectedPost.retweetCount.includes(phoneSettings._id) ? selectedPost.retweetCount.filter((id) => id !== phoneSettings._id) : [...selectedPost.retweetCount, phoneSettings._id]
+                                        });
+                                        setPostRepliesData(postRepliesdata.map((t) => {
+                                            if (t._id === selectedPost._id) {
+                                                return {
+                                                    ...t,
+                                                    retweetCount: [...t.retweetCount, phoneSettings._id]
+                                                }
+                                            }
+                                            return t;
+                                        }));
+                                        await fetchNui('retweetRepostTweet', JSON.stringify({
+                                            tweetId: selectedPost._id,
+                                            retweet: true,
+                                            pigeonId: phoneSettings.pigeonIdAttached
+                                        }));
                                     }
                                 }}>
                                     <svg className='clickanimationXl' width="1.1458333333333333vw" height="0.625vw" viewBox="0 0 25 15" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -541,10 +697,26 @@ export default function Home(props: {
                                         ...selectedPost,
                                         likeCount: selectedPost.likeCount.includes(phoneSettings._id) ? selectedPost.likeCount.filter((id) => id !== phoneSettings._id) : [...selectedPost.likeCount, phoneSettings._id]
                                     });
-                                    await fetchNui('likeTweet', JSON.stringify({
-                                        tweetId: selectedPost._id,
-                                        like: tweets.length > 0 && !selectedPost.likeCount.includes(phoneSettings._id)
-                                    }))
+                                    if (tweets.length > 0 && tweets.find((t) => t._id === selectedPost._id)) {
+                                        setTweets(tweets.map((t) => {
+                                            if (t._id === selectedPost._id) {
+                                                return {
+                                                    ...t,
+                                                    likeCount: t.likeCount.includes(phoneSettings._id) ? t.likeCount.filter((id) => id !== phoneSettings._id) : [...t.likeCount, phoneSettings._id]
+                                                }
+                                            }
+                                            return t;
+                                        }));
+                                        await fetchNui('likeTweet', JSON.stringify({
+                                            tweetId: selectedPost._id,
+                                            like: tweets.length > 0 && !selectedPost.likeCount.includes(phoneSettings._id)
+                                        }));
+                                    } else {
+                                        await fetchNui('likeRepostTweet', JSON.stringify({
+                                            tweetId: selectedPost._id,
+                                            like: !selectedPost.likeCount.includes(phoneSettings._id)
+                                        }));
+                                    }
                                 }}>
                                     <svg className='clickanimationXl' width="0.8333333333333334vw" height="0.78125vw" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M11.3333 0C10.0275 0 8.84701 0.603333 8 1.57571C7.15308 0.603424 5.97249 0 4.66667 0C2.08936 0 0 2.35052 0 5.25C0 8.14948 2.66667 10.5 8 15C13.3333 10.5 16 8.14948 16 5.25C16 2.35052 13.9106 0 11.3333 0Z" fill={tweets.length > 0 && selectedPost.likeCount.includes(phoneSettings._id) ? "#E22514" : "#828282"} />
@@ -555,7 +727,7 @@ export default function Home(props: {
                         </div>
                     </div>
                     <div className="divider" style={{ backgroundColor: 'rgba(255,255,255,0.3)', marginTop: '0.5vw', width: '100%' }} />
-                    {/* <div style={{
+                    <div style={{
                         width: '100%',
                         maxHeight: '31%',
                         overflowY: 'auto',
@@ -564,7 +736,7 @@ export default function Home(props: {
                         flexDirection: 'column',
                         alignItems: 'center',
                     }}>
-                        {tweets.length > 0 && selectedIdforReply && postRepliesdata && postRepliesdata.length > 0 && postRepliesdata.map((data: TweetData, index: number) => {
+                        {tweets.length > 0 && postRepliesdata && postRepliesdata.length > 0 && postRepliesdata.map((data: TweetData, index: number) => {
                             return (
                                 <div key={index} style={{
                                     width: '16.2vw',
@@ -574,7 +746,7 @@ export default function Home(props: {
                                     alignItems: 'start',
                                     padding: '0.5vw',
                                     borderRadius: '0.5vw',
-                                    marginTop: '1vw',
+                                    marginTop: index === 0 ? '0.5vw' : '0.5vw',
                                 }}>
                                     <Avatar mt={'0.2vw'} size={"1.4vw"} src={data.avatar.length > 0 ? data.avatar : 'https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg'} />
                                     <div style={{
@@ -657,7 +829,11 @@ export default function Home(props: {
                                                 alignItems: 'center',
                                                 gap: '0.3vw',
                                             }} onClick={async () => {
+                                                const res = await fetchNui('getReplies', data._id);
                                                 setSelectedPost(data);
+                                                if (res) {
+                                                    setPostRepliesData(JSON.parse(res as string));
+                                                }
                                             }}>
                                                 <svg className='clickanimationXl' width="0.78125vw" height="0.78125vw" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path fillRule="evenodd" clipRule="evenodd" d="M7.46822 0C2.99976 0 -0.551448 3.8453 0.0710452 8.34385C0.467791 11.2104 2.64202 13.6172 5.48974 14.3762C6.55023 14.659 7.64522 14.7189 8.74471 14.5292C9.6627 14.3702 10.6047 14.4414 11.5039 14.6664L12.5967 14.9394C14.0134 15.2942 15.3004 14.0334 14.9381 12.6444C14.9381 12.6444 14.7356 11.8674 14.7296 11.8426C14.5031 10.9726 14.4544 10.0539 14.6884 9.1861C14.9779 8.11659 15.0266 6.95182 14.7664 5.74505C14.0779 2.56126 11.1544 0 7.46822 0ZM7.46822 1.50002C10.4322 1.50002 12.7534 3.53255 13.3002 6.06233C13.5004 6.98934 13.4802 7.90811 13.2409 8.79462C12.2284 12.5387 15.1886 14.0417 11.8677 13.2107C10.7629 12.9347 9.6117 12.8567 8.48896 13.0509C7.62272 13.2009 6.74523 13.1582 5.87599 12.9272C3.60576 12.3219 1.86953 10.3974 1.55678 8.13836C1.05353 4.49782 3.9515 1.50002 7.46822 1.50002Z" fill={data.repliesCount.includes(phoneSettings._id) ? "#0A84FF" : "#828282"} />
@@ -669,21 +845,40 @@ export default function Home(props: {
                                                 alignItems: 'center',
                                                 gap: '0.3vw',
                                             }} onClick={async () => {
-                                                if (!data.retweetCount.includes(phoneSettings._id)) {
-                                                    setTweets(tweets.map((t, i) => {
-                                                        if (i === index) {
+                                                if (postRepliesdata.length > 0 && postRepliesdata.find((t) => t._id === data._id) && !data.retweetCount.includes(phoneSettings._id)) {
+                                                    setPostRepliesData(postRepliesdata.map((t) => {
+                                                        if (t._id === data._id) {
                                                             return {
                                                                 ...t,
                                                                 retweetCount: [...t.retweetCount, phoneSettings._id]
                                                             }
                                                         }
                                                         return t;
-                                                    }))
-                                                    await fetchNui('retweetTweet', JSON.stringify({
+                                                    }));
+                                                    if (tweets.length > 0 && tweets.find((t) => t._id === data.originalTweetId)) {
+                                                        setTweets(tweets.map((t) => {
+                                                            if (t._id === data.originalTweetId) {
+                                                                return {
+                                                                    ...t,
+                                                                    repliesCount: [...t.repliesCount, phoneSettings._id]
+                                                                }
+                                                            }
+                                                            return t;
+                                                        }));
+                                                        setSelectedPost({
+                                                            ...selectedPost,
+                                                            repliesCount: [...selectedPost.repliesCount, phoneSettings._id]
+                                                        });
+                                                        await fetchNui('increaseRepliesCount', JSON.stringify({
+                                                            tweetId: data.originalTweetId,
+                                                            pigeonId: phoneSettings.pigeonIdAttached
+                                                        }));
+                                                    }
+                                                    await fetchNui('retweetRepostTweet', JSON.stringify({
                                                         tweetId: data._id,
                                                         retweet: true,
                                                         pigeonId: phoneSettings.pigeonIdAttached
-                                                    }))
+                                                    }));
                                                 }
                                             }}>
                                                 <svg className='clickanimationXl' width="1.1458333333333333vw" height="0.625vw" viewBox="0 0 25 15" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -696,19 +891,19 @@ export default function Home(props: {
                                                 alignItems: 'center',
                                                 gap: '0.3vw',
                                             }} onClick={async () => {
-                                                setTweets(tweets.map((t) => {
-                                                    if (i === index) {
+                                                setPostRepliesData(postRepliesdata.map((t) => {
+                                                    if (t._id === data._id) {
                                                         return {
                                                             ...t,
                                                             likeCount: t.likeCount.includes(phoneSettings._id) ? t.likeCount.filter((id) => id !== phoneSettings._id) : [...t.likeCount, phoneSettings._id]
                                                         }
                                                     }
                                                     return t;
-                                                }))
-                                                await fetchNui('likeTweet', JSON.stringify({
+                                                }));
+                                                await fetchNui('likeRepostTweet', JSON.stringify({
                                                     tweetId: data._id,
                                                     like: !data.likeCount.includes(phoneSettings._id)
-                                                }))
+                                                }));
                                             }}>
                                                 <svg className='clickanimationXl' width="0.8333333333333334vw" height="0.78125vw" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M11.3333 0C10.0275 0 8.84701 0.603333 8 1.57571C7.15308 0.603424 5.97249 0 4.66667 0C2.08936 0 0 2.35052 0 5.25C0 8.14948 2.66667 10.5 8 15C13.3333 10.5 16 8.14948 16 5.25C16 2.35052 13.9106 0 11.3333 0Z" fill={data.likeCount.includes(phoneSettings._id) ? "#E22514" : "#828282"} />
@@ -720,7 +915,7 @@ export default function Home(props: {
                                                     display: 'flex',
                                                     alignItems: 'center',
                                                     gap: '0.3vw',
-                                                }} onClick={() => handleDeleteTweet(data)}>
+                                                }} onClick={() => handleDeletePostTweet(data)}>
                                                     <svg style={{ cursor: 'pointer' }} width="0.78125vw" height="0.78125vw" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                         <path d="M2.81625 13.7123L1.5 4.5H13.5L12.1838 13.7123C12.1327 14.0697 11.9544 14.3967 11.6816 14.6332C11.4088 14.8698 11.0598 15 10.6987 15H4.30125C3.94018 15 3.59122 14.8698 3.31843 14.6332C3.04565 14.3967 2.86734 14.0697 2.81625 13.7123ZM14.25 1.5H10.5V0.75C10.5 0.551088 10.421 0.360322 10.2803 0.21967C10.1397 0.0790176 9.94891 0 9.75 0H5.25C5.05109 0 4.86032 0.0790176 4.71967 0.21967C4.57902 0.360322 4.5 0.551088 4.5 0.75V1.5H0.75C0.551088 1.5 0.360322 1.57902 0.21967 1.71967C0.0790176 1.86032 0 2.05109 0 2.25C0 2.44891 0.0790176 2.63968 0.21967 2.78033C0.360322 2.92098 0.551088 3 0.75 3H14.25C14.4489 3 14.6397 2.92098 14.7803 2.78033C14.921 2.63968 15 2.44891 15 2.25C15 2.05109 14.921 1.86032 14.7803 1.71967C14.6397 1.57902 14.4489 1.5 14.25 1.5Z" fill="#828282" />
                                                     </svg>
@@ -731,7 +926,7 @@ export default function Home(props: {
                                 </div>
                             )
                         })}
-                    </div> */}
+                    </div>
                 </div>}
             </div>}
         </Transition>

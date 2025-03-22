@@ -7,10 +7,6 @@ class PigeonService {
     //@ts-ignore
     public static tweetData: TweetData[];
 
-    private async getCitizenId(client: number): Promise<string> {
-        return await exports["qb-core"].GetPlayerCitizenIdBySource(client);
-    }
-
     public async searchUserExist(client: number, data: string): Promise<any> {
         const user = await MongoDB.findOne("phone_pigeon_users", { email: data });
         return !!user;
@@ -65,14 +61,6 @@ class PigeonService {
     private async isLoggedIn(citizenId: string): Promise<boolean> {
         const user = await MongoDB.findOne("phone_pigeon_users", { _id: citizenId });
         return user && user.loggedIn;
-    }
-
-    public async setProfile() {
-
-    }
-
-    public async getMyProfile() {
-
     }
 
     public async getProfile(client: number, email: string): Promise<any> {
@@ -171,7 +159,7 @@ class PigeonService {
         tweet.repliesCount.push(citizenId);
         await MongoDB.updateOne("phone_pigeon_tweets", { _id: tweetId }, tweet);
         await MongoDB.insertOne("phone_pigeon_tweets_replies", reply);
-
+        await triggerClientCallback("pigeon:refreshRepost", -1, JSON.stringify(reply));
     }
 
     public async likeTweet(client: number, data: string) {
@@ -188,6 +176,21 @@ class PigeonService {
         return true;
     }
 
+    public async likeRepliesTweet(client: number, data: string) {
+        const { tweetId, like } = JSON.parse(data);
+        const citizenId = await exports["qb-core"].GetPlayerCitizenIdBySource(client);
+        const tweet = await MongoDB.findOne("phone_pigeon_tweets_replies", { _id: tweetId });
+        console.log(tweet, like);
+        if (!tweet) return console.log("Tweet not found");
+        if (like) {
+            tweet.likeCount.push(citizenId);
+        } else {
+            tweet.likeCount = tweet.likeCount.filter((l: any) => l !== citizenId);
+        }
+        await MongoDB.updateOne("phone_pigeon_tweets_replies", { _id: tweetId }, tweet);
+        return true;
+    }
+
     public async retweet(client: number, data: string) {
         const { tweetId, retweet, pigeonId, ogTweetId } = JSON.parse(data);
         try {
@@ -201,7 +204,7 @@ class PigeonService {
                 originalTweet.retweetCount.push(citizenId);
                 await MongoDB.updateOne("phone_pigeon_tweets", { _id: tweetId }, originalTweet);
 
-                const retweet: TweetData = {
+                const retweetData: TweetData = {
                     _id: generateUUid(),
                     username: retWeetuser.displayName,
                     email: retWeetuser.email,
@@ -217,10 +220,9 @@ class PigeonService {
                     originalTweetId: tweetId,
                     hashtags: originalTweet.hashtags,
                     parentTweetId: null,
-
                 };
-                await MongoDB.insertOne("phone_pigeon_tweets", retweet);
-                await triggerClientCallback("pigeon:refreshTweet", -1, JSON.stringify(retweet));
+                await MongoDB.insertOne("phone_pigeon_tweets", retweetData);
+                await triggerClientCallback("pigeon:refreshTweet", -1, JSON.stringify(retweetData));
                 return true;
             } else if (!retweet) {
                 const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(client);
@@ -229,9 +231,80 @@ class PigeonService {
                 if (!originalTweet || !retweet) {
                     return { error: "Original tweet not found" };
                 }
-                originalTweet.retweetCount = originalTweet.retweetCount.filter((l: any) => l !== citizenId);
+
+                // Remove only first occurrence of citizenId
+                let removed = false;
+                originalTweet.retweetCount = originalTweet.retweetCount.filter((l: any) => {
+                    if (l === citizenId && !removed) {
+                        removed = true;
+                        return false;
+                    }
+                    return true;
+                });
                 await MongoDB.updateOne("phone_pigeon_tweets", { _id: ogTweetId }, originalTweet);
                 await MongoDB.deleteOne("phone_pigeon_tweets", { _id: tweetId });
+                return true;
+            }
+            return true;
+        } catch (error) {
+            console.error("Error in retweet:", error);
+            return { error: "An error occurred" };
+        }
+    }
+
+    public async retweetRepliesTweet(client: number, data: string) {
+        const { tweetId, retweet, pigeonId, ogTweetId } = JSON.parse(data);
+        try {
+            if (retweet) {
+                const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(client);
+                const originalTweet = await MongoDB.findOne("phone_pigeon_tweets_replies", { _id: tweetId });
+                const retWeetuser = await MongoDB.findOne("phone_pigeon_users", { email: pigeonId });
+                if (!originalTweet) {
+                    return { error: "Original tweet not found" };
+                }
+                originalTweet.retweetCount.push(citizenId);
+                await MongoDB.updateOne("phone_pigeon_tweets_replies", { _id: tweetId }, originalTweet);
+
+                const retweetData: TweetData = {
+                    _id: generateUUid(),
+                    username: retWeetuser.displayName,
+                    email: retWeetuser.email,
+                    avatar: retWeetuser.avatar,
+                    verified: retWeetuser.verified,
+                    content: originalTweet.content,
+                    attachments: originalTweet.attachments,
+                    createdAt: new Date().toISOString(),
+                    likeCount: [],
+                    repliesCount: [],
+                    retweetCount: [],
+                    isRetweet: true,
+                    originalTweetId: originalTweet.originalTweetId,
+                    hashtags: originalTweet.hashtags,
+                    parentTweetId: tweetId,
+                };
+                await MongoDB.insertOne("phone_pigeon_tweets_replies", retweetData);
+                await triggerClientCallback("pigeon:refreshRepost", -1, JSON.stringify(retweetData));
+                return true;
+            } else if (!retweet) {
+                const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(client);
+                const originalTweet = await MongoDB.findOne("phone_pigeon_tweets_replies", { _id: ogTweetId });
+                const retweet = await MongoDB.findOne("phone_pigeon_tweets_replies", { _id: tweetId });
+                if (!originalTweet || !retweet) {
+                    return { error: "Original tweet not found" };
+                }
+
+                // Remove only first occurrence of citizenId
+                let removed = false;
+                originalTweet.retweetCount = originalTweet.retweetCount.filter((l: any) => {
+                    if (l === citizenId && !removed) {
+                        removed = true;
+                        return false;
+                    }
+                    return true;
+                });
+                console.log(originalTweet.retweetCount);
+                await MongoDB.updateOne("phone_pigeon_tweets_replies", { _id: ogTweetId }, originalTweet);
+                await MongoDB.deleteOne("phone_pigeon_tweets_replies", { _id: tweetId });
                 return true;
             }
             return true;
@@ -245,200 +318,59 @@ class PigeonService {
         await MongoDB.deleteOne("phone_pigeon_tweets", { _id: tweetId });
     }
 
+    public async deleteRepliesTweet(client: number, tweetId: string) {
+        await MongoDB.deleteOne("phone_pigeon_tweets_replies", { _id: tweetId });
+    }
+
     public async getPostReplies(client: number, tweetId: string) {
-        const replies = await MongoDB.findMany("phone_pigeon_tweets_replies", { originalTweetId: tweetId });
+        const replies = await MongoDB.findMany("phone_pigeon_tweets_replies", { originalTweetId: tweetId }, null, false, {
+            sort: { createdAt: -1 }
+        });
         return JSON.stringify(replies);
     }
 
-    followUser() {
-        return async (client: number, targetUsername: string) => {
-            try {
-                const citizenId = await this.getCitizenId(client);
-                if (!(await this.isLoggedIn(citizenId))) {
-                    return { error: "Not logged in" };
-                }
-                const targetUser = await MongoDB.findOne("phone_pigeon_users", { username: targetUsername });
-                if (!targetUser) {
-                    return { error: "User not found" };
-                }
-                if (citizenId === targetUser._id) {
-                    return { error: "Cannot follow yourself" };
-                }
-                const existingFollow = await MongoDB.findOne("phone_pigeon_follows", {
-                    followerId: citizenId,
-                    followeeId: targetUser._id,
-                });
-                if (existingFollow) {
-                    return { error: "Already following" };
-                }
-                await MongoDB.insertOne("phone_pigeon_follows", {
-                    _id: generateUUid(),
-                    followerId: citizenId,
-                    followeeId: targetUser._id,
-                });
-                if (targetUser.notificationsEnabled) {
-                    const followerUsername = await this.getUsernameByCitizenId(citizenId);
-                    const followeeSource = await global.exports["qb-core"].GetSourceByCitizenId(targetUser._id);
-                    if (followeeSource) {
-                        emitNet("pigeon:notifyFollow", followeeSource, {
-                            followerUsername,
-                        });
-                    }
+    public async increaseRepliesCount(client: number, data: string): Promise<any> {
+        const { tweetId } = JSON.parse(data);
+        const tweet = await MongoDB.findOne("phone_pigeon_tweets", { _id: tweetId });
+        if (!tweet) return { error: "Tweet not found" };
+        tweet.repliesCount.push(await exports['qb-core'].GetPlayerCitizenIdBySource(client));
+        await MongoDB.updateOne("phone_pigeon_tweets", { _id: tweetId }, tweet);
+    }
+
+    public async decreaseRepliesCount(client: number, data: string): Promise<any> {
+        try {
+            const { tweetId } = JSON.parse(data);
+            const cid = await exports['qb-core'].GetPlayerCitizenIdBySource(client);
+
+            const tweet = await MongoDB.findOne("phone_pigeon_tweets", { _id: tweetId });
+            if (!tweet) {
+                console.error(`Tweet not found for tweetId: ${tweetId}`);
+                return { error: "Tweet not found" };
+            }
+
+            // Remove only the first occurrence of cid
+            let removed = false;
+            tweet.repliesCount = tweet.repliesCount.filter((r: string) => {
+                if (r === cid && !removed) {
+                    removed = true;
+                    return false;
                 }
                 return true;
-            } catch (error) {
-                console.error("Error in followUser:", error);
-                return { error: "An error occurred" };
+            });
+
+            const updateResult = await MongoDB.updateOne("phone_pigeon_tweets", { _id: tweetId }, tweet);
+
+            if (!updateResult || updateResult.modifiedCount === 0) {
+                console.warn(`No changes made to tweet ${tweetId} repliesCount`);
+                return { success: false, message: "No changes made to replies count" };
             }
-        };
-    }
 
-    unfollowUser() {
-        return async (client: number, targetUsername: string) => {
-            try {
-                const citizenId = await this.getCitizenId(client);
-                if (!(await this.isLoggedIn(citizenId))) {
-                    return { error: "Not logged in" };
-                }
-                const targetUser = await MongoDB.findOne("phone_pigeon_users", { username: targetUsername });
-                if (!targetUser) {
-                    return { error: "User not found" };
-                }
-                await MongoDB.deleteOne("phone_pigeon_follows", {
-                    followerId: citizenId,
-                    followeeId: targetUser._id,
-                });
-                return true;
-            } catch (error) {
-                console.error("Error in unfollowUser:", error);
-                return { error: "An error occurred" };
-            }
-        };
-    }
-
-    getFollowers() {
-        return async (client: number, targetUsername: string) => {
-            try {
-                const citizenId = await this.getCitizenId(client);
-                if (!(await this.isLoggedIn(citizenId))) {
-                    return { error: "Not logged in" };
-                }
-                const targetUser = await MongoDB.findOne("phone_pigeon_users", { username: targetUsername });
-                if (!targetUser) {
-                    return { error: "User not found" };
-                }
-                const followers = await MongoDB.findMany("phone_pigeon_follows", { followeeId: targetUser._id });
-                interface Follow {
-                    followerId: string;
-                    followeeId: string;
-                }
-
-                const followerIds: string[] = followers.map((f: Follow) => f.followerId);
-                const followerProfiles = await MongoDB.findMany("phone_pigeon_users", { _id: { $in: followerIds } });
-                return followerProfiles;
-            } catch (error) {
-                console.error("Error in getFollowers:", error);
-                return { error: "An error occurred" };
-            }
-        };
-    }
-
-    getFollowing() {
-        return async (client: number, targetUsername: string) => {
-            try {
-                const citizenId = await this.getCitizenId(client);
-                if (!(await this.isLoggedIn(citizenId))) {
-                    return { error: "Not logged in" };
-                }
-                const targetUser = await MongoDB.findOne("phone_pigeon_users", { username: targetUsername });
-                if (!targetUser) {
-                    return { error: "User not found" };
-                }
-                const following = await MongoDB.findMany("phone_pigeon_follows", { followerId: targetUser._id });
-                const followingIds: string[] = following.map((f: { followeeId: string }) => f.followeeId);
-                const followingProfiles = await MongoDB.findMany("phone_pigeon_users", { _id: { $in: followingIds } });
-                return followingProfiles;
-            } catch (error) {
-                console.error("Error in getFollowing:", error);
-                return { error: "An error occurred" };
-            }
-        };
-    }
-
-    searchUsers() {
-        return async (client: number, data: string) => {
-            try {
-                const citizenId = await this.getCitizenId(client);
-                if (!(await this.isLoggedIn(citizenId))) {
-                    return { error: "Not logged in" };
-                }
-                const { searchTerm, page = 1, limit = 20 } = JSON.parse(data);
-                const regex = new RegExp(searchTerm, "i");
-                const allUsers = await MongoDB.findMany("phone_pigeon_users", { username: { $regex: regex } });
-                const sortedUsers = allUsers; // No specific sorting required
-                const skip = (page - 1) * limit;
-                const users = sortedUsers.slice(skip, skip + limit);
-                return users;
-            } catch (error) {
-                console.error("Error in searchUsers:", error);
-                return { error: "An error occurred" };
-            }
-        };
-    }
-
-    getTweetsByHashtag() {
-        /*  return async (client: number, data: string) => {
-             try {
-                 const citizenId = await this.getCitizenId(client);
-                 if (!(await this.isLoggedIn(citizenId))) {
-                     return { error: "Not logged in" };
-                 }
-                 const { hashtag, page = 1, limit = 20 } = JSON.parse(data);
-                 const allTweets = await MongoDB.findMany("phone_pigeon_tweets", { hashtags: hashtag });
-                 const sortedTweets: Tweet[] = allTweets.sort((a: Tweet, b: Tweet) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-                 const skip = (page - 1) * limit;
-                 const tweets = sortedTweets.slice(skip, skip + limit);
-                 const tweetIds = tweets.map(t => t._id);
-                 const likes = await MongoDB.findMany("phone_pigeon_likes", {
-                     tweetId: { $in: tweetIds },
-                     userId: citizenId,
-                 });
-                 const likedTweetIds = new Set(likes.map((l: { tweetId: string }) => l.tweetId));
-                 tweets.forEach(t => {
-                     t.likedByMe = likedTweetIds.has(t._id);
-                     t.retweetCount = t.retweetCount || 0;
-                 });
-                 return tweets;
-             } catch (error) {
-                 console.error("Error in getTweetsByHashtag:", error);
-                 return { error: "An error occurred" };
-             }
-         }; */
-    }
-
-    getTrendingHashtags() {
-        return async (client: number) => {
-            try {
-                const citizenId = await this.getCitizenId(client);
-                if (!(await this.isLoggedIn(citizenId))) {
-                    return { error: "Not logged in" };
-                }
-                const allTweets = await MongoDB.findMany("phone_pigeon_tweets", {});
-                const hashtagCounts: { [key: string]: number } = {};
-                allTweets.forEach((tweet: TweetData) => {
-                    if (tweet.hashtags) {
-                        tweet.hashtags.forEach((hashtag: string) => {
-                            hashtagCounts[hashtag] = (hashtagCounts[hashtag] || 0) + 1;
-                        });
-                    }
-                });
-                const trending = Object.entries(hashtagCounts).sort((a, b) => b[1] - a[1]).slice(0, 10).map(entry => entry[0]);
-                return trending;
-            } catch (error) {
-                console.error("Error in getTrendingHashtags:", error);
-                return { error: "An error occurred" };
-            }
-        };
+            console.log(`Successfully decreased repliesCount for tweet ${tweetId}`);
+            return { success: true };
+        } catch (error: any) {
+            console.error("Error in decreaseRepliesCount:", error);
+            return { error: "An error occurred", details: error.message };
+        }
     }
 }
 

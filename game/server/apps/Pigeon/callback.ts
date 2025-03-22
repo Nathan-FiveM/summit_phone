@@ -8,7 +8,6 @@ import { pigeonService } from "./PigeonService";
 onClientCallback("pigeon:searchUsers", pigeonService.searchUserExist);
 onClientCallback("pigeon:login", pigeonService.login);
 onClientCallback("pigeon:signup", pigeonService.signup);
-onClientCallback("pigeon:setProfile", pigeonService.setProfile);
 onClientCallback("pigeon:toggleNotifications", pigeonService.toggleNotifications);
 onClientCallback("pigeon:postTweet", pigeonService.postTweet);
 onClientCallback("pigeon:getProfile", pigeonService.getProfile);
@@ -18,6 +17,12 @@ onClientCallback("pigeon:retweetTweet", pigeonService.retweet);
 onClientCallback("pigeon:deleteTweet", pigeonService.deleteTweet);
 onClientCallback("pigeon:postReply", pigeonService.postReply);
 onClientCallback("pigeon:getReplies", pigeonService.getPostReplies);
+onClientCallback("pigeon:likeRepostTweet", pigeonService.likeRepliesTweet);
+onClientCallback("pigeon:retweetRepostTweet", pigeonService.retweetRepliesTweet);
+onClientCallback("pigeon:increaseRepliesCount", pigeonService.increaseRepliesCount);
+onClientCallback("pigeon:decreaseRepliesCount", pigeonService.decreaseRepliesCount);
+onClientCallback("pigeon:deleteRepliesTweet", pigeonService.deleteRepliesTweet);
+
 
 /* onClientCallback("pigeon:getUserTweets", pigeonService.getUserTweets);
 onClientCallback("pigeon:getFeed", pigeonService.getFeed);

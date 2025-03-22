@@ -6,3 +6,8 @@ onServerCallback('pigeon:refreshTweet', (data: string) => {
     NUI.sendReactMessage('pigeonRefreshTweet', data);
     return true;
 });
+
+onServerCallback('pigeon:refreshRepost', (data: string) => {
+    NUI.sendReactMessage('pigeonRefreshRepost', data);
+    return true;
+});

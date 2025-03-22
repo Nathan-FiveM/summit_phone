@@ -36,9 +36,38 @@ on('__cfx_nui:likeTweet', async (data: string, cb: Function) => {
     cb(res);
 });
 
+RegisterNuiCallbackType('likeRepostTweet');
+on('__cfx_nui:likeRepostTweet', async (data: string, cb: Function) => {
+    const res = await triggerServerCallback('pigeon:likeRepostTweet', 1, data);
+    cb(res);
+});
+
 RegisterNuiCallbackType('retweetTweet');
 on('__cfx_nui:retweetTweet', async (data: string, cb: Function) => {
     const res = await triggerServerCallback('pigeon:retweetTweet', 1, data);
+    cb(res);
+});
+
+RegisterNuiCallbackType('retweetRepostTweet');
+on('__cfx_nui:retweetRepostTweet', async (data: string, cb: Function) => {
+    const res = await triggerServerCallback('pigeon:retweetRepostTweet', 1, data);
+    cb(res);
+});
+
+RegisterNuiCallbackType('increaseRepliesCount');
+on('__cfx_nui:increaseRepliesCount', async (data: string, cb: Function) => {
+    const res = await triggerServerCallback('pigeon:increaseRepliesCount', 1, data);
+    cb(res);
+});
+RegisterNuiCallbackType('decreaseRepliesCount');
+on('__cfx_nui:decreaseRepliesCount', async (data: string, cb: Function) => {
+    const res = await triggerServerCallback('pigeon:decreaseRepliesCount', 1, data);
+    cb(res);
+});
+
+RegisterNuiCallbackType('deleteRepliesTweet');
+on('__cfx_nui:deleteRepliesTweet', async (data: string, cb: Function) => {
+    const res = await triggerServerCallback('pigeon:deleteRepliesTweet', 1, data);
     cb(res);
 });
 
@@ -65,7 +94,7 @@ RegisterCommand('postTweet', async (source: number, args: string[], raw: string)
 
 RegisterCommand('postReply', async (source: number, args: string[], raw: string) => {
     const res = await triggerServerCallback('pigeon:postReply', 1, JSON.stringify({
-        tweetId: "f98d97ba-f02a-47e7-9d71-0412621f631c",
+        tweetId: args[0],
         content: "Test Reply",
         email: "test@smrt.com",
         attachments: []

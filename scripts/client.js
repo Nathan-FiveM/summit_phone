@@ -5,7 +5,7 @@ import { readFileSync, writeFileSync } from 'fs';
 // Auto-run build
 await build({
   platform: 'browser',
-  target: ['es2024'],
+  target: ['es2021'],
   format: 'iife',
   entryPoints: ['game/client/index.ts'],
   outfile: '../build/client.js',

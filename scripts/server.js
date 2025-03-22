@@ -4,7 +4,7 @@ import { readFileSync, writeFileSync } from 'fs';
 
 await build({
   platform: 'node',
-  target: ['node22'],
+  target: ['node16'],
   format: 'cjs',
   entryPoints: ['game/server/index.ts'],
   outfile: '../build/server.js',
