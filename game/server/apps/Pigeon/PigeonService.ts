@@ -408,6 +408,14 @@ class PigeonService {
         });
         return JSON.stringify(res);
     }
+
+    public async searchUsers(client: number, value: string): Promise<any> {
+        const res = await MongoDB.findMany("phone_pigeon_users", { email: { $regex: value, $options: "i" } }, null, false, {
+            sort: { createdAt: -1 }
+        });
+        return JSON.stringify(res);
+    }
+
 }
 
 export const pigeonService = new PigeonService();

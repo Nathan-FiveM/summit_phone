@@ -7,6 +7,7 @@ import Navigation from "./Navigation";
 import Home from "./Home";
 import CreateNew from "./CreateNew";
 import { TweetProfileData } from "../../../../../types/types";
+import SearchUser from "./SearchUsers";
 
 export default function Pigeon(props: { onExit: () => void; onEnter: () => void }) {
     const nodeRef = useRef(null);
@@ -49,7 +50,7 @@ export default function Pigeon(props: { onExit: () => void; onEnter: () => void 
         bio: '',
         followers: [],
         following: []
-        
+
     });
 
     return (
@@ -74,7 +75,7 @@ export default function Pigeon(props: { onExit: () => void; onEnter: () => void 
                     })
                 }
             }}
-            onExited={()=>{
+            onExited={() => {
                 props.onExit();
                 setLocation({
                     app: location.app,
@@ -384,8 +385,9 @@ export default function Pigeon(props: { onExit: () => void; onEnter: () => void 
                         width: '100%',
                         height: '100%',
                     }}>
-                        <Home location={location.page.pigeon} profileData={profileData}/>
+                        <Home location={location.page.pigeon} profileData={profileData} />
                         <CreateNew location={location.page.pigeon} />
+                        <SearchUser show={location.page.pigeon === 'search'} profileData={profileData} />
                         <Navigation location={location.page.pigeon} onClick={(e) => {
                             setLocation({
                                 app: 'pigeon',

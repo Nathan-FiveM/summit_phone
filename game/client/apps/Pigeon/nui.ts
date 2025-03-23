@@ -126,20 +126,8 @@ on('__cfx_nui:getAllLikedTweets', async (data: string, cb: Function) => {
     cb(res);
 });
 
-/* RegisterCommand('postTweet', async (source: number, args: string[], raw: string) => {
-    for (let i = 0; i < 40; i++) {
-        const res = await triggerServerCallback('pigeon:postTweet', 1, "test@smrt.com", JSON.stringify({
-            content: "Test Tweet " + i,
-            attachments: ["https://cdn.summitrp.gg/uploads/ruxDWWQ7.png"]
-        }));
-    }
-}, false);
-
-RegisterCommand('postReply', async (source: number, args: string[], raw: string) => {
-    const res = await triggerServerCallback('pigeon:postReply', 1, JSON.stringify({
-        tweetId: args[0],
-        content: "Test Reply",
-        email: "test@smrt.com",
-        attachments: []
-    }));
-}, false); */
+RegisterNuiCallbackType('searchUsers');
+on('__cfx_nui:searchUsers', async (data: string, cb: Function) => {
+    const res = await triggerServerCallback('pigeon:searchUsersX', 1, data);
+    cb(res);
+});

@@ -13,8 +13,12 @@ export default function CreateNew(props: { location: string }) {
         password: '',
         displayName: '',
         avatar: '',
+        bio: '',
+        followers: [],
+        following: [],
         verified: false,
-        notificationsEnabled: false
+        notificationsEnabled: false,
+        createdAt: '',
     });
     const [content, setContent] = useState('');
     const [inputTitle, setInputTitle] = useState('');
