@@ -213,7 +213,11 @@ type TweetProfileData = {
     displayName: string,
     avatar: string,
     verified: boolean,
-    notificationsEnabled: boolean
+    notificationsEnabled: boolean,
+    createdAt: string,
+    bio: string,
+    followers: string[],
+    following: string[],
 }
 
 type TweetData = {

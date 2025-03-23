@@ -102,6 +102,30 @@ on('__cfx_nui:postReply', async (data: string, cb: Function) => {
     cb(res);
 });
 
+RegisterNuiCallbackType('followUser');
+on('__cfx_nui:followUser', async (data: string, cb: Function) => {
+    const res = await triggerServerCallback('pigeon:followUser', 1, data);
+    cb(res);
+});
+
+RegisterNuiCallbackType('getUserTweets');
+on('__cfx_nui:getUserTweets', async (data: string, cb: Function) => {
+    const res = await triggerServerCallback('pigeon:getUserTweets', 1, data);
+    cb(res);
+});
+
+RegisterNuiCallbackType('getRepliesX');
+on('__cfx_nui:getRepliesX', async (data: string, cb: Function) => {
+    const res = await triggerServerCallback('pigeon:getAllPostReplies', 1, data);
+    cb(res);
+});
+
+RegisterNuiCallbackType('getAllLikedTweets');
+on('__cfx_nui:getAllLikedTweets', async (data: string, cb: Function) => {
+    const res = await triggerServerCallback('pigeon:getAllLikedTweets', 1, data);
+    cb(res);
+});
+
 /* RegisterCommand('postTweet', async (source: number, args: string[], raw: string) => {
     for (let i = 0; i < 40; i++) {
         const res = await triggerServerCallback('pigeon:postTweet', 1, "test@smrt.com", JSON.stringify({

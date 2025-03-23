@@ -17,6 +17,10 @@ export default function Home(props: {
         displayName: string;
         avatar: string;
         notificationsEnabled: boolean;
+        createdAt: string;
+        bio: string;
+        followers: string[];
+        following: string[];
     }
 }) {
     const { phoneSettings, location, setLocation } = usePhone();
@@ -323,10 +327,10 @@ export default function Home(props: {
                     }}>
                         <div onClick={() => {
                             setFilter('all');
-                        }} style={{ cursor: 'pointer', fontWeight: '500', width: '40%', textAlign: 'center', fontSize: '0.75vw', letterSpacing: '0.05vw', borderBottom: `1px solid ${filter === "all" ? '#0A84FF' : 'rgba(0,0,0,0)'}` }}>All</div>
+                        }} style={{ cursor: 'pointer', fontWeight: '500', width: '40%', textAlign: 'center', fontSize: '0.75vw', letterSpacing: '0.05vw', borderBottom: `0.052083333333333336vw solid ${filter === "all" ? '#0A84FF' : 'rgba(0,0,0,0)'}` }}>All</div>
                         <div onClick={() => {
                             setFilter('following');
-                        }} style={{ cursor: 'pointer', fontWeight: '500', width: '40%', textAlign: 'center', fontSize: '0.75vw', letterSpacing: '0.05vw', borderBottom: `1px solid ${filter === "following" ? '#0A84FF' : 'rgba(0,0,0,0)'}` }}>Following</div>
+                        }} style={{ cursor: 'pointer', fontWeight: '500', width: '40%', textAlign: 'center', fontSize: '0.75vw', letterSpacing: '0.05vw', borderBottom: `0.052083333333333336vw solid ${filter === "following" ? '#0A84FF' : 'rgba(0,0,0,0)'}` }}>Following</div>
                     </div>
                 </div>
                 <div style={{
@@ -346,7 +350,9 @@ export default function Home(props: {
                         loader={<></>}
                         endMessage={<></>}
                     >
-                        {tweets && tweets.map((tweet, index) => {
+                        {tweets && tweets.filter(
+                            tweet => filter === 'all' ? true : props.profileData.following.includes(tweet.email)
+                        ).map((tweet, index) => {
                             return (
                                 <div key={index} style={{
                                     width: '16.2vw',
@@ -489,18 +495,19 @@ export default function Home(props: {
                                                     if (t._id === tweet._id) {
                                                         return {
                                                             ...t,
-                                                            likeCount: t.likeCount.includes(phoneSettings._id) ? t.likeCount.filter((id) => id !== phoneSettings._id) : [...t.likeCount, phoneSettings._id]
+                                                            likeCount: t.likeCount.includes(phoneSettings.pigeonIdAttached) ? t.likeCount.filter((id) => id !== phoneSettings.pigeonIdAttached) : [...t.likeCount, phoneSettings.pigeonIdAttached]
                                                         }
                                                     }
                                                     return t;
                                                 }))
                                                 await fetchNui('likeTweet', JSON.stringify({
                                                     tweetId: tweet._id,
-                                                    like: !tweet.likeCount.includes(phoneSettings._id)
+                                                    like: !tweet.likeCount.includes(phoneSettings.pigeonIdAttached),
+                                                    email: phoneSettings.pigeonIdAttached
                                                 }))
                                             }}>
                                                 <svg className='clickanimationXl' width="0.8333333333333334vw" height="0.78125vw" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M11.3333 0C10.0275 0 8.84701 0.603333 8 1.57571C7.15308 0.603424 5.97249 0 4.66667 0C2.08936 0 0 2.35052 0 5.25C0 8.14948 2.66667 10.5 8 15C13.3333 10.5 16 8.14948 16 5.25C16 2.35052 13.9106 0 11.3333 0Z" fill={tweet.likeCount.includes(phoneSettings._id) ? "#E22514" : "#828282"} />
+                                                    <path d="M11.3333 0C10.0275 0 8.84701 0.603333 8 1.57571C7.15308 0.603424 5.97249 0 4.66667 0C2.08936 0 0 2.35052 0 5.25C0 8.14948 2.66667 10.5 8 15C13.3333 10.5 16 8.14948 16 5.25C16 2.35052 13.9106 0 11.3333 0Z" fill={tweet.likeCount.includes(phoneSettings.pigeonIdAttached) ? "#E22514" : "#828282"} />
                                                 </svg>
                                                 <div style={{ fontSize: '0.7vw', fontWeight: 500 }}>{tweet.likeCount.length}</div>
                                             </div>
@@ -709,31 +716,33 @@ export default function Home(props: {
                                 }} onClick={async () => {
                                     setSelectedPost({
                                         ...selectedPost,
-                                        likeCount: selectedPost.likeCount.includes(phoneSettings._id) ? selectedPost.likeCount.filter((id) => id !== phoneSettings._id) : [...selectedPost.likeCount, phoneSettings._id]
+                                        likeCount: selectedPost.likeCount.includes(phoneSettings.pigeonIdAttached) ? selectedPost.likeCount.filter((id) => id !== phoneSettings.pigeonIdAttached) : [...selectedPost.likeCount, phoneSettings.pigeonIdAttached]
                                     });
                                     if (tweets.length > 0 && tweets.find((t) => t._id === selectedPost._id)) {
                                         setTweets(tweets.map((t) => {
                                             if (t._id === selectedPost._id) {
                                                 return {
                                                     ...t,
-                                                    likeCount: t.likeCount.includes(phoneSettings._id) ? t.likeCount.filter((id) => id !== phoneSettings._id) : [...t.likeCount, phoneSettings._id]
+                                                    likeCount: t.likeCount.includes(phoneSettings.pigeonIdAttached) ? t.likeCount.filter((id) => id !== phoneSettings.pigeonIdAttached) : [...t.likeCount, phoneSettings.pigeonIdAttached]
                                                 }
                                             }
                                             return t;
                                         }));
                                         await fetchNui('likeTweet', JSON.stringify({
                                             tweetId: selectedPost._id,
-                                            like: tweets.length > 0 && !selectedPost.likeCount.includes(phoneSettings._id)
+                                            like: tweets.length > 0 && !selectedPost.likeCount.includes(phoneSettings.pigeonIdAttached),
+                                            email: phoneSettings.pigeonIdAttached
                                         }));
                                     } else {
                                         await fetchNui('likeRepostTweet', JSON.stringify({
                                             tweetId: selectedPost._id,
-                                            like: !selectedPost.likeCount.includes(phoneSettings._id)
+                                            like: !selectedPost.likeCount.includes(phoneSettings.pigeonIdAttached),
+                                            email: phoneSettings.pigeonIdAttached
                                         }));
                                     }
                                 }}>
                                     <svg className='clickanimationXl' width="0.8333333333333334vw" height="0.78125vw" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M11.3333 0C10.0275 0 8.84701 0.603333 8 1.57571C7.15308 0.603424 5.97249 0 4.66667 0C2.08936 0 0 2.35052 0 5.25C0 8.14948 2.66667 10.5 8 15C13.3333 10.5 16 8.14948 16 5.25C16 2.35052 13.9106 0 11.3333 0Z" fill={tweets.length > 0 && selectedPost.likeCount.includes(phoneSettings._id) ? "#E22514" : "#828282"} />
+                                        <path d="M11.3333 0C10.0275 0 8.84701 0.603333 8 1.57571C7.15308 0.603424 5.97249 0 4.66667 0C2.08936 0 0 2.35052 0 5.25C0 8.14948 2.66667 10.5 8 15C13.3333 10.5 16 8.14948 16 5.25C16 2.35052 13.9106 0 11.3333 0Z" fill={tweets.length > 0 && selectedPost.likeCount.includes(phoneSettings.pigeonIdAttached) ? "#E22514" : "#828282"} />
                                     </svg>
                                     <div style={{ fontSize: '0.7vw', fontWeight: 500 }}>{tweets.length > 0 && selectedPost.likeCount.length}</div>
                                 </div>
@@ -876,18 +885,19 @@ export default function Home(props: {
                                                     if (t._id === data._id) {
                                                         return {
                                                             ...t,
-                                                            likeCount: t.likeCount.includes(phoneSettings._id) ? t.likeCount.filter((id) => id !== phoneSettings._id) : [...t.likeCount, phoneSettings._id]
+                                                            likeCount: t.likeCount.includes(phoneSettings.pigeonIdAttached) ? t.likeCount.filter((id) => id !== phoneSettings.pigeonIdAttached) : [...t.likeCount, phoneSettings.pigeonIdAttached]
                                                         }
                                                     }
                                                     return t;
                                                 }));
                                                 await fetchNui('likeRepostTweet', JSON.stringify({
                                                     tweetId: data._id,
-                                                    like: !data.likeCount.includes(phoneSettings._id)
+                                                    like: !data.likeCount.includes(phoneSettings.pigeonIdAttached),
+                                                    email: phoneSettings.pigeonIdAttached
                                                 }));
                                             }}>
                                                 <svg className='clickanimationXl' width="0.8333333333333334vw" height="0.78125vw" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M11.3333 0C10.0275 0 8.84701 0.603333 8 1.57571C7.15308 0.603424 5.97249 0 4.66667 0C2.08936 0 0 2.35052 0 5.25C0 8.14948 2.66667 10.5 8 15C13.3333 10.5 16 8.14948 16 5.25C16 2.35052 13.9106 0 11.3333 0Z" fill={data.likeCount.includes(phoneSettings._id) ? "#E22514" : "#828282"} />
+                                                    <path d="M11.3333 0C10.0275 0 8.84701 0.603333 8 1.57571C7.15308 0.603424 5.97249 0 4.66667 0C2.08936 0 0 2.35052 0 5.25C0 8.14948 2.66667 10.5 8 15C13.3333 10.5 16 8.14948 16 5.25C16 2.35052 13.9106 0 11.3333 0Z" fill={data.likeCount.includes(phoneSettings.pigeonIdAttached) ? "#E22514" : "#828282"} />
                                                 </svg>
                                                 <div style={{ fontSize: '0.7vw', fontWeight: 500 }}>{data.likeCount.length}</div>
                                             </div>

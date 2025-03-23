@@ -1,10 +1,6 @@
 import { onClientCallback } from "@overextended/ox_lib/server";
 import { pigeonService } from "./PigeonService";
 
-/* setImmediate(() => {
-    pigeonService.registerFeeds();
-}); */
-
 onClientCallback("pigeon:searchUsers", pigeonService.searchUserExist);
 onClientCallback("pigeon:login", pigeonService.login);
 onClientCallback("pigeon:signup", pigeonService.signup);
@@ -22,11 +18,13 @@ onClientCallback("pigeon:retweetRepostTweet", pigeonService.retweetRepliesTweet)
 onClientCallback("pigeon:increaseRepliesCount", pigeonService.increaseRepliesCount);
 onClientCallback("pigeon:decreaseRepliesCount", pigeonService.decreaseRepliesCount);
 onClientCallback("pigeon:deleteRepliesTweet", pigeonService.deleteRepliesTweet);
-
-
-/* onClientCallback("pigeon:getUserTweets", pigeonService.getUserTweets);
-onClientCallback("pigeon:getFeed", pigeonService.getFeed);
 onClientCallback("pigeon:followUser", pigeonService.followUser);
+onClientCallback("pigeon:getUserTweets", pigeonService.getUserTweets);
+onClientCallback('pigeon:getAllPostReplies', pigeonService.getAllPostReplies);
+onClientCallback('pigeon:getAllLikedTweets', pigeonService.getAllLikedTweets);
+
+/* 
+onClientCallback("pigeon:getFeed", pigeonService.getFeed);
 onClientCallback("pigeon:unfollowUser", pigeonService.unfollowUser);
 
 onClientCallback("pigeon:getFollowers", pigeonService.getFollowers);

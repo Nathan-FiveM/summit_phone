@@ -6,6 +6,7 @@ import { useDebouncedCallback } from "@mantine/hooks";
 import Navigation from "./Navigation";
 import Home from "./Home";
 import CreateNew from "./CreateNew";
+import { TweetProfileData } from "../../../../../types/types";
 
 export default function Pigeon(props: { onExit: () => void; onEnter: () => void }) {
     const nodeRef = useRef(null);
@@ -36,20 +37,19 @@ export default function Pigeon(props: { onExit: () => void; onEnter: () => void 
     }, 500);
 
 
-    const [profileData, setProfileData] = useState<{
-        _id: string;
-        email: string;
-        password: string;
-        displayName: string;
-        avatar: string;
-        notificationsEnabled: boolean;
-    }>({
+    const [profileData, setProfileData] = useState<TweetProfileData>({
         _id: '',
         email: '',
         password: '',
         displayName: '',
         avatar: '',
         notificationsEnabled: false,
+        createdAt: '',
+        verified: false,
+        bio: '',
+        followers: [],
+        following: []
+        
     });
 
     return (

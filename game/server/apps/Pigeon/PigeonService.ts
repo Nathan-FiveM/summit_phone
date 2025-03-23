@@ -1,6 +1,6 @@
 import { MongoDB } from "@server/sv_main";
 import { generateUUid } from "@shared/utils";
-import { TweetData } from "../../../../types/types";
+import { TweetData, TweetProfileData } from "../../../../types/types";
 import { triggerClientCallback } from "@overextended/ox_lib/server";
 
 class PigeonService {
@@ -34,10 +34,14 @@ class PigeonService {
             email,
             password,
             verified: false,
-            username: email, // Assuming username is set to email for consistency
+            username: email,
             displayName: email,
             avatar: "",
             notificationsEnabled: true,
+            createdAt: new Date().toISOString(),
+            bio: "",
+            followers: [],
+            following: [],
         });
         return true;
     }
@@ -142,29 +146,28 @@ class PigeonService {
     }
 
     public async likeTweet(client: number, data: string) {
-        const { tweetId, like } = JSON.parse(data);
-        const citizenId = await exports["qb-core"].GetPlayerCitizenIdBySource(client);
+        const { tweetId, like, email } = JSON.parse(data);
+        
         const tweet = await MongoDB.findOne("phone_pigeon_tweets", { _id: tweetId });
         if (!tweet) return { error: "Tweet not found" };
         if (like) {
-            tweet.likeCount.push(citizenId);
+            tweet.likeCount.push(email);
         } else {
-            tweet.likeCount = tweet.likeCount.filter((l: any) => l !== citizenId);
+            tweet.likeCount = tweet.likeCount.filter((l: any) => l !== email);
         }
         await MongoDB.updateOne("phone_pigeon_tweets", { _id: tweetId }, tweet);
         return true;
     }
 
     public async likeRepliesTweet(client: number, data: string) {
-        const { tweetId, like } = JSON.parse(data);
-        const citizenId = await exports["qb-core"].GetPlayerCitizenIdBySource(client);
+        const { tweetId, like, email } = JSON.parse(data);
         const tweet = await MongoDB.findOne("phone_pigeon_tweets_replies", { _id: tweetId });
         console.log(tweet, like);
         if (!tweet) return console.log("Tweet not found");
         if (like) {
-            tweet.likeCount.push(citizenId);
+            tweet.likeCount.push(email);
         } else {
-            tweet.likeCount = tweet.likeCount.filter((l: any) => l !== citizenId);
+            tweet.likeCount = tweet.likeCount.filter((l: any) => l !== email);
         }
         await MongoDB.updateOne("phone_pigeon_tweets_replies", { _id: tweetId }, tweet);
         return true;
@@ -330,7 +333,6 @@ class PigeonService {
                 return { error: "Tweet not found" };
             }
 
-            // Remove only the first occurrence of cid
             let removed = false;
             tweet.repliesCount = tweet.repliesCount.filter((r: string) => {
                 if (r === cid && !removed) {
@@ -353,6 +355,58 @@ class PigeonService {
             console.error("Error in decreaseRepliesCount:", error);
             return { error: "An error occurred", details: error.message };
         }
+    }
+
+    public async followUser(client: number, data: string): Promise<any> {
+        try {
+            const { targetEmail, currentEmail, follow } = JSON.parse(data);
+            const targetUser: TweetProfileData = await MongoDB.findOne("phone_pigeon_users", { email: targetEmail });
+            if (!targetUser) return { error: "Target user not found" };
+
+            const currentUser: TweetProfileData = await MongoDB.findOne("phone_pigeon_users", { email: currentEmail });
+            if (!currentUser) return { error: "Current user not found" };
+
+            if (follow) {
+                if (!targetUser.followers.includes(currentEmail)) {
+                    targetUser.followers.push(currentEmail);
+                }
+                if (!currentUser.following.includes(targetEmail)) {
+                    currentUser.following.push(targetEmail);
+                }
+            } else {
+                targetUser.followers = targetUser.followers.filter(email => email !== currentEmail);
+                currentUser.following = currentUser.following.filter(email => email !== targetEmail);
+            }
+
+            await MongoDB.updateOne("phone_pigeon_users", { email: targetEmail }, targetUser);
+            await MongoDB.updateOne("phone_pigeon_users", { email: currentEmail }, currentUser);
+
+            return { success: true };
+        } catch (error) {
+            console.error("Error in followUser:", error);
+            return { error: "An error occurred while updating follow status" };
+        }
+    }
+
+    public async getUserTweets(client: number, email: string): Promise<any> {
+        const res = await MongoDB.findMany("phone_pigeon_tweets", { email }, null, false, {
+            sort: { createdAt: -1 }
+        });
+        return JSON.stringify(res);
+    }
+
+    public async getAllPostReplies(client: number, email: string): Promise<any> {
+        const res = await MongoDB.findMany("phone_pigeon_tweets_replies", { email: email }, null, false, {
+            sort: { createdAt: -1 }
+        });
+        return JSON.stringify(res);
+    }
+
+    public async getAllLikedTweets(client: number, email: string): Promise<any> {
+        const res = await MongoDB.findMany("phone_pigeon_tweets", { likeCount: email }, null, false, {
+            sort: { createdAt: -1 }
+        });
+        return JSON.stringify(res);
     }
 }
 
