@@ -19,7 +19,30 @@ export default function BluePage(props: { onEnter: () => void, onExit: () => voi
         imageAttachment: string,
         phoneNumber: string,
         email: string;
-    }[]>([])
+        createdAt: string;
+    }[]>([]);
+
+    function formatedDate(date: string) {
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(today.getDate() - 1);
+        yesterday.setHours(0, 0, 0, 0);
+        const newDate = new Date(date);
+        const timeDiff = today.getTime() - newDate.getTime();
+        if (newDate > yesterday && timeDiff < 900000) {
+            return 'Just Now';
+        } else if (newDate > yesterday && timeDiff < 3600000) {
+            return `${Math.floor(timeDiff / 60000)} minutes ago`;
+        } else if (newDate > yesterday && timeDiff < 7200000) {
+            return '1 hour ago';
+        } else if (newDate > yesterday && timeDiff < 86400000) {
+            return `${Math.floor(timeDiff / 3600000)} hours ago`;
+        } else if (newDate > yesterday) {
+            return 'Yesterday';
+        } else {
+            return `${newDate.getDate().toString().padStart(2, '0')}/${(newDate.getMonth() + 1).toString().padStart(2, '0')}/${newDate.getFullYear()}`;
+        }
+    };
 
     useNuiEvent('refreshBluePosts', (data: string) => {
         const parsedData = JSON.parse(data);
@@ -99,6 +122,7 @@ export default function BluePage(props: { onEnter: () => void, onExit: () => voi
                                 backgroundColor: '#1A1A1A',
                                 borderRadius: '0.5vw',
                                 display: 'flex',
+                                marginTop: i === 0 ? '' : '0.5vw',
                             }} key={i}>
                                 <div style={{
                                     width: post.imageAttachment.length > 0 ? '60%' : '100%',
@@ -155,6 +179,13 @@ export default function BluePage(props: { onEnter: () => void, onExit: () => voi
                                             <path d="M2.81625 13.7123L1.5 4.5H13.5L12.1838 13.7123C12.1327 14.0697 11.9544 14.3967 11.6816 14.6332C11.4088 14.8698 11.0598 15 10.6987 15H4.30125C3.94018 15 3.59122 14.8698 3.31843 14.6332C3.04565 14.3967 2.86734 14.0697 2.81625 13.7123ZM14.25 1.5H10.5V0.75C10.5 0.551088 10.421 0.360322 10.2803 0.21967C10.1397 0.0790176 9.94891 0 9.75 0H5.25C5.05109 0 4.86032 0.0790176 4.71967 0.21967C4.57902 0.360322 4.5 0.551088 4.5 0.75V1.5H0.75C0.551088 1.5 0.360322 1.57902 0.21967 1.71967C0.0790176 1.86032 0 2.05109 0 2.25C0 2.44891 0.0790176 2.63968 0.21967 2.78033C0.360322 2.92098 0.551088 3 0.75 3H14.25C14.4489 3 14.6397 2.92098 14.7803 2.78033C14.921 2.63968 15 2.44891 15 2.25C15 2.05109 14.921 1.86032 14.7803 1.71967C14.6397 1.57902 14.4489 1.5 14.25 1.5Z" fill="#828282" />
                                         </svg>}
                                     </div>
+                                    <div style={{
+                                        fontSize: '0.6vw',
+                                        fontWeight: 500,
+                                        marginLeft: '0.5vw',
+                                        color: '#828282',
+                                        marginBottom: '0.2vw',
+                                    }}>{formatedDate(post.createdAt)}</div>
                                 </div>
                                 {post.imageAttachment.length > 0 && <div style={{
                                     width: '40%',
