@@ -163,7 +163,7 @@ export const iconList = [
     'pigeon',
     'darkchat',
     'garage',
-    'notes',
+    /* 'notes', */
     'housing',
     'bluepage',
     /* 'pixie', */
@@ -246,26 +246,26 @@ export const fullIconsDetails = [
         description: 'Garage App made find your stored cars or bikes.',
         id: 9,
     },
-    {
+    /* {
         icon: notesIcon,
         name: 'Notes',
         link: 'notes',
         description: 'Notes app is a place where you can store your important notes',
         id: 10,
-    },
+    }, */
     {
         icon: housingIcon,
         name: 'Housing',
         link: 'housing',
         description: 'Housing app made easy to manage your purchased properties.',
-        id: 11,
+        id: 10,
     },
     {
         icon: bluePageicon,
         name: 'Blue page',
         link: 'bluepage',
         description: 'Blue page is a place where you can sell your things.',
-        id: 12,
+        id: 11,
     },
     /* {
         icon: pixieIcon,
@@ -279,7 +279,7 @@ export const fullIconsDetails = [
         name: 'Groups',
         link: 'groups',
         description: 'A place where you can create or join groups.',
-        id: 13,
+        id: 12,
     },
     {
         icon: phoneIcon,

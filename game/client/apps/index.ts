@@ -15,3 +15,5 @@ import "./Settings/nui";
 import "./Hosuing/nui";
 import "./Pigeon/nui";
 import "./Pigeon/callback";
+import "./BluePage/callback";
+import "./BluePage/nui";

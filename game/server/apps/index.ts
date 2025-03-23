@@ -14,3 +14,4 @@ import "./Settings/callback";
 import "./Settings/events";
 import "./Pigeon/callback";
 import "./Hosuing/callback";
+import "./BluePage/callback";

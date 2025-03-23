@@ -1,13 +1,23 @@
 import { onServerCallback } from "@overextended/ox_lib/client";
-import { TweetData } from "../../../../types/types";
 import { NUI } from "@client/classes/NUI";
 
 onServerCallback('pigeon:refreshTweet', (data: string) => {
-    NUI.sendReactMessage('pigeonRefreshTweet', data);
+    if (LocalPlayer.state.onPhone) {
+        NUI.sendReactMessage('pigeonRefreshTweet', data);
+    }
     return true;
 });
 
 onServerCallback('pigeon:refreshRepost', (data: string) => {
-    NUI.sendReactMessage('pigeonRefreshRepost', data);
+    if (LocalPlayer.state.onPhone) {
+        NUI.sendReactMessage('pigeonRefreshRepost', data);
+    }
+    return true;
+});
+
+onServerCallback('bluepage:refreshDeletePost', (data: string) => {
+    if (LocalPlayer.state.onPhone) {
+        NUI.sendReactMessage('refreshDeletePost', data);
+    }
     return true;
 });
