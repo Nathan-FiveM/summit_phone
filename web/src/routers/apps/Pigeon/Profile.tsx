@@ -1,4 +1,4 @@
-import { ActionIcon, Avatar, Button, Textarea, Transition } from "@mantine/core";
+import { ActionIcon, Avatar, Button, Textarea, TextInput, Transition } from "@mantine/core";
 import { fetchNui } from "../../../hooks/fetchNui";
 import { usePhone } from "../../../store/store";
 import { useEffect, useState } from "react";
@@ -8,7 +8,7 @@ import dayjs from "dayjs";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 export default function Profile(props: { show: boolean, email: string, onClose: () => void }) {
-    const { phoneSettings, location, setLocation } = usePhone();
+    const { phoneSettings, location, setLocation, setPhoneSettings } = usePhone();
     const [profileData, setProfileData] = useState<TweetProfileData>({
         _id: '',
         email: '',
@@ -22,9 +22,9 @@ export default function Profile(props: { show: boolean, email: string, onClose: 
         followers: [],
         following: [],
     });
-    
+
     const [tweets, setTweets] = useState<TweetData[]>([]);
-    const [hasMore, setHasMore] = useState(true);
+    const [hasMore] = useState(true);
     function formatedDate(date: string) {
         const today = new Date();
         const yesterday = new Date(today);
@@ -48,8 +48,7 @@ export default function Profile(props: { show: boolean, email: string, onClose: 
     };
 
     const [filter, setFilter] = useState('post');
-    const [inputShow, setInputShow] = useState(false);
-    const [imageAttachment, setImageAttachment] = useState<string[]>([]);
+
     useEffect(() => {
         async function fetUserTweets() {
             const res = await fetchNui('getUserTweets', props.email);
@@ -65,12 +64,19 @@ export default function Profile(props: { show: boolean, email: string, onClose: 
         }
         if (filter === 'post') {
             fetUserTweets();
-        }else if (filter === 'replies'){
+        } else if (filter === 'replies') {
             fetUserReplies();
-        }else if (filter === 'liked'){
+        } else if (filter === 'liked') {
             fetUserLikes();
         }
     }, [filter, props.email]);
+
+    const [editProfile, setEditProfile] = useState(false);
+    const [inputTitle, setInputTitle] = useState('');
+    const [inputDescription, setInputDescription] = useState('');
+    const [inputPlaceholder, setInputPlaceholder] = useState('');
+    const [inputShow, setInputShow] = useState(false);
+    const [duplicateProfiledata, setDuplicateProfileData] = useState<TweetProfileData>({ ...profileData });
 
     return (
         <Transition
@@ -176,6 +182,9 @@ export default function Profile(props: { show: boolean, email: string, onClose: 
                             padding: '0vw',
                             color: 'white',
                             fontWeight: 500,
+                        }} onClick={() => {
+                            setEditProfile(true);
+                            setDuplicateProfileData({ ...profileData });
                         }} variant="outline">Edit Profile</Button> : <Button style={{
                             borderRadius: '2vw',
                             width: '5vw',
@@ -223,7 +232,7 @@ export default function Profile(props: { show: boolean, email: string, onClose: 
                     <InfiniteScroll
                         scrollableTarget="scrollableDivx"
                         dataLength={tweets && tweets.length}
-                        next={()=>{}}
+                        next={() => { }}
                         hasMore={hasMore}
                         loader={<></>}
                         endMessage={<></>}
@@ -353,6 +362,207 @@ export default function Profile(props: { show: boolean, email: string, onClose: 
                         })}
                     </InfiniteScroll>
                 </div>
+                <Transition
+                    mounted={editProfile}
+                    transition="slide-up"
+                    duration={400}
+                    timingFunction="ease"
+                    onEnter={async () => {
+                        /* const res = await fetchNui('getProfile', props.email);
+                        setProfileData(JSON.parse(res as string)) */
+                    }}
+                >
+                    {(styles) => <div style={{
+                        ...styles,
+                        width: '100%',
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        position: 'absolute',
+                        zIndex: 1,
+                        backgroundColor: 'black',
+                    }}>
+                        <div style={{
+                            marginTop: '1.8vw',
+                            width: '90%',
+                            display: 'flex',
+                            alignItems: 'center',
+                        }}>
+                            <svg onClick={() => {
+                                setEditProfile(false);
+                            }} style={{ cursor: 'pointer' }} width="2.1875vw" height="0.8854166666666666vw" viewBox="0 0 42 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M7.7809 1.62449L2.28066 8.49979L7.7809 15.3751C8.12591 15.8064 8.05599 16.4357 7.62473 16.7807C7.19347 17.1257 6.56417 17.0557 6.21916 16.6245L0.568995 9.56178C0.0722991 8.9409 0.0722966 8.05868 0.568995 7.43781L6.21917 0.375098C6.56418 -0.0561646 7.19347 -0.126086 7.62473 0.218925C8.05599 0.563934 8.12591 1.19323 7.7809 1.62449Z" fill="#0A84FF" />
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M12.7032 12.9998H16.4473C18.252 12.9998 19.3711 12.0682 19.3711 10.5799C19.3711 9.46073 18.5274 8.62284 17.3789 8.53495V8.48807C18.2754 8.35331 18.9668 7.57987 18.9668 6.65409C18.9668 5.35917 17.9707 4.54471 16.3828 4.54471H12.7032V12.9998ZM14.4727 8.06034V5.86307H15.9258C16.752 5.86307 17.2266 6.24979 17.2266 6.92948C17.2266 7.64432 16.6875 8.06034 15.7442 8.06034H14.4727ZM15.9961 11.6814H14.4727V9.22636H15.9551C16.9981 9.22636 17.5664 9.64823 17.5664 10.4392C17.5664 11.2478 17.0157 11.6814 15.9961 11.6814Z" fill="#0A84FF" />
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M20.5922 11.1951C20.5922 12.326 21.5004 13.0994 22.6957 13.0994C23.4809 13.0994 24.2602 12.7068 24.6118 12.0389H24.6469V12.9998H26.2993V8.68143C26.2993 7.41581 25.2504 6.58378 23.6391 6.58378C21.975 6.58378 20.9379 7.42167 20.8735 8.64042H22.4379C22.52 8.17753 22.9243 7.86112 23.5629 7.86112C24.2075 7.86112 24.6176 8.20096 24.6176 8.7869V9.20292L23.0356 9.29667C21.4711 9.39042 20.5922 10.0525 20.5922 11.1951ZM24.6176 10.6971C24.6176 11.3767 24.0024 11.8631 23.2582 11.8631C22.6782 11.8631 22.2914 11.5701 22.2914 11.1014C22.2914 10.656 22.6547 10.3689 23.2934 10.3221L24.6176 10.24V10.6971Z" fill="#0A84FF" />
+                                <path d="M32.1258 9.05643H33.7137C33.6375 7.63261 32.5594 6.58378 30.8602 6.58378C28.9793 6.58378 27.7782 7.83768 27.7782 9.85331C27.7782 11.9041 28.9793 13.1346 30.8719 13.1346C32.5243 13.1346 33.6317 12.1795 33.7196 10.6971H32.1258C32.0203 11.3826 31.575 11.7928 30.8895 11.7928C30.0399 11.7928 29.5125 11.0896 29.5125 9.85331C29.5125 8.64042 30.0399 7.92557 30.8836 7.92557C31.5868 7.92557 32.0262 8.39432 32.1258 9.05643Z" fill="#0A84FF" />
+                                <path d="M39.0539 6.71854L36.9211 9.23807H36.8977V4.54471H35.1868V12.9998H36.8977V10.9256L37.343 10.4451L39.1418 12.9998H41.1106L38.5969 9.41386L40.9934 6.71854H39.0539Z" fill="#0A84FF" />
+                            </svg>
+                            <div style={{
+                                fontSize: '0.8vw',
+                                fontWeight: 500,
+                                marginLeft: '3.5vw',
+                            }}>Edit Profile</div>
+                            <div style={{
+                                padding: '0.4vw',
+                                marginLeft: 'auto',
+                                color: 'rgba(255, 255, 255, 0.5)',
+                                fontSize: '0.8vw',
+                                fontWeight: 500,
+                                cursor: 'pointer',
+                            }} className='clickanimation' onClick={async () => {
+                                const res = await fetchNui('pigeon:updateProfile', JSON.stringify(duplicateProfiledata));
+                                if (res === 'success') {
+                                    setEditProfile(false);
+                                    setProfileData({ ...duplicateProfiledata });
+                                    setLocation({
+                                        app: 'pigeon',
+                                        page: {
+                                            ...location.page,
+                                            pigeon: 'home'
+                                        }
+                                    });
+                                }
+                            }}>
+                                Save
+                            </div>
+                        </div>
+                        <div style={{ width: '90%', display: 'flex', flexDirection: 'column', alignItems: 'start', marginTop: '0.5vw' }}>
+                            <div style={{
+                                display: 'flex',
+                                borderBottom: '0.052083333333333336vw solid rgba(255, 255, 255, 0.2)',
+                                paddingBottom: '0.5vw',
+                            }}>
+                                <Avatar size={'4vw'} src={duplicateProfiledata.avatar.length > 0 ? duplicateProfiledata.avatar : 'https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg'} />
+                                <TextInput styles={{
+                                    root: {
+                                        width: '11vw',
+                                        marginLeft: '0.5vw',
+                                        fontSize: '0.8vw',
+                                        fontWeight: 500,
+                                        color: 'white',
+                                        marginTop: '1vw',
+                                    },
+                                    input: {
+                                        backgroundColor: 'rgba(255, 255, 255, 0)',
+                                        border: 'none',
+                                        outline: 'none',
+                                        color: 'white',
+                                    },
+                                }} value={duplicateProfiledata.avatar} onChange={(event) => {
+                                    setDuplicateProfileData({ ...duplicateProfiledata, avatar: event.currentTarget.value })
+                                }} placeholder="Profile Picture URL" onFocus={() => fetchNui('disableControls', true)} onBlur={() => fetchNui('disableControls', false)} />
+                            </div>
+                            <div style={{
+                                display: 'flex',
+                                paddingTop: '0.5vw',
+                                borderBottom: '0.052083333333333336vw solid rgba(255, 255, 255, 0.2)',
+                                paddingBottom: '0.5vw',
+                            }}>
+                                <div style={{ fontWeight: '500', fontSize: '0.8vw' }}>Username</div>
+                                <TextInput styles={{
+                                    root: {
+                                        width: '11vw',
+                                        marginLeft: '0.5vw',
+                                        fontSize: '0.8vw',
+                                        fontWeight: 500,
+                                        color: 'white',
+                                    },
+                                    input: {
+                                        backgroundColor: 'rgba(255, 255, 255, 0)',
+                                        border: 'none',
+                                        outline: 'none',
+                                        color: 'white',
+                                    },
+                                }} value={duplicateProfiledata.displayName} onChange={(e) => {
+                                    setDuplicateProfileData({ ...duplicateProfiledata, displayName: e.currentTarget.value })
+                                }} placeholder="Profile Username" onFocus={() => fetchNui('disableControls', true)} onBlur={() => fetchNui('disableControls', false)} />
+                            </div>
+                            <div style={{
+                                display: 'flex',
+                                paddingTop: '0.5vw',
+                                borderBottom: '0.052083333333333336vw solid rgba(255, 255, 255, 0.2)',
+                                paddingBottom: '0.5vw',
+                            }}>
+                                <div style={{ fontWeight: '500', width: '30%', fontSize: '0.8vw' }}>Bio</div>
+                                <Textarea styles={{
+                                    root: {
+                                        width: '13.5vw',
+                                        backgroundColor: 'rgba(255, 255, 255, 0)',
+                                        marginLeft: '0.5vw',
+                                        fontSize: '0.8vw',
+                                        fontWeight: 500,
+                                        color: 'white',
+                                    },
+                                    input: {
+                                        backgroundColor: 'rgba(255, 255, 255, 0)',
+                                        border: 'none',
+                                        outline: 'none',
+                                        color: 'white',
+                                    },
+                                }} value={duplicateProfiledata.bio} onChange={(e) => {
+                                    setDuplicateProfileData({ ...duplicateProfiledata, bio: e.currentTarget.value })
+                                }} placeholder="Profile Bio" onFocus={() => fetchNui('disableControls', true)} onBlur={() => fetchNui('disableControls', false)} />
+                            </div>
+                            <div style={{
+                                display: 'flex',
+                                paddingTop: '0.5vw',
+                                paddingBottom: '0.5vw',
+                            }}>
+                                <div style={{ fontWeight: '500', fontSize: '0.75vw' }}>Joined At</div>
+                                <TextInput styles={{
+                                    root: {
+                                        width: '11vw',
+                                        marginLeft: '0.5vw',
+                                        fontSize: '0.8vw',
+                                        fontWeight: 500,
+                                        color: 'white',
+                                    },
+                                    input: {
+                                        backgroundColor: 'rgba(255, 255, 255, 0)',
+                                        border: 'none',
+                                        outline: 'none',
+                                        color: 'white',
+                                    },
+                                }} disabled value={dayjs(new Date(duplicateProfiledata.createdAt)).format('MMM YYYY')} placeholder="Profile Username" onFocus={() => fetchNui('disableControls', true)} onBlur={() => fetchNui('disableControls', false)} />
+                            </div>
+                        </div>
+                        <Button color="red" mt={'0.8vw'} onClick={async () => {
+                            setEditProfile(false);
+                            setLocation({
+                                app: '',
+                                page: {
+                                    ...location.page,
+                                    pigeon: ''
+                                }
+                            });
+                            const dataX = {
+                                ...phoneSettings,
+                                pigeonIdAttached: '',
+                            }
+                            setPhoneSettings(dataX);
+                            await fetchNui('setSettings', JSON.stringify(dataX));
+                        }} style={{
+                            width: '8.0vw',
+                        }}>Sign Out</Button>
+                        <Button color="teal" mt={'0.8vw'} onClick={async () => {
+                            setInputTitle('Password');
+                            setInputDescription('Change your password');
+                            setInputPlaceholder('Enter new Password');
+                            setInputShow(true);
+                        }} style={{
+                            width: '8.0vw',
+                        }}>Change Password</Button>
+                    </div>}
+                </Transition>
+                <InputDialog show={inputShow} placeholder={inputPlaceholder} description={inputDescription} title={inputTitle} onConfirm={async (e: string) => {
+                    setInputShow(false);
+                    if (inputTitle === 'Password') {
+                        await fetchNui('pigeon:changePassword', JSON.stringify({ email: duplicateProfiledata.email, password: e }));
+                    }
+                }} onCancel={() => {
+                    setInputShow(false);
+                }} />
             </div>}
         </Transition>
     )

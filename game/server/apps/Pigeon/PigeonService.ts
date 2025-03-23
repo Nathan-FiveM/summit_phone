@@ -495,6 +495,20 @@ class PigeonService {
         return JSON.stringify(res);
     }
 
+    public async changePassword(client: number, data: string): Promise<any> {
+        const { email, password } = JSON.parse(data);
+        const user = await MongoDB.findOne("phone_pigeon_users", { email });
+        if (!user) return { error: "User not found" };
+        user.password = password;
+        await MongoDB.updateOne("phone_pigeon_users", { email }, user);
+        return true;
+    };
+
+    public async updateProfile(client: number, data: string): Promise<any> {
+        const parsedData: TweetProfileData = JSON.parse(data);
+        const user = await MongoDB.updateOne("phone_pigeon_users", { email: parsedData.email }, parsedData);
+        return "success";
+    }
 }
 
 export const pigeonService = new PigeonService();

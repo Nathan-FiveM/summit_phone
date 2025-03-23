@@ -20,6 +20,7 @@ export default function InputDialog(props: { show: boolean, title: string, descr
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
+                zIndex: 10,
             }}>
                 <div style={{
                     width: '14.739583333333334vw',

@@ -279,6 +279,9 @@ export default function Home(props: {
             duration={400}
             timingFunction="ease"
             onEnter={async () => {
+                if (showProfile){
+                    setShowProfile(false);
+                }
                 const res = await fetchNui('getAllTweets', JSON.stringify({
                     start,
                     end,

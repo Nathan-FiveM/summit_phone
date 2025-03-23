@@ -73,7 +73,7 @@ export default function Pigeon(props: { onExit: () => void; onEnter: () => void 
                             ...location.page,
                             pigeon: "home"
                         }
-                    })
+                    });
                 }
             }}
             onExited={() => {
@@ -201,6 +201,15 @@ export default function Pigeon(props: { onExit: () => void; onEnter: () => void 
                                     }
                                     setPhoneSettings(dataX);
                                     const resXX = await fetchNui('setSettings', JSON.stringify(dataX));
+                                    const resXa = await fetchNui('getPlayerspigeonProfile', email);
+                                    setProfileData(JSON.parse(resXa as string));
+                                    setLocation({
+                                        app: 'pigeon',
+                                        page: {
+                                            ...location.page,
+                                            pigeon: "home"
+                                        }
+                                    });
                                 }
                             }}
                         >

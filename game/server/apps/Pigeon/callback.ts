@@ -24,3 +24,5 @@ onClientCallback('pigeon:getAllPostReplies', pigeonService.getAllPostReplies);
 onClientCallback('pigeon:getAllLikedTweets', pigeonService.getAllLikedTweets);
 onClientCallback('pigeon:searchUsersX', pigeonService.searchUsers);
 onClientCallback('pigeon:getNotifications', pigeonService.getNotifications);
+onClientCallback('pigeon:changePassword', pigeonService.changePassword);
+onClientCallback('pigeon:updateProfile', pigeonService.updateProfile);

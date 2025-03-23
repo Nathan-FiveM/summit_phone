@@ -137,3 +137,15 @@ on('__cfx_nui:getNotifications', async (data: string, cb: Function) => {
     const res = await triggerServerCallback('pigeon:getNotifications', 1, data);
     cb(res);
 });
+
+RegisterNuiCallbackType('pigeon:changePassword');
+on('__cfx_nui:pigeon:changePassword', async (data: string, cb: Function) => {
+    const res = await triggerServerCallback('pigeon:changePassword', 1, data);
+    cb(res);
+});
+
+RegisterNuiCallbackType('pigeon:updateProfile');
+on('__cfx_nui:pigeon:updateProfile', async (data: string, cb: Function) => {
+    const res = await triggerServerCallback('pigeon:updateProfile', 1, data);
+    cb(res);
+});
