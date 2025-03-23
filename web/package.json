@@ -18,6 +18,7 @@
     "dayjs": "^1.11.13",
     "immer": "^10.1.1",
     "react": "latest",
+    "react-circular-progressbar": "^2.2.0",
     "react-dnd": "^16.0.1",
     "react-dnd-touch-backend": "^16.0.1",
     "react-dom": "latest",

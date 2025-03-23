@@ -17,3 +17,5 @@ import "./Pigeon/nui";
 import "./Pigeon/callback";
 import "./BluePage/callback";
 import "./BluePage/nui";
+import "./Garage/nui";
+import "./Garage/callback";

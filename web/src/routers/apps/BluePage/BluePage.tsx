@@ -115,7 +115,9 @@ export default function BluePage(props: { onEnter: () => void, onExit: () => voi
                     overflowY: 'auto',
                     overflowX: 'hidden',
                 }}>
-                    {postData.length > 0 && postData.map((post, i) => {
+                    {postData.length > 0 && postData.filter(
+                        (post) => post.title.toLowerCase().includes(searchValue.toLowerCase()) || post.content.toLowerCase().includes(searchValue.toLowerCase())
+                    ).map((post, i) => {
                         return (
                             <div style={{
                                 width: '100%',

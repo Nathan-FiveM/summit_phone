@@ -32,13 +32,12 @@ import MailApp from './routers/apps/Mail/Mail';
 import AppStore from './routers/apps/AppStore/AppStore';
 import Calculator from './routers/apps/Calculator/Calculator';
 import Camera from './routers/apps/Camera/Camera';
-import CameraAdapter from './routers/apps/Camera/Camera';
 import Photos from './routers/apps/Photos/Photos';
-import { Image } from '@mantine/core';
 import DarkChat from './routers/apps/DarkChat/DarkChat';
 import Housing from './routers/apps/Housing/Housing';
 import Pigeon from './routers/apps/Pigeon/Pigeon';
 import BluePage from './routers/apps/BluePage/BluePage';
+import GarageApp from './routers/apps/Garage/GarageData';
 
 debugData([
   {
@@ -162,6 +161,7 @@ export default function App() {
   const [housingEnter, setHousingEnter] = useState(false);
   const [pigeonEnter, setPigeonEnter] = useState(false);
   const [bluePageEnter, setBluePageEnter] = useState(false);
+  const [garagesEnter, setGaragesEnter] = useState(false);
 
   return (
     <div style={{
@@ -298,6 +298,15 @@ export default function App() {
             setBluePageEnter(false);
           }} onEnter={() => {
             setBluePageEnter(true);
+          }} />
+        </div>
+        <div className='fuckerMessager' id='fuckerMessager' style={{
+          visibility: garagesEnter ? 'visible' : 'hidden',
+        }}>
+          <GarageApp onEnter={() => {
+            setGaragesEnter(true);
+          }} onExit={() => {
+            setGaragesEnter(false);
           }} />
         </div>
         <div className="backButton" onClick={() => {

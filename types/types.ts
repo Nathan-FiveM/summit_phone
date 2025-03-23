@@ -238,4 +238,41 @@ type TweetData = {
     parentTweetId: any,
 }
 
-export type { PhoneSettings, PhoneMail, PhoneLocation, PhoneContacts, PhoneCallHistory, Notification, PhonePlayerCard, PhoneBusiness, PhoneMailMessage, JobData, JobGrades, DarkChatProfile, DarkChatChannel, ApartMentData, HouseData, TweetData, TweetProfileData };
+type GarageData = {
+    plate: string;
+    garage: string;
+    state: string;
+    category: string;
+    brand: string;
+    name: string;
+    turboInstalled: boolean;
+    bodyHealth: number;
+    tankHealth: number;
+    fuelLevel: number;
+    engineHealth: number;
+    modSuspension: number;
+    modTransmission: number;
+    modEngine: number;
+    modBrakes: number;
+}
+
+export type {
+    PhoneSettings,
+    PhoneMail,
+    PhoneLocation,
+    PhoneContacts,
+    PhoneCallHistory,
+    Notification,
+    PhonePlayerCard,
+    PhoneBusiness,
+    PhoneMailMessage,
+    JobData,
+    JobGrades,
+    DarkChatProfile,
+    DarkChatChannel,
+    ApartMentData,
+    HouseData,
+    TweetData,
+    TweetProfileData,
+    GarageData
+};
