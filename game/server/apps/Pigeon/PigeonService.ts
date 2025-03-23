@@ -2,6 +2,7 @@ import { MongoDB } from "@server/sv_main";
 import { generateUUid } from "@shared/utils";
 import { TweetData, TweetProfileData } from "../../../../types/types";
 import { triggerClientCallback } from "@overextended/ox_lib/server";
+import { Utils } from "@server/classes/Utils";
 
 class PigeonService {
     //@ts-ignore
@@ -91,6 +92,20 @@ class PigeonService {
             };
             await MongoDB.insertOne("phone_pigeon_tweets", tweet);
             await triggerClientCallback("pigeon:refreshTweet", -1, JSON.stringify(tweet));
+            emitNet('phone:addnotiFication', -1, JSON.stringify({
+                id: generateUUid(),
+                title: 'New Tweet',
+                description: `${res.displayName} has posted a new tweet.`,
+                app: 'pigeon',
+                timeout: 5000
+            }));
+            await MongoDB.insertOne("phone_pigeon_notifications", {
+                _id: generateUUid(),
+                content: `${res.displayName} has posted a new tweet.`,
+                email: res.email,
+                createdAt: new Date().toISOString(),
+                type: "post",
+            });
         } catch (error) {
             console.error("Error in postTweet:", error);
             return { error: "An error occurred" };
@@ -143,15 +158,52 @@ class PigeonService {
         await MongoDB.updateOne("phone_pigeon_tweets", { _id: tweetId }, tweet);
         await MongoDB.insertOne("phone_pigeon_tweets_replies", reply);
         await triggerClientCallback("pigeon:refreshRepost", -1, JSON.stringify(reply));
+        if (tweet.repliesCount) {
+            const uniqueCids = [...new Set(tweet.repliesCount)];
+            for (const replyCid of uniqueCids) {
+                const res = await exports['qb-core'].GetPlayerByCitizenId(replyCid);
+                emitNet('phone:addnotiFication', res.PlayerData.source, JSON.stringify({
+                    id: generateUUid(),
+                    title: 'New Reply',
+                    description: `${user.displayName} has replied to tweet.`,
+                    app: 'pigeon',
+                    timeout: 5000
+                }));
+                await MongoDB.insertOne("phone_pigeon_notifications", {
+                    _id: generateUUid(),
+                    content: `${user.displayName} has replied to tweet.`,
+                    email: user.email,
+                    createdAt: new Date().toISOString(),
+                    type: "post",
+                });
+            }
+        }
     }
 
     public async likeTweet(client: number, data: string) {
         const { tweetId, like, email } = JSON.parse(data);
-        
         const tweet = await MongoDB.findOne("phone_pigeon_tweets", { _id: tweetId });
         if (!tweet) return { error: "Tweet not found" };
         if (like) {
             tweet.likeCount.push(email);
+            for (const likeCid of tweet.likeCount) {
+                const cid = await Utils.GetCidFromTweetId(likeCid);
+                const res = await exports['qb-core'].GetPlayerByCitizenId(cid);
+                emitNet('phone:addnotiFication', res.PlayerData.source, JSON.stringify({
+                    id: generateUUid(),
+                    title: 'New Like',
+                    description: `${email} has liked your tweet.`,
+                    app: 'pigeon',
+                    timeout: 5000
+                }));
+                await MongoDB.insertOne("phone_pigeon_notifications", {
+                    _id: generateUUid(),
+                    content: `${email} has liked your tweet.`,
+                    email,
+                    createdAt: new Date().toISOString(),
+                    type: "like",
+                });
+            }
         } else {
             tweet.likeCount = tweet.likeCount.filter((l: any) => l !== email);
         }
@@ -269,6 +321,26 @@ class PigeonService {
                 };
                 await MongoDB.insertOne("phone_pigeon_tweets_replies", retweetData);
                 await triggerClientCallback("pigeon:refreshRepost", -1, JSON.stringify(retweetData));
+                if (ogTweet.repliesCount) {
+                    const uniqueCids = [...new Set(ogTweet.repliesCount)];
+                    for (const replyCid of uniqueCids) {
+                        const res = await exports['qb-core'].GetPlayerByCitizenId(replyCid);
+                        emitNet('phone:addnotiFication', res.PlayerData.source, JSON.stringify({
+                            id: generateUUid(),
+                            title: 'New Reply',
+                            description: `${retWeetuser.displayName} has replied to tweet.`,
+                            app: 'pigeon',
+                            timeout: 5000
+                        }));
+                        await MongoDB.insertOne("phone_pigeon_notifications", {
+                            _id: generateUUid(),
+                            content: `{retWeetuser.displayName} has replied to tweet.`,
+                            email: retWeetuser.email,
+                            createdAt: new Date().toISOString(),
+                            type: "post",
+                        });
+                    }
+                }
                 return true;
             } else if (!retweet) {
                 const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(client);
@@ -411,6 +483,13 @@ class PigeonService {
 
     public async searchUsers(client: number, value: string): Promise<any> {
         const res = await MongoDB.findMany("phone_pigeon_users", { email: { $regex: value, $options: "i" } }, null, false, {
+            sort: { createdAt: -1 }
+        });
+        return JSON.stringify(res);
+    }
+
+    public async getNotifications(client: number, email: string): Promise<any> {
+        const res = await MongoDB.findMany("phone_pigeon_notifications", { email }, null, false, {
             sort: { createdAt: -1 }
         });
         return JSON.stringify(res);

@@ -131,3 +131,9 @@ on('__cfx_nui:searchUsers', async (data: string, cb: Function) => {
     const res = await triggerServerCallback('pigeon:searchUsersX', 1, data);
     cb(res);
 });
+
+RegisterNuiCallbackType('getNotifications');
+on('__cfx_nui:getNotifications', async (data: string, cb: Function) => {
+    const res = await triggerServerCallback('pigeon:getNotifications', 1, data);
+    cb(res);
+});

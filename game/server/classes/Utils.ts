@@ -240,6 +240,12 @@ class Util {
         if (!user) return false;
         return user.username;
     };
+
+    async GetCidFromTweetId(email: string) {
+        const res = await MongoDB.findOne('phone_settings', { pigeonIdAttached: email });
+        if (!res) return false;
+        return res._id;
+    }
 }
 
 export const Utils = new Util();

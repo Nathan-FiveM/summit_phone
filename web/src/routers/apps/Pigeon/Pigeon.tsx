@@ -8,6 +8,7 @@ import Home from "./Home";
 import CreateNew from "./CreateNew";
 import { TweetProfileData } from "../../../../../types/types";
 import SearchUser from "./SearchUsers";
+import Notifications from "./Notifications";
 
 export default function Pigeon(props: { onExit: () => void; onEnter: () => void }) {
     const nodeRef = useRef(null);
@@ -388,6 +389,7 @@ export default function Pigeon(props: { onExit: () => void; onEnter: () => void 
                         <Home location={location.page.pigeon} profileData={profileData} />
                         <CreateNew location={location.page.pigeon} />
                         <SearchUser show={location.page.pigeon === 'search'} profileData={profileData} />
+                        <Notifications show={location.page.pigeon === 'notification'} profileData={profileData} />
                         <Navigation location={location.page.pigeon} onClick={(e) => {
                             setLocation({
                                 app: 'pigeon',
