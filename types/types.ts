@@ -256,6 +256,16 @@ type GarageData = {
     modBrakes: number;
 }
 
+type WalletAccount = {
+    _id: string;
+    citizenId: string;
+    name: string;
+    cardNumber: string;
+    cardPin: number;
+    bankAccount: string;
+    balance: number;
+}
+
 export type {
     PhoneSettings,
     PhoneMail,
@@ -274,5 +284,6 @@ export type {
     HouseData,
     TweetData,
     TweetProfileData,
-    GarageData
+    GarageData,
+    WalletAccount
 };

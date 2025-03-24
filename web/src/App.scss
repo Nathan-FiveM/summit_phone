@@ -1235,6 +1235,29 @@
           }
         }
       }
+
+      .wallet-header {
+        display: flex;
+        height: 17px;
+        flex-direction: column;
+        justify-content: center;
+        align-self: stretch;
+        color: rgba(255, 255, 255, 0.78);
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 26px;
+      }
+
+      .wallet-subheader {
+        align-self: stretch;
+        color: #FFF;
+        font-family: "SF Pro Display";
+        font-size: 25px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 26px;
+      }
     }
 
     .company {
@@ -1673,19 +1696,36 @@
     align-items: center;
     gap: 1.7vw;
 
-    .hoverhere {
-      cursor: pointer;
+  }
 
+  .hoverhere {
+    cursor: pointer;
+
+    path {
+      transition: all 0.3s ease;
+    }
+
+    &:hover {
       path {
         transition: all 0.3s ease;
+        fill: #0A84FF;
       }
 
-      &:hover {
-        path {
-          transition: all 0.3s ease;
-          fill: #0A84FF;
-        }
+    }
+  }
+  .hoverhereX {
+    cursor: pointer;
+
+    path {
+      transition: all 0.3s ease;
+    }
+
+    &:hover {
+      path {
+        transition: all 0.3s ease;
+        stroke: #0A84FF;
       }
+
     }
   }
 }

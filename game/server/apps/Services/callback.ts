@@ -322,10 +322,6 @@ onClientCallback('summit_phone:server:hireEmployee', async (client, targetSource
             }));
         }
         const targetPlayer = await exports['qb-core'].GetPlayer(targetSource);
-        const multiJobCheck = await MongoDB.findOne('phone_multijobs', { citizenId: targetPlayer.PlayerData.citizenid, jobName: jobname });
-        if (!multiJobCheck) {
-            await MongoDB.insertOne('phone_multijobs', { _id: generateUUid(), citizenId: targetPlayer.PlayerData.citizenid, jobName: jobname, gradeLevel: 1 });
-        }
         targetPlayer.Functions.SetJob(jobname, 1);
         emitNet('phone:addnotiFication', client, JSON.stringify({
             id: generateUUid(),

@@ -98,6 +98,20 @@ onNet('summit_phone:server:fireInactiveEmployee', async (data: { jobName: string
     emitNet('summit_phone:client:refreshEmpData', source, data.jobName);
 });
 
+on('summit_phone:server:hireinMultiJob', async (client: string, jobname: string, gradeLevel: number) => {
+    const targetCid = await exports['qb-core'].GetPlayerCitizenIdBySource(client);
+    const multiJobCheck = await MongoDB.findOne('phone_multijobs', { citizenId: targetCid, jobName: jobname });
+    if (multiJobCheck) {
+        if (multiJobCheck.gradeLevel !== gradeLevel) {
+            await MongoDB.updateOne('phone_multijobs', { citizenId: targetCid, jobName: jobname }, { gradeLevel });
+        } else {
+            return emitNet('QBCore:Notify', client, 'You are already in this job with this grade level', 'error');
+        }
+    } else {
+        await MongoDB.insertOne('phone_multijobs', { _id: generateUUid(), citizenId: targetCid, jobName: jobname, gradeLevel });
+    }
+})
+
 setImmediate(async () => {
     const jobArray: any = {};
     const jobData = await MongoDB.findMany('summit_jobs', {});
