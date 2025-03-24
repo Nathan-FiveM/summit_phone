@@ -2,9 +2,15 @@ import { Button, Image, Transition } from "@mantine/core";
 import { GarageData } from "../../../../../types/types";
 import { CircularProgressbarWithChildren } from "react-circular-progressbar";
 import 'react-circular-progressbar/dist/styles.css';
+import { fetchNui } from "../../../hooks/fetchNui";
+import { useState } from "react";
 
 export default function SelectedData(props: { show: boolean, data: GarageData, onExit: () => void }) {
-    /* console.log(props.data.engineHealth); */
+    const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
+    const handleImageError = (category: string) => {
+        setImageErrors(prev => new Set(prev).add(category));
+    };
+
     return (
         <Transition
             mounted={props.show}
@@ -56,7 +62,18 @@ export default function SelectedData(props: { show: boolean, data: GarageData, o
                     justifyContent: 'center',
                     marginTop: '0.5vw',
                 }}>
-                    <Image src={`https://cdn.summitrp.gg/uploads/server/phone/${props.data.category?.toUpperCase()}.png`} alt="vehicle" width={180} height={180} style={{ borderRadius: '0.5vw' }} />
+                    {!imageErrors.has(props.data.category)
+                        ? <Image
+                            onError={() => handleImageError(props.data.category)}
+                            src={`https://cdn.summitrp.gg/uploads/server/phone/${props.data.category?.toUpperCase()}.png`}
+                            alt="vehicle"
+                            width={180}
+                            height={180}
+                            style={{ borderRadius: '0.5vw' }}
+                        />
+                        :
+                        <></>
+                    }
                 </div>
                 <div style={{
                     width: '100%',
@@ -380,8 +397,8 @@ export default function SelectedData(props: { show: boolean, data: GarageData, o
                     borderRadius: '0.5vw',
                     height: '2.5vw',
                     fontSize: '1vw',
-                }} onClick={()=>{
-                      
+                }} onClick={() => {
+                    fetchNui('garage:valet', JSON.stringify(props.data));
                 }}>
                     Valet
                 </Button>

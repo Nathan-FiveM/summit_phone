@@ -249,7 +249,7 @@ export default function MessageDetails() {
                                     phoneNumber: identifier
                                 }))
                             }} style={{ marginLeft: '1.7vw', cursor: 'pointer' }} width="1.1vw" height="1.1vw" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M19.0711 4.92893C20.8807 6.73858 22 9.23858 22 12C22 17.5229 17.5229 22 12 22C9.23858 22 6.73858 20.8807 4.92893 19.0711M19.0711 4.92893C17.2614 3.11929 14.7614 2 12 2C6.47716 2 2 6.47716 2 12C2 14.7614 3.11929 17.2614 4.92893 19.0711M19.0711 4.92893L4.92893 19.0711" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M19.0711 4.92893C20.8807 6.73858 22 9.23858 22 12C22 17.5229 17.5229 22 12 22C9.23858 22 6.73858 20.8807 4.92893 19.0711M19.0711 4.92893C17.2614 3.11929 14.7614 2 12 2C6.47716 2 2 6.47716 2 12C2 14.7614 3.11929 17.2614 4.92893 19.0711M19.0711 4.92893L4.92893 19.0711" stroke="white" strokeWidth="2" stroke-linecap="round" stroke-linejoin="round" />
                             </svg> : <div>
                                 {isAdmin ? <div style={{
                                     display: 'flex',
@@ -276,7 +276,7 @@ export default function MessageDetails() {
                                     }} onClick={() => {
                                         setShowAddMemberModal(true);
                                     }} width="1.25vw" height="1.25vw" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M7.55556 12H12M12 12H16.4444M12 12V16.4444M12 12V7.55556M12 22C6.47716 22 2 17.5229 2 12C2 6.47716 6.47716 2 12 2C17.5229 2 22 6.47716 22 12C22 17.5229 17.5229 22 12 22Z" stroke="#0A84FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                                        <path d="M7.55556 12H12M12 12H16.4444M12 12V16.4444M12 12V7.55556M12 22C6.47716 22 2 17.5229 2 12C2 6.47716 6.47716 2 12 2C17.5229 2 22 6.47716 22 12C22 17.5229 17.5229 22 12 22Z" stroke="#0A84FF" strokeWidth="2.5" stroke-linecap="round" stroke-linejoin="round" />
                                     </svg>
                                 </div> : <svg onClick={async () => {
                                     await fetchNui('leaveGroup', JSON.stringify({

@@ -75,7 +75,7 @@ export default function Settings(props: { onExit: () => void, onEnter: () => voi
                     </div>
                     <div className="right">
                         <svg className='clickanimationXl' xmlns="http://www.w3.org/2000/svg" width="0.4166666666666667vw" height="0.8854166666666666vw" viewBox="0 0 8 17" fill="none">
-                            <path d="M1 1L6.65017 8.06271C6.85469 8.31837 6.85469 8.68163 6.65017 8.93729L1 16" stroke="white" stroke-opacity="0.5" stroke-width="2" stroke-linecap="round" />
+                            <path d="M1 1L6.65017 8.06271C6.85469 8.31837 6.85469 8.68163 6.65017 8.93729L1 16" stroke="white" stroke-opacity="0.5" strokeWidth="2" stroke-linecap="round" />
                         </svg>
                     </div>
                 </div>
@@ -166,7 +166,7 @@ export default function Settings(props: { onExit: () => void, onEnter: () => voi
                             flexShrink: 0
                         }}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="0.4166666666666667vw" height="0.9375vw" viewBox="0 0 8 18" fill="none">
-                                <path d="M1 1.5L6.65017 8.56271C6.85469 8.81837 6.85469 9.18163 6.65017 9.43729L1 16.5" stroke="white" stroke-opacity="0.5" stroke-width="2" stroke-linecap="round" />
+                                <path d="M1 1.5L6.65017 8.56271C6.85469 8.81837 6.85469 9.18163 6.65017 9.43729L1 16.5" stroke="white" stroke-opacity="0.5" strokeWidth="2" stroke-linecap="round" />
                             </svg>
                         </div>
                     </div>
@@ -209,7 +209,7 @@ export default function Settings(props: { onExit: () => void, onEnter: () => voi
                             flexShrink: 0
                         }}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="0.4166666666666667vw" height="0.9375vw" viewBox="0 0 8 18" fill="none">
-                                <path d="M1 1.5L6.65017 8.56271C6.85469 8.81837 6.85469 9.18163 6.65017 9.43729L1 16.5" stroke="white" stroke-opacity="0.5" stroke-width="2" stroke-linecap="round" />
+                                <path d="M1 1.5L6.65017 8.56271C6.85469 8.81837 6.85469 9.18163 6.65017 9.43729L1 16.5" stroke="white" stroke-opacity="0.5" strokeWidth="2" stroke-linecap="round" />
                             </svg>
                         </div>
                     </div>
@@ -253,7 +253,7 @@ export default function Settings(props: { onExit: () => void, onEnter: () => voi
                             flexShrink: 0
                         }}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="0.4166666666666667vw" height="0.9375vw" viewBox="0 0 8 18" fill="none">
-                                <path d="M1 1.5L6.65017 8.56271C6.85469 8.81837 6.85469 9.18163 6.65017 9.43729L1 16.5" stroke="white" stroke-opacity="0.5" stroke-width="2" stroke-linecap="round" />
+                                <path d="M1 1.5L6.65017 8.56271C6.85469 8.81837 6.85469 9.18163 6.65017 9.43729L1 16.5" stroke="white" stroke-opacity="0.5" strokeWidth="2" stroke-linecap="round" />
                             </svg>
                         </div>
                     </div>
@@ -296,7 +296,7 @@ export default function Settings(props: { onExit: () => void, onEnter: () => voi
                             flexShrink: 0
                         }}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="0.4166666666666667vw" height="0.9375vw" viewBox="0 0 8 18" fill="none">
-                                <path d="M1 1.5L6.65017 8.56271C6.85469 8.81837 6.85469 9.18163 6.65017 9.43729L1 16.5" stroke="white" stroke-opacity="0.5" stroke-width="2" stroke-linecap="round" />
+                                <path d="M1 1.5L6.65017 8.56271C6.85469 8.81837 6.85469 9.18163 6.65017 9.43729L1 16.5" stroke="white" stroke-opacity="0.5" strokeWidth="2" stroke-linecap="round" />
                             </svg>
                         </div>
                     </div>
@@ -339,7 +339,7 @@ export default function Settings(props: { onExit: () => void, onEnter: () => voi
                             flexShrink: 0
                         }}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="0.4166666666666667vw" height="0.9375vw" viewBox="0 0 8 18" fill="none">
-                                <path d="M1 1.5L6.65017 8.56271C6.85469 8.81837 6.85469 9.18163 6.65017 9.43729L1 16.5" stroke="white" stroke-opacity="0.5" stroke-width="2" stroke-linecap="round" />
+                                <path d="M1 1.5L6.65017 8.56271C6.85469 8.81837 6.85469 9.18163 6.65017 9.43729L1 16.5" stroke="white" stroke-opacity="0.5" strokeWidth="2" stroke-linecap="round" />
                             </svg>
                         </div>
                     </div>

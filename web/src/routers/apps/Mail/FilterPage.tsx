@@ -76,7 +76,7 @@ export default function FilterPage(props: { show: boolean, inboxCount: number, d
                                     {props.inboxCount}
                                 </div>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="6" height="15" viewBox="0 0 6 15" fill="none">
-                                    <path d="M1.00002 13.3058L4.72802 7.87553C4.8919 7.63682 4.8919 7.32186 4.72802 7.08315L1.00001 1.65289" stroke="#5E5E5E" stroke-width="2" stroke-linecap="round" />
+                                    <path d="M1.00002 13.3058L4.72802 7.87553C4.8919 7.63682 4.8919 7.32186 4.72802 7.08315L1.00001 1.65289" stroke="#5E5E5E" strokeWidth="2" stroke-linecap="round" />
                                 </svg>
                             </div>
                         </div>
@@ -116,7 +116,7 @@ export default function FilterPage(props: { show: boolean, inboxCount: number, d
                                     {props.draftCount}
                                 </div>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="6" height="15" viewBox="0 0 6 15" fill="none">
-                                    <path d="M1.00002 13.3058L4.72802 7.87553C4.8919 7.63682 4.8919 7.32186 4.72802 7.08315L1.00001 1.65289" stroke="#5E5E5E" stroke-width="2" stroke-linecap="round" />
+                                    <path d="M1.00002 13.3058L4.72802 7.87553C4.8919 7.63682 4.8919 7.32186 4.72802 7.08315L1.00001 1.65289" stroke="#5E5E5E" strokeWidth="2" stroke-linecap="round" />
                                 </svg>
                             </div>
                         </div>
@@ -156,7 +156,7 @@ export default function FilterPage(props: { show: boolean, inboxCount: number, d
                                     {props.sentCount}
                                 </div>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="6" height="15" viewBox="0 0 6 15" fill="none">
-                                    <path d="M1.00002 13.3058L4.72802 7.87553C4.8919 7.63682 4.8919 7.32186 4.72802 7.08315L1.00001 1.65289" stroke="#5E5E5E" stroke-width="2" stroke-linecap="round" />
+                                    <path d="M1.00002 13.3058L4.72802 7.87553C4.8919 7.63682 4.8919 7.32186 4.72802 7.08315L1.00001 1.65289" stroke="#5E5E5E" strokeWidth="2" stroke-linecap="round" />
                                 </svg>
                             </div>
                         </div>
@@ -197,7 +197,7 @@ export default function FilterPage(props: { show: boolean, inboxCount: number, d
                                     {props.binCount}
                                 </div>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="6" height="15" viewBox="0 0 6 15" fill="none">
-                                    <path d="M1.00002 13.3058L4.72802 7.87553C4.8919 7.63682 4.8919 7.32186 4.72802 7.08315L1.00001 1.65289" stroke="#5E5E5E" stroke-width="2" stroke-linecap="round" />
+                                    <path d="M1.00002 13.3058L4.72802 7.87553C4.8919 7.63682 4.8919 7.32186 4.72802 7.08315L1.00001 1.65289" stroke="#5E5E5E" strokeWidth="2" stroke-linecap="round" />
                                 </svg>
                             </div>
                         </div>
@@ -209,7 +209,7 @@ export default function FilterPage(props: { show: boolean, inboxCount: number, d
                     }}>
                         <div style={{ paddingLeft: '0.3vw', display: 'flex', width: '100%' }}>
                             <svg width="1.1979166666666667vw" height="1.1458333333333333vw" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" clip-rule="evenodd" d="M10 10C7.794 10 6 8.206 6 6C6 3.794 7.794 2 10 2C12.206 2 14 3.794 14 6C14 8.206 12.206 10 10 10ZM13.758 10.673C15.124 9.57397 16 7.89 16 6C16 2.686 13.314 0 10 0C6.686 0 4 2.686 4 6C4 7.89 4.876 9.57397 6.242 10.673C2.583 12.048 0 15.445 0 20H2C2 15 5.589 12 10 12C14.411 12 18 15 18 20H20C20 15.445 17.417 12.048 13.758 10.673Z" fill="#0A84FF" />
+                                <path fillRule="evenodd" clipRule="evenodd" d="M10 10C7.794 10 6 8.206 6 6C6 3.794 7.794 2 10 2C12.206 2 14 3.794 14 6C14 8.206 12.206 10 10 10ZM13.758 10.673C15.124 9.57397 16 7.89 16 6C16 2.686 13.314 0 10 0C6.686 0 4 2.686 4 6C4 7.89 4.876 9.57397 6.242 10.673C2.583 12.048 0 15.445 0 20H2C2 15 5.589 12 10 12C14.411 12 18 15 18 20H20C20 15.445 17.417 12.048 13.758 10.673Z" fill="#0A84FF" />
                             </svg>
 
                             <div style={{
@@ -232,7 +232,7 @@ export default function FilterPage(props: { show: boolean, inboxCount: number, d
                                 cursor: 'pointer',
                             }} onClick={() => props.onClick('profile')}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="6" height="15" viewBox="0 0 6 15" fill="none">
-                                    <path d="M1.00002 13.3058L4.72802 7.87553C4.8919 7.63682 4.8919 7.32186 4.72802 7.08315L1.00001 1.65289" stroke="#5E5E5E" stroke-width="2" stroke-linecap="round" />
+                                    <path d="M1.00002 13.3058L4.72802 7.87553C4.8919 7.63682 4.8919 7.32186 4.72802 7.08315L1.00001 1.65289" stroke="#5E5E5E" strokeWidth="2" stroke-linecap="round" />
                                 </svg>
                             </div>
                         </div>

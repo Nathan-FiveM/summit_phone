@@ -128,7 +128,7 @@ export default function Camera(props: { onExit: () => void; onEnter: () => void 
                         await handleCapture();
                     }} className='clickanimation' width="2.34375vw" height="2.34375vw" viewBox="0 0 27 27" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M13.5 23C18.7467 23 23 18.7467 23 13.5C23 8.25329 18.7467 4 13.5 4C8.25329 4 4 8.25329 4 13.5C4 18.7467 8.25329 23 13.5 23Z" fill="white" />
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M27 13.5C27 20.9558 20.9558 27 13.5 27C6.04416 27 0 20.9558 0 13.5C0 6.04416 6.04416 0 13.5 0C20.9558 0 27 6.04416 27 13.5ZM26 13.5C26 20.4036 20.4036 26 13.5 26C6.59644 26 1 20.4036 1 13.5C1 6.59644 6.59644 1 13.5 1C20.4036 1 26 6.59644 26 13.5Z" fill="white" />
+                        <path fillRule="evenodd" clipRule="evenodd" d="M27 13.5C27 20.9558 20.9558 27 13.5 27C6.04416 27 0 20.9558 0 13.5C0 6.04416 6.04416 0 13.5 0C20.9558 0 27 6.04416 27 13.5ZM26 13.5C26 20.4036 20.4036 26 13.5 26C6.59644 26 1 20.4036 1 13.5C1 6.59644 6.59644 1 13.5 1C20.4036 1 26 6.59644 26 13.5Z" fill="white" />
                     </svg>
                     <svg style={{
                         rotate: landscape ? '90deg' : '0deg',
@@ -136,7 +136,7 @@ export default function Camera(props: { onExit: () => void; onEnter: () => void 
                         fetchNui('selfiMode', !selfiMode);
                         setSelfiMode(!selfiMode);
                     }} className='clickanimation' width="1.40625vw" height="1.25vw" viewBox="0 0 27 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M11.8974 23C5.87895 23 1 18.0751 1 12C1 5.92487 5.87895 1 11.8974 1C17.9159 1 22.7949 5.92487 22.7949 12C22.7949 13.9972 22.2676 15.8701 21.3459 17.4845M21.3459 17.4845L26 15.8824M21.3459 17.4845L20.9088 17.6348L19.1727 12.4959" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M11.8974 23C5.87895 23 1 18.0751 1 12C1 5.92487 5.87895 1 11.8974 1C17.9159 1 22.7949 5.92487 22.7949 12C22.7949 13.9972 22.2676 15.8701 21.3459 17.4845M21.3459 17.4845L26 15.8824M21.3459 17.4845L20.9088 17.6348L19.1727 12.4959" stroke="white" strokeWidth="2" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                 </div>
             </div>

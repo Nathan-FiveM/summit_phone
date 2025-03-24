@@ -74,7 +74,7 @@ export default function FacePass() {
                         <svg style={{
                             flexShrink: '0'
                         }} width="8" height="18" viewBox="0 0 8 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M7 16.5L1.34983 9.43729C1.14531 9.18163 1.14531 8.81837 1.34983 8.56271L7 1.5" stroke="#0A84FF" stroke-width="2" stroke-linecap="round" />
+                            <path d="M7 16.5L1.34983 9.43729C1.14531 9.18163 1.14531 8.81837 1.34983 8.56271L7 1.5" stroke="#0A84FF" strokeWidth="2" stroke-linecap="round" />
                         </svg>
                         <div style={{
                             width: "1.71875vw",
@@ -112,7 +112,7 @@ export default function FacePass() {
                     <svg onClick={() => {
                         setShowPasscode(true);
                     }} xmlns="http://www.w3.org/2000/svg" width="0.4166666666666667vw" height="0.8854166666666666vw" viewBox="0 0 8 17" fill="none">
-                        <path d="M1 16L6.65017 8.93729C6.85469 8.68163 6.85469 8.31837 6.65017 8.06271L1 1" stroke="#D0D0D0" stroke-width="2" stroke-linecap="round" />
+                        <path d="M1 16L6.65017 8.93729C6.85469 8.68163 6.85469 8.31837 6.65017 8.06271L1 1" stroke="#D0D0D0" strokeWidth="2" stroke-linecap="round" />
                     </svg>
                 </div>
                 <div className="contasa" style={{
@@ -152,7 +152,7 @@ export default function FacePass() {
                                 <svg style={{
                                     flexShrink: '0'
                                 }} width="8" height="18" viewBox="0 0 8 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M7 16.5L1.34983 9.43729C1.14531 9.18163 1.14531 8.81837 1.34983 8.56271L7 1.5" stroke="#0A84FF" stroke-width="2" stroke-linecap="round" />
+                                    <path d="M7 16.5L1.34983 9.43729C1.14531 9.18163 1.14531 8.81837 1.34983 8.56271L7 1.5" stroke="#0A84FF" strokeWidth="2" stroke-linecap="round" />
                                 </svg>
                                 <div style={{
                                     width: "1.71875vw",
@@ -221,7 +221,7 @@ export default function FacePass() {
                                 <svg style={{
                                     flexShrink: '0'
                                 }} width="8" height="18" viewBox="0 0 8 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M7 16.5L1.34983 9.43729C1.14531 9.18163 1.14531 8.81837 1.34983 8.56271L7 1.5" stroke="#0A84FF" stroke-width="2" stroke-linecap="round" />
+                                    <path d="M7 16.5L1.34983 9.43729C1.14531 9.18163 1.14531 8.81837 1.34983 8.56271L7 1.5" stroke="#0A84FF" strokeWidth="2" stroke-linecap="round" />
                                 </svg>
                                 <div style={{
                                     width: "1.71875vw",
@@ -291,7 +291,7 @@ export default function FacePass() {
                                 <svg style={{
                                     flexShrink: '0'
                                 }} width="8" height="18" viewBox="0 0 8 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M7 16.5L1.34983 9.43729C1.14531 9.18163 1.14531 8.81837 1.34983 8.56271L7 1.5" stroke="#0A84FF" stroke-width="2" stroke-linecap="round" />
+                                    <path d="M7 16.5L1.34983 9.43729C1.14531 9.18163 1.14531 8.81837 1.34983 8.56271L7 1.5" stroke="#0A84FF" strokeWidth="2" stroke-linecap="round" />
                                 </svg>
                                 <div style={{
                                     width: "1.71875vw",

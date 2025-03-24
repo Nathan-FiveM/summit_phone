@@ -13,7 +13,7 @@ export default function GarageApp(props: { onEnter: () => void, onExit: () => vo
     const { location, phoneSettings, setLocation } = usePhone();
     const [garageData, setGarageData] = useState<GarageData[]>([]);
     const [searchValue, setSearchValue] = useState('');
-
+    const [imageErrors, setImageErrors] = useState<Set<string>>(new Set()); // Track failed image loads
     const [showSelectedData, setShowSelectedData] = useState(false);
     const [selectedData, setSelectedData] = useState<GarageData>({
         plate: '',
@@ -32,6 +32,11 @@ export default function GarageApp(props: { onEnter: () => void, onExit: () => vo
         modEngine: 0,
         modBrakes: 0,
     });
+
+    // Handle image load error
+    const handleImageError = (category: string) => {
+        setImageErrors(prev => new Set(prev).add(category));
+    };
 
     return (
         <CSSTransition
@@ -83,6 +88,7 @@ export default function GarageApp(props: { onEnter: () => void, onExit: () => vo
                     {garageData && garageData.filter(
                         (data) => data.brand.toLowerCase().includes(searchValue.toLowerCase()) || data.name.toLowerCase().includes(searchValue.toLowerCase()) || data.plate.toLowerCase().includes(searchValue.toLowerCase()) || data.state.toLowerCase().includes(searchValue.toLowerCase()) || data.category.toLowerCase().includes(searchValue.toLowerCase())
                     ).map((data, i) => {
+                        const hasImageError = imageErrors.has(data.category);
                         return (
                             <div key={i} style={{
                                 width: '100%',
@@ -93,7 +99,7 @@ export default function GarageApp(props: { onEnter: () => void, onExit: () => vo
                                 borderRadius: '0.5vw',
                                 paddingBottom: '0.2vw',
                                 cursor: 'pointer',
-                            }} onClick={()=>{
+                            }} onClick={() => {
                                 setSelectedData(data);
                                 setShowSelectedData(true);
                             }}>
@@ -110,13 +116,15 @@ export default function GarageApp(props: { onEnter: () => void, onExit: () => vo
                                         <div style={{ fontSize: '0.6vw', width: '100%' }}>{data.state}</div>
                                         <div style={{ fontSize: '0.6vw', width: '100%' }}>{data.category?.toUpperCase()}</div>
                                     </div>
-                                    <Image src={`https://cdn.summitrp.gg/uploads/server/phone/${data.category?.toUpperCase()}.png`} alt="vehicle" width={80} height={80} style={{ borderRadius: '0.5vw', marginRight: '0.5vw' }} />
+                                    {!hasImageError && (
+                                        <Image onError={() => handleImageError(data.category)} src={`https://cdn.summitrp.gg/uploads/server/phone/${data.category?.toUpperCase()}.png`} alt="vehicle" width={80} height={80} style={{ borderRadius: '0.5vw', marginRight: '0.5vw' }} />
+                                    )}
                                 </div>
                             </div>
                         )
                     })}
                 </div>
-                <SelectedData show={showSelectedData} data={selectedData} onExit={()=>{
+                <SelectedData show={showSelectedData} data={selectedData} onExit={() => {
                     setShowSelectedData(false);
                 }} />
             </div>
