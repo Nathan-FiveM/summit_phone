@@ -38,6 +38,7 @@ import Housing from './routers/apps/Housing/Housing';
 import Pigeon from './routers/apps/Pigeon/Pigeon';
 import BluePage from './routers/apps/BluePage/BluePage';
 import GarageApp from './routers/apps/Garage/GarageData';
+import Wallet from './routers/apps/Wallet/Wallet';
 
 debugData([
   {
@@ -162,6 +163,7 @@ export default function App() {
   const [pigeonEnter, setPigeonEnter] = useState(false);
   const [bluePageEnter, setBluePageEnter] = useState(false);
   const [garagesEnter, setGaragesEnter] = useState(false);
+  const [walletEnter, setWalletEnter] = useState(false);
 
   return (
     <div style={{
@@ -307,6 +309,15 @@ export default function App() {
             setGaragesEnter(true);
           }} onExit={() => {
             setGaragesEnter(false);
+          }} />
+        </div>
+        <div className='fuckerMessager' id='fuckerMessager' style={{
+          visibility: walletEnter ? 'visible' : 'hidden',
+        }}>
+          <Wallet onEnter={() => {
+            setWalletEnter(true);
+          }} onExit={() => {
+            setWalletEnter(false);
           }} />
         </div>
         <div className="backButton" onClick={() => {

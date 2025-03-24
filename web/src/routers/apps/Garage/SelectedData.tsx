@@ -72,7 +72,14 @@ export default function SelectedData(props: { show: boolean, data: GarageData, o
                             style={{ borderRadius: '0.5vw' }}
                         />
                         :
-                        <></>
+                        <Image
+                            onError={() => handleImageError(props.data.category)}
+                            src={`https://cdn.summitrp.gg/uploads/server/phone/SPORTS.png`}
+                            alt="vehicle"
+                            width={180}
+                            height={180}
+                            style={{ borderRadius: '0.5vw' }}
+                        />
                     }
                 </div>
                 <div style={{

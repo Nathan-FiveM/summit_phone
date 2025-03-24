@@ -10,7 +10,7 @@ import SelectedData from "./SelectedData";
 
 export default function GarageApp(props: { onEnter: () => void, onExit: () => void }) {
     const nodeRef = useRef(null);
-    const { location, phoneSettings, setLocation } = usePhone();
+    const { location } = usePhone();
     const [garageData, setGarageData] = useState<GarageData[]>([]);
     const [searchValue, setSearchValue] = useState('');
     const [imageErrors, setImageErrors] = useState<Set<string>>(new Set()); // Track failed image loads
@@ -116,8 +116,10 @@ export default function GarageApp(props: { onEnter: () => void, onExit: () => vo
                                         <div style={{ fontSize: '0.6vw', width: '100%' }}>{data.state}</div>
                                         <div style={{ fontSize: '0.6vw', width: '100%' }}>{data.category?.toUpperCase()}</div>
                                     </div>
-                                    {!hasImageError && (
+                                    {!hasImageError ? (
                                         <Image onError={() => handleImageError(data.category)} src={`https://cdn.summitrp.gg/uploads/server/phone/${data.category?.toUpperCase()}.png`} alt="vehicle" width={80} height={80} style={{ borderRadius: '0.5vw', marginRight: '0.5vw' }} />
+                                    ): (
+                                        <Image src={`https://cdn.summitrp.gg/uploads/server/phone/SPORTS.png`} alt="vehicle" width={80} height={80} style={{ borderRadius: '0.5vw', marginRight: '0.5vw' }} />
                                     )}
                                 </div>
                             </div>
