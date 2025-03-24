@@ -11,6 +11,6 @@ RegisterNuiCallbackType('garage:valet');
 on('__cfx_nui:garage:valet', async (data: string, cb: Function) => {
     const dataX: GarageData = JSON.parse(data);
     console.log(dataX);
-    const res = await triggerServerCallback('garage:valet', 1, data) as string;
-    cb(res);
+    /* const res = await triggerServerCallback('garage:valet', 1, data) as string; */
+    cb("res");
 });

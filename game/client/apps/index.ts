@@ -18,3 +18,5 @@ import "./Pigeon/callback";
 import "./BluePage/callback";
 import "./BluePage/nui";
 import "./Garage/nui";
+import "./Wallet/nui";
+import "./Wallet/callbacks";
