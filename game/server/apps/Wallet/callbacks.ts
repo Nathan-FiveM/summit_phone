@@ -172,5 +172,20 @@ onClientCallback('wallet:acceptInvoicePayment', async (client, id: string) => {
 });
 
 onClientCallback('wallet:declineInvoicePayment', async (client, id: string) => {
-    
+    const res = await MongoDB.findOne('phone_bank_invoices', { _id: id });
+    if (!res) return false;
+    if (res.status === 'pending') {
+        await MongoDB.updateOne('phone_bank_invoices', { _id: id }, { status: 'declined' });
+        const sourcePlayer = await exports['qb-core'].GetPlayerByCitizenId(res.from);
+        emitNet('phone:addnotiFication', sourcePlayer.PlayerData.source, JSON.stringify({
+            id: generateUUid(),
+            title: 'Wallet',
+            description: `${res.targetName} has declined your invoice of $${res.amount}.`,
+            app: 'settings',
+            timeout: 5000
+        }));
+        return true;
+    } else {
+        return false;
+    }
 });
