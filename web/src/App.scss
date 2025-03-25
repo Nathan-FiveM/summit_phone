@@ -1713,6 +1713,7 @@
 
     }
   }
+
   .hoverhereX {
     cursor: pointer;
 
@@ -1727,6 +1728,17 @@
       }
 
     }
+  }
+}
+
+.mantine-Autocomplete-option {
+  &:hover {
+    background: #cacaca1e;
+  }
+}
+.mantine-Select-option {
+  &:hover {
+    background: #cacaca1e;
   }
 }
 

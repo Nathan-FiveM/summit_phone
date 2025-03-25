@@ -7,13 +7,14 @@ import smrtBankLogo from "../../../../images/smrtbanklogo.svg";
 import smrtVecImage from "../../../../images/walletLoginLogo.svg";
 import smrtDetail from "../../../../images/smrtDetail.svg";
 import { useLocalStorage, useTimeout } from "@mantine/hooks";
-import { Avatar, Button, NumberFormatter, NumberInput, Transition } from "@mantine/core";
+import { Autocomplete, Avatar, Button, Checkbox, NumberFormatter, NumberInput, Select, Textarea, Transition } from "@mantine/core";
 import { fetchNui } from "../../../hooks/fetchNui";
-import { PhoneContacts, WalletAccount } from "../../../../../types/types";
+import { InvoiceData, PhoneContacts, WalletAccount } from "../../../../../types/types";
 import { useNuiEvent } from "../../../hooks/useNuiEvent";
 import Navigation from "./Navigation";
 import Searchbar from "../../components/SearchBar";
 import Dialpad from "../../components/dialpad1";
+import dayjs from "dayjs";
 
 export default function Wallet(props: { onEnter: () => void, onExit: () => void }) {
     const nodeRef = useRef(null);
@@ -43,11 +44,18 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
         balance: 0,
     });
 
-    useNuiEvent('updateWalletamount', (amount: number) => {
-        setWalletDetails({
-            ...walletDetails,
-            balance: amount,
-        });
+    useNuiEvent('updateWalletamount', (data: { type: string, amount: number }) => {
+        if (data.type === 'remove') {
+            setWalletDetails({
+                ...walletDetails,
+                balance: walletDetails.balance - data.amount,
+            });
+        } else if (data.type === 'add') {
+            setWalletDetails({
+                ...walletDetails,
+                balance: walletDetails.balance + data.amount,
+            });
+        }
     });
     const [seachValue, setSearchValue] = useState('');
     const [contactsData, setContactsData] = useState<PhoneContacts[]>([]);
@@ -66,6 +74,24 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
     const [showTransferPage, setShowTransferPage] = useState(false);
     const [amount, setAmount] = useState(0);
     const [resaccountNumber, setResAccountNumber] = useState('');
+    const [transcationData, setTranscationData] = useState<{
+        _id: string,
+        from: string,
+        to: string,
+        amount: number,
+        type: string,
+        date: string
+    }[]>([]);
+    const [historyType, setHistoryType] = useState('sent');
+    const [showNewInvoicePage, setShowNewInvoicePage] = useState(false);
+    const [billingData, setBillingData] = useState({
+        description: '',
+        amount: 0,
+        paymentTime: '',
+        numberOfPayments: '',
+        receiver: '',
+    });
+    const [invoiceData, setInvoiceData] = useState<InvoiceData[]>([]);
 
     return (
         <CSSTransition
@@ -203,7 +229,7 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
                             border: 'none',
                         }} onClick={async () => {
                             if (phoneSettings.smrtId === '' || phoneSettings.smrtPassword === '') {
-                                fetchNui('showNoti', { app: 'settings', title: 'System', description: 'You have to Login your Mail Account' })
+                                fetchNui('showNoti', { app: 'settings', title: 'System', description: 'You have to Login your Mail Account' });
                                 return;
                             }
                             setLoading(true);
@@ -218,6 +244,10 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
                     transition="pop"
                     duration={400}
                     timingFunction="ease"
+                    onEnter={async () => {
+                        const res = await fetchNui('getTransactions');
+                        setTranscationData(JSON.parse(res as string));
+                    }}
                 >
                     {(styles) => <div style={{
                         ...styles,
@@ -318,7 +348,9 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
                                 <path d="M24.3752 24.2188V15.625H15.7815" stroke="white" stroke-width="1.5" stroke-miterlimit="10" />
                                 <path d="M7.29126 59.6738H8.35181C8.45142 60.5879 9.3186 61.1914 10.5256 61.1914C11.6682 61.1914 12.5002 60.5879 12.5002 59.7559C12.5002 59.041 12.0022 58.6016 10.8655 58.3086L9.78149 58.0273C8.2229 57.6289 7.53149 56.9434 7.53149 55.7949C7.53149 54.3887 8.76196 53.4043 10.5198 53.4043C12.2014 53.4043 13.4202 54.4004 13.467 55.8184H12.4124C12.3186 54.9102 11.5862 54.3535 10.4846 54.3535C9.38892 54.3535 8.6272 54.9219 8.6272 55.748C8.6272 56.3867 9.09595 56.7676 10.2444 57.0664L11.1292 57.3008C12.8811 57.7402 13.5901 58.4141 13.5901 59.627C13.5901 61.1738 12.3713 62.1406 10.426 62.1406C8.63306 62.1406 7.39087 61.168 7.29126 59.6738ZM17.1057 56.6855C16.1506 56.6855 15.4827 57.418 15.4182 58.4316H18.7288C18.7053 57.4121 18.0667 56.6855 17.1057 56.6855ZM18.7053 60.2539H19.7073C19.5315 61.3203 18.5002 62.1055 17.1702 62.1055C15.4241 62.1055 14.3635 60.8926 14.3635 58.9766C14.3635 57.084 15.4417 55.8008 17.1233 55.8008C18.7698 55.8008 19.7834 56.9961 19.7834 58.8418V59.2285H15.4124V59.2871C15.4124 60.4531 16.0979 61.2207 17.1936 61.2207C17.967 61.2207 18.5354 60.8281 18.7053 60.2539ZM20.8147 62V55.9062H21.7756V56.8789H21.7991C22.1389 56.2227 22.7893 55.8008 23.7327 55.8008C25.0686 55.8008 25.842 56.6621 25.842 58.0449V62H24.8225V58.2266C24.8225 57.2422 24.3596 56.7031 23.4221 56.7031C22.4612 56.7031 21.8342 57.3828 21.8342 58.4141V62H20.8147ZM29.4514 62.1055C27.8987 62.1055 26.844 60.8633 26.844 58.9531C26.844 57.043 27.8928 55.8008 29.428 55.8008C30.301 55.8008 31.0042 56.2285 31.3674 56.8965H31.3909V53.5449H32.4104V62H31.4377V60.9688H31.4202C31.0276 61.6719 30.3303 62.1055 29.4514 62.1055ZM29.6448 56.6973C28.5667 56.6973 27.887 57.5762 27.887 58.9531C27.887 60.3359 28.5667 61.209 29.6448 61.209C30.6936 61.209 31.3967 60.3184 31.3967 58.9531C31.3967 57.5938 30.6936 56.6973 29.6448 56.6973Z" fill="#565656" />
                             </svg>
-                            <svg className='clickanimation' width="2.1354166666666665vw" height="3.6979166666666665vw" viewBox="0 0 41 71" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <svg onClick={() => {
+                                setShowNewInvoicePage(true);
+                            }} className='clickanimation' width="2.1354166666666665vw" height="3.6979166666666665vw" viewBox="0 0 41 71" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <rect x="0.833496" y="0.5" width="39" height="39" rx="9.5" fill="#565656" />
                                 <rect x="0.833496" y="0.5" width="39" height="39" rx="9.5" stroke="#565656" />
                                 <path d="M15.0455 19.0444H13.9959C12.8727 19.0444 11.9604 18.1322 11.9604 17.009V14.5354C11.9604 13.4139 12.8727 12.5 13.9959 12.5H26.6711C27.7942 12.5 28.7065 13.4123 28.7065 14.5354V16.8112C28.7065 17.9343 27.7942 18.8466 26.6711 18.8466H24.7485V17.7954H26.6711C27.2139 17.7954 27.6569 17.354 27.6569 16.8095V14.5354C27.6569 13.9926 27.2155 13.5496 26.6711 13.5496H13.9959C13.4531 13.5496 13.01 13.991 13.01 14.5354V17.0074C13.01 17.5501 13.4515 17.9932 13.9959 17.9932H15.0455V19.0444Z" fill="white" />
@@ -351,41 +383,48 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
                             overflowX: 'hidden',
                             overflowY: 'auto',
                         }}>
-                            <div style={{
-                                width: '100%',
-                                height: '3vw',
-                                borderRadius: '0.3125vw',
-                                backgroundColor: 'rgb(41, 41, 41)',
-                                display: 'flex',
-                                alignItems: 'center',
-                            }}>
-                                <svg width="1.5625vw" height="1.5625vw" style={{ marginLeft: '0.7vw' }} viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <rect x="0.000244141" width="26" height="26" rx="3" fill="white" fill-opacity="0.34" />
-                                    <path d="M5.50024 20.5H20.5002M6.33358 18H19.6669M8.00024 18V13.8334M11.3336 18V13.8334M14.6669 18V13.8334M18.0002 18V13.8334M13.0002 8.83909L13.0064 8.83348M20.5002 11.3334L14.7719 6.24151C14.145 5.68429 13.8316 5.4057 13.4779 5.29989C13.1662 5.20668 12.8342 5.20668 12.5226 5.29989C12.1689 5.4057 11.8555 5.68429 11.2286 6.24151L5.50024 11.3334H20.5002Z" stroke="white" stroke-linecap="round" stroke-linejoin="round" />
-                                </svg>
-                                <div style={{
-                                    width: '40%',
-                                    height: '70%',
-                                    marginLeft: '0.5vw',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    justifyContent: 'center',
-                                }}>
-                                    <div style={{ fontSize: '0.8vw', fontWeight: 600, lineHeight: '0.8vw' }}>Money Debit</div>
-                                    <div style={{ fontSize: '0.7vw', fontWeight: 400, lineHeight: '0.8vw' }}>Mar, 2025</div>
-                                </div>
-                                <div style={{
-                                    width: '38%',
-                                    textAlign: 'right',
-                                    fontSize: '0.75vw',
-                                    fontWeight: 500,
-                                    whiteSpace: 'nowrap',
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                }}>
-                                    <NumberFormatter value={1000} thousandSeparator prefix="$ " />
-                                </div>
-                            </div>
+                            {transcationData && transcationData.map((data, i) => {
+                                return (
+                                    <div style={{
+                                        width: '100%',
+                                        height: '3vw',
+                                        borderRadius: '0.3125vw',
+                                        backgroundColor: 'rgb(48, 48, 48)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        marginTop: i === 0 ? '0.0vw' : '0.3vw',
+                                    }} key={i}>
+                                        <svg width="1.5625vw" height="1.5625vw" style={{ marginLeft: '0.7vw' }} viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <rect x="0.000244141" width="26" height="26" rx="3" fill="white" fill-opacity="0.34" />
+                                            <path d="M5.50024 20.5H20.5002M6.33358 18H19.6669M8.00024 18V13.8334M11.3336 18V13.8334M14.6669 18V13.8334M18.0002 18V13.8334M13.0002 8.83909L13.0064 8.83348M20.5002 11.3334L14.7719 6.24151C14.145 5.68429 13.8316 5.4057 13.4779 5.29989C13.1662 5.20668 12.8342 5.20668 12.5226 5.29989C12.1689 5.4057 11.8555 5.68429 11.2286 6.24151L5.50024 11.3334H20.5002Z" stroke="white" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                        <div style={{
+                                            width: '40%',
+                                            height: '70%',
+                                            marginLeft: '0.5vw',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            justifyContent: 'center',
+                                        }}>
+                                            <div style={{ fontSize: '0.8vw', fontWeight: 600, lineHeight: '0.8vw' }}>{data.type === 'debit' ? "Money Debit" : "Money Credit"}</div>
+                                            <div style={{ fontSize: '0.7vw', fontWeight: 400, lineHeight: '0.8vw' }}>{dayjs(new Date(data.date)).format('MMM, YYYY')}</div>
+                                        </div>
+                                        <div style={{
+                                            width: '38%',
+                                            textAlign: 'right',
+                                            fontSize: '0.75vw',
+                                            fontWeight: 500,
+                                            whiteSpace: 'nowrap',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                        }}>
+                                            <NumberFormatter value={data.amount} thousandSeparator prefix="$ " style={{
+                                                color: data.type === 'credit' ? 'green' : 'rgba(255, 0, 0, 0.8)'
+                                            }} />
+                                        </div>
+                                    </div>
+                                )
+                            })}
                         </div>
                     </div>}
                 </Transition>
@@ -488,7 +527,7 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
                                             fontSize: '0.9vw',
                                             fontWeight: 600,
                                             width: '90%',
-                                            borderBottom: '0.1vw solid rgb(41, 41, 41)',
+                                            borderBottom: '0.1vw solid rgb(48, 48, 48)',
                                             marginTop: '0.3vw',
                                         }}>
                                             {contact.firstName} {contact.lastName}
@@ -553,7 +592,7 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
                                 height: '2.5vw',
                                 marginTop: '0.8vw',
                                 borderRadius: '0vw',
-                                backgroundColor: 'rgba(41, 41, 41, 0)',
+                                backgroundColor: 'rgba(48, 48, 48, 0)',
                                 display: 'flex',
                                 alignItems: 'center',
                                 borderBottom: '1px solid rgba(255, 255, 255, 0.7)',
@@ -670,6 +709,667 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
                                 setAmount(Number(String(amount) + e));
                             }
                         }} />
+                    </div>}
+                </Transition>
+                <Transition
+                    mounted={location.app === "wallet" && location.page.wallet === "invoice"}
+                    transition="fade"
+                    duration={400}
+                    timingFunction="ease"
+                    onEnter={async () => {
+                        const res = await fetchNui('getContacts');
+                        setContactsData(JSON.parse(res as string));
+                        const newRes = await fetchNui('getInvoices', historyType);
+                        setInvoiceData(JSON.parse(newRes as string));
+                        setShowStartupScreen(false);
+                    }}
+                >
+                    {(styles) => <div style={{
+                        ...styles,
+                        width: '100%',
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        position: 'absolute',
+                        backgroundColor: 'rgb(0, 0, 0)',
+                        zIndex: 1,
+                    }}>
+                        <div style={{
+                            marginTop: '1.8vw',
+                            width: '90%',
+                            display: 'flex',
+                            alignItems: 'center',
+                        }}>
+                            <svg width="2.3958333333333335vw" height="0.9375vw" onClick={() => {
+                                setLocation({
+                                    app: "wallet",
+                                    page: {
+                                        ...location.page,
+                                        wallet: "home"
+                                    }
+                                });
+                                setShowTransferPage(false);
+                            }} style={{
+                                cursor: 'pointer'
+                            }} viewBox="0 0 46 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M7 16.5L1.34983 9.43729C1.14531 9.18163 1.14531 8.81837 1.34983 8.56271L7 1.5" stroke="#0A84FF" stroke-width="2" stroke-linecap="round" />
+                                <path d="M18.5356 14H14.2949V3.43115H18.5137C20.3887 3.43115 21.6191 4.47119 21.6191 6.06787C21.6191 7.18848 20.7915 8.19189 19.7368 8.36768V8.42627C21.1724 8.5874 22.1392 9.60547 22.1392 11.0117C22.1392 12.8721 20.7842 14 18.5356 14ZM15.9355 4.77148V7.92822H17.7739C19.1948 7.92822 19.9785 7.34229 19.9785 6.29492C19.9785 5.31348 19.3047 4.77148 18.1182 4.77148H15.9355ZM15.9355 12.6597H18.1987C19.6782 12.6597 20.4619 12.0518 20.4619 10.9092C20.4619 9.7666 19.6562 9.18066 18.1035 9.18066H15.9355V12.6597ZM26.0576 12.8794C27.1636 12.8794 28.0278 12.1177 28.0278 11.1143V10.5063L26.1309 10.6235C25.186 10.6895 24.6514 11.1069 24.6514 11.7661C24.6514 12.4399 25.208 12.8794 26.0576 12.8794ZM25.6182 14.1318C24.1094 14.1318 23.0547 13.1943 23.0547 11.8101C23.0547 10.4624 24.0874 9.63477 25.9185 9.53223L28.0278 9.40771V8.81445C28.0278 7.95752 27.4492 7.44482 26.4824 7.44482C25.5669 7.44482 24.9956 7.88428 24.8564 8.57275H23.3623C23.4502 7.18115 24.6367 6.15576 26.541 6.15576C28.4087 6.15576 29.6025 7.14453 29.6025 8.68994V14H28.0864V12.7329H28.0498C27.603 13.5898 26.6289 14.1318 25.6182 14.1318ZM37.7544 8.94629H36.2456C36.0845 8.12598 35.4692 7.47412 34.4365 7.47412C33.2134 7.47412 32.4077 8.49219 32.4077 10.1475C32.4077 11.8394 33.2207 12.8208 34.4512 12.8208C35.4253 12.8208 36.0625 12.2861 36.2456 11.3926H37.769C37.6006 13.0332 36.2896 14.1465 34.4365 14.1465C32.2319 14.1465 30.7964 12.6377 30.7964 10.1475C30.7964 7.70117 32.2319 6.15576 34.4219 6.15576C36.4067 6.15576 37.6152 7.43018 37.7544 8.94629ZM40.5449 9.59814L43.6577 6.29492H45.5181L42.3247 9.61279L45.6426 14H43.8042L41.1895 10.5796L40.5303 11.2314V14H38.9482V3.43115H40.5303V9.59814H40.5449Z" fill="#0A84FF" />
+                            </svg>
+                            <div style={{ fontSize: '0.9vw', fontWeight: 500, marginLeft: '3.5vw' }}>Transfer</div>
+                        </div>
+                        <div style={{ marginTop: '0.2vw', width: '90%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                <div className="wallet-header">Welcome</div>
+                                <div className="wallet-subheader">{walletDetails.name}</div>
+                            </div>
+                        </div>
+                        <svg style={{
+                            marginTop: '0.5vw',
+                        }} onClick={() => {
+                            setShowNewInvoicePage(true);
+                        }} className='clickanimation' width="15.104166666666666vw" height="4.6875vw" viewBox="0 0 271 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="271" height="80" rx="9" fill="url(#paint0_linear_309_1324)" fill-opacity="0.78" />
+                            <path d="M75.4834 41.9897H77.6147C77.7173 42.8613 78.6255 43.4326 79.7974 43.4326C80.9766 43.4326 81.7822 42.8687 81.7822 42.0923C81.7822 41.4038 81.2769 41.0229 80.0024 40.7373L78.6255 40.437C76.6772 40.0195 75.7178 39.0308 75.7178 37.4854C75.7178 35.5371 77.4023 34.248 79.7607 34.248C82.2217 34.248 83.7671 35.5151 83.8037 37.4268H81.731C81.6577 36.5332 80.874 35.9912 79.7681 35.9912C78.6768 35.9912 77.9443 36.5112 77.9443 37.2949C77.9443 37.9468 78.457 38.313 79.6729 38.5913L80.9546 38.8623C83.0713 39.3164 83.9941 40.2246 83.9941 41.8359C83.9941 43.8867 82.3315 45.1831 79.7095 45.1831C77.168 45.1831 75.5493 43.9746 75.4834 41.9897ZM88.6963 38.562C87.7588 38.562 87.085 39.2725 87.0117 40.2539H90.3442C90.3003 39.2505 89.6484 38.562 88.6963 38.562ZM90.3735 42.5977H92.3364C92.1021 44.1357 90.6958 45.1685 88.7549 45.1685C86.3379 45.1685 84.8877 43.623 84.8877 41.1108C84.8877 38.606 86.3525 36.98 88.6743 36.98C90.9595 36.98 92.4023 38.5254 92.4023 40.9131V41.5649H86.9897V41.6968C86.9897 42.8174 87.7002 43.5864 88.7915 43.5864C89.5752 43.5864 90.1758 43.1982 90.3735 42.5977ZM93.5083 45V37.1484H95.5737V38.5474H95.6177C96.0352 37.5732 96.8628 37.002 98.0713 37.002C99.8145 37.002 100.796 38.1006 100.796 39.939V45H98.6572V40.3857C98.6572 39.3604 98.1738 38.7744 97.2144 38.7744C96.2549 38.7744 95.647 39.4775 95.647 40.4956V45H93.5083ZM105.066 45.1245C103.103 45.1245 101.865 43.5718 101.865 41.0596C101.865 38.5693 103.11 37.0239 105.081 37.0239C106.216 37.0239 107.095 37.6245 107.476 38.4961H107.52V34.4312H109.658V45H107.549V43.6523H107.512C107.131 44.5166 106.223 45.1245 105.066 45.1245ZM105.791 38.7378C104.714 38.7378 104.055 39.6387 104.055 41.0742C104.055 42.5171 104.714 43.4033 105.791 43.4033C106.853 43.4033 107.534 42.5098 107.534 41.0742C107.534 39.646 106.853 38.7378 105.791 38.7378ZM116.36 45H114.243V34.4312H116.089L121.025 41.3159H121.084V34.4312H123.201V45H121.37L116.426 38.0786H116.36V45ZM128.306 38.562C127.368 38.562 126.694 39.2725 126.621 40.2539H129.954C129.91 39.2505 129.258 38.562 128.306 38.562ZM129.983 42.5977H131.946C131.711 44.1357 130.305 45.1685 128.364 45.1685C125.947 45.1685 124.497 43.623 124.497 41.1108C124.497 38.606 125.962 36.98 128.284 36.98C130.569 36.98 132.012 38.5254 132.012 40.9131V41.5649H126.599V41.6968C126.599 42.8174 127.31 43.5864 128.401 43.5864C129.185 43.5864 129.785 43.1982 129.983 42.5977ZM144.089 37.1484L142.009 45H139.731L138.311 39.4482H138.267L136.853 45H134.604L132.517 37.1484H134.67L135.857 42.9712H135.901L137.292 37.1484H139.343L140.742 42.9712H140.786L141.98 37.1484H144.089ZM150.293 45H148.081V34.4312H150.293V45ZM151.868 45V37.1484H153.933V38.5474H153.977C154.395 37.5732 155.222 37.002 156.431 37.002C158.174 37.002 159.155 38.1006 159.155 39.939V45H157.017V40.3857C157.017 39.3604 156.533 38.7744 155.574 38.7744C154.614 38.7744 154.006 39.4775 154.006 40.4956V45H151.868ZM167.644 37.1484L164.949 45H162.532L159.814 37.1484H162.107L163.74 43.1104H163.784L165.41 37.1484H167.644ZM171.775 45.1685C169.402 45.1685 167.886 43.645 167.886 41.0669C167.886 38.5254 169.424 36.98 171.775 36.98C174.126 36.98 175.664 38.5181 175.664 41.0669C175.664 43.6523 174.148 45.1685 171.775 45.1685ZM171.775 43.5352C172.822 43.5352 173.489 42.6489 173.489 41.0742C173.489 39.5142 172.815 38.6133 171.775 38.6133C170.735 38.6133 170.054 39.5142 170.054 41.0742C170.054 42.6489 170.72 43.5352 171.775 43.5352ZM176.807 45V37.1484H178.945V45H176.807ZM177.876 36.2842C177.231 36.2842 176.733 35.7935 176.733 35.1782C176.733 34.5557 177.231 34.0723 177.876 34.0723C178.521 34.0723 179.019 34.5557 179.019 35.1782C179.019 35.7935 178.521 36.2842 177.876 36.2842ZM187.507 40.0708H185.522C185.398 39.2432 184.849 38.6572 183.97 38.6572C182.915 38.6572 182.256 39.5508 182.256 41.0669C182.256 42.6123 182.915 43.4912 183.977 43.4912C184.834 43.4912 185.391 42.9785 185.522 42.1216H187.515C187.405 43.9746 186.021 45.1685 183.955 45.1685C181.589 45.1685 180.088 43.6304 180.088 41.0669C180.088 38.5474 181.589 36.98 183.94 36.98C186.064 36.98 187.412 38.291 187.507 40.0708ZM192.07 38.562C191.133 38.562 190.459 39.2725 190.386 40.2539H193.718C193.674 39.2505 193.022 38.562 192.07 38.562ZM193.748 42.5977H195.71C195.476 44.1357 194.07 45.1685 192.129 45.1685C189.712 45.1685 188.262 43.623 188.262 41.1108C188.262 38.606 189.727 36.98 192.048 36.98C194.333 36.98 195.776 38.5254 195.776 40.9131V41.5649H190.364V41.6968C190.364 42.8174 191.074 43.5864 192.166 43.5864C192.949 43.5864 193.55 43.1982 193.748 42.5977Z" fill="#DAFEF4" />
+                            <defs>
+                                <linearGradient id="paint0_linear_309_1324" x1="48.0118" y1="-25.625" x2="225.886" y2="56.3497" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#2B5D81" />
+                                    <stop offset="0.525294" stop-color="#2B646A" />
+                                    <stop offset="1" stop-color="#2A1856" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div style={{
+                            width: '90%',
+                            display: 'flex',
+                            marginTop: '0.8vw',
+                            gap: '1vw',
+                        }}>
+                            <div style={{
+                                fontSize: '0.7vw',
+                                fontWeight: 400,
+                                letterSpacing: '0.07vw',
+                                backgroundColor: historyType === 'sent' ? 'rgba(255, 255, 255, 0.25)' : '',
+                                textAlign: 'center',
+                                width: '4vw',
+                                height: '1.2vw',
+                                borderRadius: '0.3vw',
+                                cursor: 'pointer',
+                            }} onClick={async () => {
+                                const newRes = await fetchNui('getInvoices', 'sent');
+                                setInvoiceData(JSON.parse(newRes as string));
+                                setHistoryType('sent');
+                            }}>Sent</div>
+                            <div style={{
+                                fontSize: '0.7vw',
+                                fontWeight: 400,
+                                letterSpacing: '0.07vw',
+                                backgroundColor: historyType === 'received' ? 'rgba(255, 255, 255, 0.25)' : '',
+                                textAlign: 'center',
+                                width: '4vw',
+                                height: '1.2vw',
+                                borderRadius: '0.3vw',
+                                cursor: 'pointer',
+                            }} onClick={async () => {
+                                const newRes = await fetchNui('getInvoices', 'received');
+                                setInvoiceData(JSON.parse(newRes as string));
+                                setHistoryType('received');
+                            }}>Received</div>
+                        </div>
+                        <div style={{ width: '89%', fontSize: '0.65vw', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.06vw', marginTop: '0.3vw' }}>Pending</div>
+                        <div style={{
+                            width: '90%',
+                            height: '23.5%',
+                            overflowY: 'auto',
+                            overflowX: 'hidden',
+                        }}>
+                            {invoiceData && invoiceData.map((invoice, index: number) => {
+                                return (
+                                    <div style={{
+                                        width: '100%',
+                                        height: '3.8vw',
+                                        backgroundColor: 'rgba(255, 255, 255, 0.18)',
+                                        borderRadius: '0.3vw',
+                                        paddingLeft: '0.5vw',
+                                        paddingTop: '0.3vw',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        marginTop: index === 0 ? '0.2vw' : '0.5vw',
+                                    }} key={index}>
+                                        <div style={{
+                                            display: 'flex',
+                                            width: '97%',
+                                            justifyContent: 'space-between',
+                                        }}>
+                                            <Checkbox
+                                                defaultChecked
+                                                label={historyType === 'sent' ? invoice.targetName : invoice.sourceName}
+                                                styles={{
+                                                    input: {
+                                                        outline: 'none',
+                                                        color: 'red',
+                                                        backgroundColor: 'rgb(100, 100, 100)',
+                                                        border: 'none',
+                                                    },
+                                                    label: {
+                                                        fontSize: '0.8vw',
+                                                        fontWeight: 500,
+                                                        letterSpacing: '0.05vw',
+                                                    }
+                                                }}
+                                                checked={invoice.status === 'pending' ? false : true}
+                                            />
+                                            <div style={{
+                                                height: '1.0vw',
+                                                fontSize: '0.7vw',
+                                                fontWeight: 500,
+                                                marginLeft: '0.5vw',
+                                                textAlign: 'right',
+                                            }}>
+                                                <NumberFormatter value={invoice.amount} thousandSeparator prefix="$ " />
+                                            </div>
+                                        </div>
+                                        <div style={{
+                                            display: 'flex',
+                                        }}>
+                                            <div style={{
+                                                marginTop: '0.2vw',
+                                                width: '70%',
+                                                height: '2.1vw',
+                                                lineHeight: '0.7vw',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis',
+                                                fontSize: '0.6vw',
+                                                fontWeight: 400,
+                                            }}>
+                                                {invoice.description}
+                                            </div>
+                                            <div style={{ gap: '0.2vw', marginLeft: '0.2vw', display: 'flex', height: '2.2vw', alignItems: 'end' }}>
+                                                <svg onClick={async () => {
+                                                    const res = await fetchNui('declineInvoicePayment', invoice._id);
+                                                }} className='clickanimation' width="1.8229166666666667vw" height="0.78125vw" viewBox="0 0 35 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <rect width="35" height="15" rx="3" fill="#FFDDDD" fill-opacity="0.28" />
+                                                    <path d="M5.51953 4.86328H7.50781C9.18359 4.86328 10.1758 5.89453 10.1758 7.67188C10.1758 9.45312 9.1875 10.5 7.50781 10.5H5.51953V4.86328ZM6.39453 5.61719V9.74219H7.42578C8.62109 9.74219 9.28125 9.01172 9.28125 7.67969C9.28125 6.35156 8.61719 5.61719 7.42578 5.61719H6.39453ZM12.6289 6.99609C12.0391 6.99609 11.625 7.44531 11.582 8.06641H13.6367C13.6172 7.4375 13.2188 6.99609 12.6289 6.99609ZM13.6328 9.29297H14.4336C14.3164 10.043 13.6055 10.5781 12.6641 10.5781C11.457 10.5781 10.7266 9.76172 10.7266 8.46484C10.7266 7.17578 11.4688 6.31641 12.6289 6.31641C13.7695 6.31641 14.4805 7.12109 14.4805 8.36719V8.65625H11.5781V8.70703C11.5781 9.42188 12.0078 9.89453 12.6836 9.89453C13.1641 9.89453 13.5195 9.65234 13.6328 9.29297ZM18.6641 7.80469H17.8594C17.7734 7.36719 17.4453 7.01953 16.8945 7.01953C16.2422 7.01953 15.8125 7.5625 15.8125 8.44531C15.8125 9.34766 16.2461 9.87109 16.9023 9.87109C17.4219 9.87109 17.7617 9.58594 17.8594 9.10938H18.6719C18.582 9.98438 17.8828 10.5781 16.8945 10.5781C15.7188 10.5781 14.9531 9.77344 14.9531 8.44531C14.9531 7.14062 15.7188 6.31641 16.8867 6.31641C17.9453 6.31641 18.5898 6.99609 18.6641 7.80469ZM19.3008 10.5V4.86328H20.1445V10.5H19.3008ZM21.0391 10.5V6.39062H21.8828V10.5H21.0391ZM21.4609 5.78906C21.1914 5.78906 20.9727 5.57422 20.9727 5.30859C20.9727 5.03906 21.1914 4.82422 21.4609 4.82422C21.7344 4.82422 21.9531 5.03906 21.9531 5.30859C21.9531 5.57422 21.7344 5.78906 21.4609 5.78906ZM22.7461 10.5V6.39062H23.5508V7.07812H23.5703C23.793 6.60938 24.2305 6.32031 24.8633 6.32031C25.7695 6.32031 26.2891 6.89844 26.2891 7.83984V10.5H25.4414V8.00391C25.4414 7.38672 25.1523 7.04688 24.5664 7.04688C23.9727 7.04688 23.5898 7.46875 23.5898 8.10547V10.5H22.7461ZM28.8242 6.99609C28.2344 6.99609 27.8203 7.44531 27.7773 8.06641H29.832C29.8125 7.4375 29.4141 6.99609 28.8242 6.99609ZM29.8281 9.29297H30.6289C30.5117 10.043 29.8008 10.5781 28.8594 10.5781C27.6523 10.5781 26.9219 9.76172 26.9219 8.46484C26.9219 7.17578 27.6641 6.31641 28.8242 6.31641C29.9648 6.31641 30.6758 7.12109 30.6758 8.36719V8.65625H27.7734V8.70703C27.7734 9.42188 28.2031 9.89453 28.8789 9.89453C29.3594 9.89453 29.7148 9.65234 29.8281 9.29297Z" fill="white" />
+                                                </svg>
+                                                <svg onClick={async () => {
+                                                    const res = await fetchNui('acceptInvoicePayment', invoice._id);
+                                                }} className='clickanimation' width="1.8229166666666667vw" height="0.78125vw" viewBox="0 0 35 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <rect width="35" height="15" rx="3" fill="#D3FFCD" fill-opacity="0.28" />
+                                                    <path d="M11.5195 4.86328H13.6328C14.7266 4.86328 15.4883 5.61719 15.4883 6.71484C15.4883 7.81641 14.7109 8.57422 13.6055 8.57422H12.3945V10.5H11.5195V4.86328ZM12.3945 5.60156V7.83984H13.3984C14.1602 7.83984 14.5938 7.42969 14.5938 6.71875C14.5938 6.00781 14.1602 5.60156 13.4023 5.60156H12.3945ZM17.2617 9.90234C17.8516 9.90234 18.3125 9.49609 18.3125 8.96094V8.63672L17.3008 8.69922C16.7969 8.73438 16.5117 8.95703 16.5117 9.30859C16.5117 9.66797 16.8086 9.90234 17.2617 9.90234ZM17.0273 10.5703C16.2227 10.5703 15.6602 10.0703 15.6602 9.33203C15.6602 8.61328 16.2109 8.17188 17.1875 8.11719L18.3125 8.05078V7.73438C18.3125 7.27734 18.0039 7.00391 17.4883 7.00391C17 7.00391 16.6953 7.23828 16.6211 7.60547H15.8242C15.8711 6.86328 16.5039 6.31641 17.5195 6.31641C18.5156 6.31641 19.1523 6.84375 19.1523 7.66797V10.5H18.3438V9.82422H18.3242C18.0859 10.2812 17.5664 10.5703 17.0273 10.5703ZM20.3789 12.0312C20.3125 12.0312 20.0977 12.0234 20.0352 12.0117V11.3281C20.0977 11.3438 20.2383 11.3438 20.3086 11.3438C20.7031 11.3438 20.9102 11.1797 21.0391 10.7578C21.0391 10.75 21.1133 10.5078 21.1133 10.5039L19.6289 6.39062H20.543L21.5859 9.73438H21.5977L22.6406 6.39062H23.5312L21.9883 10.7148C21.6367 11.7109 21.2344 12.0312 20.3789 12.0312Z" fill="white" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                        <div style={{ width: '89%', fontSize: '0.65vw', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.06vw', marginTop: '0.1vw' }}>History</div>
+                        <div style={{
+                            width: '90%',
+                            height: '24%',
+                            overflowY: 'auto',
+                            overflowX: 'hidden',
+                        }}>
+                            {invoiceData && invoiceData.filter(
+                                (invoice) => invoice.status === 'paid' || invoice.status === 'declined'
+                            ).map((invoice, index: number) => {
+                                return (
+                                    <div style={{
+                                        width: '100%',
+                                        height: '3.8vw',
+                                        backgroundColor: 'rgba(255, 255, 255, 0.18)',
+                                        borderRadius: '0.3vw',
+                                        paddingLeft: '0.5vw',
+                                        paddingTop: '0.3vw',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        marginTop: index === 0 ? '0.2vw' : '0.5vw',
+                                    }} key={index}>
+                                        <div style={{
+                                            display: 'flex',
+                                            width: '97%',
+                                            justifyContent: 'space-between',
+                                        }}>
+                                            <Checkbox
+                                                defaultChecked
+                                                label={historyType === 'sent' ? invoice.targetName : invoice.sourceName}
+                                                styles={{
+                                                    input: {
+                                                        outline: 'none',
+                                                        color: 'red',
+                                                        backgroundColor: 'rgb(100, 100, 100)',
+                                                        border: 'none',
+                                                    },
+                                                    label: {
+                                                        fontSize: '0.8vw',
+                                                        fontWeight: 500,
+                                                        letterSpacing: '0.05vw',
+                                                    }
+                                                }}
+                                                checked={invoice.status === 'pending' ? false : true}
+                                            />
+                                            <div style={{
+                                                height: '1.0vw',
+                                                fontSize: '0.7vw',
+                                                fontWeight: 500,
+                                                marginLeft: '0.5vw',
+                                                textAlign: 'right',
+                                            }}>
+                                                <NumberFormatter value={invoice.amount} thousandSeparator prefix="$ " />
+                                            </div>
+                                        </div>
+                                        <div style={{
+                                            display: 'flex',
+                                        }}>
+                                            <div style={{
+                                                marginTop: '0.2vw',
+                                                width: '70%',
+                                                height: '2.1vw',
+                                                lineHeight: '0.7vw',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis',
+                                                fontSize: '0.6vw',
+                                                fontWeight: 400,
+                                            }}>
+                                                {invoice.description}
+                                            </div>
+                                            <div style={{ gap: '0.2vw', marginLeft: '0.2vw', display: 'flex', height: '2.2vw', alignItems: 'end' }}>
+                                                <svg onClick={async () => {
+                                                    const res = await fetchNui('declineInvoicePayment', {});
+                                                }} className='clickanimation' width="1.8229166666666667vw" height="0.78125vw" viewBox="0 0 35 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <rect width="35" height="15" rx="3" fill="#FFDDDD" fill-opacity="0.28" />
+                                                    <path d="M5.51953 4.86328H7.50781C9.18359 4.86328 10.1758 5.89453 10.1758 7.67188C10.1758 9.45312 9.1875 10.5 7.50781 10.5H5.51953V4.86328ZM6.39453 5.61719V9.74219H7.42578C8.62109 9.74219 9.28125 9.01172 9.28125 7.67969C9.28125 6.35156 8.61719 5.61719 7.42578 5.61719H6.39453ZM12.6289 6.99609C12.0391 6.99609 11.625 7.44531 11.582 8.06641H13.6367C13.6172 7.4375 13.2188 6.99609 12.6289 6.99609ZM13.6328 9.29297H14.4336C14.3164 10.043 13.6055 10.5781 12.6641 10.5781C11.457 10.5781 10.7266 9.76172 10.7266 8.46484C10.7266 7.17578 11.4688 6.31641 12.6289 6.31641C13.7695 6.31641 14.4805 7.12109 14.4805 8.36719V8.65625H11.5781V8.70703C11.5781 9.42188 12.0078 9.89453 12.6836 9.89453C13.1641 9.89453 13.5195 9.65234 13.6328 9.29297ZM18.6641 7.80469H17.8594C17.7734 7.36719 17.4453 7.01953 16.8945 7.01953C16.2422 7.01953 15.8125 7.5625 15.8125 8.44531C15.8125 9.34766 16.2461 9.87109 16.9023 9.87109C17.4219 9.87109 17.7617 9.58594 17.8594 9.10938H18.6719C18.582 9.98438 17.8828 10.5781 16.8945 10.5781C15.7188 10.5781 14.9531 9.77344 14.9531 8.44531C14.9531 7.14062 15.7188 6.31641 16.8867 6.31641C17.9453 6.31641 18.5898 6.99609 18.6641 7.80469ZM19.3008 10.5V4.86328H20.1445V10.5H19.3008ZM21.0391 10.5V6.39062H21.8828V10.5H21.0391ZM21.4609 5.78906C21.1914 5.78906 20.9727 5.57422 20.9727 5.30859C20.9727 5.03906 21.1914 4.82422 21.4609 4.82422C21.7344 4.82422 21.9531 5.03906 21.9531 5.30859C21.9531 5.57422 21.7344 5.78906 21.4609 5.78906ZM22.7461 10.5V6.39062H23.5508V7.07812H23.5703C23.793 6.60938 24.2305 6.32031 24.8633 6.32031C25.7695 6.32031 26.2891 6.89844 26.2891 7.83984V10.5H25.4414V8.00391C25.4414 7.38672 25.1523 7.04688 24.5664 7.04688C23.9727 7.04688 23.5898 7.46875 23.5898 8.10547V10.5H22.7461ZM28.8242 6.99609C28.2344 6.99609 27.8203 7.44531 27.7773 8.06641H29.832C29.8125 7.4375 29.4141 6.99609 28.8242 6.99609ZM29.8281 9.29297H30.6289C30.5117 10.043 29.8008 10.5781 28.8594 10.5781C27.6523 10.5781 26.9219 9.76172 26.9219 8.46484C26.9219 7.17578 27.6641 6.31641 28.8242 6.31641C29.9648 6.31641 30.6758 7.12109 30.6758 8.36719V8.65625H27.7734V8.70703C27.7734 9.42188 28.2031 9.89453 28.8789 9.89453C29.3594 9.89453 29.7148 9.65234 29.8281 9.29297Z" fill="white" />
+                                                </svg>
+                                                <svg onClick={async () => {
+                                                    const res = await fetchNui('acceptInvoicePayment', {});
+                                                }} className='clickanimation' width="1.8229166666666667vw" height="0.78125vw" viewBox="0 0 35 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <rect width="35" height="15" rx="3" fill="#D3FFCD" fill-opacity="0.28" />
+                                                    <path d="M11.5195 4.86328H13.6328C14.7266 4.86328 15.4883 5.61719 15.4883 6.71484C15.4883 7.81641 14.7109 8.57422 13.6055 8.57422H12.3945V10.5H11.5195V4.86328ZM12.3945 5.60156V7.83984H13.3984C14.1602 7.83984 14.5938 7.42969 14.5938 6.71875C14.5938 6.00781 14.1602 5.60156 13.4023 5.60156H12.3945ZM17.2617 9.90234C17.8516 9.90234 18.3125 9.49609 18.3125 8.96094V8.63672L17.3008 8.69922C16.7969 8.73438 16.5117 8.95703 16.5117 9.30859C16.5117 9.66797 16.8086 9.90234 17.2617 9.90234ZM17.0273 10.5703C16.2227 10.5703 15.6602 10.0703 15.6602 9.33203C15.6602 8.61328 16.2109 8.17188 17.1875 8.11719L18.3125 8.05078V7.73438C18.3125 7.27734 18.0039 7.00391 17.4883 7.00391C17 7.00391 16.6953 7.23828 16.6211 7.60547H15.8242C15.8711 6.86328 16.5039 6.31641 17.5195 6.31641C18.5156 6.31641 19.1523 6.84375 19.1523 7.66797V10.5H18.3438V9.82422H18.3242C18.0859 10.2812 17.5664 10.5703 17.0273 10.5703ZM20.3789 12.0312C20.3125 12.0312 20.0977 12.0234 20.0352 12.0117V11.3281C20.0977 11.3438 20.2383 11.3438 20.3086 11.3438C20.7031 11.3438 20.9102 11.1797 21.0391 10.7578C21.0391 10.75 21.1133 10.5078 21.1133 10.5039L19.6289 6.39062H20.543L21.5859 9.73438H21.5977L22.6406 6.39062H23.5312L21.9883 10.7148C21.6367 11.7109 21.2344 12.0312 20.3789 12.0312Z" fill="white" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </div>}
+                </Transition>
+                <Transition
+                    mounted={showNewInvoicePage}
+                    transition="fade"
+                    duration={400}
+                    timingFunction="ease"
+                    onEnter={async () => {
+                        const res = await fetchNui('getContacts');
+                        setContactsData(JSON.parse(res as string));
+                        const newRes = await fetchNui('getInvoices');
+                        /* setInvoicesData(JSON.parse(newRes as string)); */
+                        setShowStartupScreen(false);
+                    }}
+                >
+                    {(styles) => <div style={{
+                        ...styles,
+                        width: '100%',
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        position: 'absolute',
+                        backgroundColor: 'rgb(0, 0, 0)',
+                        zIndex: 5,
+                    }}>
+                        <div style={{
+                            marginTop: '2vw',
+                            width: '90%',
+                            display: 'flex',
+                            alignItems: 'center',
+                        }}>
+                            <svg width="2.3958333333333335vw" height="0.9375vw" onClick={() => {
+                                setLocation({
+                                    app: "wallet",
+                                    page: {
+                                        ...location.page,
+                                        wallet: "invoice"
+                                    }
+                                });
+                                setShowNewInvoicePage(false);
+                            }} style={{
+                                cursor: 'pointer'
+                            }} viewBox="0 0 46 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M7 16.5L1.34983 9.43729C1.14531 9.18163 1.14531 8.81837 1.34983 8.56271L7 1.5" stroke="#0A84FF" stroke-width="2" stroke-linecap="round" />
+                                <path d="M18.5356 14H14.2949V3.43115H18.5137C20.3887 3.43115 21.6191 4.47119 21.6191 6.06787C21.6191 7.18848 20.7915 8.19189 19.7368 8.36768V8.42627C21.1724 8.5874 22.1392 9.60547 22.1392 11.0117C22.1392 12.8721 20.7842 14 18.5356 14ZM15.9355 4.77148V7.92822H17.7739C19.1948 7.92822 19.9785 7.34229 19.9785 6.29492C19.9785 5.31348 19.3047 4.77148 18.1182 4.77148H15.9355ZM15.9355 12.6597H18.1987C19.6782 12.6597 20.4619 12.0518 20.4619 10.9092C20.4619 9.7666 19.6562 9.18066 18.1035 9.18066H15.9355V12.6597ZM26.0576 12.8794C27.1636 12.8794 28.0278 12.1177 28.0278 11.1143V10.5063L26.1309 10.6235C25.186 10.6895 24.6514 11.1069 24.6514 11.7661C24.6514 12.4399 25.208 12.8794 26.0576 12.8794ZM25.6182 14.1318C24.1094 14.1318 23.0547 13.1943 23.0547 11.8101C23.0547 10.4624 24.0874 9.63477 25.9185 9.53223L28.0278 9.40771V8.81445C28.0278 7.95752 27.4492 7.44482 26.4824 7.44482C25.5669 7.44482 24.9956 7.88428 24.8564 8.57275H23.3623C23.4502 7.18115 24.6367 6.15576 26.541 6.15576C28.4087 6.15576 29.6025 7.14453 29.6025 8.68994V14H28.0864V12.7329H28.0498C27.603 13.5898 26.6289 14.1318 25.6182 14.1318ZM37.7544 8.94629H36.2456C36.0845 8.12598 35.4692 7.47412 34.4365 7.47412C33.2134 7.47412 32.4077 8.49219 32.4077 10.1475C32.4077 11.8394 33.2207 12.8208 34.4512 12.8208C35.4253 12.8208 36.0625 12.2861 36.2456 11.3926H37.769C37.6006 13.0332 36.2896 14.1465 34.4365 14.1465C32.2319 14.1465 30.7964 12.6377 30.7964 10.1475C30.7964 7.70117 32.2319 6.15576 34.4219 6.15576C36.4067 6.15576 37.6152 7.43018 37.7544 8.94629ZM40.5449 9.59814L43.6577 6.29492H45.5181L42.3247 9.61279L45.6426 14H43.8042L41.1895 10.5796L40.5303 11.2314V14H38.9482V3.43115H40.5303V9.59814H40.5449Z" fill="#0A84FF" />
+                            </svg>
+                        </div>
+                        <Autocomplete
+                            label="Sender"
+                            placeholder="Pick value"
+                            data={[
+                                'Me'
+                            ]}
+                            styles={{
+                                root: {
+                                    width: '90%',
+                                    marginTop: '0.5vw',
+                                    height: '4vw',
+                                },
+                                label: {
+                                    fontSize: '0.7vw',
+                                    fontWeight: 500,
+                                    letterSpacing: '0.05vw',
+                                    color: 'white',
+                                },
+                                input: {
+                                    backgroundColor: 'rgb(48, 48, 48)',
+                                    color: 'white',
+                                    border: 'none',
+                                    fontSize: '0.7vw',
+                                    height: '2vw',
+                                    minHeight: '10px',
+                                    outline: 'none',
+                                    borderRadius: '0.5vw',
+                                }
+                            }}
+                            disabled
+                            defaultValue="Me"
+                            value="Me"
+                        />
+                        <Select
+                            label="Receiver"
+                            placeholder="Select or Enter a contact or PayPal ID"
+                            data={contactsData && contactsData.map((contact) => {
+                                return {
+                                    label: contact.firstName + ' ' + contact.lastName,
+                                    value: contact.contactNumber,
+                                };
+                            })}
+                            value={billingData.receiver}
+                            onChange={(e) => {
+                                console.log(e);
+                                setBillingData({
+                                    ...billingData,
+                                    receiver: e,
+                                });
+                            }}
+                            styles={{
+                                root: {
+                                    width: '90%',
+                                    marginTop: '1vw',
+                                    height: '4vw',
+                                },
+                                label: {
+                                    fontSize: '0.7vw',
+                                    fontWeight: 500,
+                                    letterSpacing: '0.05vw',
+                                    color: 'white',
+                                },
+                                input: {
+                                    backgroundColor: 'rgb(48, 48, 48)',
+                                    color: 'white',
+                                    border: 'none',
+                                    outline: 'none',
+                                    height: '2vw',
+                                    fontSize: '0.7vw',
+                                    minHeight: '10px',
+                                    borderRadius: '0.5vw',
+                                },
+                                dropdown: {
+                                    backgroundColor: 'rgb(48, 48, 48)',
+                                    color: 'white',
+                                    border: 'none',
+                                },
+                                option: {
+                                    fontWeight: 500,
+                                    letterSpacing: '0.05vw',
+                                }
+                            }}
+                            clearable
+                            onFocus={() => fetchNui('disableControls', true)} onBlur={() => fetchNui('disableControls', false)}
+                        />
+                        <div className="divider" style={{ marginTop: '1vw' }} />
+                        <div style={{
+                            width: '90%',
+                            marginTop: '1.0vw',
+                        }}>
+                            <NumberInput
+                                label="Amount"
+                                placeholder="$ 0"
+                                styles={{
+                                    root: {
+                                        width: '50%',
+                                        height: '3vw',
+                                    },
+                                    label: {
+                                        fontSize: '0.7vw',
+                                        fontWeight: 500,
+                                        letterSpacing: '0.05vw',
+                                        color: 'white',
+                                    },
+                                    input: {
+                                        backgroundColor: 'rgb(48, 48, 48)',
+                                        color: 'white',
+                                        border: 'none',
+                                        outline: 'none',
+                                        height: '1.9vw',
+                                        fontSize: '0.9vw',
+                                        minHeight: '10px',
+                                        borderRadius: '0.5vw',
+                                    }
+                                }}
+                                value={billingData.amount}
+                                onChange={(e) => {
+                                    setBillingData({
+                                        ...billingData,
+                                        amount: Number(e),
+                                    });
+                                }}
+                                rightSection={<></>}
+                                onFocus={() => fetchNui('disableControls', true)} onBlur={() => fetchNui('disableControls', false)}
+                            />
+                        </div>
+                        <div style={{
+                            width: '90%',
+                            marginTop: '1.0vw',
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                        }}>
+                            <Select
+                                label="Number of Payments"
+                                placeholder=""
+                                defaultValue="1"
+                                data={[
+                                    '1',
+                                    '2',
+                                    '3',
+                                    '4',
+                                    '5',
+                                    '6',
+                                    '7',
+                                    '8',
+                                    '9',
+                                    '10',
+                                ]}
+                                styles={{
+                                    root: {
+                                        width: '43%',
+                                        marginTop: '0.2vw',
+                                        height: '4vw'
+                                    },
+                                    label: {
+                                        fontSize: '0.6vw',
+                                        fontWeight: 500,
+                                        letterSpacing: '0.05vw',
+                                        color: 'white',
+                                    },
+                                    input: {
+                                        backgroundColor: 'rgb(48, 48, 48)',
+                                        color: 'white',
+                                        border: 'none',
+                                        height: '1.9vw',
+                                        fontSize: '0.9vw',
+                                        minHeight: '10px',
+                                        outline: 'none',
+                                        borderRadius: '0.5vw',
+                                    },
+                                    dropdown: {
+                                        backgroundColor: 'rgb(48, 48, 48)',
+                                        color: 'white',
+                                        border: 'none',
+                                    },
+                                    option: {
+                                        fontWeight: 500,
+                                        letterSpacing: '0.05vw',
+                                    }
+                                }}
+                                clearable
+                                value={billingData.numberOfPayments}
+                                onChange={(e) => {
+                                    setBillingData({
+                                        ...billingData,
+                                        numberOfPayments: e,
+                                    });
+                                }}
+                                onFocus={() => fetchNui('disableControls', true)} onBlur={() => fetchNui('disableControls', false)}
+                                rightSection={<></>}
+                            />
+                            <Select
+                                label="Each Payment Period"
+                                placeholder=""
+                                data={[
+                                    //@ts-ignore
+                                    { label: 'Daily', value: '0' },
+                                    //@ts-ignore
+                                    { label: 'Weekly', value: '1' },
+                                    //@ts-ignore
+                                    { label: 'Monthly', value: '2' },
+                                    //@ts-ignore
+                                    { label: 'Quarterly', value: '3' },
+                                    //@ts-ignore
+                                    { label: 'Yearly', value: '4' },
+                                ]}
+                                styles={{
+                                    root: {
+                                        width: '43%',
+                                        height: '2.2vw',
+                                        marginTop: '0.2vw',
+                                    },
+                                    label: {
+                                        fontSize: '0.6vw',
+                                        fontWeight: 500,
+                                        letterSpacing: '0.05vw',
+                                        color: 'white',
+                                    },
+                                    input: {
+                                        backgroundColor: 'rgb(48, 48, 48)',
+                                        color: 'white',
+                                        border: 'none',
+                                        outline: 'none',
+                                        borderRadius: '0.5vw',
+                                        height: '1.9vw',
+                                        fontSize: '0.9vw',
+                                        minHeight: '10px',
+                                    },
+                                    dropdown: {
+                                        backgroundColor: 'rgb(48, 48, 48)',
+                                        color: 'white',
+                                        border: 'none',
+                                    },
+                                    option: {
+                                        fontWeight: 500,
+                                        letterSpacing: '0.05vw',
+                                    }
+                                }}
+                                defaultValue="Daily"
+                                clearable
+                                value={billingData.paymentTime}
+                                onChange={(e) => {
+                                    setBillingData({
+                                        ...billingData,
+                                        paymentTime: e,
+                                    });
+                                }}
+                                rightSection={<></>}
+                                onFocus={() => fetchNui('disableControls', true)} onBlur={() => fetchNui('disableControls', false)}
+                            />
+                        </div>
+                        <div className="divider" style={{ marginTop: '1vw' }} />
+                        <Textarea styles={{
+                            root: {
+                                width: '90%',
+                                height: '8vw',
+                                marginTop: '1.0vw',
+                            },
+                            label: {
+                                fontSize: '0.7vw',
+                                fontWeight: 500,
+                                letterSpacing: '0.05vw',
+                                color: 'white',
+                            },
+                            input: {
+                                backgroundColor: 'rgb(48, 48, 48)',
+                                color: 'white',
+                                border: 'none',
+                                outline: 'none',
+                                height: '5vw',
+                                borderRadius: '0.5vw',
+                                fontSize: '0.7vw',
+                                minHeight: '10px',
+                            }
+                        }} value={billingData.description} onChange={(e) => {
+                            setBillingData({
+                                ...billingData,
+                                description: e.currentTarget.value,
+                            })
+                        }} label="Description" placeholder="Enter a description" onFocus={() => fetchNui('disableControls', true)} onBlur={() => fetchNui('disableControls', false)} />
+                        <div style={{
+                            display: 'flex',
+                            gap: '2.8vw',
+                        }}>
+                            <Button style={{
+                                width: '6.09375vw',
+                                height: '2.3958333333333335vw',
+                                borderRadius: '0.3645833333333333vw',
+                                background: '#343434',
+                                fontSize: '0.7vw',
+                            }} onClick={async () => {
+                                setLocation({
+                                    app: "wallet",
+                                    page: {
+                                        ...location.page,
+                                        wallet: "invoice"
+                                    }
+                                });
+                                setShowNewInvoicePage(false);
+                            }}>
+                                Cancel
+                            </Button>
+                            <Button style={{
+                                width: '6.09375vw',
+                                height: '2.3958333333333335vw',
+                                fontSize: '0.7vw',
+                                borderRadius: '0.3645833333333333vw',
+                                background: '#394538'
+                            }} onClick={async () => {
+                                if (billingData.receiver === '' || billingData.amount === 0) {
+                                    return;
+                                }
+                                const res = await fetchNui('createInvoice', JSON.stringify(billingData));
+                                if (res) {
+                                    setLocation({
+                                        app: "wallet",
+                                        page: {
+                                            ...location.page,
+                                            wallet: "invoice"
+                                        }
+                                    });
+                                    setShowNewInvoicePage(false);
+                                } else {
+                                    fetchNui('showNoti', { app: 'settings', title: 'Wallet Error', description: 'Something Went Wrong !' });
+                                }
+                            }}>
+                                Send
+                            </Button>
+                        </div>
                     </div>}
                 </Transition>
                 {location.page.wallet !== '' && (

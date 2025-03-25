@@ -69,12 +69,27 @@ onClientCallback('transXAdqasddasdferMoney', async (client, data: string) => {
     const { amount, to } = JSON.parse(data);
     const res: WalletAccount = await MongoDB.findOne('phone_bank_user', { bankAccount: to });
     if (!res) return false;
-    const targetPlayer = await Utils.GetSourceFromCitizenId(res.citizenId);
+    const targetPlayer = await exports['qb-core'].GetPlayerByCitizenId(res.citizenId);
     const sourcePlayer = await exports['qb-core'].GetPlayer(client);
     if (!await exports['qb-core'].DoesPlayerExist(targetPlayer.PlayerData.source)) return false;
     if (sourcePlayer.PlayerData.money.bank < amount) return false;
     if (await sourcePlayer.Functions.RemoveMoney('bank', amount)) {
         targetPlayer.Functions.AddMoney('bank', amount);
+        emitNet('phone:addnotiFication', client, JSON.stringify({
+            id: generateUUid(),
+            title: 'Wallet',
+            description: `You have transferred $${amount} to ${res.name}.`,
+            app: 'settings',
+            timeout: 5000
+        }));
+        emitNet('phone:addnotiFication', targetPlayer.PlayerData.source, JSON.stringify({
+            id: generateUUid(),
+            title: 'Wallet',
+            description: `You have received $${amount} from ${sourcePlayer.PlayerData.charinfo.firstname} ${sourcePlayer.PlayerData.charinfo.lastname}.`,
+            app: 'settings',
+            timeout: 5000
+        }));
+
         await MongoDB.insertOne('phone_bank_transactions', {
             _id: generateUUid(),
             from: sourcePlayer.PlayerData.citizenid,
@@ -95,4 +110,67 @@ onClientCallback('transXAdqasddasdferMoney', async (client, data: string) => {
     } else {
         return false;
     }
+});
+
+onClientCallback('getTransactions', async (client) => {
+    const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(client);
+    const transactions = await MongoDB.findMany('phone_bank_transactions', { from: citizenId }, null, false, {
+        sort: { date: -1 }
+    });
+    return JSON.stringify(transactions);
+});
+
+onClientCallback('wallet:createInvoice', async (client, data: string) => {
+    const { description, amount, paymentTime, numberOfPayments, receiver, } = JSON.parse(data);
+    const sourcePlayer = await exports['qb-core'].GetPlayer(client);
+    const targetPlayer = await exports['qb-core'].GetPlayerByCitizenId(await Utils.GetCitizenIdByPhoneNumber(receiver));
+    if (!targetPlayer) return false;
+    if (amount < 0) return false;
+    const res = await MongoDB.insertOne('phone_bank_invoices', {
+        _id: generateUUid(),
+        from: sourcePlayer.PlayerData.citizenid,
+        to: targetPlayer.PlayerData.citizenid,
+        amount: amount,
+        status: 'pending',
+        sourceName: `${sourcePlayer.PlayerData.charinfo.firstname} ${sourcePlayer.PlayerData.charinfo.lastname}`,
+        targetName: `${targetPlayer.PlayerData.charinfo.firstname} ${targetPlayer.PlayerData.charinfo.lastname}`,
+        description: description,
+        paymentTime: paymentTime,
+        numberOfPayments: numberOfPayments,
+        date: new Date().toISOString()
+    });
+    if (res) {
+        emitNet('phone:addnotiFication', targetPlayer.PlayerData.source, JSON.stringify({
+            id: generateUUid(),
+            title: 'Wallet',
+            description: `${sourcePlayer.PlayerData.charinfo.firstname} ${sourcePlayer.PlayerData.charinfo.lastname} has sent you an invoice of $${amount}.`,
+            app: 'settings',
+            timeout: 5000
+        }));
+        return true;
+    }
+    return false;
+});
+
+onClientCallback('wallet:getInvoices', async (client, type) => {
+    const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(client);
+    if (type === 'sent') {
+        const invoices = await MongoDB.findMany('phone_bank_invoices', { from: citizenId }, null, false, {
+            sort: { date: -1 }
+        });
+        return JSON.stringify(invoices);
+    } else {
+        const invoices = await MongoDB.findMany('phone_bank_invoices', { to: citizenId }, null, false, {
+            sort: { date: -1 }
+        });
+        return JSON.stringify(invoices);
+    }
+});
+
+onClientCallback('wallet:acceptInvoicePayment', async (client, id: string) => {
+
+});
+
+onClientCallback('wallet:declineInvoicePayment', async (client, id: string) => {
+    
 });

@@ -266,6 +266,20 @@ type WalletAccount = {
     balance: number;
 }
 
+type InvoiceData = {
+    _id: string,
+    from: string,
+    to: string,
+    amount: number,
+    status: string,
+    sourceName: string,
+    targetName: string,
+    description: string,
+    paymentTime: string,
+    numberOfPayments: string,
+    date: string
+}
+
 export type {
     PhoneSettings,
     PhoneMail,
@@ -285,5 +299,6 @@ export type {
     TweetData,
     TweetProfileData,
     GarageData,
-    WalletAccount
+    WalletAccount,
+    InvoiceData
 };
