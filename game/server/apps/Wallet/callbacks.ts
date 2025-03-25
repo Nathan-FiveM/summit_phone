@@ -176,7 +176,7 @@ onClientCallback('wallet:declineInvoicePayment', async (client, id: string) => {
     if (!res) return false;
     if (res.status === 'pending') {
         await MongoDB.updateOne('phone_bank_invoices', { _id: id }, { status: 'declined' });
-        const sourcePlayer = await exports['qb-core'].GetPlayerByCitizenId(res.from);
+        const sourcePlayer = await exports['qb-core'].GetPlayerByCitizenId(res.to);
         emitNet('phone:addnotiFication', sourcePlayer.PlayerData.source, JSON.stringify({
             id: generateUUid(),
             title: 'Wallet',
