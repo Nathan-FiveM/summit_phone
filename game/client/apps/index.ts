@@ -20,3 +20,5 @@ import "./BluePage/nui";
 import "./Garage/nui";
 import "./Wallet/nui";
 import "./Wallet/callbacks";
+import "./Groups/nui";
+import "./Groups/callback";

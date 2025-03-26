@@ -280,6 +280,15 @@ type InvoiceData = {
     date: string
 }
 
+type MultiJobData = {
+    _id: string;
+    citizenId: string;
+    jobName: string;
+    gradeLevel: number;
+    jobLabel: string;
+    gradeLabel: string;
+}
+
 export type {
     PhoneSettings,
     PhoneMail,
@@ -300,5 +309,6 @@ export type {
     TweetProfileData,
     GarageData,
     WalletAccount,
-    InvoiceData
+    InvoiceData,
+    MultiJobData
 };

@@ -39,6 +39,7 @@ import Pigeon from './routers/apps/Pigeon/Pigeon';
 import BluePage from './routers/apps/BluePage/BluePage';
 import GarageApp from './routers/apps/Garage/GarageData';
 import Wallet from './routers/apps/Wallet/Wallet';
+import Groups from './routers/apps/Groups/Groups';
 
 debugData([
   {
@@ -164,6 +165,7 @@ export default function App() {
   const [bluePageEnter, setBluePageEnter] = useState(false);
   const [garagesEnter, setGaragesEnter] = useState(false);
   const [walletEnter, setWalletEnter] = useState(false);
+  const [groupsEnter, setGroupsEnter] = useState(false);
 
   return (
     <div style={{
@@ -309,6 +311,15 @@ export default function App() {
             setGaragesEnter(true);
           }} onExit={() => {
             setGaragesEnter(false);
+          }} />
+        </div>
+        <div className='fuckerMessager' id='fuckerMessager' style={{
+          visibility: groupsEnter ? 'visible' : 'hidden',
+        }}>
+          <Groups onEnter={() => {
+            setGroupsEnter(true);
+          }} onExit={() => {
+            setGroupsEnter(false);
           }} />
         </div>
         <div className='fuckerMessager' id='fuckerMessager' style={{
