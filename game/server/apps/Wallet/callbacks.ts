@@ -121,9 +121,10 @@ onClientCallback('getTransactions', async (client) => {
 });
 
 onClientCallback('wallet:createInvoice', async (client, data: string) => {
-    const { description, amount, paymentTime, numberOfPayments, receiver, } = JSON.parse(data);
+    const { description, amount, paymentTime, numberOfPayments, receiver, } = JSON.parse(data); // paymentTime = 0 for daily, 1 for weekly, 2 for monthly and 3 for quarterly and 4 for yearly
     const sourcePlayer = await exports['qb-core'].GetPlayer(client);
     const targetPlayer = await exports['qb-core'].GetPlayerByCitizenId(await Utils.GetCitizenIdByPhoneNumber(receiver));
+    console.log(description, amount, paymentTime, numberOfPayments, receiver, sourcePlayer, targetPlayer);
     if (!targetPlayer) return false;
     if (amount < 0) return false;
     const res = await MongoDB.insertOne('phone_bank_invoices', {
@@ -168,15 +169,90 @@ onClientCallback('wallet:getInvoices', async (client, type) => {
 });
 
 onClientCallback('wallet:acceptInvoicePayment', async (client, id: string) => {
+    const invoice = await MongoDB.findOne('phone_bank_invoices', { _id: id });
+    if (!invoice || invoice.status !== 'pending') return false;
 
+    const isRecurring = invoice.paymentTime !== "" && invoice.numberOfPayments !== "";
+
+    const targetPlayer = exports['qb-core'].GetPlayer(client);
+    if (!targetPlayer || targetPlayer.PlayerData.citizenid !== invoice.to) return false;
+    const sourcePlayer = await exports['qb-core'].GetPlayerByCitizenId(invoice.from);
+    if (!sourcePlayer) return false;
+
+    let updateFields;
+    if (isRecurring) {
+        if (invoice.numberOfPayments <= 0) return false;
+        const newNumberOfPayments = invoice.numberOfPayments - 1;
+        updateFields = {
+            numberOfPayments: newNumberOfPayments,
+            status: 'paid'
+        };
+    } else {
+        updateFields = { status: 'paid' };
+    }
+
+    if (!(await targetPlayer.Functions.RemoveMoney('bank', invoice.amount))) return false;
+    await sourcePlayer.Functions.AddMoney('bank', invoice.amount);
+
+    const notificationId1 = generateUUid();
+    const notificationId2 = generateUUid();
+    const transactionId1 = generateUUid();
+    const transactionId2 = generateUUid();
+
+    const notificationSource = {
+        id: notificationId1,
+        title: 'Wallet',
+        description: isRecurring
+            ? `${invoice.targetName} has accepted your invoice of $${invoice.amount}, ${updateFields.numberOfPayments} payments left.`
+            : `${invoice.targetName} has paid your invoice of $${invoice.amount}.`,
+        app: 'settings',
+        timeout: 5000
+    };
+
+    const notificationTarget = {
+        id: notificationId2,
+        title: 'Wallet',
+        description: isRecurring
+            ? `You have paid ${invoice.sourceName} an invoice of $${invoice.amount}, ${updateFields.numberOfPayments} payments left.`
+            : `You have paid ${invoice.sourceName} an invoice of $${invoice.amount}.`,
+        app: 'settings',
+        timeout: 5000
+    };
+
+    const transactionCredit = {
+        _id: transactionId1,
+        from: invoice.to,
+        to: invoice.from,
+        amount: invoice.amount,
+        type: 'credit',
+        date: new Date().toISOString()
+    };
+
+    const transactionDebit = {
+        _id: transactionId2,
+        from: invoice.from,
+        to: invoice.to,
+        amount: invoice.amount,
+        type: 'debit',
+        date: new Date().toISOString()
+    };
+
+    await Promise.all([
+        MongoDB.updateOne('phone_bank_invoices', { _id: id }, updateFields),
+        MongoDB.insertOne('phone_bank_transactions', transactionCredit),
+        MongoDB.insertOne('phone_bank_transactions', transactionDebit),
+        emitNet('phone:addnotiFication', sourcePlayer.PlayerData.source, JSON.stringify(notificationSource)),
+        emitNet('phone:addnotiFication', targetPlayer.PlayerData.source, JSON.stringify(notificationTarget))
+    ]);
+
+    return true;
 });
-
 onClientCallback('wallet:declineInvoicePayment', async (client, id: string) => {
     const res = await MongoDB.findOne('phone_bank_invoices', { _id: id });
     if (!res) return false;
     if (res.status === 'pending') {
         await MongoDB.updateOne('phone_bank_invoices', { _id: id }, { status: 'declined' });
-        const sourcePlayer = await exports['qb-core'].GetPlayerByCitizenId(res.to);
+        const sourcePlayer = await exports['qb-core'].GetPlayerByCitizenId(res.from);
         emitNet('phone:addnotiFication', sourcePlayer.PlayerData.source, JSON.stringify({
             id: generateUUid(),
             title: 'Wallet',
