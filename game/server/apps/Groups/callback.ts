@@ -1,5 +1,5 @@
 import { onClientCallback, triggerClientCallback } from "@overextended/ox_lib/server";
-import { MongoDB } from "@server/sv_main";
+import { Framework, MongoDB } from "@server/sv_main";
 import { generateUUid } from "@shared/utils";
 
 onClientCallback('groups:getmultiPleJobs', async (source: number) => {
@@ -24,7 +24,6 @@ onClientCallback('groups:changeJobOfPlayer', async (source: number, data: string
         const res = await triggerClientCallback('groups:toggleDuty', source);
         return true
     } else {
-        console.log('Failed to change job of player');
         const res = await MongoDB.deleteOne('phone_multijobs', { citizenId: sourcePlayer.PlayerData.citizenid, jobName });
         return false;
     }
@@ -59,19 +58,18 @@ interface EmploymentGroup {
 }
 
 // State
-const QBCore = exports['qb-core'].GetCoreObject();
 const Players: { [key: number]: boolean } = {};
 const EmploymentGroup: { [key: number]: EmploymentGroup } = {};
-const appIdentifier: string = 'summit_groups';
 
 // Export handler
 function exportHandler(exportName: string, func: (...args: any[]) => any): void {
     on(`__cfx_export_qb-phone_${exportName}`, (setCB: (cb: (...args: any[]) => any) => void) => setCB(func));
+    on(`__cfx_export_summit_groups_${exportName}`, (setCB: (cb: (...args: any[]) => any) => void) => setCB(func));
 }
 
 // Utility functions
 function getPlayerCharName(src: number): string {
-    const player = QBCore.Functions.GetPlayer(src) as PlayerData;
+    const player = Framework.Functions.GetPlayer(src) as PlayerData;
     return `${player.PlayerData.charinfo.firstname} ${player.PlayerData.charinfo.lastname}`;
 }
 
@@ -87,12 +85,13 @@ exportHandler('NotifyGroup', notifyGroup);
 function pNotifyGroup(group: number, header: string, msg: string, icon?: string, colour?: string, length?: number): void {
     if (!group || !EmploymentGroup[group]) return;
     for (const member of EmploymentGroup[group].members) {
-        exports['lb-phone'].SendNotification(member.Player, {
-            app: appIdentifier,
+        emitNet('phone:addnotiFication', member.Player, JSON.stringify({
+            id: generateUUid(),
             title: header || 'Missing Title',
-            content: msg || 'Empty msg',
-            icon: `https://cfx-nui-${GetCurrentResourceName()}/ui/assets/groupsapp.png`,
-        });
+            description: msg || 'Empty msg',
+            app: 'settings',
+            timeout: 5000
+        }));
     }
 }
 exports('pNotifyGroup', pNotifyGroup);
@@ -171,7 +170,7 @@ async function destroyGroup(groupID: number) {
             Players[member] = false;
         }
     }
-    exports['summit_groups'].resetJobStatus(groupID);
+    resetJobStatus(groupID);
     emit('summit_groups:server:GroupDeleted', groupID, members);
     emit('qb-phone:server:GroupDeleted', groupID, members);
     delete EmploymentGroup[groupID];
@@ -308,23 +307,24 @@ onClientCallback('summit_groups:server:jobcenter_CreateJobGroup', async (source,
     return true;
 });
 
-onClientCallback('summit_groups:server:jobcenter_DeleteGroup', (source, data: { delete: number }) => {
+onClientCallback('summit_groups:server:jobcenter_DeleteGroup', (source, data) => {
     const src = source as number;
     if (!Players[src]) return;
-    if (getGroupLeader(data.delete) === src) destroyGroup(data.delete);
-    else removePlayerFromGroup(src, data.delete);
+    if (getGroupLeader(Number(data)) === src) destroyGroup(Number(data));
+    else removePlayerFromGroup(src, Number(data));
 });
 
 onClientCallback('summit_groups:server:jobcenter_JoinTheGroup', async (source, data: { id: number }) => {
     const src = source as number;
-    const player = QBCore.Functions.GetPlayer(src) as PlayerData;
+    const player = await Framework.Functions.GetPlayer(src) as PlayerData;
     if (Players[src]) {
-        exports['lb-phone'].SendNotification(src, {
-            app: appIdentifier,
-            title: 'Already In a Group',
-            content: 'You are already a part of a group!',
-            icon: `https://cfx-nui-${GetCurrentResourceName()}/ui/assets/groupsapp.png`,
-        });
+        emitNet('phone:addnotiFication', src, JSON.stringify({
+            id: generateUUid(),
+            title: 'Already Joined',
+            description: `You have already joined a group.`,
+            app: 'settings',
+            timeout: 5000
+        }));
         return;
     }
     const name = getPlayerCharName(src);
@@ -333,12 +333,13 @@ onClientCallback('summit_groups:server:jobcenter_JoinTheGroup', async (source, d
     EmploymentGroup[data.id].Users += 1;
     Players[src] = true;
     await triggerClientCallback('summit_groups:client:UpdateGroupId', src, data.id);
-    exports['lb-phone'].SendNotification(src, {
-        app: appIdentifier,
-        title: 'Joined',
-        content: 'You joined the group',
-        icon: `https://cfx-nui-${GetCurrentResourceName()}/ui/assets/groupsapp.png`,
-    });
+    emitNet('phone:addnotiFication', src, JSON.stringify({
+        id: generateUUid(),
+        title: 'Joined Group',
+        description: `You have joined the group.`,
+        app: 'settings',
+        timeout: 5000
+    }));
     await triggerClientCallback('summit_groups:client:RefreshGroupsApp', -1, EmploymentGroup);
 });
 
@@ -349,12 +350,20 @@ function getGroupStages(groupID: number): any[] | undefined {
 exports('GetGroupStages', getGroupStages);
 exportHandler('GetGroupStages', getGroupStages);
 
-onClientCallback('summit_groups:server:getAllGroups', (src) => {
+onClientCallback('summit_groups:server:getAllGroups', async (src) => {
+    const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(src);
     if (Players[src]) {
-        const groupID = getGroupByMembers(src)!;
-        return [EmploymentGroup, true, getJobStatus(groupID), getGroupStages(groupID)];
+        return JSON.stringify({
+            data: EmploymentGroup,
+            citizenId,
+            src
+        });
     }
-    return [EmploymentGroup, false, undefined, undefined];
+    return JSON.stringify({
+        data: EmploymentGroup,
+        citizenId,
+        src
+    });
 });
 
 onClientCallback('summit_groups:server:jobcenter_CheckPlayerNames', (_src, csn: number) => {
@@ -378,14 +387,14 @@ exportHandler('isGroupTemp', isGroupTemp);
 
 async function createGroup(src: number, name: string, password?: string) {
     if (!src || !name) return;
-    const player = QBCore.Functions.GetPlayer(src) as PlayerData;
+    const player = await Framework.Functions.GetPlayer(src) as PlayerData;
     Players[src] = true;
     const id = Object.keys(EmploymentGroup).length + 1;
     EmploymentGroup[id] = {
         id,
         status: 'WAITING',
         GName: name,
-        GPass: password || QBCore.Shared.RandomInt(7),
+        GPass: password || Framework.Shared.RandomInt(7),
         GLogo: '',
         Users: 1,
         leader: src,
@@ -400,14 +409,9 @@ async function createGroup(src: number, name: string, password?: string) {
 exports('CreateGroup', createGroup);
 exportHandler('CreateGroup', createGroup);
 
-onClientCallback('summit_groups:server:GetPlayerData', (src) => {
-    const player = QBCore.Functions.GetPlayer(src) as PlayerData;
-    return [player.PlayerData.citizenid, player.PlayerData.source];
-});
-
 onClientCallback('summit_groups:server:getStageFromApp', async () => {
     const src = source as number;
-    const player = QBCore.Functions.GetPlayer(src);
+    const player = await Framework.Functions.GetPlayer(src);
     if (!player) return;
     const group = getGroupByMembers(src);
     if (!group) return;

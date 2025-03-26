@@ -29,7 +29,7 @@ export default function InputDialog(props: { show: boolean, title: string, descr
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    borderRadius: '13px',
+                    borderRadius: '0.6770833333333334vw',
                     backgroundColor: '#3C3C3C'
                 }}>
                     <div style={{
@@ -51,7 +51,7 @@ export default function InputDialog(props: { show: boolean, title: string, descr
                         textAlign: 'center',
                         color: '#FFF',
                         marginTop: '0.8vw',
-                        fontSize: '11px',
+                        fontSize: '0.5729166666666666vw',
                         fontStyle: 'normal',
                         fontWeight: 500,
                         lineHeight: 'normal',
@@ -68,6 +68,7 @@ export default function InputDialog(props: { show: boolean, title: string, descr
                             height: '1.3vw',
                             backgroundColor: 'rgba(182, 182, 182, 0.12)',
                             color: '#FFF',
+                            fontSize: '0.7vw',
                             border: 'none',
                             borderRadius: '0.2604166666666667vw',
                             textAlign: 'center',

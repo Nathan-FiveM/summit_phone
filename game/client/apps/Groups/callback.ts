@@ -1,5 +1,6 @@
 import { NUI } from "@client/classes/NUI";
 import { onServerCallback, triggerServerCallback } from "@overextended/ox_lib/client";
+import { generateUUid } from "@shared/utils";
 
 onServerCallback('groups:toggleDuty', async () => {
     emitNet('QBCore:ToggleDuty');
@@ -26,9 +27,6 @@ interface CreateBlipData {
     routeColor?: number;
 }
 // State variables
-let added: boolean | null = null;
-let errorMessage: string | null = null;
-let removed: boolean | null = null;
 let isGroupLeader: boolean = false;
 let inJob: boolean = false;
 let GroupID: number = 0;
@@ -113,11 +111,11 @@ onServerCallback('summit_groups:client:RefreshGroupsApp', (groups: any, finish: 
 
 onServerCallback('summit_groups:client:AddGroupStage', (_: any, stage: string) => {
     inJob = true;
-    exports['lb-phone'].SendCustomAppMessage(appIdentifier, { action: 'addGroupStage', status: stage });
+    NUI.sendReactMessage('groups:addGroupStage', stage);
 });
 
 onServerCallback('summit_groups:client:GetGroupsStatus', (stage: string) => {
-    exports['lb-phone'].SendCustomAppMessage(appIdentifier, { action: 'addGroupStage', status: stage });
+    NUI.sendReactMessage('groups:addStatusPage', stage);
 });
 
 RegisterNuiCallback('getStatusPage', async (_data: any, cb: Function) => {
@@ -143,40 +141,12 @@ RegisterNuiCallback('jobcenter_JoinTheGroup', async (data: any, cb: Function) =>
 
 RegisterNuiCallback('jobcenter_leave_grouped', async (data: any, cb: Function) => {
     if (!data) return;
-    /*  exports['lb-phone'].SetPopUp({
-         title: 'Are You Sure?',
-         description: 'Are you sure you want to leave the group?',
-         buttons: [
-             { title: 'Cancel', color: 'red' },
-             {
-                 title: 'Confirm',
-                 color: 'blue',
-                 cb: () => {
-                     isGroupLeader = false;
-                     await triggerServerCallback('summit_groups:server:jobcenter_leave_grouped', 1, data);
-                 },
-             },
-         ],
-     }); */
+    await triggerServerCallback('summit_groups:server:jobcenter_leave_grouped', 1, data);
     cb('ok');
 });
 
 RegisterNuiCallback('jobcenter_DeleteGroup', async (data: any, cb: Function) => {
-    /* exports['lb-phone'].SetPopUp({
-        title: 'Are You Sure?',
-        description: 'Are you sure you want to delete the group?',
-        buttons: [
-            { title: 'Cancel', color: 'red' },
-            {
-                title: 'Confirm',
-                color: 'blue',
-                cb: () => {
-                    isGroupLeader = false;
-                    await triggerServerCallback('summit_groups:server:jobcenter_DeleteGroup', data);
-                },
-            },
-        ],
-    }); */
+    await triggerServerCallback('summit_groups:server:jobcenter_DeleteGroup', 1, data);
     cb('ok');
 });
 
@@ -190,12 +160,14 @@ RegisterNuiCallback('jobcenter_CheckPlayerNames', async (data: { id: number }, c
 });
 
 RegisterNuiCallback('jobcenter_GroupBusy', (_data: any, cb: Function) => {
-    /*  exports['lb-phone'].SendNotification({
-         app: appIdentifier,
-         title: 'Busy Groups',
-         content: 'The Group is busy!',
-     });
-     cb('ok'); */
+    NUI.sendReactMessage('addNotification', {
+        id: generateUUid(),
+        title: 'Busy Groups',
+        description: 'The Group is busy!',
+        app: 'settings',
+        timeout: 5000
+    });
+    cb('ok');
 });
 
 // Exports
