@@ -1,6 +1,211 @@
-import { onServerCallback } from "@overextended/ox_lib/client";
+import { onServerCallback, triggerServerCallback } from "@overextended/ox_lib/client";
 
 onServerCallback('groups:toggleDuty', async () => {
     emitNet('QBCore:ToggleDuty');
     return true;
 });
+
+// Interfaces
+interface BlipData {
+    name: string;
+    blip: number;
+}
+
+interface CreateBlipData {
+    entity?: number;
+    netId?: number;
+    radius?: number;
+    coords?: { x: number; y: number; z: number };
+    color?: number;
+    alpha?: number;
+    sprite?: number;
+    scale?: number;
+    label?: string;
+    route?: boolean;
+    routeColor?: number;
+}
+// State variables
+let added: boolean | null = null;
+let errorMessage: string | null = null;
+let removed: boolean | null = null;
+let isGroupLeader: boolean = false;
+let inJob: boolean = false;
+let GroupID: number = 0;
+let GroupBlips: BlipData[] = [];
+const appIdentifier: string = 'summit_groups';
+
+// Utility function to simulate Lua's export handler
+function exportHandler(exportName: string, func: (...args: any[]) => any): void {
+    on(`__cfx_export_qb-phone_${exportName}`, (setCB: (cb: (...args: any[]) => any) => void) => setCB(func));
+}
+
+// Blip management
+function findBlipByName(name: string): number | undefined {
+    return GroupBlips.findIndex((blip) => blip?.name === name);
+}
+
+onServerCallback('groups:removeBlip', (name: string) => {
+    const index = findBlipByName(name);
+    if (index !== undefined && GroupBlips[index]) {
+        const blip = GroupBlips[index].blip;
+        SetBlipRoute(blip, false);
+        RemoveBlip(blip);
+        GroupBlips[index] = undefined as any; // TypeScript workaround
+    }
+});
+
+onServerCallback('groups:phoneNotification', (data: { title: string; text: string }) => {
+    exports['lb-phone'].SendNotification({
+        app: appIdentifier,
+        title: data.title,
+        content: data.text,
+    });
+});
+
+onServerCallback('groups:createBlip', (name: string, data: CreateBlipData) => {
+    if (!data) {
+        console.log('Invalid Data was passed to the create blip event');
+        return;
+    }
+    const existingIndex = findBlipByName(name);
+    if (existingIndex !== undefined) emit('groups:removeBlip', name);
+
+    let blip: number;
+    if (data.entity) blip = AddBlipForEntity(data.entity);
+    else if (data.netId) blip = AddBlipForEntity(NetworkGetEntityFromNetworkId(data.netId));
+    else if (data.radius) blip = AddBlipForRadius(data.coords!.x, data.coords!.y, data.coords!.z, data.radius);
+    else blip = AddBlipForCoord(data.coords!.x, data.coords!.y, data.coords!.z);
+
+    const color = data.color ?? 1;
+    const alpha = data.alpha ?? 255;
+    if (!data.radius) {
+        const sprite = data.sprite ?? 1;
+        const scale = data.scale ?? 0.7;
+        const label = data.label ?? 'NO LABEL FOUND';
+        SetBlipSprite(blip, sprite);
+        SetBlipScale(blip, scale);
+        BeginTextCommandSetBlipName('STRING');
+        AddTextComponentSubstringPlayerName(label);
+        EndTextCommandSetBlipName(blip);
+    }
+    SetBlipColour(blip, color);
+    SetBlipAlpha(blip, alpha);
+    if (data.route) {
+        SetBlipRoute(blip, true);
+        SetBlipRouteColour(blip, data.routeColor!);
+    }
+    GroupBlips.push({ name, blip });
+});
+
+RegisterNuiCallback('GetGroupsApp', async (_data: any, cb: Function) => {
+    if (LocalPlayer.state.isLoggedIn) {
+        const getGroups = await triggerServerCallback('summit_groups:server:getAllGroups', 1);
+        cb(getGroups);
+    }
+});
+
+onServerCallback('summit_groups:client:RefreshGroupsApp', (groups: any, finish: boolean) => {
+    if (finish) inJob = false;
+    if (inJob) return;
+    exports['lb-phone'].SendCustomAppMessage(appIdentifier, { action: 'refreshApp', data: groups });
+});
+
+onServerCallback('summit_groups:client:AddGroupStage', (_: any, stage: string) => {
+    inJob = true;
+    exports['lb-phone'].SendCustomAppMessage(appIdentifier, { action: 'addGroupStage', status: stage });
+});
+
+onServerCallback('summit_groups:client:GetGroupsStatus', (stage: string) => {
+    exports['lb-phone'].SendCustomAppMessage(appIdentifier, { action: 'addGroupStage', status: stage });
+});
+
+RegisterNuiCallback('getStatusPage', async (_data: any, cb: Function) => {
+    await triggerServerCallback('summit_groups:server:getStageFromApp', 1);
+    cb('ok');
+});
+
+onServerCallback('summit_groups:client:UpdateGroupId', (id: number) => {
+    GroupID = id;
+    if (id === 0) isGroupLeader = false;
+});
+
+RegisterNuiCallback('jobcenter_CreateJobGroup', async (data: any, cb: Function) => {
+    await triggerServerCallback('summit_groups:server:jobcenter_CreateJobGroup', 1, data);
+    isGroupLeader = true;
+    cb('ok');
+});
+
+RegisterNuiCallback('jobcenter_JoinTheGroup', async (data: any, cb: Function) => {
+    await triggerServerCallback('summit_groups:server:jobcenter_JoinTheGroup', 1, data);
+    cb('ok');
+});
+
+RegisterNuiCallback('jobcenter_leave_grouped', async (data: any, cb: Function) => {
+    if (!data) return;
+    /*  exports['lb-phone'].SetPopUp({
+         title: 'Are You Sure?',
+         description: 'Are you sure you want to leave the group?',
+         buttons: [
+             { title: 'Cancel', color: 'red' },
+             {
+                 title: 'Confirm',
+                 color: 'blue',
+                 cb: () => {
+                     isGroupLeader = false;
+                     await triggerServerCallback('summit_groups:server:jobcenter_leave_grouped', 1, data);
+                 },
+             },
+         ],
+     }); */
+    cb('ok');
+});
+
+RegisterNuiCallback('jobcenter_DeleteGroup', async (data: any, cb: Function) => {
+    /* exports['lb-phone'].SetPopUp({
+        title: 'Are You Sure?',
+        description: 'Are you sure you want to delete the group?',
+        buttons: [
+            { title: 'Cancel', color: 'red' },
+            {
+                title: 'Confirm',
+                color: 'blue',
+                cb: () => {
+                    isGroupLeader = false;
+                    await triggerServerCallback('summit_groups:server:jobcenter_DeleteGroup', data);
+                },
+            },
+        ],
+    }); */
+    cb('ok');
+});
+
+on('onResourceStart', (resource: string) => {
+    if (resource !== GetCurrentResourceName()) return;
+});
+
+RegisterNuiCallback('jobcenter_CheckPlayerNames', async (data: { id: number }, cb: Function) => {
+    const hasName = await triggerServerCallback('summit_groups:server:jobcenter_CheckPlayerNames', 1, data.id);
+    cb(hasName);
+});
+
+RegisterNuiCallback('jobcenter_GroupBusy', (_data: any, cb: Function) => {
+    /*  exports['lb-phone'].SendNotification({
+         app: appIdentifier,
+         title: 'Busy Groups',
+         content: 'The Group is busy!',
+     });
+     cb('ok'); */
+});
+
+// Exports
+function IsGroupLeader(): boolean {
+    return isGroupLeader;
+}
+exports('IsGroupLeader', IsGroupLeader);
+exportHandler('IsGroupLeader', IsGroupLeader);
+
+function GetGroupID(): number {
+    return GroupID;
+}
+exports('GetGroupID', GetGroupID);
+exportHandler('GetGroupID', GetGroupID);

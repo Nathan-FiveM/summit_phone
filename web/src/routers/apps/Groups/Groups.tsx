@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { CSSTransition } from "react-transition-group";
 import { usePhone } from "../../../store/store";
 import Navigation from "./Navigation";
-import { Button, Checkbox, Transition } from "@mantine/core";
+import { Checkbox, Transition } from "@mantine/core";
 import { fetchNui } from "../../../hooks/fetchNui";
 import { MultiJobData } from "../../../../../types/types";
 import Title from "../../components/Title";
@@ -24,8 +24,24 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
             mountOnEnter
             onEntering={async () => {
                 props.onEnter();
+                setLocation({
+                    app: 'groups',
+                    page: {
+                        ...location.page,
+                        groups: 'groups'
+                    }
+                });
             }}
-            onExited={props.onExit}
+            onExited={() => {
+                props.onExit();
+                setLocation({
+                    app: location.app,
+                    page: {
+                        ...location.page,
+                        groups: ''
+                    }
+                });
+            }}
         >
             <div
                 ref={nodeRef}
@@ -40,13 +56,14 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                 className="settings"
             >
                 <Transition
-                    mounted={location.app === 'groups' && location.page.groups === ''}
+                    mounted={location.app === 'groups' && location.page.groups === 'groups'}
                     transition="scale-x"
                     duration={400}
                     timingFunction="ease"
                     onEnter={async () => {
-                        /* const res = await fetchNui('getProfile', phoneSettings.pigeonIdAttached);
-                        setProfileData(JSON.parse(res as string)) */
+                        const res = await fetchNui('GetGroupsApp', "Ok");
+                        const [groupData, isLeader, jobStatus, jobStage] = res;
+                        console.log(groupData, isLeader, inJob);
                     }}
                 >
                     {(styles) => <div style={{
