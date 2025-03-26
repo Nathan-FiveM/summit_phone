@@ -35,7 +35,8 @@
   "dependencies": {
     "@citizenfx/three": "^0.100.0",
     "@overextended/ox_lib": "^3.28.1",
-    "cron": "^3.2.1"
+    "@types/luxon": "^3.4.2",
+    "luxon": "^3.6.0"
   },
   "packageManager": "pnpm@9.15.0+sha512.76e2379760a4328ec4415815bcd6628dee727af3779aaa4c914e3944156c4299921a89f976381ee107d41f12cfa4b66681ca9c718f0668fa0831ed4c6d8ba56c"
 }
