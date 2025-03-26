@@ -8,7 +8,7 @@ import { callHistoryManager } from "./callHistoryManager";
 import { Settings } from "../Settings/class";
 
 onClientCallback("summit_phone:server:call", async (source: number, data: string) => {
-  const { number, _id } = JSON.parse(data);
+  const { number, _id, volume } = JSON.parse(data);
   const targetPlayer = await Utils.GetPlayerFromPhoneNumber(number);
   const targetData: PhoneContacts = await MongoDB.findOne('phone_contacts', { _id });
   const sourceData: PhoneContacts = await MongoDB.findOne('phone_contacts', {
@@ -39,7 +39,7 @@ onClientCallback("summit_phone:server:call", async (source: number, data: string
     }));
     return false;
   }
-  
+
   if (callManager.isPlayerInCall(targetSource)) {
     emitNet("phone:addnotiFication", source, JSON.stringify({
       id: generateUUid(),
@@ -118,7 +118,7 @@ onClientCallback("summit_phone:server:call", async (source: number, data: string
 
   const callId = callManager.createCall(hostParticipant);
 
-  callManager.createRingTone(targetSource, String(Settings.ringtone.get(targetCitizenId)?.current));
+  callManager.createRingTone(targetSource, String(Settings.ringtone.get(targetCitizenId)?.current), volume);
   callManager.addPendingInvitation(callId, targetSource, () => {
     emitNet("phone:addnotiFication", source, JSON.stringify({
       id: generateUUid(),
@@ -242,7 +242,7 @@ onClientCallback("summit_phone:server:endCall", async (source: number, data: str
 });
 
 onClientCallback("summit_phone:server:addPlayerToCall", async (source: number, data: string) => {
-  const { contactNumber, _id } = JSON.parse(data);
+  const { contactNumber, _id, volume } = JSON.parse(data);
   const targetData: PhoneContacts = await MongoDB.findOne('phone_contacts', { _id });
   const sourceData: PhoneContacts = await MongoDB.findOne('phone_contacts', {
     contactNumber: await Utils.GetPhoneNumberBySource(source),
@@ -339,7 +339,7 @@ onClientCallback("summit_phone:server:addPlayerToCall", async (source: number, d
     }));
     return false;
   }
-  callManager.createRingTone(targetSource, String(Settings.ringtone.get(targetCitizenId)?.current));
+  callManager.createRingTone(targetSource, String(Settings.ringtone.get(targetCitizenId)?.current), volume);
   callManager.addPendingInvitation(Number(callId), targetSource, () => {
     emitNet("phone:addnotiFication", source, JSON.stringify({
       id: generateUUid(),
@@ -424,7 +424,7 @@ onClientCallback('phone:server:getDataFromDBwithNumber', async (source: number, 
 });
 
 onClientCallback('phone:server:toggleBlockNumber', async (source: number, data: string) => {
-  const parsedData : PhoneContacts = JSON.parse(data);
+  const parsedData: PhoneContacts = JSON.parse(data);
   const personalNumber = parsedData.personalNumber;
   const contactNumber = parsedData.contactNumber;
   let IsNumberBlocked = await Utils.IsNumberBlocked(personalNumber, contactNumber);

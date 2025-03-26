@@ -35,7 +35,7 @@ export default function Phone() {
         });
         return contact;
     }
-    const [volume, setVolume] = useLocalStorage({
+    const [volume] = useLocalStorage({
         key: 'volume',
         defaultValue: 50,
     });

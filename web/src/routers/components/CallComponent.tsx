@@ -8,6 +8,7 @@ import { PhoneContacts } from "../../../../types/types";
 import Searchbar from "./SearchBar";
 import AlphabetSearch from "./AlphabetSearch";
 import { Transition } from "@mantine/core";
+import { useLocalStorage } from "@mantine/hooks";
 
 export default function CallComponent() {
     const { inCall, calling, setInCall, setCalling } = usePhone();
@@ -52,7 +53,7 @@ export default function CallComponent() {
         setInCall(false);
     });
 
-    useNuiEvent('upDateInterFaceName', (name:string)=>{
+    useNuiEvent('upDateInterFaceName', (name: string) => {
         setCallingData({
             ...callingData,
             targetName: name
@@ -80,6 +81,10 @@ export default function CallComponent() {
     const [phoneContacts, setPhoneContacts] = useState<{ [key: string]: PhoneContacts[] }>({});
     const [searchValue, setSearchValue] = useState('');
     const [alphabetArrange, setAlphabetArrange] = useState<string>('');
+    const [volume] = useLocalStorage({
+        key: 'volume',
+        defaultValue: 50,
+    });
 
     return (
         <Transition
@@ -209,7 +214,7 @@ export default function CallComponent() {
                             alignItems: 'center',
                             borderRadius: '50%',
                         }} onClick={() => {
-                            if (inCall){
+                            if (inCall) {
                                 setShowContactsPortal(true);
                             }
                         }}>
@@ -392,8 +397,11 @@ export default function CallComponent() {
                                                         alignSelf: 'stretch',
                                                         cursor: 'pointer',
                                                     }} key={index} onClick={() => {
-                                                        fetchNui('addPlayerToCall', JSON.stringify(contact)).then((res:boolean)=>{
-                                                            if (res){
+                                                        fetchNui('addPlayerToCall', JSON.stringify({
+                                                            ...contact,
+                                                            volume
+                                                        })).then((res: boolean) => {
+                                                            if (res) {
                                                                 setShowContactsPortal(false);
                                                             }
                                                         })

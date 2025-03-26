@@ -134,10 +134,11 @@ class CallManager {
         return this.calls.values();
     }
 
-    public async createRingTone(source: any, ringtoneLink:string) {
+    public async createRingTone(source: any, ringtoneLink: string, volume: number) {
         const ped = GetPlayerPed(source);
         const pedId = NetworkGetNetworkIdFromEntity(ped);
         const soundId = await exports['summit_soundhandler'].StartAttachSound(ringtoneLink, pedId, 5);
+        exports['summit_soundhandler'].ChangeVolume(soundId, Math.floor(volume / 100));
         exports['summit_soundhandler'].ChangeLoop(soundId, true);
         this.ringToneManger.set(source, soundId);
     }

@@ -51,6 +51,7 @@ onServerCallback('groups:removeBlip', (name: string) => {
         RemoveBlip(blip);
         GroupBlips[index] = undefined as any; // TypeScript workaround
     }
+    return true;
 });
 
 onServerCallback('groups:phoneNotification', (data: { title: string; text: string }) => {
@@ -59,6 +60,7 @@ onServerCallback('groups:phoneNotification', (data: { title: string; text: strin
         title: data.title,
         content: data.text,
     });
+    return true;
 });
 
 onServerCallback('groups:createBlip', (name: string, data: CreateBlipData) => {
@@ -94,6 +96,7 @@ onServerCallback('groups:createBlip', (name: string, data: CreateBlipData) => {
         SetBlipRouteColour(blip, data.routeColor!);
     }
     GroupBlips.push({ name, blip });
+    return true;
 });
 
 RegisterNuiCallback('GetGroupsApp', async (_data: any, cb: Function) => {
@@ -107,15 +110,18 @@ onServerCallback('summit_groups:client:RefreshGroupsApp', (groups: any, finish: 
     if (finish) inJob = false;
     if (inJob) return;
     NUI.sendReactMessage('groups:refreshApp', groups);
+    return true;
 });
 
 onServerCallback('summit_groups:client:AddGroupStage', (_: any, stage: string) => {
     inJob = true;
     NUI.sendReactMessage('groups:addGroupStage', stage);
+    return true;
 });
 
 onServerCallback('summit_groups:client:GetGroupsStatus', (stage: string) => {
     NUI.sendReactMessage('groups:addStatusPage', stage);
+    return true;
 });
 
 RegisterNuiCallback('getStatusPage', async (_data: any, cb: Function) => {
@@ -126,6 +132,7 @@ RegisterNuiCallback('getStatusPage', async (_data: any, cb: Function) => {
 onServerCallback('summit_groups:client:UpdateGroupId', (id: number) => {
     GroupID = id;
     if (id === 0) isGroupLeader = false;
+    return true;
 });
 
 RegisterNuiCallback('groups:CreateJobGroup', async (data: any, cb: Function) => {
