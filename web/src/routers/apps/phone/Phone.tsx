@@ -12,6 +12,7 @@ import AlphabetSearch from "../../components/AlphabetSearch";
 import SavedContact from "./SavedContact";
 import SaveOrEdit from "./SaveOrEdit";
 import dayjs from "dayjs";
+import { useLocalStorage } from "@mantine/hooks";
 
 export default function Phone() {
     const nodeRef = useRef(null);
@@ -34,6 +35,10 @@ export default function Phone() {
         });
         return contact;
     }
+    const [volume, setVolume] = useLocalStorage({
+        key: 'volume',
+        defaultValue: 50,
+    });
 
     return (
         <CSSTransition nodeRef={nodeRef} in={location.app === 'phone'} timeout={450} classNames="enterandexitfromtop" unmountOnExit mountOnEnter onEntering={async () => {
@@ -92,6 +97,7 @@ export default function Phone() {
                             await fetchNui('callFromDialPad', JSON.stringify({
                                 number: dialedNumber,
                                 citizenId: phoneSettings._id,
+                                volume
                             }));
                         }} />
                     </div>}
@@ -168,6 +174,7 @@ export default function Phone() {
                                                 await fetchNui('callFromDialPad', JSON.stringify({
                                                     number,
                                                     citizenId: phoneSettings._id,
+                                                    volume
                                                 }));
                                             }}>
                                                 <div style={{
@@ -226,24 +233,8 @@ export default function Phone() {
                                                 setLocation({
                                                     app: location.app,
                                                     page: {
-                                                        phone: 'savedcontact',
-                                                        messages: location.page.messages,
-                                                        settings: location.page.settings,
-                                                        services: location.page.services,
-                                                        mail: location.page.mail,
-                                                        wallet: location.page.wallet,
-                                                        calulator: location.page.calulator,
-                                                        appstore: location.page.appstore,
-                                                        camera: location.page.camera,
-                                                        gallery: location.page.gallery,
-                                                        pigeon: location.page.pigeon,
-                                                        darkchat: location.page.darkchat,
-                                                        garages: location.page.garages,
-                                                        notes: location.page.notes,
-                                                        houses: location.page.houses,
-                                                        bluepages: location.page.bluepages,
-                                                        pixie: location.page.pixie,
-                                                        groups: location.page.groups,
+                                                        ...location.page,
+                                                        phone: 'savedcontact'
                                                     }
                                                 })
                                             }} className='clickanimation' xmlns="http://www.w3.org/2000/svg" width="0.88125vw" height="0.88125vw" viewBox="0 0 15 15" fill="none">
@@ -310,24 +301,8 @@ export default function Phone() {
                             setLocation({
                                 app: location.app,
                                 page: {
-                                    phone: 'savedcontact',
-                                    messages: location.page.messages,
-                                    settings: location.page.settings,
-                                    services: location.page.services,
-                                    mail: location.page.mail,
-                                    wallet: location.page.wallet,
-                                    calulator: location.page.calulator,
-                                    appstore: location.page.appstore,
-                                    camera: location.page.camera,
-                                    gallery: location.page.gallery,
-                                    pigeon: location.page.pigeon,
-                                    darkchat: location.page.darkchat,
-                                    garages: location.page.garages,
-                                    notes: location.page.notes,
-                                    houses: location.page.houses,
-                                    bluepages: location.page.bluepages,
-                                    pixie: location.page.pixie,
-                                    groups: location.page.groups,
+                                    ...location.page,
+                                    phone: 'savedcontact'
                                 }
                             })
                         }}>
@@ -386,24 +361,8 @@ export default function Phone() {
                                                         setLocation({
                                                             app: location.app,
                                                             page: {
-                                                                phone: 'savedcontact',
-                                                                messages: location.page.messages,
-                                                                settings: location.page.settings,
-                                                                services: location.page.services,
-                                                                mail: location.page.mail,
-                                                                wallet: location.page.wallet,
-                                                                calulator: location.page.calulator,
-                                                                appstore: location.page.appstore,
-                                                                camera: location.page.camera,
-                                                                gallery: location.page.gallery,
-                                                                pigeon: location.page.pigeon,
-                                                                darkchat: location.page.darkchat,
-                                                                garages: location.page.garages,
-                                                                notes: location.page.notes,
-                                                                houses: location.page.houses,
-                                                                bluepages: location.page.bluepages,
-                                                                pixie: location.page.pixie,
-                                                                groups: location.page.groups,
+                                                                ...location.page,
+                                                                phone: 'savedcontact'
                                                             }
                                                         })
                                                     }}>
@@ -567,24 +526,8 @@ export default function Phone() {
                                                             setLocation({
                                                                 app: location.app,
                                                                 page: {
-                                                                    phone: 'savedcontact',
-                                                                    messages: location.page.messages,
-                                                                    settings: location.page.settings,
-                                                                    services: location.page.services,
-                                                                    mail: location.page.mail,
-                                                                    wallet: location.page.wallet,
-                                                                    calulator: location.page.calulator,
-                                                                    appstore: location.page.appstore,
-                                                                    camera: location.page.camera,
-                                                                    gallery: location.page.gallery,
-                                                                    pigeon: location.page.pigeon,
-                                                                    darkchat: location.page.darkchat,
-                                                                    garages: location.page.garages,
-                                                                    notes: location.page.notes,
-                                                                    houses: location.page.houses,
-                                                                    bluepages: location.page.bluepages,
-                                                                    pixie: location.page.pixie,
-                                                                    groups: location.page.groups,
+                                                                    ...location.page,
+                                                                    phone: 'savedcontact'
                                                                 }
                                                             })
                                                             setSelectedContact(contact);
@@ -610,24 +553,8 @@ export default function Phone() {
                     setLocation({
                         app: location.app,
                         page: {
-                            phone: locate,
-                            messages: location.page.messages,
-                            settings: location.page.settings,
-                            services: location.page.services,
-                            mail: location.page.mail,
-                            wallet: location.page.wallet,
-                            calulator: location.page.calulator,
-                            appstore: location.page.appstore,
-                            camera: location.page.camera,
-                            gallery: location.page.gallery,
-                            pigeon: location.page.pigeon,
-                            darkchat: location.page.darkchat,
-                            garages: location.page.garages,
-                            notes: location.page.notes,
-                            houses: location.page.houses,
-                            bluepages: location.page.bluepages,
-                            pixie: location.page.pixie,
-                            groups: location.page.groups,
+                            ...location.page,
+                            phone: locate
                         }
                     });
                 }} location={location.page.phone} />
@@ -677,6 +604,7 @@ export default function Phone() {
                     await fetchNui('phoneCall', JSON.stringify({
                         number: number,
                         _id: _id,
+                        volume
                     }));
                 }} onMessage={(number: string, _id: string) => {
                     const data = {
@@ -719,24 +647,8 @@ export default function Phone() {
                     setLocation({
                         app: location.app,
                         page: {
+                            ...location.page,
                             phone: 'contacts',
-                            messages: location.page.messages,
-                            settings: location.page.settings,
-                            services: location.page.services,
-                            mail: location.page.mail,
-                            wallet: location.page.wallet,
-                            calulator: location.page.calulator,
-                            appstore: location.page.appstore,
-                            camera: location.page.camera,
-                            gallery: location.page.gallery,
-                            pigeon: location.page.pigeon,
-                            darkchat: location.page.darkchat,
-                            garages: location.page.garages,
-                            notes: location.page.notes,
-                            houses: location.page.houses,
-                            bluepages: location.page.bluepages,
-                            pixie: location.page.pixie,
-                            groups: location.page.groups,
                         }
                     });
                 }} />
