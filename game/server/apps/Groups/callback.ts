@@ -123,6 +123,7 @@ function getGroupByMembers(src: number): number | undefined {
             if (member.Player === src) return +group;
         }
     }
+    return undefined;
 }
 exports('GetGroupByMembers', getGroupByMembers);
 exportHandler('GetGroupByMembers', getGroupByMembers);
