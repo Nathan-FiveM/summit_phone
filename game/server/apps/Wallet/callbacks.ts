@@ -3,6 +3,7 @@ import { Utils } from "@server/classes/Utils";
 import { MongoDB } from "@server/sv_main";
 import { generateUUid } from "@shared/utils";
 import { WalletAccount } from "../../../../types/types";
+import { DateTime } from 'luxon';
 
 function GenerateCardNumber() {
     let cardNumber = '';
@@ -124,7 +125,6 @@ onClientCallback('wallet:createInvoice', async (client, data: string) => {
     const { description, amount, paymentTime, numberOfPayments, receiver, } = JSON.parse(data); // paymentTime = 0 for daily, 1 for weekly, 2 for monthly and 3 for quarterly and 4 for yearly
     const sourcePlayer = await exports['qb-core'].GetPlayer(client);
     const targetPlayer = await exports['qb-core'].GetPlayerByCitizenId(await Utils.GetCitizenIdByPhoneNumber(receiver));
-    console.log(description, amount, paymentTime, numberOfPayments, receiver, sourcePlayer, targetPlayer);
     if (!targetPlayer) return false;
     if (amount < 0) return false;
     const res = await MongoDB.insertOne('phone_bank_invoices', {
@@ -167,9 +167,22 @@ onClientCallback('wallet:getInvoices', async (client, type) => {
         return JSON.stringify(invoices);
     }
 });
+interface PhoneBankInvoices {
+    _id: string;
+    from: string;
+    to: string;
+    amount: number;
+    targetName: string;
+    sourceName: string;
+    status: string;
+    paymentTime: string;
+    numberOfPayments: string;
+    date: Date;
+    nextPaymentDate: Date | null;
+}
 
 onClientCallback('wallet:acceptInvoicePayment', async (client, id: string) => {
-    const invoice = await MongoDB.findOne('phone_bank_invoices', { _id: id });
+    const invoice = await MongoDB.findOne('phone_bank_invoices', { _id: id }) as PhoneBankInvoices;
     if (!invoice || invoice.status !== 'pending') return false;
 
     const isRecurring = invoice.paymentTime !== "" && invoice.numberOfPayments !== "";
@@ -179,14 +192,47 @@ onClientCallback('wallet:acceptInvoicePayment', async (client, id: string) => {
     const sourcePlayer = await exports['qb-core'].GetPlayerByCitizenId(invoice.from);
     if (!sourcePlayer) return false;
 
-    let updateFields;
+    let updateFields: Partial<PhoneBankInvoices> = {};
     if (isRecurring) {
-        if (invoice.numberOfPayments <= 0) return false;
-        const newNumberOfPayments = invoice.numberOfPayments - 1;
+        const numberOfPayments = parseInt(invoice.numberOfPayments, 10);
+        if (numberOfPayments <= 0) return false;
+        const newNumberOfPayments = numberOfPayments - 1;
         updateFields = {
-            numberOfPayments: newNumberOfPayments,
-            status: 'paid'
+            numberOfPayments: newNumberOfPayments.toString(),
+            status: 'paid',
         };
+
+        if (newNumberOfPayments > 0) {
+            const paymentTime = parseInt(invoice.paymentTime, 10);
+            const todayMidnightEST = DateTime.now().setZone('America/New_York').startOf('day');
+            let nextPaymentDate: DateTime;
+
+            switch (paymentTime) {
+                case 0: // Daily
+                    nextPaymentDate = todayMidnightEST.plus({ days: 1 });
+                    break;
+                case 1: // Weekly
+                    nextPaymentDate = todayMidnightEST.plus({ weeks: 1 });
+                    break;
+                case 2: // Monthly
+                    nextPaymentDate = todayMidnightEST.plus({ months: 1 });
+                    break;
+                case 3: // Quarterly
+                    nextPaymentDate = todayMidnightEST.plus({ months: 3 });
+                    break;
+                case 4: // Yearly
+                    nextPaymentDate = todayMidnightEST.plus({ years: 1 });
+                    break;
+                default:
+                    console.error(`Invalid paymentTime: ${paymentTime}`);
+                    return false; // Invalid paymentTime
+            }
+            updateFields.nextPaymentDate = nextPaymentDate.toUTC().toJSDate();
+        } else {
+            updateFields.paymentTime = "";
+            updateFields.numberOfPayments = "";
+            updateFields.nextPaymentDate = null;
+        }
     } else {
         updateFields = { status: 'paid' };
     }
@@ -265,3 +311,116 @@ onClientCallback('wallet:declineInvoicePayment', async (client, id: string) => {
         return false;
     }
 });
+
+
+export const InvoiceRecurringPayments = async () => {
+    const todayMidnightEST = DateTime.now().setZone('America/New_York').startOf('day');
+    const todayMidnightESTinUTC = todayMidnightEST.toUTC().toJSDate();
+
+    const invoices = await MongoDB.findMany('phone_bank_invoices', {
+        nextPaymentDate: { $lte: todayMidnightESTinUTC },
+        numberOfPayments: { $gt: "0" }
+    }) as PhoneBankInvoices[];
+
+    for (const invoice of invoices) {
+        if (invoice.nextPaymentDate === null) continue;
+
+        if (!invoice.paymentTime || !invoice.numberOfPayments) continue;
+        const paymentTime = parseInt(invoice.paymentTime, 10);
+        const numberOfPayments = parseInt(invoice.numberOfPayments, 10);
+        if (isNaN(paymentTime) || paymentTime < 0 || paymentTime > 4 || isNaN(numberOfPayments)) continue;
+
+        const nextPaymentDateUTC = new Date(invoice.nextPaymentDate);
+        const nextPaymentDateEST = DateTime.fromJSDate(nextPaymentDateUTC, { zone: 'utc' }).setZone('America/New_York');
+
+        if (nextPaymentDateEST <= todayMidnightEST) {
+            const targetPlayer = await exports['qb-core'].GetPlayerByCitizenId(invoice.to);
+            if (!targetPlayer) continue;
+            if (!(await targetPlayer.Functions.RemoveMoney('bank', invoice.amount))) {
+                continue;
+            }
+            const sourcePlayer = await exports['qb-core'].GetPlayerByCitizenId(invoice.from);
+            if (!sourcePlayer) continue;
+            await sourcePlayer.Functions.AddMoney('bank', invoice.amount);
+
+            const newNumberOfPayments = numberOfPayments - 1;
+            let updateFields: Partial<PhoneBankInvoices> = {
+                numberOfPayments: newNumberOfPayments.toString(),
+                status: 'paid'
+            };
+
+            if (newNumberOfPayments > 0) {
+                let nextPaymentDate: DateTime;
+                switch (paymentTime) {
+                    case 0: // Daily
+                        nextPaymentDate = todayMidnightEST.plus({ days: 1 });
+                        break;
+                    case 1: // Weekly
+                        nextPaymentDate = todayMidnightEST.plus({ weeks: 1 });
+                        break;
+                    case 2: // Monthly
+                        nextPaymentDate = todayMidnightEST.plus({ months: 1 });
+                        break;
+                    case 3: // Quarterly
+                        nextPaymentDate = todayMidnightEST.plus({ months: 3 });
+                        break;
+                    case 4: // Yearly
+                        nextPaymentDate = todayMidnightEST.plus({ years: 1 });
+                        break;
+                    default:
+                        console.error(`Invalid paymentTime: ${paymentTime}`);
+                        continue; // Skip if invalid
+                }
+                updateFields.nextPaymentDate = nextPaymentDate.toUTC().toJSDate();
+            } else {
+                updateFields.paymentTime = "";
+                updateFields.numberOfPayments = "";
+                updateFields.nextPaymentDate = null;
+            }
+
+            const transactionId1 = generateUUid();
+            const transactionId2 = generateUUid();
+            const transactionCredit = {
+                _id: transactionId1,
+                from: invoice.to,
+                to: invoice.from,
+                amount: invoice.amount,
+                type: 'credit',
+                date: new Date().toISOString()
+            };
+            const transactionDebit = {
+                _id: transactionId2,
+                from: invoice.from,
+                to: invoice.to,
+                amount: invoice.amount,
+                type: 'debit',
+                date: new Date().toISOString()
+            };
+
+            await Promise.all([
+                MongoDB.updateOne('phone_bank_invoices', { _id: invoice._id }, updateFields),
+                MongoDB.insertOne('phone_bank_transactions', transactionCredit),
+                MongoDB.insertOne('phone_bank_transactions', transactionDebit),
+                console.log('Recurring Payment Processed', invoice._id, targetPlayer.Offline, sourcePlayer.Offline),
+            ]);
+            if (!targetPlayer.Offline) {
+                emitNet('phone:addnotiFication', targetPlayer.PlayerData.source, JSON.stringify({
+                    id: generateUUid(),
+                    title: 'Wallet',
+                    description: `You have paid ${invoice.sourceName} an invoice of $${invoice.amount}, ${updateFields.numberOfPayments} payments left.`,
+                    app: 'settings',
+                    timeout: 5000
+                }));
+            }
+            if (!sourcePlayer.Offline) {
+                emitNet('phone:addnotiFication', sourcePlayer.PlayerData.source, JSON.stringify({
+                    id: generateUUid(),
+                    title: 'Wallet',
+                    description: `${invoice.targetName} has accepted your invoice of $${invoice.amount}, ${updateFields.numberOfPayments} payments left.`,
+                    app: 'settings',
+                    timeout: 5000
+                }));
+            }
+        }
+    }
+};

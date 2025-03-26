@@ -2,6 +2,7 @@ import { callManager } from "./CallManager";
 import { Utils } from "@server/classes/Utils";
 import { generateUUid } from "@shared/utils";
 import { callHistoryManager } from "./callHistoryManager";
+import { Logger } from "@server/sv_main";
 
 onNet("phone:server:declineCall", async (notiId: string, args: any) => {
   const { callId, targetSource, callerSource, databaseTableId } = JSON.parse(args);
@@ -15,6 +16,12 @@ onNet("phone:server:declineCall", async (notiId: string, args: any) => {
   callManager.stopRingTone(targetSource);
   emitNet("phone:client:removeActionNotification", targetSource, databaseTableId);
   emitNet("phone:client:removeCallingInterface", callerSource);
+  Logger.AddLog({
+    type: "phone",
+    title: "Call Declined",
+    message: `${Utils.GetPhoneNumberBySource(callerSource)} has declined the call from ${Utils.GetPhoneNumberBySource(targetSource)}`,
+    showIdentifiers: false,
+  });
 });
 
 onNet("phone:server:acceptCall", async (notiId: string, args: any) => {
@@ -61,6 +68,12 @@ onNet("phone:server:acceptCall", async (notiId: string, args: any) => {
     databaseTableId,
   }));
   emitNet("phone:client:removeActionNotification", targetSource, notiId);
+  Logger.AddLog({
+    type: "phone",
+    title: "Call Accepted",
+    message: `${Utils.GetPhoneNumberBySource(callerSource)} has accepted the call from ${Utils.GetPhoneNumberBySource(targetSource)}`,
+    showIdentifiers: false,
+  });
 });
 
 onNet("phone:server:acceptConferenceCall", async (notiId: string, args: any) => {
@@ -126,6 +139,12 @@ onNet("phone:server:acceptConferenceCall", async (notiId: string, args: any) => 
     callerSource: source,
     databaseTableId,
   }));
+  Logger.AddLog({
+    type: "phone",
+    title: "Conference Call Accepted",
+    message: `${Utils.GetPhoneNumberBySource(callerSource)} has accepted the conference call from ${Utils.GetPhoneNumberBySource(targetSource)}`,
+    showIdentifiers: false,
+  });
 });
 
 on("onResourceStop", async (resource: string) => {
