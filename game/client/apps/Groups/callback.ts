@@ -1,3 +1,4 @@
+import { NUI } from "@client/classes/NUI";
 import { onServerCallback, triggerServerCallback } from "@overextended/ox_lib/client";
 
 onServerCallback('groups:toggleDuty', async () => {
@@ -107,7 +108,7 @@ RegisterNuiCallback('GetGroupsApp', async (_data: any, cb: Function) => {
 onServerCallback('summit_groups:client:RefreshGroupsApp', (groups: any, finish: boolean) => {
     if (finish) inJob = false;
     if (inJob) return;
-    exports['lb-phone'].SendCustomAppMessage(appIdentifier, { action: 'refreshApp', data: groups });
+    NUI.sendReactMessage('groups:refreshApp', groups);
 });
 
 onServerCallback('summit_groups:client:AddGroupStage', (_: any, stage: string) => {
@@ -129,7 +130,7 @@ onServerCallback('summit_groups:client:UpdateGroupId', (id: number) => {
     if (id === 0) isGroupLeader = false;
 });
 
-RegisterNuiCallback('jobcenter_CreateJobGroup', async (data: any, cb: Function) => {
+RegisterNuiCallback('groups:CreateJobGroup', async (data: any, cb: Function) => {
     await triggerServerCallback('summit_groups:server:jobcenter_CreateJobGroup', 1, data);
     isGroupLeader = true;
     cb('ok');

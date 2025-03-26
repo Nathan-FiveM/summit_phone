@@ -1072,20 +1072,21 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
                         <Select
                             label="Receiver"
                             placeholder="Select or Enter a contact or PayPal ID"
-                            data={contactsData && contactsData.map((contact) => {
+                            data={contactsData && Array.from(new Set(contactsData.map(contact => contact.contactNumber))).map((uniqueContactNumber) => {
+                                const contact = contactsData.find(c => c.contactNumber === uniqueContactNumber);
                                 return {
-                                    label: contact.firstName + ' ' + contact.lastName,
-                                    value: contact.contactNumber,
+                                    label: contact?.firstName + ' ' + contact?.lastName,
+                                    value: contact?.contactNumber,
                                 };
                             })}
                             value={billingData.receiver}
                             onChange={(e) => {
-                                console.log(e);
                                 setBillingData({
                                     ...billingData,
                                     receiver: e,
                                 });
                             }}
+                            searchable
                             styles={{
                                 root: {
                                     width: '90%',

@@ -1,5 +1,6 @@
 import { onClientCallback, triggerClientCallback } from "@overextended/ox_lib/server";
 import { MongoDB } from "@server/sv_main";
+import { generateUUid } from "@shared/utils";
 
 onClientCallback('groups:getmultiPleJobs', async (source: number) => {
     const sourcePlayer = exports['qb-core'].GetPlayer(source);
@@ -267,26 +268,28 @@ on('playerDropped', async () => {
     }
 });
 
-onNet('summit_groups:server:employment_checkJobStauts', async () => {
+onClientCallback('summit_groups:server:employment_checkJobStauts', async () => {
     const src = source as number;
     const checkStatus = getGroupByMembers(src);
     if (checkStatus) await triggerClientCallback('summit_groups:client:showEmploymentPage', src);
     else await triggerClientCallback('summit_groups:client:showEmploymentGroupPage', src);
 });
 
-onNet('summit_groups:server:jobcenter_CreateJobGroup', async (data: { name: string; pass: string; logo?: string }) => {
+onClientCallback('summit_groups:server:jobcenter_CreateJobGroup', async (source, data: { name: string; pass: string; logo?: string }) => {
     const src = source as number;
-    const player = QBCore.Functions.GetPlayer(src) as PlayerData;
+
+    const player = await exports['qb-core'].GetPlayer(src);
     if (Players[src]) {
-        exports['lb-phone'].SendNotification(src, {
-            app: appIdentifier,
+        emitNet('phone:addnotiFication', src, JSON.stringify({
+            id: generateUUid(),
             title: 'Already Created',
-            content: 'You have already created a group',
-            icon: `https://cfx-nui-${GetCurrentResourceName()}/ui/assets/groupsapp.png`,
-        });
-        return;
+            description: `You have already created a group.`,
+            app: 'settings',
+            timeout: 5000
+        }));
+        return false;
     }
-    if (!data || !data.pass || !data.name) return;
+    if (!data || !data.pass || !data.name) return false;
     Players[src] = true;
     const ID = Object.keys(EmploymentGroup).length + 1;
     EmploymentGroup[ID] = {
@@ -302,16 +305,17 @@ onNet('summit_groups:server:jobcenter_CreateJobGroup', async (data: { name: stri
     };
     await triggerClientCallback('summit_groups:client:RefreshGroupsApp', -1, EmploymentGroup);
     await triggerClientCallback('summit_groups:client:UpdateGroupId', src, ID);
+    return true;
 });
 
-onNet('summit_groups:server:jobcenter_DeleteGroup', (data: { delete: number }) => {
+onClientCallback('summit_groups:server:jobcenter_DeleteGroup', (source, data: { delete: number }) => {
     const src = source as number;
     if (!Players[src]) return;
     if (getGroupLeader(data.delete) === src) destroyGroup(data.delete);
     else removePlayerFromGroup(src, data.delete);
 });
 
-onNet('summit_groups:server:jobcenter_JoinTheGroup', async (data: { id: number }) => {
+onClientCallback('summit_groups:server:jobcenter_JoinTheGroup', async (source, data: { id: number }) => {
     const src = source as number;
     const player = QBCore.Functions.GetPlayer(src) as PlayerData;
     if (Players[src]) {
@@ -350,7 +354,7 @@ onClientCallback('summit_groups:server:getAllGroups', (src) => {
         const groupID = getGroupByMembers(src)!;
         return [EmploymentGroup, true, getJobStatus(groupID), getGroupStages(groupID)];
     }
-    return [EmploymentGroup, false];
+    return [EmploymentGroup, false, undefined, undefined];
 });
 
 onClientCallback('summit_groups:server:jobcenter_CheckPlayerNames', (_src, csn: number) => {
@@ -358,7 +362,7 @@ onClientCallback('summit_groups:server:jobcenter_CheckPlayerNames', (_src, csn: 
     return names;
 });
 
-onNet('summit_groups:server:jobcenter_leave_grouped', async (data: { id: number }) => {
+onClientCallback('summit_groups:server:jobcenter_leave_grouped', async (source, data: { id: number }) => {
     const src = source as number;
     if (!Players[src]) return;
     removePlayerFromGroup(src, data.id);
@@ -401,7 +405,7 @@ onClientCallback('summit_groups:server:GetPlayerData', (src) => {
     return [player.PlayerData.citizenid, player.PlayerData.source];
 });
 
-onNet('summit_groups:server:getStageFromApp', async () => {
+onClientCallback('summit_groups:server:getStageFromApp', async () => {
     const src = source as number;
     const player = QBCore.Functions.GetPlayer(src);
     if (!player) return;

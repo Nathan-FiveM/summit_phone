@@ -289,6 +289,24 @@ type MultiJobData = {
     gradeLabel: string;
 }
 
+type GroupSData = {
+    [key: string]: {
+      GLogo: string;
+      GName: string;
+      GPass: string;
+      Users: number;
+      id: number;
+      leader: number;
+      members: {
+        CID: string;
+        Player: number;
+        name: string;
+      }[];
+      stage: any[];
+      status: string;
+    };
+  };
+
 export type {
     PhoneSettings,
     PhoneMail,
@@ -310,5 +328,6 @@ export type {
     GarageData,
     WalletAccount,
     InvoiceData,
-    MultiJobData
+    MultiJobData,
+    GroupSData
 };
