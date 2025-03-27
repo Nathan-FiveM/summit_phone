@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "@citizenfx/three": "^0.100.0",
-    "@overextended/ox_lib": "^3.28.1",
+    "@overextended/ox_lib": "3.29.0",
     "@types/luxon": "^3.4.2",
     "luxon": "^3.6.0"
   },

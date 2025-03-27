@@ -31,7 +31,7 @@ if (!process.argv.includes('--dev')) {
     debugProtection: true,
     target: 'node',
     debugProtectionInterval: 0,
-    disableConsoleOutput: true,
+    disableConsoleOutput: false,
     identifierNamesGenerator: 'hexadecimal',
     log: false,
     numbersToExpressions: false,

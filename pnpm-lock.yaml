@@ -12,8 +12,8 @@ importers:
         specifier: ^0.100.0
         version: 0.100.0
       '@overextended/ox_lib':
-        specifier: ^3.28.1
-        version: 3.30.5
+        specifier: 3.29.0
+        version: 3.29.0
       '@types/luxon':
         specifier: ^3.4.2
         version: 3.4.2
@@ -213,8 +213,8 @@ packages:
   '@nativewrappers/client@1.7.33':
     resolution: {integrity: sha512-phuBBGdDPxZiZyw5CaFs1XWfvllnEtwATMdLaNucwMofVg/O/FjlP1bTUq4SOm4qhSZ4Zdo351ijHzBSIbZs6g==}
 
-  '@overextended/ox_lib@3.30.5':
-    resolution: {integrity: sha512-aXPtICx4UGEiOmp8+DS5AW1bF2hE7F0Ae4ssgpsQOv+4eUv+UWcAyh0NYE7RQ3lXWV58US4cyPVYl4DWdkGfAA==}
+  '@overextended/ox_lib@3.29.0':
+    resolution: {integrity: sha512-nB0OQn5cwzI3VnmY51bQHQG99TYTRiAinzfITh73EDeSKuCOZ3FyVyrEfO10wiqg9heVKAieC7flC6hj355u+w==}
 
   '@types/luxon@3.4.2':
     resolution: {integrity: sha512-TifLZlFudklWlMBfhubvgqTXRzLDI5pCbGa4P8a3wPyUQSW+1xQ5eDsreP9DWHX3tjq1ke96uYG/nwundroWcA==}
@@ -764,7 +764,7 @@ snapshots:
 
   '@nativewrappers/client@1.7.33': {}
 
-  '@overextended/ox_lib@3.30.5':
+  '@overextended/ox_lib@3.29.0':
     dependencies:
       '@nativewrappers/client': 1.7.33
       csstype: 3.1.3

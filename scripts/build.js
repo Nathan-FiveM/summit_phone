@@ -6,8 +6,8 @@ export const build = async (esbuildOptions) => {
   const ctx = await esbuild.context({
     bundle: true,
     logLevel: 'info',
-    sourcemap: dev ? 'inline' : 'both',
-    minify: !dev,
+    sourcemap: 'inline',
+    minify: false,
     keepNames: true, // Only keep names in dev mode
     define: {
       __DEV_MODE__: dev ? 'true' : 'false', // Ensure proper boolean value
