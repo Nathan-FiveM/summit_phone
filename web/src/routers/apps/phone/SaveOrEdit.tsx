@@ -193,8 +193,8 @@ export default function SaveOrEdit(props: { data: PhoneContacts, onCancel(): voi
                                 <path d="M6.65714 6.65714V3H7.34286V6.65714H11V7.34286H7.34286V11H6.65714V7.34286H3V6.65714H6.65714Z" fill="white" />
                                 <defs>
                                     <linearGradient id="paint0_linear_241_190" x1="4" y1="14" x2="10.5" y2="3.05474e-07" gradientUnits="userSpaceOnUse">
-                                        <stop stop-color="#6BFF46" />
-                                        <stop offset="1" stop-color="#22A900" />
+                                        <stop stopColor="#6BFF46" />
+                                        <stop offset="1" stopColor="#22A900" />
                                     </linearGradient>
                                 </defs>
                             </svg>
