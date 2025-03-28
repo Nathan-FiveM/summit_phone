@@ -19,6 +19,7 @@ onClientCallback('garage:getGarageData', async (source: number) => {
     const vehicleData = Framework.Shared.Vehicles;
     for (const vehicle of res) {
         const data = vehicleData[vehicle.vehicle];
+        if (!data) continue;
         resData.push({
             plate: vehicle.plate,
             garage: vehicle.garage,
