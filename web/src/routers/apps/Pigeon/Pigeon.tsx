@@ -225,7 +225,7 @@ export default function Pigeon(props: { onExit: () => void; onEnter: () => void 
                             position: 'relative',
                             top: '10.6vw'
                         }}>
-                            Don’t have an birdy account?
+                            Don’t have an pigeon account?
                             <span
                                 style={{ color: '#0A84FF', cursor: 'pointer' }}
                                 onClick={() => {
@@ -363,6 +363,13 @@ export default function Pigeon(props: { onExit: () => void; onEnter: () => void 
                                     }
                                     setPhoneSettings(dataX);
                                     await fetchNui('setSettings', JSON.stringify(dataX));
+                                    setLocation({
+                                        app: 'pigeon',
+                                        page: {
+                                            ...location.page,
+                                            pigeon: "home"
+                                        }
+                                    });
                                 }
                             }}
                         >

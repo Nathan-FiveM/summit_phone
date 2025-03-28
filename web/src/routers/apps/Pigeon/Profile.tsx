@@ -7,7 +7,7 @@ import InputDialog from "../DarkChat/InputDialog";
 import dayjs from "dayjs";
 import InfiniteScroll from "react-infinite-scroll-component";
 
-export default function Profile(props: { show: boolean, email: string, onClose: () => void }) {
+export default function Profile(props: { show: boolean, email: string, onClose: () => void, onError: () => void }) {
     const { phoneSettings, location, setLocation, setPhoneSettings } = usePhone();
     const [profileData, setProfileData] = useState<TweetProfileData>({
         _id: '',
@@ -69,6 +69,10 @@ export default function Profile(props: { show: boolean, email: string, onClose: 
         } else if (filter === 'liked') {
             fetUserLikes();
         }
+
+        return () => {
+            setTweets([]);
+        }
     }, [filter, props.email]);
 
     const [editProfile, setEditProfile] = useState(false);
@@ -86,6 +90,12 @@ export default function Profile(props: { show: boolean, email: string, onClose: 
             timingFunction="ease"
             onEnter={async () => {
                 const res = await fetchNui('getProfile', props.email);
+                console.log(res)
+                if (res === 'User not found') {
+                    fetchNui('showNoti', { app: 'pigeon', title: 'Pigeon', description: 'Something Went Wrong, User Can\'t be fetched' })
+                    props.onError();
+                    return;
+                }
                 setProfileData(JSON.parse(res as string))
             }}
         >

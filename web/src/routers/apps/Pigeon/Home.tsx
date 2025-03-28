@@ -279,7 +279,7 @@ export default function Home(props: {
             duration={400}
             timingFunction="ease"
             onEnter={async () => {
-                if (showProfile){
+                if (showProfile) {
                     setShowProfile(false);
                 }
                 const res = await fetchNui('getAllTweets', JSON.stringify({
@@ -942,7 +942,9 @@ export default function Home(props: {
                 }} />
                 <Profile show={showProfile} email={selectedEmail} onClose={() => {
                     setShowProfile(false);
-                }} />
+                }} onError={()=>{
+                    setShowProfile(false);
+                }}/>
             </div>}
         </Transition>
     )
