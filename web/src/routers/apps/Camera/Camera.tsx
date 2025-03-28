@@ -54,6 +54,17 @@ export default function Camera(props: { onExit: () => void; onEnter: () => void 
             onExiting={() => {
                 MainRender.stop();
                 fetchNui('cameraAppOpen', false);
+                if (landscape) {
+                    setLocation({
+                        app: location.app,
+                        page: {
+                            ...location.page,
+                            camera: 'portrait',
+                        }
+                    });
+                    setLandscape(false);
+                    fetchNui('cameraMode', 'potrait');
+                }
             }}
             onExited={props.onExit}
         >
@@ -136,7 +147,7 @@ export default function Camera(props: { onExit: () => void; onEnter: () => void 
                         fetchNui('selfiMode', !selfiMode);
                         setSelfiMode(!selfiMode);
                     }} className='clickanimation' width="1.40625vw" height="1.25vw" viewBox="0 0 27 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M11.8974 23C5.87895 23 1 18.0751 1 12C1 5.92487 5.87895 1 11.8974 1C17.9159 1 22.7949 5.92487 22.7949 12C22.7949 13.9972 22.2676 15.8701 21.3459 17.4845M21.3459 17.4845L26 15.8824M21.3459 17.4845L20.9088 17.6348L19.1727 12.4959" stroke="white" strokeWidth="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M11.8974 23C5.87895 23 1 18.0751 1 12C1 5.92487 5.87895 1 11.8974 1C17.9159 1 22.7949 5.92487 22.7949 12C22.7949 13.9972 22.2676 15.8701 21.3459 17.4845M21.3459 17.4845L26 15.8824M21.3459 17.4845L20.9088 17.6348L19.1727 12.4959" stroke="white" strokeWidth="2" strokeLinecap="round" stroke-linejoin="round" />
                     </svg>
                 </div>
             </div>

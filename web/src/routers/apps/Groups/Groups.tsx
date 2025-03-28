@@ -122,7 +122,7 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                                 setInputPlaceholder('Group Name');
                                 setInputShow(true);
                             }} className='clickanimation' width="1.25vw" height="1.25vw" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M7.55555 12H12M12 12H16.4444M12 12V16.4444M12 12V7.55555M12 22C6.47716 22 2 17.5229 2 12C2 6.47716 6.47716 2 12 2C17.5229 2 22 6.47716 22 12C22 17.5229 17.5229 22 12 22Z" stroke="#0A84FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M7.55555 12H12M12 12H16.4444M12 12V16.4444M12 12V7.55555M12 22C6.47716 22 2 17.5229 2 12C2 6.47716 6.47716 2 12 2C17.5229 2 22 6.47716 22 12C22 17.5229 17.5229 22 12 22Z" stroke="#0A84FF" stroke-width="2.5" strokeLinecap="round" stroke-linejoin="round" />
                             </svg>
                         </div>
                         <Searchbar value={searchValue} onChange={(e) => {

@@ -30,6 +30,7 @@ export default function Message() {
     return (
         <CSSTransition nodeRef={nodeRef} in={location.app === 'message' && location.page.messages === ''} timeout={450} classNames="enterandexitfromtop" unmountOnExit mountOnEnter onEntering={async () => {
             const res: any = await fetchNui('getMessagesStats', "Ok");
+            if (!res) return;
             const parsedData: {
                 success: boolean,
                 stats: {

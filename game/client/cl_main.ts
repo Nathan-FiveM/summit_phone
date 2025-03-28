@@ -4,6 +4,7 @@ import "./apps/index";
 import { NUI } from "./classes/NUI";
 import { generateUUid } from "@shared/utils";
 import { triggerServerCallback } from "@overextended/ox_lib/client";
+import { PhoneSettings } from "../../types/types";
 
 export let FrameWork = exports['qb-core'].GetCoreObject();
 on('QBCore:Client:UpdateObject', () => {
@@ -68,7 +69,6 @@ RegisterCommand('testNoti', () => {
 
 exports.ox_target.addGlobalPlayer([
     {
-
         icon: 'fas fa-hands',
         label: 'Share Number',
         distance: 1.5,
@@ -79,7 +79,9 @@ exports.ox_target.addGlobalPlayer([
     }
 ]);
 
-on('QBCore:Client:OnPlayerLoaded', async (resource: string) => {
-    const response: any = await triggerServerCallback('GetClientSettings', 1)
+onNet('phone:client:setupPhone', async (citizenId: string) => {
+    const response = await triggerServerCallback('GetClientSettings', 1) as string;
+    const res = JSON.parse(response) as PhoneSettings;
+    if (!res) return;
     NUI.sendReactMessage('setSettings', response);
 });

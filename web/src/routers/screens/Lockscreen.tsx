@@ -51,7 +51,7 @@ export default function Lockscreen() {
     return (
         <CSSTransition nodeRef={nodeRef} in={phoneSettings.usePin && phoneSettings.isLock} timeout={450} classNames="enterandexitfromtop" unmountOnExit mountOnEnter>
             <div style={{
-                backgroundImage: `url(${phoneSettings.lockscreen.current ? phoneSettings.lockscreen.current : lockscreenBg})`,
+                backgroundImage: `url(${phoneSettings?.lockscreen?.current || lockscreenBg})`,
                 backgroundSize: 'cover',
                 backgroundRepeat: 'no-repeat',
             }} ref={nodeRef} className="lockscreen">
@@ -145,7 +145,7 @@ export default function Lockscreen() {
                             <div className="passcodeText" style={{
                                 marginTop: '2vw'
                             }}>Enter Passcode</div>
-                            <CircleFillers mt="0.3vw" type={phoneSettings.lockPin.length} length={passcode.length} error={false} />
+                            <CircleFillers mt="0.3vw" type={phoneSettings?.lockPin?.length || 0} length={passcode.length} error={false} />
                             <DialpadV2 onClick={(number: string) => {
                                 setPasscode(passcode + number);
                             }} mt="1.5vw" />

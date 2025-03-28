@@ -48,7 +48,7 @@ export default function CreateGroup() {
                     <svg style={{
                         flexShrink: '0'
                     }} width="8" height="18" viewBox="0 0 8 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M7 16.5L1.34983 9.43729C1.14531 9.18163 1.14531 8.81837 1.34983 8.56271L7 1.5" stroke="#0A84FF" strokeWidth="2" stroke-linecap="round" />
+                        <path d="M7 16.5L1.34983 9.43729C1.14531 9.18163 1.14531 8.81837 1.34983 8.56271L7 1.5" stroke="#0A84FF" strokeWidth="2" strokeLinecap="round" />
                     </svg>
                     <div style={{
                         width: "1.71875vw",

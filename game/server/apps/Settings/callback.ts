@@ -31,7 +31,7 @@ onClientCallback('SetClientSettings', async (client, data: string) => {
     const parsedData: {
         background: { current: string; wallpapers: string[] };
         lockscreen: { current: string; wallpapers: string[] };
-        ringtone: { current: string; ringtones: string[] };
+        ringtone: { current: string; ringtones: { name: string, url: string }[] };
         showStartupScreen: boolean;
         showNotifications: boolean;
         isLock: boolean;
@@ -113,7 +113,7 @@ onClientCallback('getPhonePlayerCard', async (client) => {
 });
 
 onClientCallback('phone:updatePersonalCard', async (client, data: string) => {
-    const parsedData : PhonePlayerCard = JSON.parse(data);
+    const parsedData: PhonePlayerCard = JSON.parse(data);
     await MongoDB.updateOne('phone_player_card', { _id: parsedData._id }, parsedData);
     return true;
 });

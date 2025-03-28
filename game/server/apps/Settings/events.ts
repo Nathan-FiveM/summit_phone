@@ -1,6 +1,7 @@
 import { MongoDB } from "@server/sv_main";
 import { generateUUid, LOGGER } from "@shared/utils";
 import { Settings } from "./class";
+import { triggerClientCallback } from "@overextended/ox_lib/server";
 
 RegisterCommand('saveSettings', async (source: number, args: string[]) => {
     await Settings.save();
@@ -13,7 +14,7 @@ const generatePhoneNumber = async (): Promise<string> => {
     return number;
 };
 
-async function GeneratePlayerPhoneNumber(citizenId: string) {
+async function GeneratePlayerPhoneNumber(citizenId: string, source: number) {
     const number = await generatePhoneNumber();
     await MongoDB.insertOne('phone_numbers', {
         _id: generateUUid(),
@@ -64,7 +65,8 @@ async function GeneratePlayerPhoneNumber(citizenId: string) {
         notes: '',
         avatar: '',
     });
-
+    Settings.RegisterNewSettings(citizenId, number);
+    emitNet('phone:client:setupPhone', source, citizenId);
     return number;
 }
 exports('GeneratePlayerPhoneNumber', GeneratePlayerPhoneNumber);

@@ -76,7 +76,7 @@ export default function FilterPage(props: { show: boolean, inboxCount: number, d
                                     {props.inboxCount}
                                 </div>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="6" height="15" viewBox="0 0 6 15" fill="none">
-                                    <path d="M1.00002 13.3058L4.72802 7.87553C4.8919 7.63682 4.8919 7.32186 4.72802 7.08315L1.00001 1.65289" stroke="#5E5E5E" strokeWidth="2" stroke-linecap="round" />
+                                    <path d="M1.00002 13.3058L4.72802 7.87553C4.8919 7.63682 4.8919 7.32186 4.72802 7.08315L1.00001 1.65289" stroke="#5E5E5E" strokeWidth="2" strokeLinecap="round" />
                                 </svg>
                             </div>
                         </div>
@@ -116,7 +116,7 @@ export default function FilterPage(props: { show: boolean, inboxCount: number, d
                                     {props.draftCount}
                                 </div>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="6" height="15" viewBox="0 0 6 15" fill="none">
-                                    <path d="M1.00002 13.3058L4.72802 7.87553C4.8919 7.63682 4.8919 7.32186 4.72802 7.08315L1.00001 1.65289" stroke="#5E5E5E" strokeWidth="2" stroke-linecap="round" />
+                                    <path d="M1.00002 13.3058L4.72802 7.87553C4.8919 7.63682 4.8919 7.32186 4.72802 7.08315L1.00001 1.65289" stroke="#5E5E5E" strokeWidth="2" strokeLinecap="round" />
                                 </svg>
                             </div>
                         </div>
@@ -156,7 +156,7 @@ export default function FilterPage(props: { show: boolean, inboxCount: number, d
                                     {props.sentCount}
                                 </div>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="6" height="15" viewBox="0 0 6 15" fill="none">
-                                    <path d="M1.00002 13.3058L4.72802 7.87553C4.8919 7.63682 4.8919 7.32186 4.72802 7.08315L1.00001 1.65289" stroke="#5E5E5E" strokeWidth="2" stroke-linecap="round" />
+                                    <path d="M1.00002 13.3058L4.72802 7.87553C4.8919 7.63682 4.8919 7.32186 4.72802 7.08315L1.00001 1.65289" stroke="#5E5E5E" strokeWidth="2" strokeLinecap="round" />
                                 </svg>
                             </div>
                         </div>
@@ -197,7 +197,7 @@ export default function FilterPage(props: { show: boolean, inboxCount: number, d
                                     {props.binCount}
                                 </div>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="6" height="15" viewBox="0 0 6 15" fill="none">
-                                    <path d="M1.00002 13.3058L4.72802 7.87553C4.8919 7.63682 4.8919 7.32186 4.72802 7.08315L1.00001 1.65289" stroke="#5E5E5E" strokeWidth="2" stroke-linecap="round" />
+                                    <path d="M1.00002 13.3058L4.72802 7.87553C4.8919 7.63682 4.8919 7.32186 4.72802 7.08315L1.00001 1.65289" stroke="#5E5E5E" strokeWidth="2" strokeLinecap="round" />
                                 </svg>
                             </div>
                         </div>
@@ -232,7 +232,7 @@ export default function FilterPage(props: { show: boolean, inboxCount: number, d
                                 cursor: 'pointer',
                             }} onClick={() => props.onClick('profile')}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="6" height="15" viewBox="0 0 6 15" fill="none">
-                                    <path d="M1.00002 13.3058L4.72802 7.87553C4.8919 7.63682 4.8919 7.32186 4.72802 7.08315L1.00001 1.65289" stroke="#5E5E5E" strokeWidth="2" stroke-linecap="round" />
+                                    <path d="M1.00002 13.3058L4.72802 7.87553C4.8919 7.63682 4.8919 7.32186 4.72802 7.08315L1.00001 1.65289" stroke="#5E5E5E" strokeWidth="2" strokeLinecap="round" />
                                 </svg>
                             </div>
                         </div>

@@ -444,7 +444,7 @@ onClientCallback('phone_message:removeMember', async (client, data: string) => {
     group.memberPhoneNumbers.splice(memberIndex, 1);
 
     for (const memberId of group.members) {
-        const memberMessages = await MongoDB.findOne('phone_messages', { citizenId: memberId });        
+        const memberMessages = await MongoDB.findOne('phone_messages', { citizenId: memberId });
         const memberGroup = memberMessages?.messages.find((msg: { groupId?: string }) => msg.groupId === groupId);
         if (memberGroup) {
             memberGroup.members = group.members;
@@ -658,7 +658,7 @@ onClientCallback('phone_message:getMessageStats', async (client, data: string) =
 
     let userMessages = await MongoDB.findOne('phone_messages', { citizenId: senderId });
     if (!userMessages) {
-        return {
+        return JSON.stringify({
             success: true,
             stats: {
                 allMessages: 0,
@@ -666,9 +666,8 @@ onClientCallback('phone_message:getMessageStats', async (client, data: string) =
                 unknownMessages: 0,
                 unreadMessages: 0,
                 recentlyDeleted: 0
-            },
-            conversations: [] // Return list of conversations with avatars
-        };
+            }
+        });
     }
 
     const currentDate = new Date();

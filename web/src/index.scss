@@ -41,3 +41,28 @@ body {
   min-width: 320px;
   min-height: 100vh;
 }
+
+.my-node-enter {
+  opacity: 0;
+  transform: translateY(100%);
+}
+
+/* Entering Active: Slide up to the final position */
+.my-node-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: transform 800ms, opacity 800ms;
+}
+
+/* Exiting: Start at the normal position */
+.my-node-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Exiting Active: Slide down out of view */
+.my-node-exit-active {
+  opacity: 0;
+  transform: translateY(100%);
+  transition: transform 800ms, opacity 800ms;
+}

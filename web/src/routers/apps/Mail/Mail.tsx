@@ -60,6 +60,7 @@ export default function MailApp(props: { onExit: () => void, onEnter: () => void
         const messagesData = JSON.parse(data);
         setMessagesData(messagesData);
     });
+    const [aDWds, setADWds] = useState(false);
 
     return (
         <CSSTransition
@@ -71,12 +72,15 @@ export default function MailApp(props: { onExit: () => void, onEnter: () => void
             mountOnEnter
             onEntering={async () => {
                 props.onEnter();
-                const messages: any = await fetchNui('getEmailMessages', JSON.stringify({
-                    email: phoneSettings.smrtId,
-                    password: phoneSettings.smrtPassword,
-                }));
-                const messagesData = JSON.parse(messages);
-                setMessagesData(messagesData);
+                if (phoneSettings.smrtId.length > 0 && phoneSettings.smrtPassword.length > 0) {
+                    const messages: any = await fetchNui('getEmailMessages', JSON.stringify({
+                        email: phoneSettings.smrtId,
+                        password: phoneSettings.smrtPassword,
+                    }));
+                    const messagesData = JSON.parse(messages);
+                    setMessagesData(messagesData);
+                    setADWds(true);
+                }
             }}
             onExited={() => {
                 props.onExit();
@@ -94,7 +98,7 @@ export default function MailApp(props: { onExit: () => void, onEnter: () => void
                 }}
                 className="settings"
             >
-                {!messagesData?.length && (
+                {!aDWds && (
                     <>
                         {!signUp ? (
                             <div style={{
@@ -191,7 +195,6 @@ export default function MailApp(props: { onExit: () => void, onEnter: () => void
                                                 email: email,
                                                 password: password,
                                             }));
-                                            console.log(messages);
                                             const messagesData = JSON.parse(messages);
                                             setMessagesData(messagesData);
 
@@ -336,23 +339,26 @@ export default function MailApp(props: { onExit: () => void, onEnter: () => void
                                     }}
                                     className="clickanimation"
                                     onClick={async () => {
-                                        await fetchNui('registerNewMailAccount', JSON.stringify({
+                                        const res = await fetchNui('registerNewMailAccount', JSON.stringify({
                                             email: `${email}@smrt.com`,
                                             password: password
                                         }));
-                                        const messages: any = await fetchNui('getEmailMessages', JSON.stringify({
-                                            email: `${email}@smrt.com`,
-                                            password: password,
-                                        }));
-                                        const messagesData = JSON.parse(messages);
-                                        setMessagesData(messagesData);
-                                        const dataX = {
-                                            ...phoneSettings,
-                                            smrtId: `${email}@smrt.com`,
-                                            smrtPassword: password,
-                                        };
-                                        setPhoneSettings(dataX);
-                                        await fetchNui('setSettings', JSON.stringify(dataX));
+                                        if (res) {
+                                            const messages: any = await fetchNui('getEmailMessages', JSON.stringify({
+                                                email: `${email}@smrt.com`,
+                                                password: password,
+                                            }));
+                                            const messagesData = JSON.parse(messages);
+                                            setMessagesData(messagesData);
+                                            const dataX = {
+                                                ...phoneSettings,
+                                                smrtId: `${email}@smrt.com`,
+                                                smrtPassword: password,
+                                            };
+                                            setPhoneSettings(dataX);
+                                            await fetchNui('setSettings', JSON.stringify(dataX));
+                                            setADWds(true);
+                                        }
                                     }}
                                 >
                                     Sign Up
@@ -383,7 +389,7 @@ export default function MailApp(props: { onExit: () => void, onEnter: () => void
                     </>
                 )}
                 <FilterPage
-                    show={messagesData?.length > 0}
+                    show={aDWds}
                     inboxCount={messagesData && messagesData?.filter((message: any) => message.tags.includes('inbox')).length || 0}
                     sentCount={messagesData && messagesData?.filter((message: any) => message.tags.includes('sent')).length || 0}
                     draftCount={messagesData && messagesData?.filter((message: any) => message.tags.includes('draft')).length || 0}

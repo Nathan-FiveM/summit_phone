@@ -167,7 +167,7 @@ export default function Calculator(props: { onExit: () => void; onEnter: () => v
                     </div>
                     <div className="dialpadV2button clickanimation" onClick={() => handleButtonClick('-')} style={{ backgroundColor: '#FF9E09', color: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '1.2vw', fontWeight: '400' }}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="1.3020833333333333vw" height="0.15625vw" viewBox="0 0 25 3" fill="none">
-                            <path d="M1.5 1.5H23.5" stroke="white" strokeWidth="3" stroke-linecap="round" />
+                            <path d="M1.5 1.5H23.5" stroke="white" strokeWidth="3" strokeLinecap="round" />
                         </svg>
                     </div>
 
@@ -182,7 +182,7 @@ export default function Calculator(props: { onExit: () => void; onEnter: () => v
                     </div>
                     <div className="dialpadV2button clickanimation" onClick={() => handleButtonClick('+')} style={{ backgroundColor: '#FF9E09', color: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '1.2vw', fontWeight: '400' }}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="1.3541666666666667vw" height="1.3020833333333333vw" viewBox="0 0 26 25" fill="none">
-                            <path d="M2 12.5H24M13 1.5L13 23.5" stroke="white" strokeWidth="3" stroke-linecap="round" />
+                            <path d="M2 12.5H24M13 1.5L13 23.5" stroke="white" strokeWidth="3" strokeLinecap="round" />
                         </svg>
                     </div>
 
@@ -200,7 +200,7 @@ export default function Calculator(props: { onExit: () => void; onEnter: () => v
                     </div>
                     <div className="dialpadV2button clickanimation" onClick={() => handleButtonClick('=')} style={{ backgroundColor: '#FF9E09', color: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '1.2vw', fontWeight: '400' }}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="1.09375vw" height="0.6770833333333334vw" viewBox="0 0 21 13" fill="none">
-                            <path d="M2 1.5H19M2 11.5H19" stroke="white" strokeWidth="3" stroke-linecap="round" />
+                            <path d="M2 1.5H19M2 11.5H19" stroke="white" strokeWidth="3" strokeLinecap="round" />
                         </svg>
                     </div>
                 </div>

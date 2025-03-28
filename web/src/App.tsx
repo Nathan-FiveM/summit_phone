@@ -97,9 +97,27 @@ export default function App() {
   }, []);
 
   useNuiEvent('setSettings', (data: string) => {
+    if (data.length === 0) return;
+    console.log("Setting settings");
     const settings: PhoneSettings = JSON.parse(data);
     setPhoneSettings(settings);
   });
+
+  const closeCallback = useCallback(async (phoneSe: any) => {
+    fetchNui("hideFrame");
+    const dataX = {
+      ...phoneSe,
+      isLock: true
+    }
+    setPhoneSettings(dataX);
+    fetchNui('unLockorLockPhone', true);
+    setLocation({
+      app: '',
+      page: {
+        ...location.page
+      }
+    });
+  }, [visible, phoneSettings.usePin, phoneSettings.showStartupScreen]);
 
   useEffect(() => {
     if (!visible) return;
@@ -108,36 +126,7 @@ export default function App() {
     const keyHandler = (e: KeyboardEvent) => {
       if (["Escape"].includes(e.code)) {
         if (!isEnvBrowser()) {
-          fetchNui("hideFrame");
-          const dataX = {
-            ...phoneSettings,
-            isLock: true
-          }
-          setPhoneSettings(dataX);
-          fetchNui('unLockorLockPhone', true);
-          setLocation({
-            app: '',
-            page: {
-              phone: location.page.phone,
-              messages: location.page.messages,
-              settings: location.page.settings,
-              services: location.page.services,
-              mail: location.page.mail,
-              wallet: location.page.wallet,
-              calulator: location.page.calulator,
-              appstore: location.page.appstore,
-              camera: location.page.camera,
-              gallery: location.page.gallery,
-              pigeon: location.page.pigeon,
-              darkchat: location.page.darkchat,
-              garages: location.page.garages,
-              notes: location.page.notes,
-              houses: location.page.houses,
-              bluepages: location.page.bluepages,
-              pixie: location.page.pixie,
-              groups: location.page.groups,
-            }
-          });
+          closeCallback(phoneSettings);
         } else {
           setVisible(!visible)
         };
@@ -146,7 +135,7 @@ export default function App() {
     window.addEventListener("keydown", keyHandler);
 
     return () => window.removeEventListener("keydown", keyHandler);
-  }, [visible, phoneSettings.usePin, phoneSettings.useFaceId, phoneSettings.showStartupScreen]);
+  }, [visible, phoneSettings.usePin, phoneSettings.showStartupScreen]);
 
   const [brightness] = useLocalStorage({
     key: 'brightness',
@@ -184,7 +173,7 @@ export default function App() {
       marginRight: location.page.camera === 'landscape' ? '9vw' : '0vw',
     }}>
       <div className="innerFrame" style={{
-        backgroundImage: `url(${phoneSettings.background.current ? phoneSettings.background.current : phoneBg})`,
+        backgroundImage: `url(${phoneSettings?.background?.current || phoneBg})`,
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'cover',
       }}>

@@ -5,7 +5,7 @@ class Setting {
     public _id = new Map<string, string>();
     public background = new Map<string, { current: string; wallpapers: string[] }>();
     public lockscreen = new Map<string, { current: string; wallpapers: string[] }>();
-    public ringtone = new Map<string, { current: string; ringtones: string[] }>();
+    public ringtone = new Map<string, { current: string; ringtones: { name: string, url: string }[] }>();
     public showStartupScreen = new Map<string, boolean>();
     public showNotifications = new Map<string, boolean>();
     public isLock = new Map<string, boolean>();
@@ -77,6 +77,26 @@ class Setting {
             LOGGER(`[Settings] Failed to save settings: ${error.message}`);
             return false;
         }
+    }
+
+    public RegisterNewSettings(citizenId: string, number: string) {
+        this._id.set(citizenId, citizenId);
+        this.background.set(citizenId, { current: '', wallpapers: [] });
+        this.lockscreen.set(citizenId, { current: '', wallpapers: [] });
+        this.ringtone.set(citizenId, { current: 'https://cdn.summitrp.gg/uploads/server/phone/sounds/iPhoneXTrap.mp3', ringtones: [{ name: 'default', url: 'https://cdn.summitrp.gg/uploads/server/phone/sounds/iPhoneXTrap.mp3' }] });
+        this.showStartupScreen.set(citizenId, true);
+        this.showNotifications.set(citizenId, true);
+        this.isLock.set(citizenId, true);
+        this.lockPin.set(citizenId, '');
+        this.usePin.set(citizenId, true);
+        this.phoneNumber.set(citizenId, number);
+        this.useFaceId.set(citizenId, false);
+        this.faceIdIdentifier.set(citizenId, citizenId);
+        this.darkMailIdAttached.set(citizenId, '');
+        this.smrtId.set(citizenId, '');
+        this.smrtPassword.set(citizenId, '');
+        this.isFlightMode.set(citizenId, false);
+        this.pigeonIdAttached.set(citizenId, '');
     }
 
     public async SavePlayerSettings(citizenId: string) {

@@ -63,8 +63,8 @@ export default function ComposeMail(props: { show: boolean, onCancel: () => void
                         if (to === '' || subject === '' || body === '') return;
                         props.onSend(to, phoneSettings.smrtId, subject, body, attachments);
                     }} xmlns="http://www.w3.org/2000/svg" className='clickanimation' width="1.5625vw" height="1.5625vw" viewBox="0 0 30 30" fill="none">
-                        <circle cx="14.9999" cy="15" r="15" fill="#E9E9E9" fill-opacity="0.38" />
-                        <path d="M15.707 6.29289C15.3165 5.90237 14.6833 5.90237 14.2928 6.29289L7.92881 12.6569C7.53829 13.0474 7.53829 13.6805 7.92881 14.0711C8.31933 14.4616 8.9525 14.4616 9.34302 14.0711L14.9999 8.41421L20.6567 14.0711C21.0473 14.4616 21.6804 14.4616 22.0709 14.0711C22.4615 13.6805 22.4615 13.0474 22.0709 12.6569L15.707 6.29289ZM15.9999 22V7H13.9999V22H15.9999Z" fill="white" fill-opacity="0.6" />
+                        <circle cx="14.9999" cy="15" r="15" fill="#E9E9E9" fillOpacity="0.38" />
+                        <path d="M15.707 6.29289C15.3165 5.90237 14.6833 5.90237 14.2928 6.29289L7.92881 12.6569C7.53829 13.0474 7.53829 13.6805 7.92881 14.0711C8.31933 14.4616 8.9525 14.4616 9.34302 14.0711L14.9999 8.41421L20.6567 14.0711C21.0473 14.4616 21.6804 14.4616 22.0709 14.0711C22.4615 13.6805 22.4615 13.0474 22.0709 12.6569L15.707 6.29289ZM15.9999 22V7H13.9999V22H15.9999Z" fill="white" fillOpacity="0.6" />
                     </svg>
                 </div>
                 <div className="composeMailContent">
