@@ -19,24 +19,25 @@ onClientCallback('garage:getGarageData', async (source: number) => {
     const vehicleData = Framework.Shared.Vehicles;
     for (const vehicle of res) {
         const data = vehicleData[vehicle.vehicle];
-        if (!data) continue;
-        resData.push({
-            plate: vehicle.plate,
-            garage: vehicle.garage,
-            state: vehicle.state === 2 ? "Impounded" : vehicle.state === 1 ? "Parked" : Number(vehicle.depotprice) > 0 ? `Depoted ${vehicle.depotprice}` : "Out",
-            category: data.category,
-            brand: data.brand,
-            name: data.name,
-            turboInstalled: JSON.parse(vehicle.mods).modTurbo,
-            bodyHealth: JSON.parse(vehicle.mods).bodyHealth,
-            tankHealth: JSON.parse(vehicle.mods).tankHealth,
-            fuelLevel: JSON.parse(vehicle.mods).fuelLevel,
-            engineHealth: JSON.parse(vehicle.mods).engineHealth,
-            modSuspension: JSON.parse(vehicle.mods).modSuspension,
-            modTransmission: JSON.parse(vehicle.mods).modTransmission,
-            modEngine: JSON.parse(vehicle.mods).modEngine,
-            modBrakes: JSON.parse(vehicle.mods).modBrakes,
-        })
+        if (data) {
+            resData.push({
+                plate: vehicle.plate,
+                garage: vehicle.garage,
+                state: vehicle.state === 2 ? "Impounded" : vehicle.state === 1 ? "Parked" : Number(vehicle.depotprice) > 0 ? `Depoted ${vehicle.depotprice}` : "Out",
+                category: data.category,
+                brand: data.brand,
+                name: data.name,
+                turboInstalled: JSON.parse(vehicle.mods).modTurbo,
+                bodyHealth: JSON.parse(vehicle.mods).bodyHealth,
+                tankHealth: JSON.parse(vehicle.mods).tankHealth,
+                fuelLevel: JSON.parse(vehicle.mods).fuelLevel,
+                engineHealth: JSON.parse(vehicle.mods).engineHealth,
+                modSuspension: JSON.parse(vehicle.mods).modSuspension,
+                modTransmission: JSON.parse(vehicle.mods).modTransmission,
+                modEngine: JSON.parse(vehicle.mods).modEngine,
+                modBrakes: JSON.parse(vehicle.mods).modBrakes,
+            })
+        }
     }
     return JSON.stringify(resData);
 });
