@@ -121,7 +121,9 @@ export default function SearchUser(props: { show: boolean, profileData: TweetPro
                 </div>
                 <Profile show={showProfile} email={selectedEmail} onClose={() => {
                     setShowProfile(false);
-                }} />
+                }} onError={()=>{
+                    setShowProfile(false);
+                }}/>
             </div>}
         </Transition>
     )
