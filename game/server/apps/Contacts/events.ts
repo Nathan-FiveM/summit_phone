@@ -1,7 +1,7 @@
 import { MongoDB } from "@server/sv_main";
 import { generateUUid } from "@shared/utils";
 
-RegisterCommand('addContact', async (source: number, args: string[]) => {
+/* RegisterCommand('addContact', async (source: number, args: string[]) => {
     const data = [
         {
             _id: generateUUid(),
@@ -94,7 +94,7 @@ RegisterCommand('addContact', async (source: number, args: string[]) => {
 
     ]
     MongoDB.insertMany('phone_contacts', data);
-}, false);
+}, false); */
 
 
 on('onResourceStop', async (resource: string) => {

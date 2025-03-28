@@ -57,7 +57,7 @@ on('onResourceStop', (resource: string) => {
     }
 });
 
-RegisterCommand('testNoti', () => {
+/* RegisterCommand('testNoti', () => {
     NUI.sendReactMessage('addNotification', {
         id: generateUUid(),
         title: 'test',
@@ -65,7 +65,7 @@ RegisterCommand('testNoti', () => {
         app: 'settings',
         timeout: 5000
     });
-}, false);
+}, false); */
 
 exports.ox_target.addGlobalPlayer([
     {

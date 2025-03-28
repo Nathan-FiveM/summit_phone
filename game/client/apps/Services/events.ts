@@ -5,6 +5,7 @@ import { inputDialog, triggerServerCallback, registerContext, showContext, hideC
 import { generateUUid } from '@shared/utils';
 
 RegisterCommand('registerBusiness', async (source: any, args: any[]) => {
+    if (!await exports['snipe-menu'].isAdmin()) return;
     const input = await inputDialog('Register New Business', [
         {
             label: 'Owner Citizen ID',
@@ -145,10 +146,11 @@ RegisterCommand('registerBusiness', async (source: any, args: any[]) => {
             job
         }));
     });
-}, true);
+}, false);
 emit('chat:addSuggestion', '/registerBusiness', 'Register a New Business.', []);
 
 RegisterCommand('updateBusiness', async (source: any, args: any[]) => {
+    if (!await exports['snipe-menu'].isAdmin()) return;
     const businessNames = await triggerServerCallback('getBusinessNames', 1);
     const parsedBusinessNames = JSON.parse(businessNames as string);
     registerContext({
@@ -171,6 +173,7 @@ RegisterCommand('updateBusiness', async (source: any, args: any[]) => {
 emit('chat:addSuggestion', '/updateBusiness', 'Update Business Details which is already registerd.', []);
 
 RegisterCommand('deleteBusiness', async (source: any, args: any[]) => {
+    if (!await exports['snipe-menu'].isAdmin()) return;
     const businessNames = await triggerServerCallback('getBusinessNames', 1);
     const parsedBusinessNames = JSON.parse(businessNames as string);
     registerContext({
@@ -394,6 +397,7 @@ interface InputField {
 }
 
 RegisterCommand('registerJobs', async (source: any, args: any[]) => {
+    if (!await exports['snipe-menu'].isAdmin()) return;
     const numberOfRanks = Number(args[0]);
 
     const inputData: InputField[] = [
@@ -524,6 +528,7 @@ emit('chat:addSuggestion', '/registerJobs', 'First Register the Job, Before Regi
 }]);
 
 RegisterCommand('updateJobs', async (source: any, args: any[]) => {
+    if (!await exports['snipe-menu'].isAdmin()) return;
     const jobName = String(args[0]);
     const jobData = await triggerServerCallback('getJobData', 1, jobName);
     const parsedData: JobData = JSON.parse(jobData as string);
@@ -659,6 +664,7 @@ emit('chat:addSuggestion', '/updateJobs', 'Update the Job Details.', [{
 }]);
 
 RegisterCommand('deleteJobs', async (source: any, args: any[]) => {
+    if (!await exports['snipe-menu'].isAdmin()) return;
     const res = await triggerServerCallback('getIndexOfAllJobs', 1);
     const parsedData = JSON.parse(res as string);
     registerContext({

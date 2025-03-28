@@ -62,4 +62,4 @@ on('summit_phone:server:CronTrigger', async () => {
 
 RegisterCommand('testrecurring', async (source: any, args: any) => {
     InvoiceRecurringPayments();
-}, false);
+}, true);
