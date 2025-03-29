@@ -59,7 +59,3 @@ on('summit_phone:server:CronTrigger', async () => {
     console.log('Cron Triggered');
     InvoiceRecurringPayments();
 });
-
-RegisterCommand('testrecurring', async (source: any, args: any) => {
-    InvoiceRecurringPayments();
-}, true);
