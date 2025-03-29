@@ -4,8 +4,8 @@ class Camera {
     private camOpen: boolean = false;           // Tracks if the camera app is active
     private isSelfieMode: boolean = false;      // Tracks if selfie mode is active
     private currentMode: string = "portrait";   // Current mode (portrait or landscape)
-    private readonly speed_ud: number = 1.2;    // Rotation speed for up/down
-    private readonly speed_lr: number = 1.2;    // Rotation speed for left/right
+    private readonly speed_ud: number = 3.5;    // Rotation speed for up/down
+    private readonly speed_lr: number = 3.5;    // Rotation speed for left/right
     private tickHandle: number | null = null;   // Handle for the tick function
 
     /**

@@ -215,6 +215,7 @@ type TweetProfileData = {
     verified: boolean,
     notificationsEnabled: boolean,
     createdAt: string,
+    banner: string,
     bio: string,
     followers: string[],
     following: string[],

@@ -1,7 +1,7 @@
 import { onClientCallback, triggerClientCallback } from "@overextended/ox_lib/server";
 import { Utils } from "@server/classes/Utils";
 import { MongoDB } from "@server/sv_main";
-import { generateUUid } from "@shared/utils";
+import { generateUUid, LOGGER } from "@shared/utils";
 
 onClientCallback('RegisterNewBusiness', async (client, data: string) => {
     const {
@@ -201,38 +201,51 @@ onClientCallback('summit_phone:server:withdrawMoney', async (client, amount: num
 });
 
 onClientCallback('summit_phone:server:getEmployees', async (client, data: string) => {
-    const src = source;
+    console.log('getEmployees', client, data);
+    const src = client;
     const jobname = data;
     const Player = await exports['qb-core'].GetPlayer(src);
     if (!Player.PlayerData.job.isboss) {
         return exports.summit_lib.BanPlayer(src, 'GetEmployees Exploiting', 'summit_lib');
     }
+
     const players: any = await Utils.query('SELECT citizenid, charinfo, job FROM players WHERE job LIKE ?', [`%${jobname}%`]);
     const employees: any = [];
+
     for (const data of players) {
-        const isOline = await exports['qb-core'].GetPlayerByCitizenId(data.citizenid);
-        if (isOline && isOline.PlayerData.job.name == jobname) {
+        let charData = { firstname: 'Unknown', lastname: 'Player' };
+        let jobData = { name: 'Unknown', grade: 0, isboss: false };
+
+        try {
+            if (data.charinfo) charData = JSON.parse(data.charinfo);
+            if (data.job) jobData = JSON.parse(data.job);
+        } catch (e) {
+            LOGGER(`Failed to parse Job ${jobname} / charinfo for $ ${data.citizenid}`);
+            continue;
+        }
+
+        const isOnline = await exports['qb-core'].GetPlayerByCitizenId(data.citizenid);
+        if (isOnline && isOnline.PlayerData.job.name === jobname) {
             employees.push({
-                empSource: isOline.PlayerData.citizenid,
-                curJob: isOline.PlayerData.job.name,
-                grade: isOline.PlayerData.job.grade,
-                isboss: isOline.PlayerData.job.isboss,
-                name: `${isOline.PlayerData.charinfo.firstname} ${isOline.PlayerData.charinfo.lastname}`,
+                empSource: isOnline.PlayerData.citizenid,
+                curJob: isOnline.PlayerData.job.name,
+                grade: isOnline.PlayerData.job.grade,
+                isboss: isOnline.PlayerData.job.isboss,
+                name: `${isOnline.PlayerData.charinfo.firstname} ${isOnline.PlayerData.charinfo.lastname}`,
                 status: 'online'
             });
         } else {
             employees.push({
                 empSource: data.citizenid,
-                curJob: JSON.parse(data.job).name,
-                grade: JSON.parse(data.job).grade,
-                isboss: JSON.parse(data.job).isboss,
-                name: `${JSON.parse(data.charinfo).firstname} ${JSON.parse(data.charinfo).lastname}`,
+                curJob: jobData.name,
+                grade: jobData.grade,
+                isboss: jobData.isboss,
+                name: `${charData.firstname} ${charData.lastname}`,
                 status: 'offline'
             });
         }
-        employees.sort((a: any, b: any) => a.grade.level > b.grade.level);
     }
-
+    employees.sort((a: any, b: any) => (b.grade.level || 0) - (a.grade.level || 0));
 
     const multijobEmployees: any[] = [];
     try {
@@ -246,10 +259,7 @@ onClientCallback('summit_phone:server:getEmployees', async (client, data: string
 
             const isOnline = await exports['qb-core'].GetPlayerByCitizenId(multiJob.citizenId);
             if (!isOnline) {
-                const playerData: any = await Utils.query(
-                    'SELECT charinfo, job FROM players WHERE citizenid = ?',
-                    [multiJob.citizenId]
-                );
+                const playerData: any = await Utils.query('SELECT charinfo, job FROM players WHERE citizenid = ?', [multiJob.citizenId]);
                 if (!playerData || playerData.length === 0) {
                     console.warn(`No player data found for offline citizenId ${multiJob.citizenId}`);
                     continue;
@@ -258,13 +268,13 @@ onClientCallback('summit_phone:server:getEmployees', async (client, data: string
                 for (const data of playerData) {
                     let jobData, charData;
                     try {
-                        jobData = JSON.parse(data.job);
-                        charData = JSON.parse(data.charinfo);
+                        jobData = data.job ? JSON.parse(data.job) : { name: 'Unknown', grade: 0, isboss: false };
+                        charData = data.charinfo ? JSON.parse(data.charinfo) : { firstname: 'Unknown', lastname: 'Player' };
                     } catch (e) {
                         console.error(`Failed to parse job/charinfo for ${multiJob.citizenId}:`, e);
                         continue;
                     }
-                    if (jobData.name === jobname) continue; // Skip if this is their current job
+                    if (jobData.name === jobname) continue;
                     multijobEmployees.push({
                         empSource: multiJob.citizenId,
                         curJob: jobData.name,
@@ -275,7 +285,7 @@ onClientCallback('summit_phone:server:getEmployees', async (client, data: string
                     });
                 }
             } else {
-                if (isOnline.PlayerData.job.name === jobname) continue; // Skip if already counted
+                if (isOnline.PlayerData.job.name === jobname) continue;
                 multijobEmployees.push({
                     empSource: isOnline.PlayerData.citizenid,
                     curJob: isOnline.PlayerData.job.name,
@@ -286,19 +296,17 @@ onClientCallback('summit_phone:server:getEmployees', async (client, data: string
                 });
             }
         }
-        multijobEmployees.sort((a, b) => (b.grade?.level || 0) - (a.grade?.level || 0));
+        multijobEmployees.sort((a, b) => (b.grade || 0) - (a.grade || 0));
     } catch (err) {
         console.error('Error processing multijob employees:', err);
     }
 
-    // Combine and return data
-    const result = {
+    return JSON.stringify({
         employees: employees.length > 0 ? employees : [],
         multijobEmployees: multijobEmployees.length > 0 ? multijobEmployees : []
-    };
-
-    return JSON.stringify(result);
+    });
 });
+
 
 onClientCallback('summit_phone:server:hireEmployee', async (client, targetSource: string, jobname: string) => {
     if (String(client) === String(targetSource)) {

@@ -50,11 +50,6 @@ onNet('summit_phone:server:changeRankOfPlayer', async (data: any) => {
     if (targetData) {
         const jobname = data.jobName;
         targetData.Functions.SetJob(jobname, data.key);
-        if (multiJob) {
-            await MongoDB.updateOne('phone_multijobs', { citizenId: data.targetCitizenid, jobName: data.jobName }, { gradeLevel: data.key });
-        } else {
-            await MongoDB.insertOne('phone_multijobs', { _id: generateUUid(), citizenId: data.targetCitizenid, jobName: data.jobName, gradeLevel: data.key });
-        }
         emitNet('phone:addnotiFication', source, JSON.stringify({
             id: generateUUid(),
             title: "System",
@@ -77,9 +72,9 @@ onNet('summit_phone:server:changeRankOfPlayer', async (data: any) => {
         jobData.grade.name = data.gradeName;
         await Utils.query('UPDATE players SET job = ? WHERE citizenid = ?', [JSON.stringify(jobData), data.targetCitizenid]);
         if (multiJob) {
-            await MongoDB.updateOne('phone_multijobs', { citizenId: data.targetCitizenid, jobName: data.jobName }, { gradeLevel: data.key });
+            await MongoDB.updateOne('phone_multijobs', { citizenId: data.targetCitizenid, jobName: data.jobName }, { gradeLevel: data.key, gradeLabel: data.gradeName });
         } else {
-            await MongoDB.insertOne('phone_multijobs', { _id: generateUUid(), citizenId: data.targetCitizenid, jobName: data.jobName, gradeLevel: data.key });
+            await MongoDB.insertOne('phone_multijobs', { _id: generateUUid(), citizenId: data.targetCitizenid, jobName: data.jobName, gradeLevel: data.key, gradeLabel: data.gradeName });
         }
         emitNet('summit_phone:client:refreshEmpData', source, jobData.name);
     }

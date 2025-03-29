@@ -63,8 +63,10 @@ class Mail {
         }
 
         playerMail.messages.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        targetMail.messages.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
         emitNet('summit_phone:client:refreshmailMessages', source, JSON.stringify(playerMail.messages));
+        emitNet('summit_phone:client:refreshmailMessages', targetCid.PlayerData.source, JSON.stringify(targetMail.messages));
         return true;
     };
 

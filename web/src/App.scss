@@ -433,7 +433,7 @@
         width: 14.375vw;
         color: #FFF;
         text-align: center;
-        font-family: "SF Pro Display";
+        font-family: "SFPro";
         font-size: 0.41vw;
         font-style: normal;
         font-weight: 500;
@@ -572,7 +572,7 @@
           margin-left: 1vw;
 
           .text {
-            width: 40px;
+            width: 2.0833333333333335vw;
             height: 0.9375vw;
             font-style: normal;
             font-weight: 500;
@@ -653,9 +653,9 @@
               .description {
                 height: 1.3vw;
                 overflow: hidden;
-                ;
+                
                 color: rgba(255, 255, 255, 0.50);
-                font-size: 10px;
+                font-size: 0.5208333333333334vw;
                 font-style: normal;
                 font-weight: 500;
                 line-height: normal;
@@ -789,7 +789,7 @@
       .innerCont {
         width: 15.052083333333334vw;
         flex-shrink: 0;
-        border-radius: 5px;
+        border-radius: 0.2604166666666667vw;
         background: rgba(255, 255, 255, 0.12);
         margin-left: 0.8vw;
         margin-top: 1.5vw;
@@ -1238,25 +1238,25 @@
 
       .wallet-header {
         display: flex;
-        height: 17px;
+        height: 0.8854166666666666vw;
         flex-direction: column;
         justify-content: center;
         align-self: stretch;
         color: rgba(255, 255, 255, 0.78);
-        font-size: 14px;
+        font-size: 0.7291666666666666vw;
         font-style: normal;
         font-weight: 500;
-        line-height: 26px;
+        line-height: 1.3541666666666667vw;
       }
 
       .wallet-subheader {
         align-self: stretch;
         color: #FFF;
-        font-family: "SF Pro Display";
-        font-size: 25px;
+        font-family: "SFPro";
+        font-size: 1.3020833333333333vw;
         font-style: normal;
         font-weight: 700;
-        line-height: 26px;
+        line-height: 1.3541666666666667vw;
       }
     }
 
@@ -1382,7 +1382,7 @@
         font-style: normal;
         font-weight: 500;
         line-height: 118.745%;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.026041666666666668vw;
       }
     }
 
@@ -1439,7 +1439,7 @@
       .text {
         color: #FFF;
         font-family: "SFPro";
-        font-size: 30px;
+        font-size: 1.5625vw;
         font-style: normal;
         font-weight: 700;
         line-height: normal;
@@ -1662,7 +1662,7 @@
       font-style: normal;
       font-weight: 500;
       line-height: 119.419%;
-      letter-spacing: 1.05px;
+      letter-spacing: 0.0546875vw;
     }
   }
 }
@@ -1835,7 +1835,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
+  font-size: 1.1458333333333333vw;
   font-weight: bold;
   color: #fff;
 }

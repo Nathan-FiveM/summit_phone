@@ -50,12 +50,12 @@ export class NU {
     };
 
     public closeUI() {
+        SetNuiFocus(false, false);
+        Animation.EndAnimation();
         this.sendReactMessage('setVisible', { show: false, color: Utils.GetPhoneItem().split('_')[0] });
         this.sendReactMessage("setCursor", { show: false, color: Utils.GetPhoneItem().split('_')[0] });
-        SetNuiFocus(false, false);
         this.stopTimeLoop();
         this.stopDisableControlsLoop();
-        Animation.EndAnimation();
         Utils.phonesArray = "";
         setTimeout(() => {
             const state = LocalPlayer.state;

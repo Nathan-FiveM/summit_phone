@@ -19,10 +19,10 @@ onClientCallback('groups:changeJobOfPlayer', async (source: number, data: string
     if (!jobName || !grade) return false;
     const sourcePlayer = await exports['qb-core'].GetPlayer(source);
     if (!sourcePlayer) return false;
-    if (await exports.summit_lib.CheckJobGrade(String(jobName), String(grade))) {
-        sourcePlayer.Functions.SetJob(String(jobName), String(grade));
-        await triggerClientCallback('QBCore:Notify', source, `Job Changed to ${jobName} Successfully`, 'success');
-        const res = await triggerClientCallback('groups:toggleDuty', source);
+    if (await exports.summit_lib.CheckJobGrade(jobName, String(grade))) {
+        sourcePlayer.Functions.SetJob(jobName, String(grade));
+        emitNet('QBCore:Notify', source, `Job Changed to ${jobName} Successfully`, 'success');
+        const res = await triggerClientCallback('groups:toggleDuty', Number(sourcePlayer.PlayerData.source));
         return true
     } else {
         const res = await MongoDB.deleteOne('phone_multijobs', { citizenId: sourcePlayer.PlayerData.citizenid, jobName });

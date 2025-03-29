@@ -8,12 +8,12 @@ class PigeonService {
     //@ts-ignore
     public static tweetData: TweetData[];
 
-    public async searchUserExist(client: number, data: string): Promise<any> {
+    public async searchUserExist(_client: number, data: string): Promise<any> {
         const user = await MongoDB.findOne("phone_pigeon_users", { email: data });
         return !!user;
     }
 
-    public async login(client: number, data: string): Promise<any> {
+    public async login(_client: number, data: string): Promise<any> {
         try {
             const { email, password } = JSON.parse(data);
             const user = await MongoDB.findOne("phone_pigeon_users", { email, password });
@@ -24,7 +24,7 @@ class PigeonService {
         }
     }
 
-    public async signup(client: number, data: string): Promise<any> {
+    public async signup(_client: number, data: string): Promise<any> {
         const { email, password } = JSON.parse(data);
         const existingUser = await MongoDB.findOne("phone_pigeon_users", { email });
         if (existingUser) {
@@ -38,6 +38,7 @@ class PigeonService {
             username: email,
             displayName: email,
             avatar: "",
+            banner: "",
             notificationsEnabled: true,
             createdAt: new Date().toISOString(),
             bio: "",
@@ -47,7 +48,7 @@ class PigeonService {
         return true;
     }
 
-    public async getProfile(client: number, email: string): Promise<any> {
+    public async getProfile(_client: number, email: string): Promise<any> {
         const user = await MongoDB.findOne("phone_pigeon_users", { email });
         if (user) {
             return JSON.stringify(user);
@@ -56,7 +57,7 @@ class PigeonService {
         }
     }
 
-    public async toggleNotifications(client: number, email: string) {
+    public async toggleNotifications(_client: number, email: string) {
         const res = await MongoDB.findOne("phone_pigeon_users", { email });
         if (res) {
             res.notificationsEnabled = !res.notificationsEnabled;
@@ -66,7 +67,7 @@ class PigeonService {
         return false;
     }
 
-    public async postTweet(client: number, email: string, data: string): Promise<any> {
+    public async postTweet(_client: number, email: string, data: string): Promise<any> {
         const { content, attachments } = JSON.parse(data);
         try {
             const res = await MongoDB.findOne("phone_pigeon_users", { email });
@@ -112,7 +113,7 @@ class PigeonService {
         }
     }
 
-    public async getAllFeed(client: number, data: string): Promise<any> {
+    public async getAllFeed(_client: number, data: string): Promise<any> {
         try {
             const { start = 1, end = 20 } = JSON.parse(data);
             const res = await MongoDB.findMany("phone_pigeon_tweets", {}, null, false, {
@@ -158,37 +159,34 @@ class PigeonService {
         await MongoDB.updateOne("phone_pigeon_tweets", { _id: tweetId }, tweet);
         await MongoDB.insertOne("phone_pigeon_tweets_replies", reply);
         await triggerClientCallback("pigeon:refreshRepost", -1, JSON.stringify(reply));
-        if (tweet.repliesCount) {
-            const uniqueCids = [...new Set(tweet.repliesCount)];
-            for (const replyCid of uniqueCids) {
-                const res = await exports['qb-core'].GetPlayerByCitizenId(replyCid);
-                emitNet('phone:addnotiFication', res.PlayerData.source, JSON.stringify({
-                    id: generateUUid(),
-                    title: 'New Reply',
-                    description: `${user.displayName} has replied to tweet.`,
-                    app: 'pigeon',
-                    timeout: 5000
-                }));
-                await MongoDB.insertOne("phone_pigeon_notifications", {
-                    _id: generateUUid(),
-                    content: `${user.displayName} has replied to tweet.`,
-                    email: user.email,
-                    createdAt: new Date().toISOString(),
-                    type: "post",
-                });
-            }
+        const res = await exports['qb-core'].GetPlayerByCitizenId(await Utils.GetCidFromTweetId(tweet.email));
+        if (res) {
+            emitNet('phone:addnotiFication', res.PlayerData.source, JSON.stringify({
+                id: generateUUid(),
+                title: 'New Reply',
+                description: `${user.displayName} has replied to tweet.`,
+                app: 'pigeon',
+                timeout: 5000
+            }));
+            await MongoDB.insertOne("phone_pigeon_notifications", {
+                _id: generateUUid(),
+                content: `${user.displayName} has replied to tweet.`,
+                email: tweet.email,
+                createdAt: new Date().toISOString(),
+                type: "post",
+            });
         }
     }
 
-    public async likeTweet(client: number, data: string) {
+    public async likeTweet(_client: number, data: string) {
         const { tweetId, like, email } = JSON.parse(data);
         const tweet = await MongoDB.findOne("phone_pigeon_tweets", { _id: tweetId });
         if (!tweet) return { error: "Tweet not found" };
         if (like) {
             tweet.likeCount.push(email);
-            for (const likeCid of tweet.likeCount) {
-                const cid = await Utils.GetCidFromTweetId(likeCid);
-                const res = await exports['qb-core'].GetPlayerByCitizenId(cid);
+            const cid = await Utils.GetCidFromTweetId(tweet.email);
+            const res = await exports['qb-core'].GetPlayerByCitizenId(cid);
+            if (res) {
                 emitNet('phone:addnotiFication', res.PlayerData.source, JSON.stringify({
                     id: generateUUid(),
                     title: 'New Like',
@@ -199,7 +197,7 @@ class PigeonService {
                 await MongoDB.insertOne("phone_pigeon_notifications", {
                     _id: generateUUid(),
                     content: `${email} has liked your tweet.`,
-                    email,
+                    email: tweet.email,
                     createdAt: new Date().toISOString(),
                     type: "like",
                 });
@@ -211,7 +209,7 @@ class PigeonService {
         return true;
     }
 
-    public async likeRepliesTweet(client: number, data: string) {
+    public async likeRepliesTweet(_client: number, data: string) {
         const { tweetId, like, email } = JSON.parse(data);
         const tweet = await MongoDB.findOne("phone_pigeon_tweets_replies", { _id: tweetId });
         console.log(tweet, like);
@@ -371,15 +369,15 @@ class PigeonService {
         }
     }
 
-    public async deleteTweet(client: number, tweetId: string) {
+    public async deleteTweet(_client: number, tweetId: string) {
         await MongoDB.deleteOne("phone_pigeon_tweets", { _id: tweetId });
     }
 
-    public async deleteRepliesTweet(client: number, tweetId: string) {
+    public async deleteRepliesTweet(_client: number, tweetId: string) {
         await MongoDB.deleteOne("phone_pigeon_tweets_replies", { _id: tweetId });
     }
 
-    public async getPostReplies(client: number, tweetId: string) {
+    public async getPostReplies(_client: number, tweetId: string) {
         const replies = await MongoDB.findMany("phone_pigeon_tweets_replies", { originalTweetId: tweetId }, null, false, {
             sort: { createdAt: -1 }
         });
@@ -429,7 +427,7 @@ class PigeonService {
         }
     }
 
-    public async followUser(client: number, data: string): Promise<any> {
+    public async followUser(_client: number, data: string): Promise<any> {
         try {
             const { targetEmail, currentEmail, follow } = JSON.parse(data);
             const targetUser: TweetProfileData = await MongoDB.findOne("phone_pigeon_users", { email: targetEmail });
@@ -460,42 +458,42 @@ class PigeonService {
         }
     }
 
-    public async getUserTweets(client: number, email: string): Promise<any> {
+    public async getUserTweets(_client: number, email: string): Promise<any> {
         const res = await MongoDB.findMany("phone_pigeon_tweets", { email }, null, false, {
             sort: { createdAt: -1 }
         });
         return JSON.stringify(res);
     }
 
-    public async getAllPostReplies(client: number, email: string): Promise<any> {
+    public async getAllPostReplies(_client: number, email: string): Promise<any> {
         const res = await MongoDB.findMany("phone_pigeon_tweets_replies", { email: email }, null, false, {
             sort: { createdAt: -1 }
         });
         return JSON.stringify(res);
     }
 
-    public async getAllLikedTweets(client: number, email: string): Promise<any> {
+    public async getAllLikedTweets(_client: number, email: string): Promise<any> {
         const res = await MongoDB.findMany("phone_pigeon_tweets", { likeCount: email }, null, false, {
             sort: { createdAt: -1 }
         });
         return JSON.stringify(res);
     }
 
-    public async searchUsers(client: number, value: string): Promise<any> {
+    public async searchUsers(_client: number, value: string): Promise<any> {
         const res = await MongoDB.findMany("phone_pigeon_users", { email: { $regex: value, $options: "i" } }, null, false, {
             sort: { createdAt: -1 }
         });
         return JSON.stringify(res);
     }
 
-    public async getNotifications(client: number, email: string): Promise<any> {
+    public async getNotifications(_client: number, email: string): Promise<any> {
         const res = await MongoDB.findMany("phone_pigeon_notifications", { email }, null, false, {
             sort: { createdAt: -1 }
         });
         return JSON.stringify(res);
     }
 
-    public async changePassword(client: number, data: string): Promise<any> {
+    public async changePassword(_client: number, data: string): Promise<any> {
         const { email, password } = JSON.parse(data);
         const user = await MongoDB.findOne("phone_pigeon_users", { email });
         if (!user) return { error: "User not found" };
@@ -504,7 +502,7 @@ class PigeonService {
         return true;
     };
 
-    public async updateProfile(client: number, data: string): Promise<any> {
+    public async updateProfile(_client: number, data: string): Promise<any> {
         const parsedData: TweetProfileData = JSON.parse(data);
         const user = await MongoDB.updateOne("phone_pigeon_users", { email: parsedData.email }, parsedData);
         return "success";

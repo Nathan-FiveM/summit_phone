@@ -15,6 +15,7 @@ export default function Profile(props: { show: boolean, email: string, onClose: 
         password: '',
         displayName: '',
         avatar: '',
+        banner: '',
         verified: false,
         notificationsEnabled: false,
         createdAt: '',
@@ -90,7 +91,6 @@ export default function Profile(props: { show: boolean, email: string, onClose: 
             timingFunction="ease"
             onEnter={async () => {
                 const res = await fetchNui('getProfile', props.email);
-                console.log(res)
                 if (res === 'User not found') {
                     fetchNui('showNoti', { app: 'pigeon', title: 'Pigeon', description: 'Something Went Wrong, User Can\'t be fetched' })
                     props.onError();
@@ -134,7 +134,19 @@ export default function Profile(props: { show: boolean, email: string, onClose: 
                         flexDirection: 'column',
                         width: '50%',
                     }}>
-                        <Avatar src={profileData.avatar.length > 0 ? profileData.avatar : "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} size={'3vw'} />
+                        <Avatar src={profileData.avatar !== '' ? profileData.avatar : "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} size={'3vw'} />
+                        <div style={{
+                            width: '100%',
+                            height: '7.4vw',
+                            background: profileData.banner !== '' ? `url(${profileData.banner})` : "url('https://cdn.summitrp.gg/uploads/server/phone/pigeonBanner.gif')",
+                            backgroundSize: 'cover',
+                            backgroundRepeat: 'no-repeat',
+                            position: 'absolute',
+                            zIndex: -1,
+                            top: '0.0vw',
+                            marginLeft: '-0.8vw',
+                            backgroundPosition: 'center',
+                        }} />
                         <div style={{
                             fontSize: '0.8vw',
                             marginTop: '0.3vw'
@@ -184,8 +196,9 @@ export default function Profile(props: { show: boolean, email: string, onClose: 
                         flexDirection: 'column',
                         alignItems: 'end',
                         justifyContent: 'center',
+                        marginTop: '1vw',
                     }}>
-                        {phoneSettings.pigeonIdAttached ? <Button style={{
+                        {phoneSettings.pigeonIdAttached === profileData.email ? <Button style={{
                             borderRadius: '2vw',
                             width: '5vw',
                             fontSize: '0.7vw',
@@ -205,6 +218,13 @@ export default function Profile(props: { show: boolean, email: string, onClose: 
                             marginTop: '0.5vw',
                         }} onClick={async () => {
                             await fetchNui('followUser', JSON.stringify({ targetEmail: profileData.email, currentEmail: phoneSettings.pigeonIdAttached, follow: !profileData.followers.includes(phoneSettings.pigeonIdAttached) }));
+                            const res = await fetchNui('getProfile', profileData.email);
+                            if (res === 'User not found') {
+                                fetchNui('showNoti', { app: 'pigeon', title: 'Pigeon', description: 'Something Went Wrong, User Can\'t be fetched' })
+                                props.onError();
+                                return;
+                            }
+                            setProfileData(JSON.parse(res as string));
                         }} variant="outline">
                             {profileData.followers.includes(phoneSettings.pigeonIdAttached) ? 'Unfollow' : 'Follow'}
                         </Button>}
@@ -462,6 +482,31 @@ export default function Profile(props: { show: boolean, email: string, onClose: 
                                 }} value={duplicateProfiledata.avatar} onChange={(event) => {
                                     setDuplicateProfileData({ ...duplicateProfiledata, avatar: event.currentTarget.value })
                                 }} placeholder="Profile Picture URL" onFocus={() => fetchNui('disableControls', true)} onBlur={() => fetchNui('disableControls', false)} />
+                            </div>
+                            <div style={{
+                                display: 'flex',
+                                paddingTop: '0.5vw',
+                                borderBottom: '0.052083333333333336vw solid rgba(255, 255, 255, 0.2)',
+                                paddingBottom: '0.5vw',
+                            }}>
+                                <div style={{ fontWeight: '500', fontSize: '0.8vw', width: '28.5%' }}>Banner</div>
+                                <TextInput styles={{
+                                    root: {
+                                        width: '11vw',
+                                        marginLeft: '0.5vw',
+                                        fontSize: '0.8vw',
+                                        fontWeight: 500,
+                                        color: 'white',
+                                    },
+                                    input: {
+                                        backgroundColor: 'rgba(255, 255, 255, 0)',
+                                        border: 'none',
+                                        outline: 'none',
+                                        color: 'white',
+                                    },
+                                }} value={duplicateProfiledata.banner} onChange={(e) => {
+                                    setDuplicateProfileData({ ...duplicateProfiledata, banner: e.currentTarget.value })
+                                }} placeholder="Enter banner URL" onFocus={() => fetchNui('disableControls', true)} onBlur={() => fetchNui('disableControls', false)} />
                             </div>
                             <div style={{
                                 display: 'flex',

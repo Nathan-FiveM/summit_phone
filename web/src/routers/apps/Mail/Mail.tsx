@@ -72,7 +72,7 @@ export default function MailApp(props: { onExit: () => void, onEnter: () => void
             mountOnEnter
             onEntering={async () => {
                 props.onEnter();
-                if (phoneSettings.smrtId.length > 0 && phoneSettings.smrtPassword.length > 0) {
+                if (phoneSettings.smrtId !== '' && phoneSettings.smrtPassword !== '') {
                     const messages: any = await fetchNui('getEmailMessages', JSON.stringify({
                         email: phoneSettings.smrtId,
                         password: phoneSettings.smrtPassword,
@@ -197,7 +197,7 @@ export default function MailApp(props: { onExit: () => void, onEnter: () => void
                                             }));
                                             const messagesData = JSON.parse(messages);
                                             setMessagesData(messagesData);
-
+                                            setADWds(true);
                                             const dataX = {
                                                 ...phoneSettings,
                                                 smrtId: email,
@@ -402,6 +402,20 @@ export default function MailApp(props: { onExit: () => void, onEnter: () => void
                                 mail: tag,
                             }
                         });
+                    }}
+                    onLogout={() => {
+                        setADWds(false);
+                        setSignUp(false);
+                        setEmail('');
+                        setPassword('');
+                        setEmailError(false);
+                        const dataX = {
+                            ...phoneSettings,
+                            smrtId: '',
+                            smrtPassword: '',
+                        };
+                        setPhoneSettings(dataX);
+                        fetchNui('setSettings', JSON.stringify(dataX));
                     }}
                 />
                 <FilteredMessage show={location.page.mail === 'inbox' || location.page.mail === 'sent' || location.page.mail === 'draft' || location.page.mail === 'bin'} messages={messagesData} onMessageClick={(messageData) => {

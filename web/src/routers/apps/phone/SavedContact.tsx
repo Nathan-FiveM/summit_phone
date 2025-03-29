@@ -33,24 +33,8 @@ export default function SavedContact(props: { onContactEdited: (data: PhoneConta
                                 setLocation({
                                     app: 'phone',
                                     page: {
+                                        ...location.page,
                                         phone: 'contacts',
-                                        messages: location.page.messages,
-                                        settings: location.page.settings,
-                                        services: location.page.services,
-                                        mail: location.page.mail,
-                                        wallet: location.page.wallet,
-                                        calulator: location.page.calulator,
-                                        appstore: location.page.appstore,
-                                        camera: location.page.camera,
-                                        gallery: location.page.gallery,
-                                        pigeon: location.page.pigeon,
-                                        darkchat: location.page.darkchat,
-                                        garages: location.page.garages,
-                                        notes: location.page.notes,
-                                        houses: location.page.houses,
-                                        bluepages: location.page.bluepages,
-                                        pixie: location.page.pixie,
-                                        groups: location.page.groups,
                                     }
                                 });
                                 setSelectedContact({
@@ -81,13 +65,13 @@ export default function SavedContact(props: { onContactEdited: (data: PhoneConta
                                     <rect width="50" height="23" rx="11.5" fill="white" fillOpacity="0.14" />
                                     <path d="M20.6587 15.2686V16.5H14.8442V7.34033H20.6587V8.56543H16.2661V11.2441H20.4238V12.4248H16.2661V15.2686H20.6587ZM24.4609 16.6143C22.7725 16.6143 21.6553 15.2686 21.6553 13.1611C21.6553 11.0537 22.7725 9.71436 24.4482 9.71436C25.4067 9.71436 26.1685 10.1968 26.543 10.9331H26.5684V7.34033H27.9458V16.5H26.6128V15.3638H26.5874C26.1938 16.1255 25.4321 16.6143 24.4609 16.6143ZM24.8228 10.8696C23.7373 10.8696 23.0581 11.7583 23.0581 13.1611C23.0581 14.5703 23.7373 15.4526 24.8228 15.4526C25.8765 15.4526 26.5811 14.5576 26.5811 13.1611C26.5811 11.7773 25.8765 10.8696 24.8228 10.8696ZM29.3994 16.5V9.82227H30.7705V16.5H29.3994ZM30.085 8.84473C29.647 8.84473 29.2915 8.49561 29.2915 8.06396C29.2915 7.62598 29.647 7.27686 30.085 7.27686C30.5293 7.27686 30.8848 7.62598 30.8848 8.06396C30.8848 8.49561 30.5293 8.84473 30.085 8.84473ZM32.5732 8.2417H33.9507V9.82227H35.2202V10.9077H33.9507V14.5894C33.9507 15.167 34.2046 15.4272 34.7632 15.4272C34.9028 15.4272 35.125 15.4146 35.2139 15.3955V16.481C35.0615 16.519 34.7568 16.5444 34.4521 16.5444C33.1001 16.5444 32.5732 16.0303 32.5732 14.7417V10.9077H31.6021V9.82227H32.5732V8.2417Z" fill="white" />
                                 </svg>
-                                <svg style={{
+                                {selectedContact?.contactNumber !== selectedContact?.personalNumber ? <svg style={{
                                     cursor: 'pointer',
                                 }} onClick={() => {
                                     fetchNui('blockNumber', JSON.stringify(selectedContact));
                                 }} width="1.0416666666666667vw" height="1.0416666666666667vw" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M3.63605 3.63603L16.364 16.364M19 10C19 14.9706 14.9706 19 10 19C5.02944 19 1 14.9706 1 10C1 5.02944 5.02944 1 10 1C14.9706 1 19 5.02944 19 10Z" stroke="white" strokeWidth="2" strokeLinecap="round" stroke-linejoin="round" />
-                                </svg>
+                                </svg> : <></>}
                             </div>
                         </div>
                         <Avatar src={selectedContact.image ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} w={'4.6979166666666665vw'} h={'4.6979166666666665vw'} radius="50vw" />

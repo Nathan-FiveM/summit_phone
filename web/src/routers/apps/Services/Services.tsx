@@ -25,7 +25,7 @@ type JobData = {
 
 export default function Services(props: { onExit: () => void, onEnter: () => void }) {
     const nodeRef = useRef(null);
-    const { location, setLocation } = usePhone();
+    const { location, phoneSettings, setLocation } = usePhone();
     const [businessData, setBusinessData] = useState<PhoneBusiness[]>([]);
     const [jobData, setJobData] = useState<JobData>({
         label: '',
@@ -131,7 +131,11 @@ export default function Services(props: { onExit: () => void, onEnter: () => voi
                                                 <rect x="0.5" y="0.5" width="20" height="20" rx="2" fill="#3A3A3A" />
                                                 <path d="M5.56401 6.12893C6.26972 5.32749 7.09613 4.92052 7.60791 5.43346L9.31505 7.14272C9.74797 7.57628 9.64295 8.15046 9.14526 8.74278C8.92245 9.00783 8.79085 9.33773 8.76998 9.68357C8.7491 10.0294 8.84007 10.3728 9.02938 10.6628C9.25872 11.0141 9.54599 11.3631 9.8912 11.7088C10.312 12.1303 10.7462 12.474 11.1932 12.7411C11.4764 12.9103 11.8046 12.9882 12.1334 12.9644C12.4623 12.9406 12.7759 12.8163 13.0319 12.6082C13.6523 12.1037 14.086 11.9212 14.4361 12.2713L16.1432 13.981C17.1619 15.0012 14.7048 17.2488 12.9446 16.9422C11.5243 16.6943 9.33154 15.137 7.89277 13.6961C6.62297 12.4244 4.91302 9.94877 4.65311 8.64648C4.49378 7.84987 4.88486 6.89894 5.56401 6.12812V6.12893Z" fill="white" />
                                             </svg>
-                                            <svg onClick={()=>{
+                                            <svg onClick={() => {
+                                                if (phoneSettings.smrtId === '' && phoneSettings.smrtPassword === '') {
+                                                    fetchNui('showNoti', { app: 'settings', title: 'Mail', description: 'You can\'t Mail, you need to Sign In First' })
+                                                    return;
+                                                }
                                                 setLocation({
                                                     app: 'mail',
                                                     page: {
@@ -156,7 +160,7 @@ export default function Services(props: { onExit: () => void, onEnter: () => voi
                         <div style={{
                             alignSelf: 'stretch',
                             color: 'rgba(255, 255, 255, 0.17)',
-                            fontSize: '14px',
+                            fontSize: '0.7291666666666666vw',
                             marginTop: '0.5vw',
                             marginLeft: '0.8vw',
                             fontStyle: 'normal',
@@ -222,7 +226,7 @@ export default function Services(props: { onExit: () => void, onEnter: () => voi
                             <div style={{
                                 alignSelf: 'stretch',
                                 color: 'rgba(255, 255, 255, 0.17)',
-                                fontSize: '14px',
+                                fontSize: '0.7291666666666666vw',
                                 marginTop: '0.5vw',
                                 marginLeft: '0.8vw',
                                 fontStyle: 'normal',
@@ -338,7 +342,7 @@ export default function Services(props: { onExit: () => void, onEnter: () => voi
                                 <div style={{
                                     alignSelf: 'stretch',
                                     color: 'rgba(255, 255, 255, 0.17)',
-                                    fontSize: '14px',
+                                    fontSize: '0.7291666666666666vw',
                                     marginTop: '0.5vw',
                                     marginLeft: '0.8vw',
                                     fontStyle: 'normal',
@@ -379,7 +383,9 @@ export default function Services(props: { onExit: () => void, onEnter: () => voi
                                 </div>
 
                                 <div className="innerCont" style={{ marginTop: '0.5vw', maxHeight: '9vw', overflowY: 'auto', overflowX: 'hidden' }}>
-                                    {employeeData && employeeData.map((employee, index) => {
+                                    {employeeData && employeeData.sort((a: any, b: any) => {
+                                        return b?.grade?.level - a?.grade?.level;
+                                    }).map((employee, index) => {
                                         return (
                                             <div className="conta1" key={index}>
                                                 <div className="innerConta1">
@@ -410,7 +416,7 @@ export default function Services(props: { onExit: () => void, onEnter: () => voi
                                 <div style={{
                                     alignSelf: 'stretch',
                                     color: 'rgba(255, 255, 255, 0.17)',
-                                    fontSize: '14px',
+                                    fontSize: '0.7291666666666666vw',
                                     marginTop: '0.5vw',
                                     marginLeft: '0.8vw',
                                     fontStyle: 'normal',
@@ -418,7 +424,9 @@ export default function Services(props: { onExit: () => void, onEnter: () => voi
                                     lineHeight: 'normal',
                                 }}>INACTIVE EMPLOYEES</div>
                                 <div className="innerCont" style={{ marginTop: '0.5vw', maxHeight: '9vw', overflowY: 'auto', overflowX: 'hidden' }}>
-                                    {inActiveEmployees && inActiveEmployees.map((employee, index) => {
+                                    {inActiveEmployees && inActiveEmployees.sort((a: any, b: any) => {
+                                        return b?.grade?.level - a?.grade?.level;
+                                    }).map((employee, index) => {
                                         return (
                                             <div className="conta1" key={index}>
                                                 <div className="innerConta1">

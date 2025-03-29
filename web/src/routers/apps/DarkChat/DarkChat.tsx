@@ -382,13 +382,25 @@ export default function DarkChat(props: { onExit: () => void; onEnter: () => voi
                                 }}
                                 className="clickanimation"
                                 onClick={async () => {
-                                    if (emailError || !email.includes('@') || !email || !password) return;
+                                    if (emailError || email.includes('@') || !email || !password) return;
                                     const res = await fetchNui('registerNewDarkMailAccount', JSON.stringify({
                                         email: `${email}@onion.duck`,
                                         password: password
                                     }));
                                     if (res) {
                                         setSignUp(false);
+                                        const dataX = {
+                                            ...phoneSettings,
+                                            darkMailIdAttached: email,
+                                        }
+                                        setPhoneSettings(dataX);
+                                        const resXX = await fetchNui('setSettings', JSON.stringify(dataX));
+                                        const res = await fetchNui('getDarkChatProfile', email);
+                                        const parsedRes = JSON.parse(res as string);
+                                        setChannelProfile(parsedRes);
+                                        const resX = await fetchNui('getDarkChatChannels', "Ok");
+                                        const parsedResX = JSON.parse(resX as string);
+                                        setChannelData(parsedResX);
                                     }
                                 }}
                             >
@@ -438,7 +450,7 @@ export default function DarkChat(props: { onExit: () => void; onEnter: () => voi
                                 setInputDescription('Create a new channel for secure communication.');
                                 setInputPlaceholder('Channel Name');
                             }} className='clickanimation' width="1.25vw" height="1.25vw" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M7.55556 12H12M12 12H16.4444M12 12V16.4444M12 12V7.55556M12 22C6.47716 22 2 17.5229 2 12C2 6.47716 6.47716 2 12 2C17.5229 2 22 6.47716 22 12C22 17.5229 17.5229 22 12 22Z" stroke="#0A84FF" strokeWidth="2.5" strokeLinecap="round" stroke-linejoin="round" />
+                                <path d="M7.55556 12H12M12 12H16.4444M12 12V16.4444M12 12V7.55556M12 22C6.47716 22 2 17.5229 2 12C2 6.47716 6.47716 2 12 2C17.5229 2 22 6.47716 22 12C22 17.5229 17.5229 22 12 22Z" stroke="#0A84FF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
                             <Avatar style={{
                                 cursor: 'pointer',
