@@ -157,6 +157,7 @@ class Util {
 
     async GetSourceFromCitizenId(citizenId: string) {
         const source = await exports['qb-core'].GetPlayerByCitizenId(citizenId);
+        if (!source) return false;
         return source.PlayerData.source;
     }
 
@@ -245,7 +246,13 @@ class Util {
         const res = await MongoDB.findOne('phone_settings', { pigeonIdAttached: email });
         if (!res) return false;
         return res._id;
-    }
+    };
+
+    async GetCidFromDarkEmail(email: string) {
+        const res = await MongoDB.findOne('phone_settings', { darkMailIdAttached: email });
+        if (!res) return false;
+        return res._id;
+    };
 }
 
 export const Utils = new Util();

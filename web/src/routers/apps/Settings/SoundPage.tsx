@@ -33,6 +33,11 @@ export default function SoundPage() {
             transition="fade"
             duration={400}
             timingFunction="ease"
+            onExit={() => {
+                setShowAddRintone(false);
+                setAddRintone('');
+                stopSound();
+            }}
         >
             {(styles) => <div style={{
                 ...styles,
@@ -183,7 +188,7 @@ export default function SoundPage() {
                     gap: '0.10416666666666667vw',
                     marginLeft: '0.8vw',
                 }}>
-                    {phoneSettings.ringtone.ringtones.map((ringtone, index) => {
+                    {phoneSettings?.ringtone && phoneSettings?.ringtone?.ringtones.map((ringtone, index) => {
                         return (
                             <div key={index} className="containerSAd" style={{
                                 display: 'flex',

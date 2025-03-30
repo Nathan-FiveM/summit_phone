@@ -306,7 +306,7 @@ export default function WallpaperPage() {
                             </svg>}
                         </div>
                     </BackgroundImage>
-                    {phoneSettings.background.wallpapers.map((wallpape, index) => {
+                    {phoneSettings?.background && phoneSettings?.background?.wallpapers?.map((wallpape, index) => {
                         return (
                             <BackgroundImage src={wallpape} style={{
                                 width: '5.364583333333333vw',
@@ -408,7 +408,6 @@ export default function WallpaperPage() {
                                 className="Dsadsadsa"
                             />
                         </div>
-
                     </div>}
                 </Transition>
             </div>}

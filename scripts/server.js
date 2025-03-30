@@ -19,7 +19,7 @@ writeFileSync(
 
 
 // Obfuscate the output file if not in dev mode
-/* if (!process.argv.includes('--dev')) {
+if (!process.argv.includes('--dev')) {
   const outputFilePath = '../build/server.js';
   const code = readFileSync(outputFilePath, 'utf-8');
 
@@ -56,4 +56,4 @@ writeFileSync(
 
   writeFileSync(outputFilePath, obfuscationResult.getObfuscatedCode());
   console.log('✅ Obfuscation complete.');
-} */
+}

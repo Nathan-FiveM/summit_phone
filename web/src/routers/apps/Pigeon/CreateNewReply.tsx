@@ -136,6 +136,8 @@ export default function CreateNewReply(props: { show: boolean, tweetId: string, 
                             height: '10vw',
                             objectFit: 'cover',
                             borderRadius: '0.5vw',
+                        }} onError={() => {
+                            setImageAttachment(imageAttachment.filter((img) => img !== image));
                         }} />
                     })}
                 </div>
@@ -143,6 +145,8 @@ export default function CreateNewReply(props: { show: boolean, tweetId: string, 
                 <InputDialog show={inputShow} placeholder={inputPlaceholder} description={inputDescription} title={inputTitle} onConfirm={async (e: string) => {
                     setInputShow(false);
                     if (inputTitle === 'Attach Image') {
+                        if (e === '') return;
+                        if (imageAttachment.includes(e)) return;
                         setImageAttachment([...imageAttachment, e]);
                     }
                 }} onCancel={() => {

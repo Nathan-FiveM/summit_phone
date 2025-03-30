@@ -8,6 +8,7 @@ import { useNuiEvent } from "../../../hooks/useNuiEvent";
 import { setClipboard } from "../../../hooks/misc";
 import { useDisclosure } from "@mantine/hooks";
 import { Portal } from '@mantine/core';
+import InputDialog from "../DarkChat/InputDialog";
 
 
 export default function Photos(props: { onExit: () => void; onEnter: () => void }) {
@@ -20,6 +21,10 @@ export default function Photos(props: { onExit: () => void; onEnter: () => void 
         link: string;
         date: string;
     }[]>([]);
+    const [inputTitle, setInputTitle] = useState('');
+    const [inputDescription, setInputDescription] = useState('');
+    const [inputPlaceholder, setInputPlaceholder] = useState('');
+    const [inputShow, setInputShow] = useState(false);
     const [seletedLink, setSelectedLink] = useState<string>('');
     useNuiEvent('photos:viewPhoto', async (data: string) => {
         const link = photos.find((photo) => photo._id === data)?.link;
@@ -75,8 +80,20 @@ export default function Photos(props: { onExit: () => void; onEnter: () => void 
                     marginLeft: '0vw',
                     marginTop: '2vw',
                     letterSpacing: '0.1vw',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    width: '90%',
                 }}>
                     <Title title="Photos" />
+                    <svg onClick={async () => {
+                        setInputShow(true);
+                        setInputTitle('Import Image');
+                        setInputDescription('Import an image from URL.');
+                        setInputPlaceholder('Link to image');
+                    }} style={{ marginTop: '0.5vw' }} className='clickanimation' width="1.25vw" height="1.25vw" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7.55556 12H12M12 12H16.4444M12 12V16.4444M12 12V7.55556M12 22C6.47716 22 2 17.5229 2 12C2 6.47716 6.47716 2 12 2C17.5229 2 22 6.47716 22 12C22 17.5229 17.5229 22 12 22Z" stroke="#0A84FF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
                 </div>
                 <div style={{
                     width: '90%',
@@ -123,6 +140,17 @@ export default function Photos(props: { onExit: () => void; onEnter: () => void 
                         </div>
                     </Portal>
                 )}
+                <InputDialog show={inputShow} placeholder={inputPlaceholder} description={inputDescription} title={inputTitle} onConfirm={async (e: string) => {
+                    setInputShow(false);
+                    if (inputTitle === 'Import Image') {
+                        if (e === '') return;
+                        const res = await fetchNui('saveimageToPhotos', e);
+                        const parsedRes = JSON.parse(res as string);
+                        setPhotos([...photos, parsedRes]);
+                    }
+                }} onCancel={() => {
+                    setInputShow(false);
+                }} />
             </div>
         </CSSTransition>
     );

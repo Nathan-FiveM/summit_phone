@@ -227,7 +227,7 @@ export default function LockWallpaperPage() {
                             display: 'flex',
                             justifyContent: 'space-between',
                             alignItems: 'flex-end',
-                        }} onMouseEnter={() => setHover(5)} onMouseLeave={() => setHover(0)}  onClick={async () => {
+                        }} onMouseEnter={() => setHover(5)} onMouseLeave={() => setHover(0)} onClick={async () => {
                             const data = {
                                 ...phoneSettings,
                                 lockscreen: {
@@ -306,7 +306,7 @@ export default function LockWallpaperPage() {
                             </svg>}
                         </div>
                     </BackgroundImage>
-                    {phoneSettings.lockscreen.wallpapers.map((wallpape, index) => {
+                    {phoneSettings?.lockscreen && phoneSettings?.lockscreen?.wallpapers?.map((wallpape, index) => {
                         return (
                             <BackgroundImage src={wallpape} style={{
                                 width: '5.364583333333333vw',

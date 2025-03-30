@@ -5,9 +5,6 @@ import { triggerClientCallback } from "@overextended/ox_lib/server";
 import { Utils } from "@server/classes/Utils";
 
 class PigeonService {
-    //@ts-ignore
-    public static tweetData: TweetData[];
-
     public async searchUserExist(_client: number, data: string): Promise<any> {
         const user = await MongoDB.findOne("phone_pigeon_users", { email: data });
         return !!user;
@@ -67,8 +64,8 @@ class PigeonService {
         return false;
     }
 
-    public async postTweet(_client: number, email: string, data: string): Promise<any> {
-        const { content, attachments } = JSON.parse(data);
+    public async postTweet(_client: number, data: string): Promise<any> {
+        const { email, content, attachments } = JSON.parse(data);
         try {
             const res = await MongoDB.findOne("phone_pigeon_users", { email });
             if (!res) return { error: "User not found" };

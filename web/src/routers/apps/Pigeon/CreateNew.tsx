@@ -71,7 +71,7 @@ export default function CreateNew(props: { location: string }) {
                         color: 'white',
                         height: '1.7vw',
                         borderRadius: '1vw',
-                    }} onClick={()=>{
+                    }} onClick={() => {
                         fetchNui('postTweet', JSON.stringify({
                             content: content,
                             attachments: imageAttachment,
@@ -142,6 +142,8 @@ export default function CreateNew(props: { location: string }) {
                             height: '10vw',
                             objectFit: 'cover',
                             borderRadius: '0.5vw',
+                        }} onError={() => {
+                            setImageAttachment(imageAttachment.filter((_, i) => i !== index));
                         }} />
                     })}
                 </div>
@@ -149,12 +151,14 @@ export default function CreateNew(props: { location: string }) {
                 <InputDialog show={inputShow} placeholder={inputPlaceholder} description={inputDescription} title={inputTitle} onConfirm={async (e: string) => {
                     setInputShow(false);
                     if (inputTitle === 'Attach Image') {
+                        if (e === '') return;
+                        if (imageAttachment.includes(e)) return;
                         setImageAttachment([...imageAttachment, e]);
                     }
                 }} onCancel={() => {
                     setInputShow(false);
                 }} />
-            </div>}
+            </div>} 
         </Transition>
     )
 }

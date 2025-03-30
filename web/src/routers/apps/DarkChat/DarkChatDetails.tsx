@@ -113,11 +113,11 @@ export default function DarkChatDetails(props: { show: boolean, channelId: strin
                                     borderRadius: '0.5vw',
                                     width: '100%',
                                     flexDirection: 'column',
-                                    alignItems: data.from === phoneSettings._id ? 'flex-end' : 'flex-start',
+                                    alignItems: data.from === phoneSettings.darkMailIdAttached ? 'flex-end' : 'flex-start',
                                 }}>
                                     <div style={{
-                                        backgroundColor: data.from === phoneSettings._id ? 'rgb(72, 72, 72)' : 'rgb(46, 46, 46)',
-                                        alignItems: data.from === phoneSettings._id ? 'flex-end' : 'flex-start',
+                                        backgroundColor: data.from === phoneSettings.darkMailIdAttached ? 'rgb(72, 72, 72)' : 'rgb(46, 46, 46)',
+                                        alignItems: data.from === phoneSettings.darkMailIdAttached ? 'flex-end' : 'flex-start',
                                         width: 'fit-content',
                                         maxWidth: '70%',
                                         padding: '0.4vw',

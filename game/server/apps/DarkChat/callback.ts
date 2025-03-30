@@ -28,26 +28,25 @@ onClientCallback('LoginDarkMailAccount', async (client, data: string) => {
     }
 });
 
-onClientCallback('CreateNewDarkChannel', async (client, name: string) => {
-    // Check If Channel Exists Then Add Player To that Channel or Else Create New Channel
-    const player = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
+onClientCallback('CreateNewDarkChannel', async (client, data: string) => {
+    const { name, email } = JSON.parse(data);
     const res2: DarkChatChannel[] = await MongoDB.findMany('phone_darkchat_channels', {});
-    if (res2.find((channel) => channel.name === name) && !res2.find((channel) => channel.name === name)?.members.includes(player)) {
-        res2.find((channel) => channel.name === name)?.members.push(player);
+    if (res2.find((channel) => channel.name === name) && !res2.find((channel) => channel.name === name)?.members.includes(email)) {
+        res2.find((channel) => channel.name === name)?.members.push(email);
         await MongoDB.updateOne('phone_darkchat_channels', { name }, res2.find((channel) => channel.name === name));
-        return JSON.stringify(res2.filter((channel) => channel.members.includes(player)));
+        return JSON.stringify(res2.filter((channel) => channel.members.includes(email)));
     } else if (!res2.find((channel) => channel.name === name)) {
         const newData = {
             _id: generateUUid(),
             name,
-            members: [player],
-            creator: player,
+            members: [email],
+            creator: email,
             createdAt: new Date().toISOString(),
             messages: []
         }
         await MongoDB.insertOne('phone_darkchat_channels', newData);
         res2.push(newData);
-        return JSON.stringify(res2.filter((channel) => channel.members.includes(player)));
+        return JSON.stringify(res2.filter((channel) => channel.members.includes(email)));
     } else {
         return false;
     }
@@ -58,19 +57,18 @@ onClientCallback('GetDarkChatProfile', async (client, email: string) => {
     return JSON.stringify(res);
 });
 
-onClientCallback('GetDarkChatChannels', async (client) => {
-    const player = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
-    const res = await MongoDB.findMany('phone_darkchat_channels', { members: player });
+onClientCallback('GetDarkChatChannels', async (client, email: string) => {
+    const res = await MongoDB.findMany('phone_darkchat_channels', { members: email });
     return JSON.stringify(res);
 });
 
-onClientCallback('RemoveFromDarkChannel', async (client, _id: string) => {
-    const player = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
+onClientCallback('RemoveFromDarkChannel', async (client, data: string) => {
+    const { _id, email } = JSON.parse(data);
     const res = await MongoDB.findOne('phone_darkchat_channels', { _id });
-    if (res.creator === player) {
+    if (res.creator === email) {
         await MongoDB.deleteOne('phone_darkchat_channels', { _id });
     } else {
-        res.members = res.members.filter((member: string) => member !== player);
+        res.members = res.members.filter((member: string) => member !== email);
         await MongoDB.updateOne('phone_darkchat_channels', { _id }, res);
     }
     return true;
@@ -96,7 +94,8 @@ onClientCallback('SetDarkChatMessages', async (client, dataX: string) => {
     const { channel, data } = JSON.parse(dataX);
     const res = await MongoDB.updateOne('phone_darkchat_channels', { _id: channel }, data);
     data.members.forEach(async (member: string) => {
-        const res = await Utils.GetSourceFromCitizenId(member);
+        const res = await Utils.GetSourceFromCitizenId(await Utils.GetCidFromDarkEmail(member));
+        if (!res) return;
         emitNet('summit_phone:client:receiveDarkChatMessage', res, JSON.stringify(data));
         if (res !== client) {
             emitNet('phone:addnotiFication', res, JSON.stringify({

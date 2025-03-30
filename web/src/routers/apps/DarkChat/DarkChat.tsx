@@ -124,7 +124,7 @@ export default function DarkChat(props: { onExit: () => void; onEnter: () => voi
                 const parsedRes = JSON.parse(res as string);
                 setChannelProfile(parsedRes);
                 if (phoneSettings.darkMailIdAttached) {
-                    const res = await fetchNui('getDarkChatChannels', "Ok");
+                    const res = await fetchNui('getDarkChatChannels', phoneSettings.darkMailIdAttached);
                     const parsedRes = JSON.parse(res as string);
                     setChannelData(parsedRes);
                 }
@@ -241,7 +241,7 @@ export default function DarkChat(props: { onExit: () => void; onEnter: () => voi
                                         }
                                         setPhoneSettings(dataX);
                                         const resXX = await fetchNui('setSettings', JSON.stringify(dataX));
-                                        const resX = await fetchNui('getDarkChatChannels', "Ok");
+                                        const resX = await fetchNui('getDarkChatChannels', email);
                                         const parsedRes = JSON.parse(resX as string);
                                         setChannelData(parsedRes);
 
@@ -391,14 +391,14 @@ export default function DarkChat(props: { onExit: () => void; onEnter: () => voi
                                         setSignUp(false);
                                         const dataX = {
                                             ...phoneSettings,
-                                            darkMailIdAttached: email,
+                                            darkMailIdAttached: `${email}@onion.duck`,
                                         }
                                         setPhoneSettings(dataX);
                                         const resXX = await fetchNui('setSettings', JSON.stringify(dataX));
-                                        const res = await fetchNui('getDarkChatProfile', email);
+                                        const res = await fetchNui('getDarkChatProfile', `${email}@onion.duck`);
                                         const parsedRes = JSON.parse(res as string);
                                         setChannelProfile(parsedRes);
-                                        const resX = await fetchNui('getDarkChatChannels', "Ok");
+                                        const resX = await fetchNui('getDarkChatChannels', phoneSettings.darkMailIdAttached);
                                         const parsedResX = JSON.parse(resX as string);
                                         setChannelData(parsedResX);
                                     }
@@ -514,7 +514,10 @@ export default function DarkChat(props: { onExit: () => void; onEnter: () => voi
                                         {channel.messages[channel.messages.length - 1]?.date ? formatedDate(channel.messages[channel.messages.length - 1]?.date) : ''}
                                     </div>
                                     <svg onClick={async () => {
-                                        const res = await fetchNui('removeFromDarkChannel', channel._id);
+                                        const res = await fetchNui('removeFromDarkChannel', JSON.stringify({
+                                            _id: channel._id,
+                                            email: phoneSettings.darkMailIdAttached,
+                                        }));
                                         if (res) {
                                             setChannelData(channelData.filter((x) => x._id !== channel._id));
                                         }
@@ -531,7 +534,7 @@ export default function DarkChat(props: { onExit: () => void; onEnter: () => voi
                     const newMessage = {
                         message: message,
                         date: new Date().toISOString(),
-                        from: phoneSettings._id,
+                        from: phoneSettings.darkMailIdAttached,
                     }
                     channelData[seleectedId].messages.push(newMessage);
                     fetchNui('setDarkChatMessages', JSON.stringify({
@@ -550,7 +553,10 @@ export default function DarkChat(props: { onExit: () => void; onEnter: () => voi
                 <InputDialog show={inputShow} placeholder={inputPlaceholder} description={inputDescription} title={inputTitle} onConfirm={async (e: string) => {
                     setInputShow(false);
                     if (inputTitle === 'Create') {
-                        const res = await fetchNui('createNewDarkChannel', e);
+                        const res = await fetchNui('createNewDarkChannel', JSON.stringify({
+                            name: e,
+                            email: phoneSettings.darkMailIdAttached,
+                        }));
                         const parsedRes = JSON.parse(res as string);
                         setChannelData(parsedRes);
                     } else if (inputTitle === 'Update Avatar') {

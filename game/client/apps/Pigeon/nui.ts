@@ -91,8 +91,7 @@ on('__cfx_nui:getProfile', async (data: string, cb: Function) => {
 
 RegisterNuiCallbackType('postTweet');
 on('__cfx_nui:postTweet', async (data: string, cb: Function) => {
-    const { email } = JSON.parse(data);
-    const res = await triggerServerCallback('pigeon:postTweet', 1, email, data);
+    const res = await triggerServerCallback('pigeon:postTweet', 1, data);
     cb(res);
 });
 

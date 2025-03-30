@@ -4,12 +4,14 @@ import { generateUUid } from "@shared/utils";
 
 onClientCallback('savePhotoToPhotos', async (source: number, data: string) => {
   const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(source);
-  const res = await MongoDB.insertOne('phone_photos', {
+  const dataX = {
     _id: generateUUid(),
     citizenId,
     link: data,
     date: new Date().toISOString()
-  })
+  };
+  const res = await MongoDB.insertOne('phone_photos', dataX);
+  return JSON.stringify(dataX);
 });
 
 onClientCallback('getPhotos', async (source: number) => {

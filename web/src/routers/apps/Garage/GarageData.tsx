@@ -112,13 +112,12 @@ export default function GarageApp(props: { onEnter: () => void, onExit: () => vo
                                 }}>
                                     <div style={{ width: '60%', display: 'flex', flexDirection: 'column' }}>
                                         <div style={{ fontSize: '0.7vw' }}>{data.brand} {data.name} {data.plate}</div>
-                                        <div style={{ fontSize: '0.6vw' }}></div>
-                                        <div style={{ fontSize: '0.6vw', width: '100%' }}>{data.state}</div>
+                                        <div style={{ fontSize: '0.6vw', fontWeight: 500, width: '100%' }}>{data.state} - {data.garage}</div>
                                         <div style={{ fontSize: '0.6vw', width: '100%' }}>{data.category?.toUpperCase()}</div>
                                     </div>
                                     {!hasImageError ? (
                                         <Image onError={() => handleImageError(data.category)} src={`https://cdn.summitrp.gg/uploads/server/phone/${data.category?.toUpperCase()}.png`} alt="vehicle" width={80} height={80} style={{ borderRadius: '0.5vw', marginRight: '0.5vw' }} />
-                                    ): (
+                                    ) : (
                                         <Image src={`https://cdn.summitrp.gg/uploads/server/phone/SPORTS.png`} alt="vehicle" width={80} height={80} style={{ borderRadius: '0.5vw', marginRight: '0.5vw' }} />
                                     )}
                                 </div>

@@ -28,7 +28,7 @@ on('__cfx_nui:createNewDarkChannel', async (data: string, cb: Function) => {
 
 RegisterNuiCallbackType('getDarkChatChannels');
 on('__cfx_nui:getDarkChatChannels', async (data: string, cb: Function) => {
-    const response = await triggerServerCallback('GetDarkChatChannels', 1)
+    const response = await triggerServerCallback('GetDarkChatChannels', 1, data)
     cb(response);
 });
 
