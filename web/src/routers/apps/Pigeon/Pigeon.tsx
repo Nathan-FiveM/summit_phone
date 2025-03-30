@@ -50,8 +50,8 @@ export default function Pigeon(props: { onExit: () => void; onEnter: () => void 
         verified: false,
         bio: '',
         followers: [],
-        following: []
-
+        following: [],
+        banner: '',
     });
 
     return (

@@ -14,6 +14,7 @@ export default function CreateNew(props: { location: string }) {
         displayName: '',
         avatar: '',
         bio: '',
+        banner: '',
         followers: [],
         following: [],
         verified: false,

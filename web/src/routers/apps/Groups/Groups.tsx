@@ -279,7 +279,7 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                         position: 'absolute',
                         zIndex: 1,
                     }}>
-                        <div style={{ width: '90%', marginTop: '2vw', letterSpacing: '0.07vw' }}><Title title="MultiJobs" /></div>
+                        <div style={{ width: '90%', marginTop: '2vw', letterSpacing: '0.07vw' }}><Title title="Jobs" /></div>
                         <Searchbar value={searchValue} onChange={(e) => {
                             setSearchValue(e);
                         }} mt="0.3vw" />
