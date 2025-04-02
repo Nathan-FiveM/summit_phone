@@ -1,6 +1,6 @@
 import { onClientCallback } from "@overextended/ox_lib/server";
 import { Utils } from "@server/classes/Utils";
-import { MongoDB } from "@server/sv_main";
+import { MongoDB, Logger } from "@server/sv_main";
 import { generateUUid } from "@shared/utils";
 
 onClientCallback('phone_message:sendMessage', async (client, data: string) => {
@@ -68,7 +68,12 @@ onClientCallback('phone_message:sendMessage', async (client, data: string) => {
     } else {
         await MongoDB.insertOne('phone_messages', userMessages);
     }
-
+    Logger.AddLog({
+        type: 'phone_messages',
+        title: 'Message Sent',
+        message: `Sender ${senderPhoneNumber} sent a message to ${type === 'private' ? phoneNumber : 'group ' + groupId } with content: ${messageData.message}`,
+        showIdentifiers: false
+    });
     // Handle recipients
     if (type === 'private') {
         const targetCitizenId = await Utils.GetCitizenIdByPhoneNumber(phoneNumber);
@@ -78,14 +83,16 @@ onClientCallback('phone_message:sendMessage', async (client, data: string) => {
             if (!isBlocked) {
                 await sendToRecipient(targetCitizenId, senderPhoneNumber, messageData, 'private', phoneNumber);
                 const CVXCS = await Utils.GetSourceFromCitizenId(targetCitizenId);
-                emitNet("phone:addnotiFication", CVXCS, JSON.stringify({
-                    id: generateUUid(),
-                    title: "Messages",
-                    description: "You have a new message",
-                    app: "message",
-                    timeout: 2000,
-                }));
-                emitNet('phone_messages:client:updateMessages', CVXCS, JSON.stringify(newMessage));
+                if (CVXCS) {
+                    emitNet("phone:addnotiFication", CVXCS, JSON.stringify({
+                        id: generateUUid(),
+                        title: "Messages",
+                        description: "You have a new message",
+                        app: "message",
+                        timeout: 2000,
+                    }));
+                    emitNet('phone_messages:client:updateMessages', CVXCS, JSON.stringify(newMessage));
+                }
             } else {
                 console.log(`Sender ${senderPhoneNumber} is blocked by ${phoneNumber}. Message saved only for sender.`);
             }
@@ -107,14 +114,17 @@ onClientCallback('phone_message:sendMessage', async (client, data: string) => {
                 } else {
                     console.log(`Sender ${senderPhoneNumber} is blocked by group member ${memberPhoneNumber}.`);
                 }
-                emitNet("phone:addnotiFication", await Utils.GetSourceFromCitizenId(memberId), JSON.stringify({
-                    id: generateUUid(),
-                    title: "Messages",
-                    description: "You have a new message",
-                    app: "message",
-                    timeout: 2000,
-                }));
-                emitNet('phone_messages:client:updateMessages', await Utils.GetSourceFromCitizenId(memberId), JSON.stringify(newMessage));
+                const CVXCS = await Utils.GetSourceFromCitizenId(memberId);
+                if (CVXCS) {
+                    emitNet("phone:addnotiFication", CVXCS, JSON.stringify({
+                        id: generateUUid(),
+                        title: "Messages",
+                        description: "You have a new message",
+                        app: "message",
+                        timeout: 2000,
+                    }));
+                    emitNet('phone_messages:client:updateMessages', CVXCS, JSON.stringify(newMessage));
+                }
             }
         }
     }
@@ -259,13 +269,16 @@ onClientCallback('phone_message:createGroup', async (client, data: string) => {
     for (const memberId of memberIds) {
         if (memberId !== senderId) {
             let memberMessages = await MongoDB.findOne('phone_messages', { citizenId: memberId });
-            emitNet("phone:addnotiFication", await Utils.GetSourceFromCitizenId(memberId), JSON.stringify({
-                id: generateUUid(),
-                title: "Messages",
-                description: "You you have been added to a new group",
-                app: "message",
-                timeout: 2000,
-            }));
+            const CVXCS = await Utils.GetSourceFromCitizenId(memberId);
+            if (CVXCS) {
+                emitNet("phone:addnotiFication", CVXCS, JSON.stringify({
+                    id: generateUUid(),
+                    title: "Messages",
+                    description: "You have been added to a new group",
+                    app: "message",
+                    timeout: 2000,
+                }));
+            }
             if (!memberMessages) {
                 memberMessages = {
                     _id: generateUUid(),
@@ -281,13 +294,19 @@ onClientCallback('phone_message:createGroup', async (client, data: string) => {
             }
         }
     }
-
+    Logger.AddLog({
+        type: 'phone_groups',
+        title: 'Group Created',
+        message: `Group '${groupName}' created by ${senderPhoneNumber}. Group ID: ${groupId} with members: ${memberPhoneNumbers.join(', ')}`,
+        showIdentifiers: false
+    });
     return JSON.stringify({ success: true, groupId });
 });
 
 onClientCallback('phone_message:toggleBlock', async (client, data: string) => {
     const { phoneNumber } = JSON.parse(data);
     const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
+    const senderPhoneNumber = await Utils.GetPhoneNumberByCitizenId(senderId);
 
     if (!senderId) {
         return JSON.stringify({ success: false, message: 'Sender not found' });
@@ -319,6 +338,12 @@ onClientCallback('phone_message:toggleBlock', async (client, data: string) => {
             app: "message",
             timeout: 2000,
         }));
+        Logger.AddLog({
+            type: 'phone_blocks',
+            title: 'Number Unblocked',
+            message: `${senderPhoneNumber} unblocked ${phoneNumber}.`,
+            showIdentifiers: false
+        });
     } else {
         userMessages.blockedNumbers.push(phoneNumber);
         emitNet("phone:addNotification", client, JSON.stringify({
@@ -328,6 +353,12 @@ onClientCallback('phone_message:toggleBlock', async (client, data: string) => {
             app: "message",
             timeout: 2000,
         }));
+        Logger.AddLog({
+            type: 'phone_blocks',
+            title: 'Number Blocked',
+            message: `${senderPhoneNumber} blocked ${phoneNumber}.`,
+            showIdentifiers: false
+        });
     }
 
     if (userMessages.messages.length === 0 && userMessages.blockedNumbers.length === 0 && !userMessages.deletedMessages?.length) {
@@ -343,7 +374,7 @@ onClientCallback('phone_message:addMember', async (client, data: string) => {
     try {
         const { groupId, phoneNumber } = JSON.parse(data);
         const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
-
+        const senderPhoneNumber = await Utils.GetPhoneNumberByCitizenId(senderId);
         if (!senderId) {
             return JSON.stringify({ success: false, message: 'Sender not found' });
         }
@@ -412,7 +443,12 @@ onClientCallback('phone_message:addMember', async (client, data: string) => {
                     .catch((error: any) => console.error(`Failed to create messages for new member ${memberId}:`, error));
             }
         }
-
+        Logger.AddLog({
+            type: 'phone_groups',
+            title: 'Member Added',
+            message: `${senderPhoneNumber} added ${phoneNumber} to group ${groupId}.`,
+            showIdentifiers: false
+        });
         return JSON.stringify({ success: true });
     } catch (error) {
         console.error('Error adding member to group:', error);
@@ -423,7 +459,7 @@ onClientCallback('phone_message:addMember', async (client, data: string) => {
 onClientCallback('phone_message:removeMember', async (client, data: string) => {
     const { groupId, phoneNumber } = JSON.parse(data);
     const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
-
+    const senderPhoneNumber = await Utils.GetPhoneNumberByCitizenId(senderId);
     const memberIdToRemove = await Utils.GetCitizenIdByPhoneNumber(phoneNumber);
     if (!memberIdToRemove) {
         return JSON.stringify({ success: false, message: 'Member not found' });
@@ -463,13 +499,18 @@ onClientCallback('phone_message:removeMember', async (client, data: string) => {
             await MongoDB.updateOne('phone_messages', { _id: removedMemberMessages._id }, removedMemberMessages);
         }
     }
-
+    Logger.AddLog({
+        type: 'phone_groups',
+        title: 'Member Removed',
+        message: `${senderPhoneNumber} removed ${phoneNumber} from group ${groupId}.`,
+        showIdentifiers: false
+    })
     return JSON.stringify({ success: true });
 });
 
 onClientCallback('phone_message:deleteGroup', async (client, groupId: string) => {
     const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
-
+    const senderPhoneNumber = await Utils.GetPhoneNumberByCitizenId(senderId);
     let userMessages = await MongoDB.findOne('phone_messages', { citizenId: senderId });
     const group = userMessages?.messages.find((msg: { groupId?: string }) => msg.groupId === groupId);
     if (!group || !group.members) {
@@ -483,13 +524,16 @@ onClientCallback('phone_message:deleteGroup', async (client, groupId: string) =>
 
     for (const memberId of group.members) {
         const memberMessages = await MongoDB.findOne('phone_messages', { citizenId: memberId });
-        emitNet("phone:addnotiFication", await Utils.GetSourceFromCitizenId(memberId), JSON.stringify({
-            id: generateUUid(),
-            title: "Messages",
-            description: "Group has been deleted",
-            app: "message",
-            timeout: 2000,
-        }));
+        const CVXCS = await Utils.GetSourceFromCitizenId(memberId);
+        if (CVXCS) {
+            emitNet("phone:addnotiFication", CVXCS, JSON.stringify({
+                id: generateUUid(),
+                title: "Messages",
+                description: "Group has been deleted",
+                app: "message",
+                timeout: 2000,
+            }));
+        }
         if (memberMessages) {
             const groupIndex = memberMessages.messages.findIndex((msg: { groupId?: string }) => msg.groupId === groupId);
             if (groupIndex !== -1) {
@@ -498,7 +542,12 @@ onClientCallback('phone_message:deleteGroup', async (client, groupId: string) =>
             }
         }
     }
-
+    Logger.AddLog({
+        type: 'phone_groups',
+        title: 'Group Deleted',
+        message: `Group ${groupId} deleted by ${senderPhoneNumber}.`,
+        showIdentifiers: false
+    });
     return JSON.stringify({ success: true });
 });
 
@@ -717,7 +766,7 @@ onClientCallback('phone_message:getMessageStats', async (client, data: string) =
 onClientCallback('phone_message:deleteMessage', async (client, data: string) => {
     const { conversationType, phoneNumber, groupId, messageIndex } = JSON.parse(data);
     const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
-
+    const senderPhoneNumber = await Utils.GetPhoneNumberByCitizenId(senderId);
     if (!senderId) {
         return JSON.stringify({ success: false, message: 'Sender not found' });
     }
@@ -761,7 +810,12 @@ onClientCallback('phone_message:deleteMessage', async (client, data: string) => 
     );
 
     await MongoDB.updateOne('phone_messages', { _id: userMessages._id }, userMessages);
-
+    Logger.AddLog({
+        type: 'phone_messages',
+        title: 'Message Deleted',
+        message: `Message deleted from ${conversationType} conversation with ${phoneNumber || groupId} by ${senderPhoneNumber} with content: ${deletedMessage.message}`,
+        showIdentifiers: false
+    });
     return JSON.stringify({ success: true });
 });
 
@@ -769,7 +823,7 @@ onClientCallback('phone_message:updateGroupName', async (client, data: string) =
     try {
         const { groupId, newName } = JSON.parse(data);
         const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
-
+        const senderPhoneNumber = await Utils.GetPhoneNumberByCitizenId(senderId);
         if (!senderId) {
             return JSON.stringify({ success: false, message: 'Sender not found' });
         }
@@ -787,7 +841,7 @@ onClientCallback('phone_message:updateGroupName', async (client, data: string) =
         if (group.creatorId !== senderId) {
             return JSON.stringify({ success: false, message: 'Only the group creator can update the group name' });
         }
-
+        const oldName = group.name;
         group.name = newName;
 
         for (const memberId of group.members || []) {
@@ -811,6 +865,12 @@ onClientCallback('phone_message:updateGroupName', async (client, data: string) =
             .then(() => console.log(`Updated group name for sender ${senderId}`))
             .catch((error: any) => console.error(`Failed to update group name for sender ${senderId}:`, error));
 
+        Logger.AddLog({
+            type: 'phone_groups',
+            title: 'Group Name Updated',
+            message: `Group ${groupId} | ${oldName} name updated to ${newName} by ${senderPhoneNumber}.`,
+            showIdentifiers: false
+        });
         return JSON.stringify({ success: true });
     } catch (error) {
         console.error('Error updating group name:', error);
@@ -822,7 +882,7 @@ onClientCallback('phone_message:updateGroupAvatar', async (client, data: string)
     try {
         const { groupId, newAvatar } = JSON.parse(data);
         const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
-
+        const senderPhoneNumber = await Utils.GetPhoneNumberByCitizenId(senderId);
         if (!senderId) {
             return JSON.stringify({ success: false, message: 'Sender not found' });
         }
@@ -868,7 +928,12 @@ onClientCallback('phone_message:updateGroupAvatar', async (client, data: string)
         await MongoDB.updateOne('phone_messages', { _id: userMessages._id }, userMessages)
             .then(() => console.log(`Updated group avatar for sender ${senderId}`))
             .catch((error: any) => console.error(`Failed to update group avatar for sender ${senderId}:`, error));
-
+        Logger.AddLog({
+            type: 'phone_groups',
+            title: 'Group Avatar Updated',
+            message: `Group ${groupId} avatar updated by ${senderPhoneNumber}.`,
+            showIdentifiers: false
+        });
         return JSON.stringify({ success: true });
     } catch (error) {
         console.error('Error updating group avatar:', error);
