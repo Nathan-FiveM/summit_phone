@@ -1,5 +1,5 @@
 import { onClientCallback } from "@overextended/ox_lib/server";
-import { MongoDB } from "@server/sv_main";
+import { Logger, MongoDB } from "@server/sv_main";
 import { generateUUid } from "@shared/utils";
 
 onClientCallback('savePhotoToPhotos', async (source: number, data: string) => {
@@ -11,6 +11,12 @@ onClientCallback('savePhotoToPhotos', async (source: number, data: string) => {
     date: new Date().toISOString()
   };
   const res = await MongoDB.insertOne('phone_photos', dataX);
+  Logger.AddLog({
+    type: 'phone_photos',
+    title: 'Photo Saved',
+    message: `Photo saved by ${await exports['qb-core'].GetPlayerName(source)} | ${citizenId}, Link: ${data}`,
+    showIdentifiers: false
+  });
   return JSON.stringify(dataX);
 });
 
@@ -23,5 +29,11 @@ onClientCallback('getPhotos', async (source: number) => {
 onClientCallback('deletePhoto', async (source: number, data: string) => {
   const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(source);
   await MongoDB.deleteOne('phone_photos', { _id: data, citizenId });
+  Logger.AddLog({
+    type: 'phone_photos',
+    title: 'Photo Deleted',
+    message: `Photo deleted by ${await exports['qb-core'].GetPlayerName(source)} | ${citizenId}, Link: ${data}`,
+    showIdentifiers: false
+  });
   return true;
 });
