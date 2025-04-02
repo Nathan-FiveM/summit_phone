@@ -1,5 +1,6 @@
 import { onClientCallback } from "@overextended/ox_lib/server";
 import { Utils } from "@server/classes/Utils";
+import { Logger } from "@server/sv_main";
 
 onClientCallback('getOwnedHouses', async (client) => {
     const player = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
@@ -48,6 +49,12 @@ onClientCallback('removeAccess', async (client, data) => {
         const newAccess = hasAccess.filter((access: string) => access !== cid);
         console.log(newAccess);
         await Utils.query('UPDATE properties SET has_access = ? WHERE property_id = ?', [JSON.stringify(newAccess), id]);
+        Logger.AddLog({
+            type: 'properties',
+            title: 'Access Removed',
+            message: `Access removed from ${cid} to ${houseData.street}, ${houseData.property_id} by ${await Utils.GetCitizenIdByPhoneNumber(await Utils.GetPhoneNumberBySource(client))}`,
+            showIdentifiers: false
+        });
     }
     return true;
 });
