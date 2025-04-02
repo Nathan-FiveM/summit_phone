@@ -50,7 +50,7 @@ onClientCallback('removeAccess', async (client, data) => {
         console.log(newAccess);
         await Utils.query('UPDATE properties SET has_access = ? WHERE property_id = ?', [JSON.stringify(newAccess), id]);
         Logger.AddLog({
-            type: 'properties',
+            type: 'phone_properties',
             title: 'Access Removed',
             message: `Access removed from ${cid} to ${houseData.street}, ${houseData.property_id} by ${await Utils.GetCitizenIdByPhoneNumber(await Utils.GetPhoneNumberBySource(client))}`,
             showIdentifiers: false
