@@ -1366,8 +1366,7 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
                                 if (billingData.receiver === '' || billingData.amount === 0) {
                                     return;
                                 }
-                                console.log(JSON.stringify(billingData));
-                                /* const res = await fetchNui('createInvoice', JSON.stringify(billingData));
+                                const res = await fetchNui('createInvoice', JSON.stringify(billingData));
                                 if (res) {
                                     setLocation({
                                         app: "wallet",
@@ -1379,7 +1378,7 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
                                     setShowNewInvoicePage(false);
                                 } else {
                                     fetchNui('showNoti', { app: 'settings', title: 'Wallet Error', description: 'Something Went Wrong !' });
-                                } */
+                                }
                             }}>
                                 Send
                             </Button>

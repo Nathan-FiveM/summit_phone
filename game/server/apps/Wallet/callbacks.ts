@@ -1,6 +1,6 @@
 import { onClientCallback } from "@overextended/ox_lib/server";
 import { Utils } from "@server/classes/Utils";
-import { MongoDB } from "@server/sv_main";
+import { Logger, MongoDB } from "@server/sv_main";
 import { generateUUid } from "@shared/utils";
 import { WalletAccount } from "../../../../types/types";
 import { DateTime } from 'luxon';
@@ -107,6 +107,12 @@ onClientCallback('transXAdqasddasdferMoney', async (client, data: string) => {
             type: 'credit',
             date: new Date().toISOString()
         });
+        Logger.AddLog({
+            type: 'phone_bank_transactions',
+            title: 'Money Transfer',
+            message: `${sourcePlayer.PlayerData.charinfo.firstname} ${sourcePlayer.PlayerData.charinfo.lastname} has transferred $${amount} to ${res.name}.`,
+            showIdentifiers: false
+        });
         return true;
     } else {
         return false;
@@ -148,6 +154,12 @@ onClientCallback('wallet:createInvoice', async (client, data: string) => {
             app: 'settings',
             timeout: 5000
         }));
+        Logger.AddLog({
+            type: 'phone_bank_invoices',
+            title: 'Invoice Created',
+            message: `${sourcePlayer.PlayerData.charinfo.firstname} ${sourcePlayer.PlayerData.charinfo.lastname} has sent an invoice of $${amount} to ${targetPlayer.PlayerData.charinfo.firstname} ${targetPlayer.PlayerData.charinfo.lastname}.`,
+            showIdentifiers: false
+        });
         return true;
     }
     return false;
@@ -288,7 +300,29 @@ onClientCallback('wallet:acceptInvoicePayment', async (client, id: string) => {
         MongoDB.insertOne('phone_bank_transactions', transactionCredit),
         MongoDB.insertOne('phone_bank_transactions', transactionDebit),
         emitNet('phone:addnotiFication', sourcePlayer.PlayerData.source, JSON.stringify(notificationSource)),
-        emitNet('phone:addnotiFication', targetPlayer.PlayerData.source, JSON.stringify(notificationTarget))
+        emitNet('phone:addnotiFication', targetPlayer.PlayerData.source, JSON.stringify(notificationTarget)),
+        Logger.AddLog({
+            type: 'phone_bank_invoices',
+            title: 'Invoice Payment Accepted',
+            message: `${invoice.targetName} has paid the invoice of $${invoice.amount} to ${invoice.sourceName} with ${updateFields.numberOfPayments} payments left. Payment Schedule: ${
+                parseInt(invoice.paymentTime, 10) === 0
+                    ? 'Daily'
+                    : parseInt(invoice.paymentTime, 10) === 1
+                        ? 'Weekly'
+                        : parseInt(invoice.paymentTime, 10) === 2
+                            ? 'Monthly'
+                            : parseInt(invoice.paymentTime, 10) === 3
+                                ? 'Quarterly'
+                                : parseInt(invoice.paymentTime, 10) === 4
+                                    ? 'Yearly'
+                                    : 'Unknown'
+            }, Next Payment Date: ${
+                updateFields.nextPaymentDate
+                    ? DateTime.fromJSDate(updateFields.nextPaymentDate).toFormat('yyyy-LL-dd HH:mm:ss')
+                    : 'N/A'
+            }`,
+            showIdentifiers: false
+        })
     ]);
 
     return true;
@@ -306,6 +340,12 @@ onClientCallback('wallet:declineInvoicePayment', async (client, id: string) => {
             app: 'settings',
             timeout: 5000
         }));
+        Logger.AddLog({
+            type: 'phone_bank_invoices',
+            title: 'Invoice Payment Declined',
+            message: `${res.targetName} has declined the invoice of $${res.amount} to ${res.sourceName}.`,
+            showIdentifiers: false
+        });
         return true;
     } else {
         return false;
@@ -401,7 +441,28 @@ export const InvoiceRecurringPayments = async () => {
                 MongoDB.updateOne('phone_bank_invoices', { _id: invoice._id }, updateFields),
                 MongoDB.insertOne('phone_bank_transactions', transactionCredit),
                 MongoDB.insertOne('phone_bank_transactions', transactionDebit),
-                console.log('Recurring Payment Processed', invoice._id, targetPlayer.Offline, sourcePlayer.Offline),
+                Logger.AddLog({
+                    type: 'phone_bank_invoices',
+                    title: 'Recurring Payment Processed',
+                    message: `${invoice.targetName} has paid the invoice of $${invoice.amount} to ${invoice.sourceName} with ${updateFields.numberOfPayments} payments left. Payment Schedule: ${
+                        paymentTime === 0
+                            ? 'Daily'
+                            : paymentTime === 1
+                            ? 'Weekly'
+                            : paymentTime === 2
+                            ? 'Monthly'
+                            : paymentTime === 3
+                            ? 'Quarterly'
+                            : paymentTime === 4
+                            ? 'Yearly'
+                            : 'Unknown'
+                    }, Next Payment Date: ${
+                        updateFields.nextPaymentDate
+                            ? DateTime.fromJSDate(updateFields.nextPaymentDate).toFormat('yyyy-LL-dd HH:mm:ss')
+                            : 'N/A'
+                    }`,
+                    showIdentifiers: false
+                }),
             ]);
             if (!targetPlayer.Offline) {
                 emitNet('phone:addnotiFication', targetPlayer.PlayerData.source, JSON.stringify({
@@ -416,7 +477,7 @@ export const InvoiceRecurringPayments = async () => {
                 emitNet('phone:addnotiFication', sourcePlayer.PlayerData.source, JSON.stringify({
                     id: generateUUid(),
                     title: 'Wallet',
-                    description: `${invoice.targetName} has accepted your invoice of $${invoice.amount}, ${updateFields.numberOfPayments} payments left.`,
+                    description: `${invoice.targetName} has paid your invoice of $${invoice.amount}, ${updateFields.numberOfPayments} payments left.`,
                     app: 'settings',
                     timeout: 5000
                 }));
