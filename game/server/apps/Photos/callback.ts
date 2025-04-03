@@ -28,11 +28,12 @@ onClientCallback('getPhotos', async (source: number) => {
 
 onClientCallback('deletePhoto', async (source: number, data: string) => {
   const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(source);
+  const res = await MongoDB.findOne('phone_photos', { _id: data });
   await MongoDB.deleteOne('phone_photos', { _id: data, citizenId });
   Logger.AddLog({
     type: 'phone_photos',
     title: 'Photo Deleted',
-    message: `Photo deleted by ${await exports['qb-core'].GetPlayerName(source)} | ${citizenId}, Link: ${data}`,
+    message: `Photo deleted by ${await exports['qb-core'].GetPlayerName(source)} | ${citizenId}, Link: ${res.link}`,
     showIdentifiers: false
   });
   return true;
