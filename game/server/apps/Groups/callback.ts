@@ -1,5 +1,5 @@
 import { onClientCallback, triggerClientCallback } from "@overextended/ox_lib/server";
-import { Framework, MongoDB } from "@server/sv_main";
+import { Framework, MongoDB, Logger } from "@server/sv_main";
 import { generateUUid } from "@shared/utils";
 
 onClientCallback('groups:getmultiPleJobs', async (source: number) => {
@@ -10,7 +10,15 @@ onClientCallback('groups:getmultiPleJobs', async (source: number) => {
 });
 
 onClientCallback('groups:deleteMultiJob', async (source: number, data: string) => {
+    const name = await exports['qb-core'].GetPlayerName(source);
+    const job = await MongoDB.findOne('phone_multijobs', { _id: data });
     const res = await MongoDB.deleteOne('phone_multijobs', { _id: data });
+    Logger.AddLog({
+        type: 'phone_multijobs',
+        title: 'Job Deleted',
+        message: `${name} deleted job ${job.jobName} (${job.citizenId})`,
+        showIdentifiers: false
+    });
     return true;
 });
 
@@ -23,9 +31,21 @@ onClientCallback('groups:changeJobOfPlayer', async (source: number, data: string
         sourcePlayer.Functions.SetJob(jobName, String(grade));
         emitNet('QBCore:Notify', source, `Job Changed to ${jobName} Successfully`, 'success');
         const res = await triggerClientCallback('groups:toggleDuty', Number(sourcePlayer.PlayerData.source));
+        Logger.AddLog({
+            type: 'phone_multijobs',
+            title: 'Job Changed',
+            message: `${sourcePlayer.PlayerData.charinfo.firstname} ${sourcePlayer.PlayerData.charinfo.lastname} changed job to '${jobName}' (Grade: ${grade}).`,
+            showIdentifiers: false
+        });
         return true
     } else {
         const res = await MongoDB.deleteOne('phone_multijobs', { citizenId: sourcePlayer.PlayerData.citizenid, jobName });
+        Logger.AddLog({
+            type: 'phone_multijobs',
+            title: 'Invalid Job Removed',
+            message: `${sourcePlayer.PlayerData.charinfo.firstname} ${sourcePlayer.PlayerData.charinfo.lastname} attempted to change to invalid job '${jobName}', removed from multi-jobs.`,
+            showIdentifiers: false
+        });
         return false;
     }
 });
@@ -176,6 +196,12 @@ async function destroyGroup(groupID: number) {
     emit('summit_groups:server:GroupDeleted', groupID, members);
     emit('qb-phone:server:GroupDeleted', groupID, members);
     delete EmploymentGroup[groupID];
+    Logger.AddLog({
+        type: 'phone_employment_groups',
+        title: 'Group Destroyed',
+        message: `Group '${EmploymentGroup[groupID]?.GName}' (ID: ${groupID}) destroyed.`,
+        showIdentifiers: false
+    });
     await triggerClientCallback('summit_groups:client:RefreshGroupsApp', -1, EmploymentGroup);
 }
 exports('DestroyGroup', destroyGroup);
@@ -193,6 +219,12 @@ async function removePlayerFromGroup(src: number, groupID: number) {
             pNotifyGroup(groupID, 'Job Center', `${member.name} Has left the group`, 'fas fa-users', '#FFBF00', 7500);
             await triggerClientCallback('summit_groups:client:RefreshGroupsApp', -1, EmploymentGroup);
             await triggerClientCallback('QBCore:Notify', src, 'You have left the group', 'primary');
+            Logger.AddLog({
+                type: 'phone_employment_groups',
+                title: 'Player Left Group',
+                message: `${member.name} left group '${group.GName}' (ID: ${groupID}).`,
+                showIdentifiers: false
+            });
             if (group.Users <= 0) destroyGroup(groupID);
             return;
         }
@@ -206,6 +238,12 @@ async function changeGroupLeader(groupID: number) {
         for (const member of group.members) {
             if (member.Player !== leader) {
                 group.leader = member.Player;
+                Logger.AddLog({
+                    type: 'phone_employment_groups',
+                    title: 'Leader Changed',
+                    message: `Leader of group '${group.GName}' (ID: ${groupID}) changed to ${member.name}.`,
+                    showIdentifiers: false
+                });
                 return true;
             }
         }
@@ -306,14 +344,31 @@ onClientCallback('summit_groups:server:jobcenter_CreateJobGroup', async (source,
     };
     await triggerClientCallback('summit_groups:client:RefreshGroupsApp', -1, EmploymentGroup);
     await triggerClientCallback('summit_groups:client:UpdateGroupId', src, ID);
+    Logger.AddLog({
+        type: 'phone_employment_groups',
+        title: 'Group Created',
+        message: `${player.PlayerData.charinfo.firstname} ${player.PlayerData.charinfo.lastname} created group '${data.name}' (ID: ${ID}).`,
+        showIdentifiers: false
+    });
     return true;
 });
 
 onClientCallback('summit_groups:server:jobcenter_DeleteGroup', (source, data) => {
     const src = source as number;
     if (!Players[src]) return;
-    if (getGroupLeader(Number(data)) === src) destroyGroup(Number(data));
-    else removePlayerFromGroup(src, Number(data));
+    const groupID = Number(data);
+    const group = EmploymentGroup[groupID];
+    if (getGroupLeader(groupID) === src) {
+        Logger.AddLog({
+            type: 'phone_employment_groups',
+            title: 'Group Deleted',
+            message: `${getPlayerCharName(src)} deleted group '${group.GName}' (ID: ${groupID}).`,
+            showIdentifiers: false
+        });
+        destroyGroup(groupID);
+    } else {
+        removePlayerFromGroup(src, groupID);
+    }
 });
 
 onClientCallback('summit_groups:server:jobcenter_JoinTheGroup', async (source, data: { id: number }) => {
@@ -343,6 +398,12 @@ onClientCallback('summit_groups:server:jobcenter_JoinTheGroup', async (source, d
         timeout: 5000
     }));
     await triggerClientCallback('summit_groups:client:RefreshGroupsApp', -1, EmploymentGroup);
+    Logger.AddLog({
+        type: 'phone_employment_groups',
+        title: 'Player Joined Group',
+        message: `${name} joined group '${EmploymentGroup[data.id].GName}' (ID: ${data.id}).`,
+        showIdentifiers: false
+    });
 });
 
 function getGroupStages(groupID: number): any[] | undefined {
@@ -406,6 +467,12 @@ async function createGroup(src: number, name: string, password?: string) {
     };
     await triggerClientCallback('summit_groups:client:UpdateGroupId', src, id);
     await triggerClientCallback('summit_groups:client:RefreshGroupsApp', -1, EmploymentGroup);
+    Logger.AddLog({
+        type: 'phone_employment_groups',
+        title: 'Script Group Created',
+        message: `${player.PlayerData.charinfo.firstname} ${player.PlayerData.charinfo.lastname} created script-initiated group '${name}' (ID: ${id}).`,
+        showIdentifiers: false
+    });
     return id;
 }
 exports('CreateGroup', createGroup);
