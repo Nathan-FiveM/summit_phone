@@ -2,7 +2,7 @@ import { onClientCallback } from "@overextended/ox_lib/server";
 import { Utils } from "@server/classes/Utils";
 import { callManager } from "./CallManager";
 import { generateUUid } from "@shared/utils";
-import { MongoDB } from "@server/sv_main";
+import { MongoDB, Logger } from "@server/sv_main";
 import { PhoneContacts } from "../../../../types/types";
 import { callHistoryManager } from "./callHistoryManager";
 import { Settings } from "../Settings/class";
@@ -195,7 +195,12 @@ onClientCallback("summit_phone:server:call", async (source: number, data: string
     callerSource: source,
     databaseTableId: _id,
   }));
-
+  Logger.AddLog({
+    type: 'phone_calls',
+    title: 'Call Initiated',
+    message: `${sourcePhone} initiated a call to ${targetPhone} (Call ID: ${callId}).`,
+    showIdentifiers: false
+  });
   return true;
 });
 
@@ -210,6 +215,12 @@ onClientCallback("summit_phone:server:declineCall", async (source: number, data:
   callManager.stopRingTone(targetSource);
   emitNet("phone:client:removeActionNotification", targetSource, databaseTableId);
   emitNet("phone:client:removeCallingInterface", callerSource);
+  Logger.AddLog({
+    type: 'phone_calls',
+    title: 'Call Declined',
+    message: `${await Utils.GetPhoneNumberBySource(targetSource)} declined the call from ${await Utils.GetPhoneNumberBySource(callerSource)} (Call ID: ${callId}).`,
+    showIdentifiers: false
+  });
   return true;
 });
 
@@ -225,11 +236,23 @@ onClientCallback("summit_phone:server:endCall", async (source: number, data: str
     }
     await callHistoryManager.recordTwoPartyCallHistory(call, "completed", "completed", new Date());
     callManager.endCall(callId);
+    Logger.AddLog({
+      type: 'phone_calls',
+      title: 'Call Ended',
+      message: `Call ended by ${await Utils.GetPhoneNumberBySource(source)} (Call ID: ${callId}).`,
+      showIdentifiers: false
+    });
   } else if (callManager.getParticipants(callId).length > 2) {
     emitNet("phone:client:removeAccpetedCallingInterface", source);
     emitNet("phone:client:removeCallingInterface", source);
     exports["pma-voice"].setPlayerCall(source, 0);
     callManager.removeFromCall(callId, source);
+    Logger.AddLog({
+      type: 'phone_calls',
+      title: 'Participant Left Call',
+      message: `${await Utils.GetPhoneNumberBySource(source)} left the conference call (Call ID: ${callId}).`,
+      showIdentifiers: false
+    });
   } else {
     for (const participant of callManager.getParticipants(callId)) {
       emitNet("phone:client:removeAccpetedCallingInterface", participant.source);
@@ -237,6 +260,12 @@ onClientCallback("summit_phone:server:endCall", async (source: number, data: str
     }
     await callHistoryManager.recordTwoPartyCallHistory(call, "completed", "completed", new Date());
     callManager.endCall(callId);
+    Logger.AddLog({
+      type: 'phone_calls',
+      title: 'Call Ended',
+      message: `Call ended by ${await Utils.GetPhoneNumberBySource(source)} (Call ID: ${callId}).`,
+      showIdentifiers: false
+    });
   }
   return true;
 });
@@ -389,7 +418,12 @@ onClientCallback("summit_phone:server:addPlayerToCall", async (source: number, d
       },
     },
   }));
-
+  Logger.AddLog({
+    type: 'phone_calls',
+    title: 'Player Added to Call',
+    message: `${sourcePhone} added ${contactNumber} to conference call (Call ID: ${callId}).`,
+    showIdentifiers: false
+  });
   return true;
 });
 
