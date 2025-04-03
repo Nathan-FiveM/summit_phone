@@ -1,4 +1,4 @@
-import { MongoDB } from "@server/sv_main";
+import { Logger, MongoDB } from "@server/sv_main";
 import { generateUUid } from "@shared/utils";
 import { TweetData, TweetProfileData } from "../../../../types/types";
 import { triggerClientCallback } from "@overextended/ox_lib/server";
@@ -14,7 +14,16 @@ class PigeonService {
         try {
             const { email, password } = JSON.parse(data);
             const user = await MongoDB.findOne("phone_pigeon_users", { email, password });
-            return !!user;
+            if (user) {
+                Logger.AddLog({
+                    type: 'phone_pigeon',
+                    title: 'User Login',
+                    message: `User with email ${email} logged in successfully.`,
+                    showIdentifiers: true
+                });
+                return true;
+            }
+            return false;
         } catch (error) {
             console.error("Error in login:", error);
             return { error: "An error occurred" };
@@ -42,6 +51,12 @@ class PigeonService {
             followers: [],
             following: [],
         });
+        Logger.AddLog({
+            type: 'phone_pigeon',
+            title: 'User Signup',
+            message: `New user account created with email ${email}.`,
+            showIdentifiers: true
+        });
         return true;
     }
 
@@ -59,6 +74,12 @@ class PigeonService {
         if (res) {
             res.notificationsEnabled = !res.notificationsEnabled;
             await MongoDB.updateOne("phone_pigeon_users", { email }, res);
+            Logger.AddLog({
+                type: 'phone_pigeon',
+                title: 'Notifications Toggled',
+                message: `User ${email} toggled notifications to ${res.notificationsEnabled ? 'enabled' : 'disabled'}.`,
+                showIdentifiers: false
+            });
             return true;
         }
         return false;
@@ -104,6 +125,13 @@ class PigeonService {
                 createdAt: new Date().toISOString(),
                 type: "post",
             });
+            Logger.AddLog({
+                type: 'phone_pigeon',
+                title: 'Tweet Posted',
+                message: `User ${email} posted a new tweet (ID: ${tweet._id}), content: ${content}`,
+                showIdentifiers: false
+            });
+            return true;
         } catch (error) {
             console.error("Error in postTweet:", error);
             return { error: "An error occurred" };
@@ -173,6 +201,13 @@ class PigeonService {
                 type: "post",
             });
         }
+        Logger.AddLog({
+            type: 'phone_pigeon',
+            title: 'Reply Posted',
+            message: `User ${email} replied to tweet (ID: ${tweetId}), content: ${content}`,
+            showIdentifiers: false
+        });
+        return true;
     }
 
     public async likeTweet(_client: number, data: string) {
@@ -199,8 +234,20 @@ class PigeonService {
                     type: "like",
                 });
             }
+            Logger.AddLog({
+                type: 'phone_pigeon',
+                title: 'Tweet Liked',
+                message: `User ${email} liked tweet (ID: ${tweetId}).`,
+                showIdentifiers: false
+            });
         } else {
             tweet.likeCount = tweet.likeCount.filter((l: any) => l !== email);
+            Logger.AddLog({
+                type: 'phone_pigeon',
+                title: 'Tweet Liked',
+                message: `User ${email} liked tweet (ID: ${tweetId}).`,
+                showIdentifiers: false
+            });
         }
         await MongoDB.updateOne("phone_pigeon_tweets", { _id: tweetId }, tweet);
         return true;
@@ -213,8 +260,20 @@ class PigeonService {
         if (!tweet) return console.log("Tweet not found");
         if (like) {
             tweet.likeCount.push(email);
+            Logger.AddLog({
+                type: 'phone_pigeon',
+                title: 'Reply Liked',
+                message: `User ${email} liked reply (ID: ${tweetId}).`,
+                showIdentifiers: false
+            });
         } else {
             tweet.likeCount = tweet.likeCount.filter((l: any) => l !== email);
+            Logger.AddLog({
+                type: 'phone_pigeon',
+                title: 'Reply Unliked',
+                message: `User ${email} unliked reply (ID: ${tweetId}).`,
+                showIdentifiers: false
+            });
         }
         await MongoDB.updateOne("phone_pigeon_tweets_replies", { _id: tweetId }, tweet);
         return true;
@@ -252,6 +311,12 @@ class PigeonService {
                 };
                 await MongoDB.insertOne("phone_pigeon_tweets", retweetData);
                 await triggerClientCallback("pigeon:refreshTweet", -1, JSON.stringify(retweetData));
+                Logger.AddLog({
+                    type: 'phone_pigeon',
+                    title: 'Tweet Retweeted',
+                    message: `User ${pigeonId} retweeted tweet (ID: ${tweetId}), original tweet ID: ${ogTweetId}, content: ${originalTweet.content}`,
+                    showIdentifiers: false
+                });
                 return true;
             } else if (!retweet) {
                 const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(client);
@@ -272,6 +337,12 @@ class PigeonService {
                 });
                 await MongoDB.updateOne("phone_pigeon_tweets", { _id: ogTweetId }, originalTweet);
                 await MongoDB.deleteOne("phone_pigeon_tweets", { _id: tweetId });
+                Logger.AddLog({
+                    type: 'phone_pigeon',
+                    title: 'Retweet Removed',
+                    message: `User removed retweet (ID: ${tweetId}) of original tweet (ID: ${ogTweetId}), content: ${originalTweet.content}`,
+                    showIdentifiers: false
+                });
                 return true;
             }
             return true;
@@ -336,6 +407,12 @@ class PigeonService {
                         });
                     }
                 }
+                Logger.AddLog({
+                    type: 'phone_pigeon',
+                    title: 'Reply Retweeted',
+                    message: `User ${pigeonId} retweeted reply (ID: ${tweetId}), original tweet ID: ${ogTweetId}), content: ${originalTweet.content}`,
+                    showIdentifiers: false
+                });
                 return true;
             } else if (!retweet) {
                 const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(client);
@@ -357,6 +434,12 @@ class PigeonService {
                 console.log(originalTweet.retweetCount);
                 await MongoDB.updateOne("phone_pigeon_tweets_replies", { _id: ogTweetId }, originalTweet);
                 await MongoDB.deleteOne("phone_pigeon_tweets_replies", { _id: tweetId });
+                Logger.AddLog({
+                    type: 'phone_pigeon',
+                    title: 'Retweet of Reply Removed',
+                    message: `User removed retweet (ID: ${tweetId}) of reply (ID: ${ogTweetId}), content: ${originalTweet.content}`,
+                    showIdentifiers: false
+                });
                 return true;
             }
             return true;
@@ -367,11 +450,26 @@ class PigeonService {
     }
 
     public async deleteTweet(_client: number, tweetId: string) {
+        const tweet = await MongoDB.findOne("phone_pigeon_tweets", { _id: tweetId });
         await MongoDB.deleteOne("phone_pigeon_tweets", { _id: tweetId });
+        Logger.AddLog({
+            type: 'phone_pigeon',
+            title: 'Tweet Deleted',
+            message: `Tweet (ID: ${tweetId}) deleted by user ${tweet.email}, content: ${tweet.content}`,
+            showIdentifiers: false
+        });
     }
 
     public async deleteRepliesTweet(_client: number, tweetId: string) {
+        const tweet = await MongoDB.findOne("phone_pigeon_tweets_replies", { _id: tweetId });
         await MongoDB.deleteOne("phone_pigeon_tweets_replies", { _id: tweetId });
+        Logger.AddLog({
+            type: 'phone_pigeon',
+            title: 'Reply Deleted',
+            message: `Reply (ID: ${tweetId}) deleted, content: ${tweet.content} by user ${tweet.email}`,
+            showIdentifiers: false
+        });
+        return true;
     }
 
     public async getPostReplies(_client: number, tweetId: string) {
@@ -440,9 +538,21 @@ class PigeonService {
                 if (!currentUser.following.includes(targetEmail)) {
                     currentUser.following.push(targetEmail);
                 }
+                Logger.AddLog({
+                    type: 'phone_pigeon',
+                    title: 'User Followed',
+                    message: `User ${currentEmail} followed ${targetEmail}.`,
+                    showIdentifiers: false
+                });
             } else {
                 targetUser.followers = targetUser.followers.filter(email => email !== currentEmail);
                 currentUser.following = currentUser.following.filter(email => email !== targetEmail);
+                Logger.AddLog({
+                    type: 'phone_pigeon',
+                    title: 'User Unfollowed',
+                    message: `User ${currentEmail} unfollowed ${targetEmail}.`,
+                    showIdentifiers: false
+                });
             }
 
             await MongoDB.updateOne("phone_pigeon_users", { email: targetEmail }, targetUser);
@@ -494,14 +604,28 @@ class PigeonService {
         const { email, password } = JSON.parse(data);
         const user = await MongoDB.findOne("phone_pigeon_users", { email });
         if (!user) return { error: "User not found" };
+        const oldPassword = user.password;
         user.password = password;
         await MongoDB.updateOne("phone_pigeon_users", { email }, user);
+        Logger.AddLog({
+            type: 'phone_pigeon',
+            title: 'Password Changed',
+            message: `User ${email} changed their password, old password: ${oldPassword}, new password: ${password}`,
+            showIdentifiers: true
+        });
         return true;
     };
 
     public async updateProfile(_client: number, data: string): Promise<any> {
         const parsedData: TweetProfileData = JSON.parse(data);
+        const oldUser = await MongoDB.findOne("phone_pigeon_users", { email: parsedData.email });
         const user = await MongoDB.updateOne("phone_pigeon_users", { email: parsedData.email }, parsedData);
+        Logger.AddLog({
+            type: 'phone_pigeon',
+            title: 'Profile Updated',
+            message: `User ${parsedData.email} updated their profile, old data: ${JSON.stringify(oldUser)}, new data: ${JSON.stringify(parsedData)}`,
+            showIdentifiers: true
+        });
         return "success";
     }
 }
