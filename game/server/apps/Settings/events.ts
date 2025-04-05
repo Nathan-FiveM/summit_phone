@@ -1,4 +1,4 @@
-import { MongoDB } from "@server/sv_main";
+import { MongoDB, Logger } from "@server/sv_main";
 import { generateUUid, LOGGER } from "@shared/utils";
 import { Settings } from "./class";
 import { triggerClientCallback } from "@overextended/ox_lib/server";
@@ -67,6 +67,12 @@ async function GeneratePlayerPhoneNumber(citizenId: string, source: number) {
     });
     Settings.RegisterNewSettings(citizenId, number);
     emitNet('phone:client:setupPhone', source, citizenId);
+    Logger.AddLog({
+        type: 'phone_settings',
+        title: 'Phone Number Generated',
+        message: `Phone number ${number} generated for ${citizenId}`,
+        showIdentifiers: true,
+    });
     return number;
 }
 exports('GeneratePlayerPhoneNumber', GeneratePlayerPhoneNumber);

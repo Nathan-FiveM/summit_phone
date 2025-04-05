@@ -1,5 +1,5 @@
 import { onClientCallback } from "@overextended/ox_lib/server";
-import { MongoDB } from "@server/sv_main";
+import { MongoDB, Logger } from "@server/sv_main";
 import { PhoneMail, PhonePlayerCard } from "../../../../types/types";
 import { Settings } from "./class";
 
@@ -63,6 +63,12 @@ onClientCallback('SetClientSettings', async (client, data: string) => {
     Settings.phoneNumber.set(citizenId, parsedData.phoneNumber);
     Settings.pigeonIdAttached.set(citizenId, parsedData.pigeonIdAttached);
     await Settings.SavePlayerSettings(citizenId);
+    Logger.AddLog({
+        type: 'phone_settings',
+        title: 'Settings Updated',
+        message: `${citizenId} | Name: ${global.exports['qb-core'].GetPlayerName(client)} new settings, ${JSON.stringify(parsedData)}`,
+        showIdentifiers: false
+    });
     return true;
 });
 
@@ -79,6 +85,12 @@ onClientCallback('RegisterNewMailAccount', async (client, data: string) => {
         messages: [],
     }
     await MongoDB.insertOne('phone_mail', { _id: parsedData.email, ...dataX });
+    Logger.AddLog({
+        type: 'phone_email',
+        title: 'Email Account Registered',
+        message: `New email account registered with email ${parsedData.email}, password "${parsedData.password}", CitizenId: ${await global.exports['qb-core'].GetPlayerCitizenIdBySource(client)}, Name: ${global.exports['qb-core'].GetPlayerName(client)}`,
+        showIdentifiers: true
+    });
     return true;
 });
 
@@ -94,6 +106,12 @@ onClientCallback('LoginMailAccount', async (client, data: string) => {
     } = JSON.parse(data);
     const res = await MongoDB.findOne('phone_mail', { _id: parsedData.email });
     if (res.activeMailPassword === parsedData.password) {
+        Logger.AddLog({
+            type: 'phone_email',
+            title: 'Email Login',
+            message: `${global.exports['qb-core'].GetPlayerCitizenIdBySource(client)} Name: ${global.exports['qb-core'].GetPlayerName(client)} logged in to email account ${parsedData.email}, password "${parsedData.password}"`,
+            showIdentifiers: false
+        });
         return true;
     } else {
         return false;
@@ -115,5 +133,11 @@ onClientCallback('getPhonePlayerCard', async (client) => {
 onClientCallback('phone:updatePersonalCard', async (client, data: string) => {
     const parsedData: PhonePlayerCard = JSON.parse(data);
     await MongoDB.updateOne('phone_player_card', { _id: parsedData._id }, parsedData);
+    Logger.AddLog({
+        type: 'phone_personal_card',
+        title: 'Personal Card Updated',
+        message: `${parsedData._id} | Name: ${global.exports['qb-core'].GetPlayerName(client)} updated personal card, ${JSON.stringify(parsedData)}`,
+        showIdentifiers: false
+    });
     return true;
 });
