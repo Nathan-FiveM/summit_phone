@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import vitePluginBundleObfuscator from 'vite-plugin-bundle-obfuscator';
+/* import vitePluginBundleObfuscator from 'vite-plugin-bundle-obfuscator';
 
 const defaultObfuscatorConfig = {
   excludes: [],
@@ -39,12 +39,13 @@ const defaultObfuscatorConfig = {
     stringArrayThreshold: 0.75,
     unicodeEscapeSequence: false,
   }
-};
+}; */
+/* vitePluginBundleObfuscator(defaultObfuscatorConfig) */
 
 // https://vite.dev/config/
 export default defineConfig({
   //@ts-ignore
-  plugins: [react(), vitePluginBundleObfuscator(defaultObfuscatorConfig)],
+  plugins: [react()],
   assetsInclude: ['**/*.svg'],
   resolve: {
     alias: {

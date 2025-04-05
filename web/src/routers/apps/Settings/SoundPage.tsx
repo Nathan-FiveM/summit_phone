@@ -1,7 +1,7 @@
 import { Slider, TextInput, Transition } from "@mantine/core";
 import { usePhone } from "../../../store/store";
 import { useLocalStorage } from "@mantine/hooks";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { fetchNui } from "../../../hooks/fetchNui";
 
 export default function SoundPage() {
@@ -11,19 +11,22 @@ export default function SoundPage() {
         defaultValue: 40,
     });
     const [isPlaying, setIsPlaying] = useState(false);
-    const audio = new Audio();
+    const audioRef = useRef(new Audio());
     function playSound(url: string) {
-        if (isPlaying) {
-            stopSound();
-        }
+        if (isPlaying) stopSound();
+        const audio = audioRef.current;
         audio.src = url;
         audio.volume = volume / 100;
         audio.play();
-    };
+        setIsPlaying(true);
+    }
+
     function stopSound() {
-        setIsPlaying(false);
+        const audio = audioRef.current;
         audio.pause();
-    };
+        audio.currentTime = 0;
+        setIsPlaying(false);
+    }
     const [showAddRintone, setShowAddRintone] = useState(false);
     const [addRintone, setAddRintone] = useState('');
 
@@ -34,9 +37,9 @@ export default function SoundPage() {
             duration={400}
             timingFunction="ease"
             onExit={() => {
+                stopSound();
                 setShowAddRintone(false);
                 setAddRintone('');
-                stopSound();
             }}
         >
             {(styles) => <div style={{
