@@ -1,5 +1,5 @@
 import { Utils } from "@server/classes/Utils";
-import { Framework, MongoDB } from "@server/sv_main";
+import { Framework, MongoDB, Logger } from "@server/sv_main";
 import { generateUUid, LOGGER } from "@shared/utils";
 
 onNet('summit_phone:server:fireEmployee', async (citizenId: string) => {
@@ -24,6 +24,12 @@ onNet('summit_phone:server:fireEmployee', async (citizenId: string) => {
             timeout: 5000,
         }));
         emitNet('summit_phone:client:refreshEmpData', source, jobname);
+        Logger.AddLog({
+            type: 'phone_employee_action',
+            title: 'Employee Fired',
+            message: `${targetData.PlayerData.charinfo.firstname} ${targetData.PlayerData.charinfo.lastname} has been fired by ${await exports['qb-core'].GetPlayerName(source)} | CitizenId: ${targetData.PlayerData.citizenid} | Job: ${targetData.PlayerData.job.name}`,
+            showIdentifiers: false
+        });
     } else {
         const playerData: any = await Utils.query('SELECT job FROM players WHERE citizenid = ? LIMIT 1', [citizenId]);
         const jobData = JSON.parse(playerData[0].job);
@@ -40,6 +46,12 @@ onNet('summit_phone:server:fireEmployee', async (citizenId: string) => {
         await Utils.query('UPDATE players SET job = ? WHERE citizenid = ?', [JSON.stringify(job), citizenId]);
         await MongoDB.deleteOne('phone_multijobs', { citizenId: citizenId, jobName: jobData.name });
         emitNet('summit_phone:client:refreshEmpData', source, jobData.name);
+        Logger.AddLog({
+            type: 'phone_employee_action',
+            title: 'Offline Employee Fired',
+            message: `Offline employee ${citizenId} has been fired by ${await exports['qb-core'].GetPlayerName(source)} | Job: ${jobData.name}`,
+            showIdentifiers: false
+        });
     }
 });
 
@@ -65,6 +77,12 @@ onNet('summit_phone:server:changeRankOfPlayer', async (data: any) => {
             timeout: 5000,
         }));
         emitNet('summit_phone:client:refreshEmpData', source, jobname);
+        Logger.AddLog({
+            type: 'phone_employee_action',
+            title: 'Rank Changed',
+            message: `${targetData.PlayerData.charinfo.firstname} ${targetData.PlayerData.charinfo.lastname} has been given a new rank by ${await exports['qb-core'].GetPlayerName(source)} | CitizenId: ${targetData.PlayerData.citizenid} | Job: ${jobname} |  New Rank: ${data.gradeName}`,
+            showIdentifiers: false
+        });
     } else {
         const playerData: any = await Utils.query('SELECT job FROM players WHERE citizenid = ? LIMIT 1', [data.targetCitizenid]);
         const jobData = JSON.parse(playerData[0].job);
@@ -73,8 +91,20 @@ onNet('summit_phone:server:changeRankOfPlayer', async (data: any) => {
         await Utils.query('UPDATE players SET job = ? WHERE citizenid = ?', [JSON.stringify(jobData), data.targetCitizenid]);
         if (multiJob) {
             await MongoDB.updateOne('phone_multijobs', { citizenId: data.targetCitizenid, jobName: data.jobName }, { gradeLevel: data.key, gradeLabel: data.gradeName });
+            Logger.AddLog({
+                type: 'phone_multi_job',
+                title: 'Multi-Job Updated',
+                message: `${data.targetCitizenid} has been updated to ${data.jobName} | New Rank: ${data.gradeName} by ${await exports['qb-core'].GetPlayerName(source)} | citizenId: ${exports['qb-core'].GetPlayerCitizenId(source)}`,
+                showIdentifiers: false
+            });
         } else {
             await MongoDB.insertOne('phone_multijobs', { _id: generateUUid(), citizenId: data.targetCitizenid, jobName: data.jobName, gradeLevel: data.key, gradeLabel: data.gradeName });
+            Logger.AddLog({
+                type: 'phone_multi_job',
+                title: 'Multi-Job Added',
+                message: `${data.targetCitizenid} has been added to ${data.jobName} | New Rank: ${data.gradeName} by ${await exports['qb-core'].GetPlayerName(source)} | citizenId: ${exports['qb-core'].GetPlayerCitizenId(source)}`,
+                showIdentifiers: false
+            });
         }
         emitNet('summit_phone:client:refreshEmpData', source, jobData.name);
     }
@@ -91,6 +121,12 @@ onNet('summit_phone:server:fireInactiveEmployee', async (data: { jobName: string
         timeout: 5000,
     }));
     emitNet('summit_phone:client:refreshEmpData', source, data.jobName);
+    Logger.AddLog({
+        type: 'phone_employee_action',
+        title: 'Inactive Employee Fired',
+        message: `Inactive employee ${data.citizenId} has been fired by ${await exports['qb-core'].GetPlayerName(source)} | Job: ${data.jobName}`,
+        showIdentifiers: false
+    });
 });
 
 on('summit_phone:server:hireinMultiJob', async (client: string, jobname: string, gradeLevel: number, jobLabel: string, gradeLabel: string) => {
@@ -99,11 +135,23 @@ on('summit_phone:server:hireinMultiJob', async (client: string, jobname: string,
     if (multiJobCheck) {
         if (multiJobCheck.gradeLevel !== gradeLevel) {
             await MongoDB.updateOne('phone_multijobs', { citizenId: targetCid, jobName: jobname }, { gradeLevel, gradeLabel });
+            Logger.AddLog({
+                type: 'phone_multi_job',
+                title: 'Multi-Job Updated',
+                message: `${targetCid} has been updated to ${jobname} | New Rank: ${gradeLabel} by ${await exports['qb-core'].GetPlayerName(client)} | citizenId: ${exports['qb-core'].GetPlayerCitizenId(client)}`,
+                showIdentifiers: false
+            });
         } else {
             return emitNet('QBCore:Notify', client, 'You are already in this job with this grade level', 'error');
         }
     } else {
         await MongoDB.insertOne('phone_multijobs', { _id: generateUUid(), citizenId: targetCid, jobName: jobname, gradeLevel, jobLabel, gradeLabel });
+        Logger.AddLog({
+            type: 'phone_multi_job',
+            title: 'Multi-Job Added',
+            message: `${targetCid} has been added to ${jobname} | New Rank: ${gradeLabel} by ${await exports['qb-core'].GetPlayerName(client)} | citizenId: ${exports['qb-core'].GetPlayerCitizenId(client)}`,
+            showIdentifiers: false
+        });
     }
 })
 
