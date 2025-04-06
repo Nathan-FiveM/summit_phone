@@ -29,6 +29,12 @@ export class NU {
             } else {
                 SetNuiFocus(true, true);
             }
+
+            setTimeout(() => {
+                if (!state.onPhone && IsNuiFocused()) {
+                    SetNuiFocus(false, false);
+                }
+            }, 1000);
         }, false);
         RegisterKeyMapping('phoneopen', 'Open Phone', 'keyboard', 'M');
         RegisterKeyMapping('+toggleNuiFocus', 'Toggle NUI Focus', 'keyboard', 'LMENU');
@@ -60,7 +66,7 @@ export class NU {
         setTimeout(() => {
             const state = LocalPlayer.state;
             state.set('onPhone', false, true);
-        }, 1000)
+        }, 500)
     };
 
     public sendReactMessage(action: string, data: object | boolean | string | number) {
