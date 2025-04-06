@@ -41,7 +41,7 @@ export default function MessageDetails() {
         await fetchMessages(true);
     }, 500);
 
-    useNuiEvent('upDatemessages', async (data: string) => {
+    useNuiEvent('upDatemessages', async () => {
         if (location.app === "message" && breakedLocation[0] === "details") {
             handeNewfetch();
         }
