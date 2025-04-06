@@ -142,8 +142,8 @@ export default function Housing(props: { onExit: () => void; onEnter: () => void
                             marginTop: index === 0 ? '' : '0.4vw',
                         }} onClick={async () => {
                             setSelectedApartment(apartment);
-                            const data = await fetchNui('getKeyHolderNames', apartment.has_access);
-                            setAccessNames(JSON.parse(data as string));
+                            const data: any = await fetchNui('getKeyHolderNames', apartment.property_id);
+                            setAccessNames(data);
                         }}>
                             <div style={{
                                 display: 'flex',
@@ -199,6 +199,7 @@ export default function Housing(props: { onExit: () => void; onEnter: () => void
                         }} onClick={async () => {
                             setSelectedApartment(apartment);
                             const data: any = await fetchNui('getKeyHolderNames', apartment.property_id);
+                            console.log(JSON.stringify(data, null, 2));
                             setAccessNames(data);
                         }}>
                             <div style={{

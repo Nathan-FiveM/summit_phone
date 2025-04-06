@@ -123,7 +123,7 @@ onClientCallback('phone_message:sendMessage', async (client, data: string) => {
                         app: "message",
                         timeout: 2000,
                     }));
-                    emitNet('phone_messages:client:updateMessages', CVXCS, JSON.stringify(newMessage));
+                    emitNet('phone_messages:client:updateMessages', CVXCS, JSON.stringify({...newMessage, groupId}));
                 }
             }
         }
@@ -200,7 +200,7 @@ async function sendToRecipient(
         read: false,
         page: targetNextPage,
         timestamp: new Date().toISOString(),
-        senderId: await Utils.GetCitizenIdByPhoneNumber(senderPhoneNumber),
+        senderId: senderPhoneNumber,
         attachments: messageData.attachments || []
     };
 

@@ -6,6 +6,7 @@ import { fetchNui } from "../../../hooks/fetchNui";
 import { Avatar, Image, TextInput, Transition } from "@mantine/core";
 import { PhoneContacts } from "../../../../../types/types";
 import { useNuiEvent } from "../../../hooks/useNuiEvent";
+import { useDebouncedCallback } from "@mantine/hooks";
 
 export interface Message {
     message: string;
@@ -36,10 +37,13 @@ export default function MessageDetails() {
     const [attachments, setAttachments] = useState<{ type: string; url: string }[]>([]);
     const [isAdmin, setIsAdmin] = useState(false);
 
+    const handeNewfetch = useDebouncedCallback(async () => {
+        await fetchMessages(true);
+    }, 500);
+
     useNuiEvent('upDatemessages', async (data: string) => {
         if (location.app === "message" && breakedLocation[0] === "details") {
-            const messages = JSON.parse(data);
-            setMessages((prev) => [messages, ...prev]);
+            handeNewfetch();
         }
     })
 
