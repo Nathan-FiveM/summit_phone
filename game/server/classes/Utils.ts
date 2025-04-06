@@ -1,4 +1,4 @@
-import { MongoDB, MySQL } from "@server/sv_main";
+import { Framework, MongoDB, MySQL } from "@server/sv_main";
 import { generateUUid, LOGGER } from "@shared/utils";
 
 class Util {
@@ -89,6 +89,8 @@ class Util {
                 citizenId: citizenId,
                 jobName: jobName,
                 gradeLevel: gradeLevel,
+                jobLabel: Framework.Shared.Jobs[jobName].label,
+                gradeLabel: Framework.Shared.Jobs[jobName].grades[gradeLevel].name,
             });
         });
         await MongoDB.insertMany('phone_multijobs', newData);

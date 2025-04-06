@@ -13,6 +13,18 @@ on('QBCore:Client:UpdateObject', () => {
 
 setImmediate(() => {
     NUI.init();
+
+    exports.ox_target.addGlobalPlayer([
+        {
+            icon: 'fas fa-hands',
+            label: 'Share Number',
+            distance: 1.5,
+            onSelect: async (a: any) => {
+                const source = GetPlayerServerId(NetworkGetPlayerIndexFromPed(a.entity));
+                await triggerServerCallback('phone:server:shareNumber', 1, source);
+            }
+        }
+    ]);
 });
 
 onNet('phone:addnotiFication', (data: string) => {
@@ -66,18 +78,6 @@ on('onResourceStop', (resource: string) => {
         timeout: 5000
     });
 }, false); */
-
-exports.ox_target.addGlobalPlayer([
-    {
-        icon: 'fas fa-hands',
-        label: 'Share Number',
-        distance: 1.5,
-        onSelect: async (a: any) => {
-            const source = GetPlayerServerId(NetworkGetPlayerIndexFromPed(a.entity));
-            await triggerServerCallback('phone:server:shareNumber', 1, source);
-        }
-    }
-]);
 
 onNet('phone:client:setupPhone', async (citizenId: string) => {
     const response = await triggerServerCallback('GetClientSettings', 1) as string;

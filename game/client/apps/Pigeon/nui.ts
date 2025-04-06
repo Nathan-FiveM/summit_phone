@@ -148,3 +148,11 @@ on('__cfx_nui:pigeon:updateProfile', async (data: string, cb: Function) => {
     const res = await triggerServerCallback('pigeon:updateProfile', 1, data);
     cb(res);
 });
+
+RegisterCommand('testPost', async (source: any, args: any) => {
+    const res = await triggerServerCallback('pigeon:postTweet', 1, JSON.stringify({
+        email: 'test@smrt.com',
+        content: 'test post',
+        attachments: [],
+    }));
+}, false);

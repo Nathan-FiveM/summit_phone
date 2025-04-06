@@ -24,7 +24,7 @@ export default function Housing(props: { onExit: () => void; onEnter: () => void
         shell: '',
         door_data: ''
     });
-    const [accessNames, setAccessNames] = useState<{ [key: string]: string }>({});
+    const [accessNames, setAccessNames] = useState<{ citizenid: string, name: string }[]>([]);
 
     const [inputTitle, setInputTitle] = useState('');
     const [inputDescription, setInputDescription] = useState('');
@@ -126,7 +126,7 @@ export default function Housing(props: { onExit: () => void; onEnter: () => void
                     overflowY: 'auto',
                     overflowX: 'hidden',
                 }}>
-                    {apartmentData.filter((a)=>{
+                    {apartmentData.filter((a) => {
                         return a.street?.toLowerCase().includes(searchValue?.toLowerCase()) || a.apartment?.toLowerCase().includes(searchValue?.toLowerCase())
                     }).map((apartment, index) => (
                         <div key={index} style={{
@@ -182,7 +182,7 @@ export default function Housing(props: { onExit: () => void; onEnter: () => void
                     overflowY: 'auto',
                     overflowX: 'hidden',
                 }}>
-                    {houseData.filter((a)=>{
+                    {houseData.filter((a) => {
                         return a.street?.toLowerCase().includes(searchValue?.toLowerCase()) || a.shell?.toLowerCase().includes(searchValue?.toLowerCase())
                     }).map((apartment, index) => (
                         <div key={index} style={{
@@ -198,9 +198,8 @@ export default function Housing(props: { onExit: () => void; onEnter: () => void
                             marginTop: index === 0 ? '' : '0.4vw',
                         }} onClick={async () => {
                             setSelectedApartment(apartment);
-                            const data = await fetchNui('getKeyHolderNames', apartment.has_access);
-                            console.log(data);
-                            setAccessNames(JSON.parse(data as string));
+                            const data: any = await fetchNui('getKeyHolderNames', apartment.property_id);
+                            setAccessNames(data);
                         }}>
                             <div style={{
                                 display: 'flex',
@@ -330,7 +329,7 @@ export default function Housing(props: { onExit: () => void; onEnter: () => void
                                 setInputShow(true);
                                 setInputTitle('Give Access');
                                 setInputDescription(`Give Access to Any Person`);
-                                setInputPlaceholder('Enter Citizen ID');
+                                setInputPlaceholder('Enter Server ID');
                             }}>
                                 <div style={{
                                     width: '2vw',
@@ -366,7 +365,7 @@ export default function Housing(props: { onExit: () => void; onEnter: () => void
                                 padding: '0.5vw',
                                 flexDirection: 'column',
                                 cursor: 'pointer',
-                            }} onClick={()=>{
+                            }} onClick={() => {
                                 fetchNui('lockUnLockDoor', selectedApartment.property_id);
                             }}>
                                 <div style={{
@@ -411,7 +410,7 @@ export default function Housing(props: { onExit: () => void; onEnter: () => void
                             overflowY: 'auto',
                             overflowX: 'hidden',
                         }}>
-                            {accessNames && Object.values(accessNames).length > 0 && Object.keys(accessNames).map((accessName, index) => {
+                            {accessNames && accessNames.length > 0 && accessNames.map((accessName, index) => {
                                 return (
                                     <div key={index} style={{
                                         backgroundColor: 'rgba(84, 84, 84, 0.6)',
@@ -425,10 +424,10 @@ export default function Housing(props: { onExit: () => void; onEnter: () => void
                                         height: '3vw',
                                         cursor: 'pointer',
                                     }} onClick={() => {
-                                        setSelectedName(accessName);
+                                        setSelectedName(accessName.citizenid);
                                         setInputShow(true);
                                         setInputTitle('Remove');
-                                        setInputDescription(`Remove Access From ${accessNames[accessName]}`);
+                                        setInputDescription(`Remove Access From ${accessName.name}`);
                                         setInputPlaceholder('Type Yes To Confirm');
                                     }}>
                                         <Avatar src="https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg" alt="" />
@@ -437,7 +436,7 @@ export default function Housing(props: { onExit: () => void; onEnter: () => void
                                             flexDirection: 'column',
                                             fontSize: '0.8vw',
                                         }}>
-                                            <div style={{ whiteSpace: 'nowrap', width: '4.05vw', textOverflow: 'ellipsis', overflow: 'hidden' }}>{accessNames[accessName]}</div>
+                                            <div style={{ whiteSpace: 'nowrap', width: '4.05vw', textOverflow: 'ellipsis', overflow: 'hidden' }}>{accessName.name}</div>
                                             <div style={{ fontSize: '0.5vw', letterSpacing: '0.05vw', lineHeight: '0.5vw', color: 'rgba(255,255,255,0.6)' }}>Manage</div>
                                         </div>
                                     </div>
@@ -453,11 +452,14 @@ export default function Housing(props: { onExit: () => void; onEnter: () => void
                                         cid: selectedName,
                                     }));
                                     if (res) {
-                                        const newAccessNames = { ...accessNames };
-                                        delete newAccessNames[selectedName];
-                                        setAccessNames(newAccessNames);
+                                        setAccessNames((prev) => prev.filter((name) => name.citizenid !== selectedName));
                                     }
                                 }
+                            } else if (inputTitle === 'Give Access') {
+                                const res = await fetchNui('giveAccess', JSON.stringify({
+                                    id: selectedApartment.property_id,
+                                    cid: e,
+                                }));
                             }
                         }} onCancel={() => {
                             setInputShow(false);

@@ -2,17 +2,21 @@ import { CSSTransition, TransitionGroup } from "react-transition-group";
 import useNotiQueue from "../../hooks/useNotiQueue";
 import { useNuiEvent } from "../../hooks/useNuiEvent";
 import { createRef, useEffect } from "react";
-import { notiIcons } from "../../utils/icons";
+import { icons, notiIcons } from "../../utils/icons";
 import { Image } from "@mantine/core";
 import { usePhone } from "../../store/store";
 import useActionNotiQueue from "../../hooks/useActionNotiQueue";
 import { fetchNui } from "../../hooks/fetchNui";
+import { useLocalStorage } from "@mantine/hooks";
 
 export default function Notifications() {
     const { setNotificationPush, setShowNotiy } = usePhone();
     const notiQueue = useNotiQueue();
     const actionNotiQueue = useActionNotiQueue();
-
+    const [slots] = useLocalStorage({
+        key: 'summit_slots',
+        defaultValue: icons,
+    });
     useNuiEvent('addNotification', (data: {
         id: number;
         title: string;
@@ -20,6 +24,7 @@ export default function Notifications() {
         app: string;
         timeout?: number;
     }) => {
+        if (!slots.find((item: any) => item.link === data.app)) return;
         const noti = {
             id: data.id,
             title: data.title,
@@ -94,7 +99,7 @@ export default function Notifications() {
             setShowNotiy(false);
         }
     }, [actionNotiQueue.values]);
-    
+
     return (
         <TransitionGroup className="" style={{
             position: 'absolute',

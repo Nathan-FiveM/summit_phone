@@ -2,13 +2,14 @@ import { useState } from "react";
 import { Notification } from "../../../types/types";
 import { usePhone } from "../store/store";
 import { get } from "http";
+import { icons } from "../utils/icons";
+import { useLocalStorage } from "@mantine/hooks";
 
 
 
 export default function useNotiQueue() {
     const [state, set] = useState<Notification[]>([]);
-    
-    const [ notifiCationHistory, setNotifiCationHistory ] = useState<Notification[]>([]);
+    const [notifiCationHistory, setNotifiCationHistory] = useState<Notification[]>([]);
 
     return {
         add(value: {

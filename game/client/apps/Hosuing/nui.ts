@@ -9,14 +9,15 @@ on('__cfx_nui:getOwnedHouses', async (data: string, cb: Function) => {
 
 RegisterNuiCallbackType('getKeyHolderNames');
 on('__cfx_nui:getKeyHolderNames', async (data: string, cb: Function) => {
-    const res = await triggerServerCallback('getKeyHolderNames', 1, data);
+    const res = await triggerServerCallback('ps-housing:cb:getPlayersWithAccess', 1, data);
     cb(res);
 });
 
 RegisterNuiCallbackType('removeAccess');
 on('__cfx_nui:removeAccess', async (data: string, cb: Function) => {
-    const res = await triggerServerCallback('removeAccess', 1, data);
-    cb(res);
+    const { id, cid } = JSON.parse(data);
+    emitNet('ps-housing:server:removeAccess', id, cid);
+    cb("Ok");
 });
 
 RegisterNuiCallbackType('setLocationOfHouse');
@@ -29,4 +30,11 @@ RegisterNuiCallbackType('lockUnLockDoor');
 on('__cfx_nui:lockUnLockDoor', async (data: string, cb: Function) => {
     emitNet('ps-housing:server:ToggleMainDoorLock', data);
     cb('ok');
+});
+
+RegisterNuiCallbackType('giveAccess');
+on('__cfx_nui:giveAccess', async (data: string, cb: Function) => {
+    const { id, cid } = JSON.parse(data);
+    emitNet('ps-housing:server:addAccess', id, cid);
+    cb("Ok");
 });
