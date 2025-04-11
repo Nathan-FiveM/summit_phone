@@ -52,21 +52,51 @@ class Mail {
         await MongoDB.updateOne('phone_mail', { _id: target }, targetMail);
 
         const targetCid = await Utils.GetPlayerByEmail(target);
+        playerMail.messages.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        targetMail.messages.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+        emitNet('summit_phone:client:refreshmailMessages', source, JSON.stringify(playerMail.messages));
         if (targetCid) {
             emitNet('phone:addnotiFication', targetCid.PlayerData.source, JSON.stringify({
                 id: generateUUid(),
                 title: 'Mail',
                 description: `You have a new mail from ${player}.`,
-                app: 'mail',
+                app: 'settings',
                 timeout: 5000
             }));
+            emitNet('summit_phone:client:refreshmailMessages', targetCid.PlayerData.source, JSON.stringify(targetMail.messages));
         }
+        return true;
+    };
 
-        playerMail.messages.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
-        targetMail.messages.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
-        emitNet('summit_phone:client:refreshmailMessages', source, JSON.stringify(playerMail.messages));
-        emitNet('summit_phone:client:refreshmailMessages', targetCid.PlayerData.source, JSON.stringify(targetMail.messages));
+    async sendEmailToAll(subject: string, sender: string, message: string, images: string[]) {
+        const mailData = await MongoDB.findMany('phone_mail', { activeMaidId: { $ne: null } });
+        if (!mailData) return false;
+        mailData.forEach(async (mail: PhoneMail) => {
+            const newMailMessage: PhoneMailMessage = {
+                _id: generateUUid(),
+                from: sender,
+                to: mail.activeMaidId,
+                avatar: '',
+                subject: subject,
+                message: message,
+                images: images || [],
+                date: new Date().toISOString(),
+                read: false,
+                tags: ['inbox'],
+                username: sender
+            };
+            mail.messages.push(newMailMessage);
+            //@ts-ignore
+            await MongoDB.updateOne('phone_mail', { _id: mail._id }, mail);
+        });
+        emitNet('phone:addnotiFication', -1, JSON.stringify({
+            id: generateUUid(),
+            title: 'Mail',
+            description: `You have a new mail, ${message}.`,
+            app: 'settings',
+            timeout: 5000
+        }));
         return true;
     };
 

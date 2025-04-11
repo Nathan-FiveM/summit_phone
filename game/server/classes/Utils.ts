@@ -95,12 +95,25 @@ class Util {
         });
         await MongoDB.insertMany('phone_multijobs', newData);
         LOGGER('Multijobs have been transferred to MongoDB.');
-    }
+    };
 
     async GetPhoneNumberByCitizenId(citizenId: string) {
         const number = await MongoDB.findOne('phone_numbers', { owner: citizenId });
         if (!number) return false;
         return number.number;
+    };
+
+    async GetEmailIdByCitizenId(citizenId: string) {
+        const number = await MongoDB.findOne('phone_settings', { _id: citizenId });
+        if (!number) return false;
+        return number.smrtId;
+    };
+
+    async GetEmailIdBySource(source: number) {
+        const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(source);
+        if (!citizenId) return false;
+        const email = await this.GetEmailIdByCitizenId(citizenId);
+        return email;
     };
 
     async GetCitizenIdByPhoneNumber(phoneNumber: string) {
