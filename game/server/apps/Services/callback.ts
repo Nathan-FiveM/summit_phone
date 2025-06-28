@@ -210,7 +210,7 @@ onClientCallback('summit_phone:server:businessCall', async (client, data: string
 });
 
 onClientCallback('summit_phone:server:getBankbalance', async (client, account) => {
-    const balance = await exports.summit_banking.getAccountMoney(account);
+    const balance = await exports.summit_bank.GetBusinessAccountBalance(account);
     return balance;
 });
 
@@ -221,7 +221,7 @@ onClientCallback('summit_phone:server:depositMoney', async (client, amount: numb
         return false;
     }
     await exports['qb-core'].RemoveMoney(client, 'bank', amount, "Phone Business App Deposit.");
-    await exports.summit_banking.addAccountMoney(account, amount);
+    await exports.summit_bank.AddMoneyToBusinessAccount(account, amount);
     Logger.AddLog({
         type: 'phone_business',
         title: 'Money Deposited',
@@ -233,11 +233,11 @@ onClientCallback('summit_phone:server:depositMoney', async (client, amount: numb
 
 onClientCallback('summit_phone:server:withdrawMoney', async (client, amount: number) => {
     const account = await exports['qb-core'].GetPlayerJob(client);
-    const balance = await exports.summit_banking.getAccountMoney(account);
+    const balance = await exports.summit_bank.GetBusinessAccountBalance(account);
     if (balance < amount) {
         return false;
     }
-    await exports.summit_banking.removeAccountMoney(account, amount);
+    await exports.summit_bank.RemoveMoneyFromBusinessAccount(account, amount);
     await exports['qb-core'].AddMoney(client, 'bank', amount, "Phone Business App Withdraw.");
     Logger.AddLog({
         type: 'phone_business',
