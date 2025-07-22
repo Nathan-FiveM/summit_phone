@@ -146,7 +146,7 @@ RegisterCommand('registerBusiness', async (source: any, args: any[]) => {
             job
         }));
     });
-}, false);
+}, true);
 emit('chat:addSuggestion', '/registerBusiness', 'Register a New Business.', []);
 
 RegisterCommand('updateBusiness', async (source: any, args: any[]) => {

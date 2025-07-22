@@ -3,38 +3,38 @@ import { triggerServerCallback } from "@overextended/ox_lib/client";
 
 RegisterNuiCallbackType('getOwnedHouses');
 on('__cfx_nui:getOwnedHouses', async (data: string, cb: Function) => {
-    const res = await triggerServerCallback('getOwnedHouses', 1);
-    cb(res);
+    const res = await exports['nolag_properties'].GetAllProperties('both');
+    cb(JSON.stringify(res));
 });
 
 RegisterNuiCallbackType('getKeyHolderNames');
 on('__cfx_nui:getKeyHolderNames', async (data: string, cb: Function) => {
-    const res = await triggerServerCallback('ps-housing:cb:getPlayersWithAccess', 1, data);
+    const res = await exports['nolag_properties'].GetKeyHolders(data);
     cb(res);
 });
 
 RegisterNuiCallbackType('removeAccess');
 on('__cfx_nui:removeAccess', async (data: string, cb: Function) => {
     const { id, cid } = JSON.parse(data);
-    emitNet('ps-housing:server:removeAccess', id, cid);
-    cb("Ok");
+    await exports['nolag_properties'].RemoveKey(id, cid);
+    cb('Ok');
 });
 
 RegisterNuiCallbackType('setLocationOfHouse');
-on('__cfx_nui:setLocationOfHouse', async (data: { x: number, y: number, z: number }, cb: Function) => {
-    SetNewWaypoint(data.x, data.y);
+on('__cfx_nui:setLocationOfHouse', async (data: { propertyId: string }, cb: Function) => {
+    await exports['nolag_properties'].SetWaypointToProperty(data.propertyId);
     cb('ok');
 });
 
 RegisterNuiCallbackType('lockUnLockDoor');
-on('__cfx_nui:lockUnLockDoor', async (data: string, cb: Function) => {
-    emitNet('ps-housing:server:ToggleMainDoorLock', data);
+on('__cfx_nui:lockUnLockDoor', async (data: { propertyId: number, doorLocked: boolean }, cb: Function) => {
+    emitNet('summit_phone:server:toggleDoorlock', data);
     cb('ok');
 });
 
 RegisterNuiCallbackType('giveAccess');
 on('__cfx_nui:giveAccess', async (data: string, cb: Function) => {
-    const { id, cid } = JSON.parse(data);
-    emitNet('ps-housing:server:addAccess', id, cid);
-    cb("Ok");
+    const { id, psrc } = JSON.parse(data);
+    emitNet('ps-housing:server:addAccess', id, psrc);
+    cb('Ok');
 });

@@ -1,60 +1,60 @@
 import { onClientCallback } from "@overextended/ox_lib/server";
 import { Utils } from "@server/classes/Utils";
-import { Logger } from "@server/sv_main";
+import { Framework, Logger } from "@server/sv_main";
 
 onClientCallback('getOwnedHouses', async (client) => {
-    const player = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
-    const apartments = await Utils.query('SELECT property_id, owner_citizenid, street, description, has_access, door_data, apartment  FROM properties WHERE owner_citizenid = ? AND apartment IS NOT NULL AND apartment <> ""', [player]);
-    const houses = await Utils.query('SELECT property_id, owner_citizenid, street, description, has_access, shell, door_data FROM properties WHERE owner_citizenid = ? AND apartment IS NULL', [player]);
-    const res = {
-        apartments: apartments,
-        houses: houses
-    }
+    const res = await exports['nolag_properties'].GetAllProperties(client, 'both');
     return JSON.stringify(res);
 });
 
 onClientCallback('getKeyHolderNames', async (client, data) => {
-    const res = JSON.parse(data);
-    let nameMap: { [key: string]: string } = {};
-
-    if (res && res.length > 0) {
-        // Process all houses in parallel
-        const apartmentPromises = res.map((house: string) =>
-            Utils.query('SELECT citizenid, charinfo FROM players WHERE citizenid = ?', [house])
-        );
-
-        const allApartments = await Promise.all(apartmentPromises);
-
-        allApartments.forEach(apartments => {
-            console.log(apartments);
-            if (apartments && apartments.length > 0) {
-                apartments.forEach((apartment: any) => {
-                    const charinfo = JSON.parse(apartment.charinfo);
-                    const fullName = `${charinfo.firstname} ${charinfo.lastname}`;
-                    nameMap[apartment.citizenid] = fullName;
-                });
-            }
-        });
-    }
-
-    return JSON.stringify(nameMap);
+    const res = await exports['nolag_properties'].GetKeyHolders(data);
+    return JSON.stringify(res);
 });
 
 onClientCallback('removeAccess', async (client, data) => {
     const { id, cid } = JSON.parse(data);
-    const house: any = await Utils.query('SELECT * FROM properties WHERE property_id = ?', [id]);
-    if (house && house.length > 0) {
-        const houseData = house[0];
-        const hasAccess = JSON.parse(houseData.has_access);
-        const newAccess = hasAccess.filter((access: string) => access !== cid);
-        console.log(newAccess);
-        await Utils.query('UPDATE properties SET has_access = ? WHERE property_id = ?', [JSON.stringify(newAccess), id]);
-        Logger.AddLog({
-            type: 'phone_properties',
-            title: 'Access Removed',
-            message: `Access removed from ${cid} to ${houseData.street}, ${houseData.property_id} by ${await Utils.GetCitizenIdByPhoneNumber(await Utils.GetPhoneNumberBySource(client))}`,
-            showIdentifiers: false
-        });
-    }
+    await exports['nolag_properties'].RemoveKey(id, cid);
+    Logger.AddLog({
+        type: 'phone_properties',
+        title: 'Access Removed',
+        message: `Access removed from ${cid} to property ${id} by ${await Utils.GetCitizenIdByPhoneNumber(await Utils.GetPhoneNumberBySource(client))}`,
+        showIdentifiers: false
+    });
     return true;
+});
+
+onClientCallback('giveAccess', async (client, data) => {
+    const { id, cid } = JSON.parse(data);
+    await exports['nolag_properties'].AddKey(id, cid);
+    Logger.AddLog({
+        type: 'phone_properties',
+        title: 'Access Given',
+        message: `Access given to ${cid} for property ${id} by ${await Utils.GetCitizenIdByPhoneNumber(await Utils.GetPhoneNumberBySource(client))}`,
+        showIdentifiers: false
+    });
+    return true;
+});
+
+onNet('summit_phone:server:toggleDoorlock', async (data: { propertyId: number, doorLocked: boolean }) => {
+    const src = source;
+    exports['nolag_properties'].ToggleDoorlock(src, data.propertyId, data.doorLocked);
+    Logger.AddLog({
+        type: 'phone_properties',
+        title: 'Doorlock Toggled',
+        message: `Doorlock ${data.doorLocked ? 'locked' : 'unlocked'} for property ${data.propertyId} by ${await Utils.GetCitizenIdByPhoneNumber(await Utils.GetPhoneNumberBySource(src))}`,
+        showIdentifiers: false
+    });
+});
+
+onNet('ps-housing:server:addAccess', async (id: number, psrc: number) => {
+    const src = source;
+    const cid = await exports['qb-core'].GetPlayerCitizenIdBySource(Number(psrc));
+    exports['nolag_properties'].AddKey(src, id, cid);
+    Logger.AddLog({
+        type: 'phone_properties',
+        title: 'Access Added',
+        message: `Access added for ${cid} to property ${id} by ${await Utils.GetCitizenIdByPhoneNumber(await Utils.GetPhoneNumberBySource(src))}`,
+        showIdentifiers: false
+    });
 });

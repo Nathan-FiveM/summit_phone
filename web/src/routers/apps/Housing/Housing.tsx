@@ -12,19 +12,10 @@ export default function Housing(props: { onExit: () => void; onEnter: () => void
     const nodeRef = useRef(null);
     const { location } = usePhone();
     const [searchValue, setSearchValue] = useState('');
-    const [apartmentData, setApartmentData] = useState<ApartMentData[]>([]);
-    const [houseData, setHouseData] = useState<HouseData[]>([]);
-    const [selectedApartment, setSelectedApartment] = useState<ApartMentData | HouseData>({
-        property_id: 0,
-        owner_citizenid: '',
-        street: '',
-        description: '',
-        has_access: '',
-        apartment: '',
-        shell: '',
-        door_data: ''
-    });
+    const [propertyData, setPropertyData] = useState<any[]>([]);
+    const [selectedProperty, setSelectedProperty] = useState<any | null>(null);
     const [accessNames, setAccessNames] = useState<{ citizenid: string, name: string }[]>([]);
+    const [selectedName, setSelectedName] = useState('');
 
     const [inputTitle, setInputTitle] = useState('');
     const [inputDescription, setInputDescription] = useState('');
@@ -33,9 +24,8 @@ export default function Housing(props: { onExit: () => void; onEnter: () => void
 
     const getContainerHeights = () => {
         const totalHeight = 70; // Total available height percentage (100% - other elements)
-        const aptCount = apartmentData.length;
-        const houseCount = houseData.length;
-        const totalCount = aptCount + houseCount;
+        const aptCount = propertyData.length;
+        const totalCount = aptCount;
 
         if (totalCount === 0) {
             return { aptHeight: '35%', houseHeight: '35%' };
@@ -46,32 +36,27 @@ export default function Housing(props: { onExit: () => void; onEnter: () => void
         // Maximum height for each section
         const maxHeight = 50;
 
-        if (aptCount === houseCount) {
+        if (aptCount === 0) {
             return { aptHeight: '35%', houseHeight: '35%' };
         }
 
         // Calculate proportional heights
         const aptProportion = aptCount / totalCount;
-        const houseProportion = houseCount / totalCount;
 
         let aptHeight = Math.max(minHeight, Math.min(maxHeight, totalHeight * aptProportion));
-        let houseHeight = Math.max(minHeight, Math.min(maxHeight, totalHeight * houseProportion));
 
         // Adjust if total exceeds available height
-        const heightSum = aptHeight + houseHeight;
+        const heightSum = aptHeight;
         if (heightSum > totalHeight) {
             const scaleFactor = totalHeight / heightSum;
             aptHeight *= scaleFactor;
-            houseHeight *= scaleFactor;
         }
 
         return {
             aptHeight: `${aptHeight}%`,
-            houseHeight: `${houseHeight}%`
+            houseHeight: '35%'
         };
     };
-
-    const [selectedName, setSelectedName] = useState('');
 
     const { aptHeight, houseHeight } = getContainerHeights();
 
@@ -86,9 +71,8 @@ export default function Housing(props: { onExit: () => void; onEnter: () => void
             onEntering={async () => {
                 props.onEnter();
                 const res = await fetchNui('getOwnedHouses', 1);
-                const { apartments, houses } = JSON.parse(res as string);
-                setApartmentData(apartments);
-                setHouseData(houses);
+                const properties = JSON.parse(res as string);
+                setPropertyData(properties);
             }}
             onExited={props.onExit}
         >
@@ -119,16 +103,16 @@ export default function Housing(props: { onExit: () => void; onEnter: () => void
                     color: 'rgba(255, 255, 255, 0.29)',
                     marginTop: '0.5vw',
                     marginBottom: '0.2vw',
-                }}>Apartments</div>
+                }}>Properties</div>
                 <div style={{
                     width: '90%',
                     maxHeight: aptHeight,
                     overflowY: 'auto',
                     overflowX: 'hidden',
                 }}>
-                    {apartmentData.filter((a) => {
-                        return a.street?.toLowerCase().includes(searchValue?.toLowerCase()) || a.apartment?.toLowerCase().includes(searchValue?.toLowerCase())
-                    }).map((apartment, index) => (
+                    {propertyData.filter((a) => {
+                        return a.address?.toLowerCase().includes(searchValue?.toLowerCase()) || a.label?.toLowerCase().includes(searchValue?.toLowerCase())
+                    }).map((property, index) => (
                         <div key={index} style={{
                             display: 'flex',
                             flexDirection: 'row',
@@ -141,8 +125,8 @@ export default function Housing(props: { onExit: () => void; onEnter: () => void
                             borderRadius: '0.35vw',
                             marginTop: index === 0 ? '' : '0.4vw',
                         }} onClick={async () => {
-                            setSelectedApartment(apartment);
-                            const data: any = await fetchNui('getKeyHolderNames', apartment.property_id);
+                            setSelectedProperty(property);
+                            const data: any = await fetchNui('getKeyHolderNames', property.id);
                             setAccessNames(data);
                         }}>
                             <div style={{
@@ -161,72 +145,15 @@ export default function Housing(props: { onExit: () => void; onEnter: () => void
                                     justifyContent: 'center',
                                     alignItems: 'flex-start',
                                 }}>
-                                    <div style={{ fontSize: '0.75vw', lineHeight: '1.0vw' }}>#{apartment.property_id} - {apartment.apartment}</div>
-                                    <div style={{ fontSize: '0.5vw', lineHeight: '0.5vw', color: 'rgb(137, 137, 137)' }}>{apartment.street}</div>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-                <div style={{
-                    width: '90%',
-                    fontSize: '0.7vw',
-                    letterSpacing: '0.03vw',
-                    color: 'rgba(255, 255, 255, 0.29)',
-                    marginTop: '0.5vw',
-                    marginBottom: '0.2vw',
-                }}>Houses</div>
-                <div style={{
-                    width: '90%',
-                    maxHeight: houseHeight,
-                    overflowY: 'auto',
-                    overflowX: 'hidden',
-                }}>
-                    {houseData.filter((a) => {
-                        return a.street?.toLowerCase().includes(searchValue?.toLowerCase()) || a.shell?.toLowerCase().includes(searchValue?.toLowerCase())
-                    }).map((apartment, index) => (
-                        <div key={index} style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            width: '100%',
-                            height: '2.8vw',
-                            backgroundColor: 'rgb(59, 59, 59)',
-                            cursor: 'pointer',
-                            borderRadius: '0.35vw',
-                            marginTop: index === 0 ? '' : '0.4vw',
-                        }} onClick={async () => {
-                            setSelectedApartment(apartment);
-                            const data: any = await fetchNui('getKeyHolderNames', apartment.property_id);
-                            console.log(JSON.stringify(data, null, 2));
-                            setAccessNames(data);
-                        }}>
-                            <div style={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                            }}>
-                                <svg width="1.5104166666666667vw" height="1.09375vw" style={{ marginLeft: '0.5vw' }} viewBox="0 0 41 33" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M20.7667 0.194351C20.3983 -0.0765679 19.893 -0.0630115 19.5396 0.227274L0.36529 15.9776C-0.0608895 16.3277 -0.123175 16.9567 0.226072 17.3836L1.16813 18.535C1.51554 18.9596 2.14018 19.025 2.56804 18.6816L19.1248 5.39266C19.8599 4.8026 20.9073 4.80599 21.6386 5.4008L37.8768 18.6079C38.3343 18.98 39.0128 18.8774 39.3399 18.3868L40.2002 17.0963C40.4786 16.6787 40.4044 16.1195 40.0267 15.789L34.8163 11.2299V0.222987H28.4568V5.84877L20.7667 0.194351Z" fill="white" />
-                                    <path fillRule="evenodd" clipRule="evenodd" d="M19.7479 7.58346C20.1184 7.28578 20.6473 7.2901 21.013 7.59379L34.816 19.0573V29.9994C34.816 31.6563 33.4729 32.9994 31.816 32.9994H8.46411C6.80726 32.9994 5.46411 31.6563 5.46411 29.9994V19.0573L19.7479 7.58346ZM17.2044 23.2154H23.564V32.9994H17.2044V23.2154Z" fill="white" />
-                                </svg>
-                                <div style={{
-                                    marginLeft: '0.5vw',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    justifyContent: 'center',
-                                    alignItems: 'flex-start',
-                                }}>
-                                    <div style={{ fontSize: '0.75vw', lineHeight: '1.0vw' }}>#{apartment.property_id} - {apartment.shell}</div>
-                                    <div style={{ fontSize: '0.5vw', lineHeight: '0.5vw', color: 'rgb(137, 137, 137)' }}>{apartment.street}</div>
+                                    <div style={{ fontSize: '0.75vw', lineHeight: '1.0vw' }}>#{property.id} - {property.label}</div>
+                                    <div style={{ fontSize: '0.5vw', lineHeight: '0.5vw', color: 'rgb(137, 137, 137)' }}>{property.address}</div>
                                 </div>
                             </div>
                         </div>
                     ))}
                 </div>
                 <Transition
-                    mounted={selectedApartment.description.length > 0}
+                    mounted={!!selectedProperty}
                     transition="fade"
                     duration={400}
                     timingFunction="ease"
@@ -255,16 +182,7 @@ export default function Housing(props: { onExit: () => void; onEnter: () => void
                                 left: '0.5vw',
                                 top: '2.5vw',
                             }} onClick={() => {
-                                setSelectedApartment({
-                                    property_id: 0,
-                                    owner_citizenid: '',
-                                    street: '',
-                                    description: '',
-                                    has_access: '',
-                                    apartment: '',
-                                    shell: '',
-                                    door_data: ''
-                                });
+                                setSelectedProperty(null);
                             }} width="2.3958333333333335vw" height="0.9375vw" viewBox="0 0 42 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M6.99988 16L1.34971 8.93729C1.14519 8.68163 1.14519 8.31837 1.34971 8.06271L6.99988 1" stroke="#0A84FF" strokeWidth="2" strokeLinecap="round" />
                                 <path d="M16.4471 13H12.703V4.54492H16.3827C17.9706 4.54492 18.9667 5.35938 18.9667 6.6543C18.9667 7.58008 18.2753 8.35352 17.3788 8.48828V8.53516C18.5272 8.62305 19.371 9.46094 19.371 10.5801C19.371 12.0684 18.2518 13 16.4471 13ZM14.4725 5.86328V8.06055H15.744C16.6874 8.06055 17.2264 7.64453 17.2264 6.92969C17.2264 6.25 16.7518 5.86328 15.9257 5.86328H14.4725ZM14.4725 11.6816H15.996C17.0155 11.6816 17.5663 11.248 17.5663 10.4395C17.5663 9.64844 16.9979 9.22656 15.955 9.22656H14.4725V11.6816ZM23.2581 11.8633C24.0022 11.8633 24.6175 11.377 24.6175 10.6973V10.2402L23.2932 10.3223C22.6546 10.3691 22.2913 10.6562 22.2913 11.1016C22.2913 11.5703 22.678 11.8633 23.2581 11.8633ZM22.6956 13.0996C21.5003 13.0996 20.5921 12.3262 20.5921 11.1953C20.5921 10.0527 21.471 9.39062 23.0354 9.29688L24.6175 9.20312V8.78711C24.6175 8.20117 24.2073 7.86133 23.5628 7.86133C22.9241 7.86133 22.5198 8.17773 22.4378 8.64062H20.8733C20.9378 7.42188 21.9749 6.58398 23.6389 6.58398C25.2503 6.58398 26.2991 7.41602 26.2991 8.68164V13H24.6468V12.0391H24.6116C24.26 12.707 23.4807 13.0996 22.6956 13.0996ZM33.7135 9.05664H32.1257C32.026 8.39453 31.5866 7.92578 30.8835 7.92578C30.0397 7.92578 29.5124 8.64062 29.5124 9.85352C29.5124 11.0898 30.0397 11.793 30.8893 11.793C31.5749 11.793 32.0202 11.3828 32.1257 10.6973H33.7194C33.6315 12.1797 32.5241 13.1348 30.8718 13.1348C28.9792 13.1348 27.778 11.9043 27.778 9.85352C27.778 7.83789 28.9792 6.58398 30.86 6.58398C32.5593 6.58398 33.6374 7.63281 33.7135 9.05664ZM36.921 9.23828L39.0538 6.71875H40.9932L38.5968 9.41406L41.1104 13H39.1417L37.3428 10.4453L36.8975 10.9258V13H35.1866V4.54492H36.8975V9.23828H36.921Z" fill="#0A84FF" />
@@ -288,9 +206,8 @@ export default function Housing(props: { onExit: () => void; onEnter: () => void
                                 flexDirection: 'column',
                                 cursor: 'pointer',
                             }} onClick={() => {
-                                const data = JSON.parse(selectedApartment.door_data);
-                                if (!data) return;
-                                fetchNui('setLocationOfHouse', { x: data.x, y: data.y, z: data.z })
+                                if (!selectedProperty) return;
+                                fetchNui('setLocationOfHouse', { propertyId: selectedProperty.id });
                             }}>
                                 <div style={{
                                     width: '2vw',
@@ -366,8 +283,11 @@ export default function Housing(props: { onExit: () => void; onEnter: () => void
                                 padding: '0.5vw',
                                 flexDirection: 'column',
                                 cursor: 'pointer',
-                            }} onClick={() => {
-                                fetchNui('lockUnLockDoor', selectedApartment.property_id);
+                            }} onClick={async () => {
+                                if (!selectedProperty) return;
+                                const newLocked = !selectedProperty.doorLocked;
+                                await fetchNui('lockUnLockDoor', { propertyId: selectedProperty.id, doorLocked: newLocked });
+                                setSelectedProperty({ ...selectedProperty, doorLocked: newLocked });
                             }}>
                                 <div style={{
                                     width: '2vw',
@@ -389,7 +309,7 @@ export default function Housing(props: { onExit: () => void; onEnter: () => void
                                     fontSize: '0.8vw',
                                     letterSpacing: '0.05vw',
                                 }}>
-                                    <div>LOCK | UNLOCK</div>
+                                    <div>{selectedProperty?.doorLocked ? 'UNLOCK' : 'LOCK'}</div>
                                     <div style={{ fontSize: '0.7vw', lineHeight: '0.5vw', letterSpacing: '0.06vw', color: 'rgba(255,255,255,0.5)', fontWeight: '500' }}>Door Manage</div>
                                 </div>
                             </div>
@@ -411,55 +331,58 @@ export default function Housing(props: { onExit: () => void; onEnter: () => void
                             overflowY: 'auto',
                             overflowX: 'hidden',
                         }}>
-                            {accessNames && accessNames.length > 0 && accessNames.map((accessName, index) => {
-                                return (
-                                    <div key={index} style={{
-                                        backgroundColor: 'rgba(84, 84, 84, 0.6)',
+                            {selectedProperty && selectedProperty.keyHolders && Object.keys(selectedProperty.keyHolders).map((citizenid, index) => (
+                                <div key={index} style={{
+                                    backgroundColor: 'rgba(84, 84, 84, 0.6)',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    borderRadius: '0.5vw',
+                                    padding: '0.4vw',
+                                    gap: '0.5vw',
+                                    width: '7.2vw',
+                                    height: '3vw',
+                                    cursor: 'pointer',
+                                }} onClick={() => {
+                                    setSelectedName(citizenid);
+                                    setInputShow(true);
+                                    setInputTitle('Remove');
+                                    setInputDescription(`Remove Access From ${citizenid}`);
+                                    setInputPlaceholder('Type Yes To Confirm');
+                                }}>
+                                    <Avatar src="https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg" alt="" />
+                                    <div style={{
                                         display: 'flex',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        borderRadius: '0.5vw',
-                                        padding: '0.4vw',
-                                        gap: '0.5vw',
-                                        width: '7.2vw',
-                                        height: '3vw',
-                                        cursor: 'pointer',
-                                    }} onClick={() => {
-                                        setSelectedName(accessName.citizenid);
-                                        setInputShow(true);
-                                        setInputTitle('Remove');
-                                        setInputDescription(`Remove Access From ${accessName.name}`);
-                                        setInputPlaceholder('Type Yes To Confirm');
+                                        flexDirection: 'column',
+                                        fontSize: '0.8vw',
                                     }}>
-                                        <Avatar src="https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg" alt="" />
-                                        <div style={{
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            fontSize: '0.8vw',
-                                        }}>
-                                            <div style={{ whiteSpace: 'nowrap', width: '4.05vw', textOverflow: 'ellipsis', overflow: 'hidden' }}>{accessName.name}</div>
-                                            <div style={{ fontSize: '0.5vw', letterSpacing: '0.05vw', lineHeight: '0.5vw', color: 'rgba(255,255,255,0.6)' }}>Manage</div>
-                                        </div>
+                                        <div style={{ whiteSpace: 'nowrap', width: '4.05vw', textOverflow: 'ellipsis', overflow: 'hidden' }}>{citizenid}</div>
+                                        <div style={{ fontSize: '0.5vw', letterSpacing: '0.05vw', lineHeight: '0.5vw', color: 'rgba(255,255,255,0.6)' }}>Manage</div>
                                     </div>
-                                )
-                            })}
+                                </div>
+                            ))}
                         </div>
                         <InputDialog show={inputShow} placeholder={inputPlaceholder} description={inputDescription} title={inputTitle} onConfirm={async (e: string) => {
                             setInputShow(false);
                             if (inputTitle === 'Remove') {
                                 if (e.toLowerCase() === 'yes') {
                                     const res = await fetchNui('removeAccess', JSON.stringify({
-                                        id: selectedApartment.property_id,
+                                        id: selectedProperty.id,
                                         cid: selectedName,
                                     }));
                                     if (res) {
-                                        setAccessNames((prev) => prev.filter((name) => name.citizenid !== selectedName));
+                                        setSelectedProperty((prev: any) => {
+                                            if (!prev) return prev;
+                                            const newKeyHolders = { ...prev.keyHolders };
+                                            delete newKeyHolders[selectedName];
+                                            return { ...prev, keyHolders: newKeyHolders };
+                                        });
                                     }
                                 }
                             } else if (inputTitle === 'Give Access') {
                                 const res = await fetchNui('giveAccess', JSON.stringify({
-                                    id: selectedApartment.property_id,
-                                    cid: e,
+                                    id: selectedProperty.id,
+                                    psrc: e,
                                 }));
                             }
                         }} onCancel={() => {
