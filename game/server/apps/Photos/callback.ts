@@ -8,7 +8,7 @@ onClientCallback('savePhotoToPhotos', async (source: number, data: string) => {
     _id: generateUUid(),
     citizenId,
     link: data,
-    date: new Date().toISOString()
+    date: new Date().toISOString().replace('T', ' ').replace('Z', '')
   };
   const res = await MongoDB.insertOne('phone_photos', dataX);
   Logger.AddLog({
