@@ -23,13 +23,13 @@ importers:
     devDependencies:
       '@citizenfx/client':
         specifier: latest
-        version: 2.0.16501-1
+        version: 2.0.16636-1
       '@citizenfx/server':
         specifier: latest
         version: 2.0.14862-1
       '@types/node':
         specifier: ^22.2.0
-        version: 22.15.34
+        version: 22.16.2
       concurrently:
         specifier: ^8.2.2
         version: 8.2.2
@@ -49,8 +49,8 @@ packages:
     resolution: {integrity: sha512-vbavdySgbTTrmFE+EsiqUTzlOr5bzlnJtUv9PynGCAKvfQqjIXbvFdumPM/GxMDfyuGMJaJAU6TO4zc1Jf1i8Q==}
     engines: {node: '>=6.9.0'}
 
-  '@citizenfx/client@2.0.16501-1':
-    resolution: {integrity: sha512-qCzH4O2mNkWj9Hj4VIp5IACw0/V6K8k6HDzYDf2DbziWpbkLgVgq/KtIEhSLSrafLNVsuDodTLzh9e+4PM6rRw==}
+  '@citizenfx/client@2.0.16636-1':
+    resolution: {integrity: sha512-i5s+f555ZHvLtf157jfLJIp2uTuFDWU9eory3sK9vHFsaaFmQ3EytPvoavzkhD1xexcFg0g0i+n29yuukVTNBQ==}
 
   '@citizenfx/server@2.0.14862-1':
     resolution: {integrity: sha512-I6XnxIGBhskPe9S+q1OQLDqs6TYw1RhX06K6jUg+n0hGITYools6VBIIhdPe2uUlHA+76qJajQlV9ONeR3mDig==}
@@ -222,8 +222,8 @@ packages:
   '@types/minimatch@3.0.5':
     resolution: {integrity: sha512-Klz949h02Gz2uZCMGwDUSDS1YBlTdDDgbWHi+81l29tQALUtvz4rAYi5uoVhE5Lagoq6DeqAUlbrHvW/mXDgdQ==}
 
-  '@types/node@22.15.34':
-    resolution: {integrity: sha512-8Y6E5WUupYy1Dd0II32BsWAx5MWdcnRd8L84Oys3veg1YrYtNtzgO4CFhiBg6MDSjk7Ay36HYOnU7/tuOzIzcw==}
+  '@types/node@22.16.2':
+    resolution: {integrity: sha512-Cdqa/eJTvt4fC4wmq1Mcc0CPUjp/Qy2FGqLza3z3pKymsI969TcZ54diNJv8UYUgeWxyb8FSbCkhdR6WqmUFhA==}
 
   '@types/validator@13.15.2':
     resolution: {integrity: sha512-y7pa/oEJJ4iGYBxOpfAKn5b9+xuihvzDVnC/OSvlVnGxVg0pOqmjiMafiJ1KVNQEaPZf9HsEp5icEwGg8uIe5Q==}
@@ -668,7 +668,7 @@ snapshots:
 
   '@babel/runtime@7.27.6': {}
 
-  '@citizenfx/client@2.0.16501-1': {}
+  '@citizenfx/client@2.0.16636-1': {}
 
   '@citizenfx/server@2.0.14862-1': {}
 
@@ -770,7 +770,7 @@ snapshots:
 
   '@types/minimatch@3.0.5': {}
 
-  '@types/node@22.15.34':
+  '@types/node@22.16.2':
     dependencies:
       undici-types: 6.21.0
 
