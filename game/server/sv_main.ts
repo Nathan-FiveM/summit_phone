@@ -39,6 +39,10 @@ onClientCallback('phone:server:shareNumber', async (source: any, comingSource: a
         email: "",
         isFav: false
     }
+    const res = await MongoDB.findOne('phone_contacts', { personalNumber: acNumber, contactNumber: sourceNumber });
+    if (res) {
+        return;
+    }
     emitNet("phone:addnotiFication", Number(comingSource), JSON.stringify({
         id: generateUUid(),
         title: "System",
@@ -46,7 +50,7 @@ onClientCallback('phone:server:shareNumber', async (source: any, comingSource: a
         app: "settings",
         timeout: 5000,
     }));
-    await MongoDB.updateOne('phone_contacts', {}, contactData, undefined, false, { upsert: true });
+    await MongoDB.insertOne('phone_contacts', contactData);
     Logger.AddLog({
         type: 'phone_contacts',
         title: 'Contact Shared',
