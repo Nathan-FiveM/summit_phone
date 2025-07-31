@@ -250,7 +250,9 @@ onClientCallback('wallet:acceptInvoicePayment', async (client, id: string) => {
     }
 
     if (!(await targetPlayer.Functions.RemoveMoney('bank', invoice.amount))) return false;
-    await sourcePlayer.Functions.AddMoney('bank', invoice.amount);
+    const tenPercentFees = Math.floor(invoice.amount * 0.1);
+    await exports.summit_bank.AddMoneyToBusinessAccount(sourcePlayer.PlayerData.job.name, invoice.amount - tenPercentFees);
+    await sourcePlayer.Functions.AddMoney('bank', tenPercentFees);
 
     const notificationId1 = generateUUid();
     const notificationId2 = generateUUid();
