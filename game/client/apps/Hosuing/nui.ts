@@ -3,7 +3,7 @@ import { triggerServerCallback } from "@overextended/ox_lib/client";
 
 RegisterNuiCallbackType('getOwnedHouses');
 on('__cfx_nui:getOwnedHouses', async (data: string, cb: Function) => {
-    const res = await exports['nolag_properties'].GetAllProperties('both');
+    const res = await exports['nolag_properties'].GetAllProperties('user');
     cb(JSON.stringify(res));
 });
 
