@@ -7,7 +7,7 @@ onNet('summit_phone:server:fireEmployee', async (citizenId: string) => {
     const targetData = await exports['qb-core'].GetPlayerByCitizenId(citizenId);
     if (targetData) {
         const jobname = targetData.PlayerData.job.name;
-        await targetData.Functions.SetJob('unemployed', 1);
+        await targetData.Functions.SetJob('unemployed', 0);
         await MongoDB.deleteOne('phone_multijobs', { citizenId: citizenId, jobName: jobname });
         emitNet('phone:addnotiFication', source, JSON.stringify({
             id: generateUUid(),

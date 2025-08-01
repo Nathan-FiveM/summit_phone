@@ -390,7 +390,7 @@ onClientCallback('summit_phone:server:hireEmployee', async (client, targetSource
             }));
         }
         const targetPlayer = await exports['qb-core'].GetPlayer(targetSource);
-        targetPlayer.Functions.SetJob(jobname, 1);
+        targetPlayer.Functions.SetJob(jobname, 0);
         Logger.AddLog({
             type: 'phone_business',
             title: 'Employee Hired',

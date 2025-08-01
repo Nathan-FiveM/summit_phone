@@ -24,7 +24,7 @@ onClientCallback('groups:deleteMultiJob', async (source: number, data: string) =
 
 onClientCallback('groups:changeJobOfPlayer', async (source: number, data: string) => {
     const { jobName, grade } = JSON.parse(data);
-    if (!jobName || !grade) return false;
+    if (!jobName) return false;
     const sourcePlayer = await exports['qb-core'].GetPlayer(source);
     if (!sourcePlayer) return false;
     if (await exports.summit_lib.CheckJobGrade(jobName, String(grade))) {
