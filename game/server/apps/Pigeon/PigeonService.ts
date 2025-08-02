@@ -256,7 +256,6 @@ class PigeonService {
     public async likeRepliesTweet(_client: number, data: string) {
         const { tweetId, like, email } = JSON.parse(data);
         const tweet = await MongoDB.findOne("phone_pigeon_tweets_replies", { _id: tweetId });
-        console.log(tweet, like);
         if (!tweet) return console.log("Tweet not found");
         if (like) {
             tweet.likeCount.push(email);

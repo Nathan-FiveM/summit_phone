@@ -98,7 +98,6 @@ export default function App() {
 
   useNuiEvent('setSettings', (data: string) => {
     if (data.length === 0) return;
-    console.log("Setting settings");
     const settings: PhoneSettings = JSON.parse(data);
     setPhoneSettings(settings);
   });

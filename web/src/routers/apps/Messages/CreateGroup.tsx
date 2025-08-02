@@ -178,7 +178,6 @@ export default function CreateGroup() {
                                 ...location.page,
                                 messages: `details/undefined/${parsedData.groupId}`,
                             }
-                            console.log(JSON.stringify(dataX));
                             setLocation({
                                 app: 'message',
                                 page: dataX

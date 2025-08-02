@@ -69,19 +69,32 @@ on('onResourceStop', (resource: string) => {
     }
 });
 
-/* RegisterCommand('testNoti', () => {
-    NUI.sendReactMessage('addNotification', {
-        id: generateUUid(),
-        title: 'test',
-        description: "Test",
-        app: 'settings',
-        timeout: 5000
-    });
-}, false); */
+// RegisterCommand('testNoti', () => {
+//     NUI.sendReactMessage('addNotification', {
+//         id: generateUUid(),
+//         title: 'test',
+//         description: "Test",
+//         app: 'settings',
+//         timeout: 5000
+//     });
+// }, false);
 
 onNet('phone:client:setupPhone', async (citizenId: string) => {
     const response = await triggerServerCallback('GetClientSettings', 1) as string;
     const res = JSON.parse(response) as PhoneSettings;
     if (!res) return;
     NUI.sendReactMessage('setSettings', response);
+});
+
+onNet('QBCore:Player:SetPlayerData', (data: any) => {
+    if (data.metadata.inlaststand || data.metadata.isdead) {
+        if (LocalPlayer.state.onPhone) {
+            NUI.closeUI();
+            NUI.shouldNotOpen = true;
+            LocalPlayer.state.set('phoneDisabled', true, true);
+        } else {
+            NUI.shouldNotOpen = true;
+            LocalPlayer.state.set('phoneDisabled', true, true);
+        }
+    }
 });

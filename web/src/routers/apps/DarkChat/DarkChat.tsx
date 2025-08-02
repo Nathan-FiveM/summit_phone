@@ -29,7 +29,6 @@ export default function DarkChat(props: { onExit: () => void; onEnter: () => voi
     const [inputShow, setInputShow] = useState(false);
 
     useNuiEvent('phone:receiveDarkChatMessage', (res: string) => {
-        console.log(res);
         const parsedRes = JSON.parse(res as string);
         setChannelData(channelData.map((channel) => {
             if (channel._id === parsedRes._id) {

@@ -249,7 +249,6 @@ onClientCallback('summit_phone:server:withdrawMoney', async (client, amount: num
 });
 
 onClientCallback('summit_phone:server:getEmployees', async (client, data: string) => {
-    console.log('getEmployees', client, data);
     const src = client;
     const jobname = data;
     const Player = await exports['qb-core'].GetPlayer(src);

@@ -3,7 +3,6 @@ import { onServerCallback, triggerServerCallback } from "@overextended/ox_lib/cl
 import { generateUUid } from "@shared/utils";
 
 onServerCallback('groups:toggleDuty', async () => {
-    console.log('Toggling duty...');
     emitNet('QBCore:ToggleDuty');
     return true;
 });

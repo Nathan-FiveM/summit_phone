@@ -7,7 +7,11 @@ class Mail {
     async getMailMessages(email: string, password: string) {
         if (!email && !password) return false;
         const mailData = await MongoDB.findOne('phone_mail', { activeMaidId: email, activeMailPassword: password });
-        mailData.messages = mailData.messages.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        if (!mailData || mailData.messages.length === 0) {
+            mailData.messages = [];
+        } else {
+            mailData.messages = mailData.messages.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        }
         if (!mailData) return false;
         return JSON.stringify(mailData.messages);
     };
@@ -26,7 +30,7 @@ class Mail {
             avatar: await Utils.GetAvatarFromEmail(target),
             username: await Utils.GetUserNameFromEmail(target),
             subject: subject,
-            message: message,
+            message: message, 
             images: images,
             date: new Date().toISOString(),
             read: true,

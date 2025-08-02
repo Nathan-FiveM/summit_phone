@@ -16,7 +16,6 @@ on('__cfx_nui:registerNewDarkMailAccount', async (data: string, cb: Function) =>
 RegisterNuiCallbackType('loginDarkMailAccount');
 on('__cfx_nui:loginDarkMailAccount', async (data: string, cb: Function) => {
     const response = await triggerServerCallback('LoginDarkMailAccount', 1, data)
-    console.log(response)
     cb(response);
 });
 

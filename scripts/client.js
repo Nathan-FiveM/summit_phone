@@ -18,7 +18,7 @@ if (!process.argv.includes('--dev')) {
 
   const obfuscationResult = JavaScriptObfuscator.obfuscate(code, {
     compact: true,
-    controlFlowFlattening: true,
+    controlFlowFlattening: false,
     controlFlowFlatteningThreshold: 1,
     deadCodeInjection: false,
     debugProtection: true,
@@ -31,7 +31,7 @@ if (!process.argv.includes('--dev')) {
     selfDefending: true,
     simplify: true,
     splitStrings: true,
-    stringArray: true,
+    stringArray: false,
     stringArrayCallsTransform: true,
     stringArrayCallsTransformThreshold: 1,
     stringArrayEncoding: ['rc4'],

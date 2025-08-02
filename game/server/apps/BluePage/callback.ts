@@ -4,7 +4,6 @@ import { generateUUid } from "@shared/utils";
 
 onClientCallback('bluepage:createPost', async (source, data: string) => {
     const { title, content, imageAttachment, phoneNumber, email } = JSON.parse(data);
-    console.log('bluepage:createPost', title, content, imageAttachment, phoneNumber, email);
     const dataX = {
         _id: generateUUid(),
         title,

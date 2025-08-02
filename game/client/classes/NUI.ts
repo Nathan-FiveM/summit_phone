@@ -12,6 +12,7 @@ export class NU {
 
     public async init() {
         RegisterCommand('phoneopen', () => {
+            if (this.shouldNotOpen) return;
             const phoneItem = Utils.GetPhoneItem();
             if (Utils.phoneList.includes(phoneItem)) {
                 this.openUI(`prop_aphone_${phoneItem.split('_')[0]}`);
@@ -41,7 +42,6 @@ export class NU {
     };
 
     public async openUI(phoneItem: string) {
-        if (this.shouldNotOpen) return;
         const state = LocalPlayer.state;
         if (state.onPhone) return;
         state.set('onPhone', true, true);

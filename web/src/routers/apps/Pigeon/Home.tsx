@@ -142,7 +142,6 @@ export default function Home(props: {
     const handleDeletePostTweet = async (tweet: TweetData) => {
         if (tweet.email === phoneSettings.pigeonIdAttached) {
             if (tweet.isRetweet && tweet.parentTweetId) {
-                console.log("Delete 1");
                 setPostRepliesData(prevTweets => {
                     return prevTweets.map(t => {
                         if (t._id === tweet.parentTweetId) {
@@ -206,7 +205,6 @@ export default function Home(props: {
                     }));
                 }
             } else {
-                console.log("Delete 2");
                 await fetchNui('deleteRepliesTweet', tweet._id);
                 setPostRepliesData(prev => prev.filter(t => t._id !== tweet._id));
 

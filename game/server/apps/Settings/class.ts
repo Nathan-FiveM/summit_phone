@@ -1,5 +1,5 @@
 import { MongoDB } from "@server/sv_main";
-import { LOGGER } from "@shared/utils";
+import { Delay, LOGGER } from "@shared/utils";
 
 class Setting {
     public _id = new Map<string, string>();
@@ -22,6 +22,16 @@ class Setting {
 
     public async load() {
         try {
+            let isDBConnected = exports['mongoDB'].isDBConnected();
+            while (isDBConnected === false) {
+                await Delay(1000);
+                isDBConnected = exports['mongoDB'].isDBConnected();
+                if (isDBConnected) {
+                    LOGGER("[Settings] MongoDB connected.");
+                    break;
+                }
+                console.log("[Settings] Waiting for MongoDB connection...");
+            }
             const res: any = await MongoDB.findMany('phone_settings', {});
             for (const data of res) {
                 this._id.set(data._id, data._id);

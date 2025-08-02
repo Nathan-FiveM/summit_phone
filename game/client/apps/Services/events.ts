@@ -577,7 +577,6 @@ RegisterCommand('updateJobs', async (source: any, args: any[]) => {
         }
     ];
     const gradesData: any = Object.values(parsedData.grades).map((grade, i) => {
-        console.log(grade.payment);
         return [
             {
                 label: `Grade ${i + 1} Label`,

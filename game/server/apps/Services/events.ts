@@ -1,6 +1,6 @@
 import { Utils } from "@server/classes/Utils";
 import { Framework, MongoDB, Logger } from "@server/sv_main";
-import { generateUUid, LOGGER } from "@shared/utils";
+import { Delay, generateUUid, LOGGER } from "@shared/utils";
 
 onNet('summit_phone:server:fireEmployee', async (citizenId: string) => {
     const source = global.source;
@@ -156,6 +156,15 @@ on('summit_phone:server:hireinMultiJob', async (client: string, jobname: string,
 })
 
 setImmediate(async () => {
+    let isDBConnected = exports['mongoDB'].isDBConnected();
+    while (isDBConnected === false) {
+        await Delay(1000);
+        isDBConnected = exports['mongoDB'].isDBConnected();
+        if (isDBConnected) {
+            LOGGER("[Settings] MongoDB connected.");
+            break;
+        }
+    }
     const jobArray: any = {};
     const jobData = await MongoDB.findMany('summit_jobs', {});
     jobData.forEach(async (job: any) => {
@@ -164,4 +173,4 @@ setImmediate(async () => {
         jobArray[_id] = rest;
     });
     const [updated, message] = exports['qb-core'].AddJobs(jobArray);
-});
+}); 

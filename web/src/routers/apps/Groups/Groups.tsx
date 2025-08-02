@@ -266,7 +266,6 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                         const res = await fetchNui('getmultiPleJobs');
                         setMultiJobsData(JSON.parse(res as string).jobsData);
                         setCurrentJob(JSON.parse(res as string).currentJob);
-                        console.log(JSON.parse(res as string).currentJob);
                     }}
                 >
                     {(styles) => <div style={{
@@ -431,7 +430,6 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                         }
                     } else if (inputTitle === 'Delete Group') {
                         if (e.toLowerCase() === 'yes') {
-                            console.log(selectedgroupId);
                             const res = await fetchNui('jobcenter_DeleteGroup', selectedgroupId);
                         }
                     } else if (inputTitle === 'Leave Group') {
