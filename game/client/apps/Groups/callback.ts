@@ -131,7 +131,10 @@ RegisterNuiCallback('getStatusPage', async (_data: any, cb: Function) => {
 
 onServerCallback('summit_groups:client:UpdateGroupId', (id: number) => {
     GroupID = id;
-    if (id === 0) isGroupLeader = false;
+    if (id === 0) {
+        isGroupLeader = false;
+        return false;
+    };
     return true;
 });
 

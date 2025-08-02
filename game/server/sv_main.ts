@@ -2,7 +2,7 @@ import "./sv_exports";
 import "./apps/index";
 import { Utils } from "./classes/Utils";
 import { Settings } from "./apps/Settings/class";
-import { generateUUid, LOGGER } from "@shared/utils";
+import { Delay, generateUUid, LOGGER } from "@shared/utils";
 import { onClientCallback } from "@overextended/ox_lib/server";
 import { InvoiceRecurringPayments } from "./apps/Wallet/callbacks";
 export let Framework = exports['qb-core'].GetCoreObject();
@@ -63,3 +63,12 @@ on('summit_phone:server:CronTrigger', async () => {
     console.log('Cron Triggered');
     InvoiceRecurringPayments();
 });
+
+RegisterCommand('resetPhonePasscode', async (source: number, args: string[]) => {
+    const citizenId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(source);
+    if (!citizenId) return;
+    Settings.lockPin.set(citizenId, '000000');
+    await Delay(1000);
+    Settings.SavePlayerSettings(citizenId);
+    emitNet('phone:client:setupPhone', source, citizenId);
+}, false);
