@@ -14,6 +14,11 @@ onNet("phone:server:declineCall", async (notiId: string, args: any) => {
   }
   callManager.endCall(callId);
   callManager.stopRingTone(targetSource);
+  
+  // NEW: End animations for both parties
+  emitNet("phone:client:endCallAnimation", targetSource);
+  emitNet("phone:client:endCallAnimation", callerSource);
+  
   emitNet("phone:client:removeActionNotification", targetSource, databaseTableId);
   emitNet("phone:client:removeCallingInterface", callerSource);
   Logger.AddLog({
@@ -58,7 +63,11 @@ onNet("phone:server:acceptCall", async (notiId: string, args: any) => {
   callManager.stopRingTone(targetSource);
   exports["pma-voice"].setPlayerCall(targetSource, callId);
   exports["pma-voice"].setPlayerCall(callerSource, callId);
+  
+  // NEW: Start animation for both parties when call is accepted
   emitNet("phone:client:acceptCall", targetSource, args);
+  emitNet("phone:client:startCallAnimation", callerSource); // NEW: Animation for caller
+  
   emitNet("phone:client:updateCallerInterface", callerSource, JSON.stringify({
     callId,
     targetSource,
@@ -145,6 +154,20 @@ onNet("phone:server:acceptConferenceCall", async (notiId: string, args: any) => 
     message: `${Utils.GetPhoneNumberBySource(callerSource)} has accepted the conference call from ${Utils.GetPhoneNumberBySource(targetSource)}`,
     showIdentifiers: false,
   });
+});
+
+onNet("phone:server:endCall", async (args: any) => {
+  const { callId, source } = JSON.parse(args);
+  const call = callManager.getCallByPlayer(source);
+  if (call && call.callId === callId) {
+    await callManager.removeParticipant(callId, source);
+    for (const p of callManager.getParticipants(callId)) {
+      emitNet("phone:client:updateConference", p.source, JSON.stringify({
+        callId: callId,
+        participants: callManager.getParticipants(callId),
+      }));
+    }
+  }
 });
 
 on("onResourceStop", async (resource: string) => {

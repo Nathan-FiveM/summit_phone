@@ -5,9 +5,13 @@ class AnimClass {
     private createdProp: any;
     public isAnimating: boolean;
     private attachedProp: boolean;
+    private isCalling: boolean;
+    private phoneWasOpen: boolean; // NEW: Track if phone was open during call
 
     constructor() {
         this.isAnimating = false;
+        this.isCalling = false;
+        this.phoneWasOpen = false;
         this.prop = `prop_aphone_blue`;
         this.attachedProp = false;
     };
@@ -22,11 +26,79 @@ class AnimClass {
         this.attachedProp = true;
     };
 
+    // Existing texting/browsing animation
     public async StatAnimation(phoneItem: string) {
         this.prop = phoneItem;
         this.isAnimating = true;
+        this.isCalling = false;
+        this.phoneWasOpen = true; // NEW: Mark that phone is open
         this.AttachProp();
         this.DoAnimation('cellphone_text_in');
+    };
+
+    // NEW: Calling animation methods
+    public async StartCallAnimation(phoneItem: string) {
+        this.prop = phoneItem;
+        this.isAnimating = true;
+        this.isCalling = true;
+        this.phoneWasOpen = true; // NEW: Mark that phone is open during call
+        this.AttachProp();
+        
+        // Use calling-specific animations
+        if (IsPedInAnyVehicle(PlayerPedId(), false)) {
+            this.DoAnimation('cellphone_call_listen_base', 'cellphone@in_car@ds');
+        } else {
+            this.DoAnimation('cellphone_call_listen_base', 'cellphone@');
+        }
+    };
+
+    public async EndCallAnimation() {
+        if (this.isAnimating && this.isCalling) {
+            this.isAnimating = false;
+            this.isCalling = false;
+            await this.DeAttachProp();
+            
+            if (IsPedInAnyVehicle(PlayerPedId(), false)) {
+                this.DoAnimation('cellphone_call_out', 'cellphone@in_car@ds');
+            } else {
+                this.DoAnimation('cellphone_call_out', 'cellphone@');
+            }
+            
+            await Delay(1000);
+            ClearPedTasks(PlayerPedId());
+            
+            // NEW: Check if phone UI is still open and switch to texting animation
+            const state = LocalPlayer.state;
+            if (state.onPhone) {
+                await Delay(500); // Small delay before switching
+                this.isAnimating = true;
+                this.isCalling = false;
+                this.AttachProp();
+                this.DoAnimation('cellphone_text_in');
+            }
+        }
+    };
+
+    // NEW: Method to switch back to texting animation
+    private async SwitchToTextingAnimation() {
+        if (this.phoneWasOpen && !this.isCalling) {
+            this.isAnimating = true;
+            this.isCalling = false;
+            this.AttachProp();
+            this.DoAnimation('cellphone_text_in');
+        }
+    };
+
+    // Existing end animation for texting/browsing
+    public async EndAnimation() {
+        if (this.isAnimating && !this.isCalling) {
+            this.isAnimating = false;
+            this.phoneWasOpen = false; // NEW: Mark that phone is closed
+            await this.DeAttachProp();
+            this.DoAnimation('cellphone_text_out');
+            await Delay(1000);
+            ClearPedTasks(PlayerPedId());
+        }
     };
 
     private async DeAttachProp() {
@@ -37,26 +109,18 @@ class AnimClass {
         }
     };
 
-    public async EndAnimation() {
-        if (this.isAnimating) {
-            this.isAnimating = false;
-            await this.DeAttachProp();
-            this.DoAnimation('cellphone_text_out');
-            await Delay(1000);
-            ClearPedTasks(PlayerPedId());
+    public async DoAnimation(anim: string, animLib?: string) {
+        let animationLibrary: string = animLib || 'cellphone@';
+        
+        if (!animLib && IsPedInAnyVehicle(PlayerPedId(), false)) {
+            animationLibrary = 'anim@cellphone@in_car@ps';
         }
-    };
-
-    public async DoAnimation(anim: string) {
-        let animLib: string = 'cellphone@';
-        if (IsPedInAnyVehicle(PlayerPedId(), false)) {
-            animLib = 'anim@cellphone@in_car@ps';
-        }
-        RequestAnimDict(animLib);
-        while (!HasAnimDictLoaded(animLib)) {
+        
+        RequestAnimDict(animationLibrary);
+        while (!HasAnimDictLoaded(animationLibrary)) {
             await Delay(0);
         }
-        TaskPlayAnim(PlayerPedId(), animLib, anim, 8.0, 8.0, -1, 50, 0, false, false, false);
+        TaskPlayAnim(PlayerPedId(), animationLibrary, anim, 8.0, 8.0, -1, 50, 0, false, false, false);
     };
 }
 

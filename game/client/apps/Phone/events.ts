@@ -4,6 +4,8 @@
 
 import { NUI } from "@client/classes/NUI";
 import { generateUUid } from "@shared/utils";
+import { Animation } from "@client/classes/Animation";
+import { Utils } from "@client/classes/Utils";
 
 onNet('summit_phone:server:addCallingNotification', (dataX: string) => {
     const data: {
@@ -14,6 +16,11 @@ onNet('summit_phone:server:addCallingNotification', (dataX: string) => {
         databaseTableId: string
     } = JSON.parse(dataX);
     const callerSource: number = GetPlayerServerId(PlayerId());
+
+    // Start calling animation for the CALLER (not receiver)
+    if (data.callerSource === callerSource) {
+        Animation.StartCallAnimation(Utils.GetPhoneItem());
+    }
 
     NUI.sendReactMessage('addActionNotification', {
         id: generateUUid(),
@@ -34,6 +41,7 @@ onNet('summit_phone:server:addCallingNotification', (dataX: string) => {
         }
     });
 });
+
 onNet('summit_phone:server:addCallinginterface', (dataX: string) => {
     NUI.sendReactMessage('addCallingInterFace', {
         data: dataX,
@@ -51,6 +59,7 @@ onNet('phone:client:removeCallingInterface', (notiId: string) => {
         show: false
     });
 });
+
 onNet('phone:client:removeAccpetedCallingInterface', (notiId: string) => {
     NUI.sendReactMessage('removeAccpetedCallingInterface', {
         data: {},
@@ -59,11 +68,20 @@ onNet('phone:client:removeAccpetedCallingInterface', (notiId: string) => {
 });
 
 onNet('phone:client:acceptCall', (data: string) => {
+    // Start calling animation for the RECEIVER when they accept
+    Animation.StartCallAnimation(Utils.GetPhoneItem());
     NUI.sendReactMessage('startCallAccepted', data);
-})
+});
+
+// NEW: Event for caller to start animation when call is accepted
+onNet('phone:client:startCallAnimation', () => {
+    // Start calling animation for the CALLER when call is accepted
+    Animation.StartCallAnimation(Utils.GetPhoneItem());
+});
+
 onNet('phone:client:updateCallerInterface', (data: string) => {
     NUI.sendReactMessage('startCallAccepted', data);
-})
+});
 
 onNet('phone:client:updateConference', (conferenceData: { conferenceParticipants: number[] }) => {
 
@@ -71,4 +89,20 @@ onNet('phone:client:updateConference', (conferenceData: { conferenceParticipants
 
 onNet('phone:client:upDateInterFaceName', (data: string) => {
     NUI.sendReactMessage('upDateInterFaceName', "Conference Call");
+});
+
+// Call ending events
+onNet('phone:client:endCallAnimation', () => {
+    Animation.EndCallAnimation();
+});
+
+onNet('phone:client:callEnded', () => {
+    Animation.EndCallAnimation();
+});
+
+// NEW: Event to handle when phone UI is opened during a call
+onNet('phone:client:phoneOpenedDuringCall', () => {
+    // This ensures the phone state is properly tracked
+    const state = LocalPlayer.state;
+    state.set('onPhone', true, true);
 });
