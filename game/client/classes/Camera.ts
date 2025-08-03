@@ -137,7 +137,9 @@ class Camera {
         if (!this.isSelfieMode) {
             const newZ = rotation[2] + rightAxisX * -1.0 * this.speed_ud;
             const newX = Math.max(Math.min(50.0, rotation[0] + rightAxisY * -1.0 * this.speed_lr), -89.5);
-            SetEntityHeading(lPed, newZ);
+            if (!IsPedInAnyVehicle(lPed, false)) {
+                SetEntityHeading(lPed, newZ);
+            }
             if (IsNuiFocused()) return;
             SetCamRot(activeCam, newX, 0.0, GetEntityHeading(lPed), 2);
         } 
