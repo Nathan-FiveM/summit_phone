@@ -42,7 +42,6 @@ class AnimClass {
         this.isAnimating = true;
         this.isCalling = true;
         this.phoneWasOpen = true; // NEW: Mark that phone is open during call
-        this.AttachProp();
         
         // Use calling-specific animations
         if (IsPedInAnyVehicle(PlayerPedId(), false)) {
@@ -56,7 +55,6 @@ class AnimClass {
         if (this.isAnimating && this.isCalling) {
             this.isAnimating = false;
             this.isCalling = false;
-            await this.DeAttachProp();
             
             if (IsPedInAnyVehicle(PlayerPedId(), false)) {
                 this.DoAnimation('cellphone_call_out', 'cellphone@in_car@ds');
@@ -73,7 +71,6 @@ class AnimClass {
                 await Delay(500); // Small delay before switching
                 this.isAnimating = true;
                 this.isCalling = false;
-                this.AttachProp();
                 this.DoAnimation('cellphone_text_in');
             }
         }
