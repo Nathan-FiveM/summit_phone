@@ -40,6 +40,7 @@ import BluePage from './routers/apps/BluePage/BluePage';
 import GarageApp from './routers/apps/Garage/GarageData';
 import Wallet from './routers/apps/Wallet/Wallet';
 import Groups from './routers/apps/Groups/Groups';
+import { Modal } from '@mantine/core';
 
 debugData([
   {
@@ -355,6 +356,7 @@ export default function App() {
           }
         }} />
       </div>
+      
     </div>
   )
 }

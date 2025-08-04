@@ -8,6 +8,8 @@ import { useNuiEvent } from "../../../hooks/useNuiEvent";
 import dayjs from "dayjs";
 import CreateNewReply from "./CreateNewReply";
 import Profile from "./Profile";
+import 'react-responsive-modal/styles.css';
+import { Modal } from 'react-responsive-modal';
 
 export default function Home(props: {
     location: string, profileData: {
@@ -23,6 +25,15 @@ export default function Home(props: {
         following: string[];
     }
 }) {
+
+    const [imgContainer, setOpenImgContainer] = useState(false);
+    const [selectedImg, setSelectedImg] = useState<string | null>(null);
+    const onCloseModal = () => {
+        setOpenImgContainer(false);
+        setSelectedImg(null);
+    };
+
+
     const { phoneSettings, location, setLocation } = usePhone();
 
     function formatedDate(date: string) {
@@ -426,7 +437,10 @@ export default function Home(props: {
                                             marginTop: '1vw',
                                         }}>
                                             {tweet.attachments.map((attachment, index) => {
-                                                return <img key={index} src={attachment} style={{
+                                                return <img key={index} onClick={() => {
+                                                    setOpenImgContainer(true);
+                                                    setSelectedImg(attachment);
+                                                }} src={attachment} style={{
                                                     width: '100%',
                                                     height: 'auto',
                                                     borderRadius: '0.5vw',
@@ -618,7 +632,10 @@ export default function Home(props: {
                                 marginTop: '1vw',
                             }}>
                                 {selectedPost.attachments.map((attachment, index) => {
-                                    return <img key={index} src={attachment} style={{
+                                    return <img key={index} src={attachment} onClick={() => {
+                                        setOpenImgContainer(true);
+                                        setSelectedImg(attachment);
+                                    }} style={{
                                         width: '100%',
                                         height: 'auto',
                                         borderRadius: '0.5vw',
@@ -831,7 +848,10 @@ export default function Home(props: {
                                             marginTop: '1vw',
                                         }}>
                                             {data.attachments.map((attachment, index) => {
-                                                return <img key={index} src={attachment} style={{
+                                                return <img key={index} src={attachment} onClick={() => {
+                                                    setOpenImgContainer(true);
+                                                    setSelectedImg(attachment);
+                                                }} style={{
                                                     width: '100%',
                                                     height: 'auto',
                                                     borderRadius: '0.5vw',
@@ -940,9 +960,27 @@ export default function Home(props: {
                 }} />
                 <Profile show={showProfile} email={selectedEmail} onClose={() => {
                     setShowProfile(false);
-                }} onError={()=>{
+                }} onError={() => {
                     setShowProfile(false);
-                }}/>
+                }} />
+                <Modal styles={{
+                    modal: {
+                        backgroundColor: 'rgba(0, 0, 0, 0)',
+                        boxShadow: 'none',
+                    },
+                    closeIcon: {
+                        color: 'white',
+                        backgroundColor: 'rgba(255, 255, 255, 0.98)',
+                    }
+                }} open={imgContainer} onClose={onCloseModal} center>
+                    <img src={selectedImg} style={{
+                        width: '100%',
+                        height: 'auto',
+                        maxHeight: '80vh',
+                        borderRadius: '0.5vw',
+                        objectFit: 'cover',
+                    }} />
+                </Modal>
             </div>}
         </Transition>
     )

@@ -22,6 +22,11 @@ class Util {
             if (source === 0) return LOGGER('This command can only be executed in-game.');
             await Utils.MigrateMultiJobData();
         }, true);
+
+        RegisterCommand('migrateSociety', async (source: any, args: any) => {
+            if (source === 0) return LOGGER('This command can only be executed in-game.');
+            await Utils.MigrateSocietyData();
+        }, true);
     };
 
     async TransferNumbers() {
@@ -96,6 +101,16 @@ class Util {
         await MongoDB.insertMany('phone_multijobs', newData);
         LOGGER('Multijobs have been transferred to MongoDB.');
     };
+
+    async MigrateSocietyData() {
+        const result: any = await this.query('SELECT * FROM av_society', []);
+
+        result.forEach(async (job: any) => {
+            await MongoDB.updateOne('summit_bank', { _id: job.job }, {
+                bankBalance: Number(job.money)
+            }, undefined, false)
+        })
+    }
 
     async GetPhoneNumberByCitizenId(citizenId: string) {
         const number = await MongoDB.findOne('phone_numbers', { owner: citizenId });

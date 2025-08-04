@@ -47,6 +47,9 @@ importers:
       react-infinite-scroll-component:
         specifier: ^6.1.0
         version: 6.1.0(react@19.1.0)
+      react-responsive-modal:
+        specifier: ^7.0.0
+        version: 7.0.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react-transition-group:
         specifier: ^4.4.5
         version: 4.4.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -201,6 +204,16 @@ packages:
   '@babel/types@7.28.1':
     resolution: {integrity: sha512-x0LvFTekgSX+83TI28Y9wYPUfzrnl2aT5+5QLnO6v7mSJYtEEevuDRN0F0uSHRk1G1IWZC43o00Y0xDDrpBGPQ==}
     engines: {node: '>=6.9.0'}
+
+  '@bedrock-layout/use-forwarded-ref@2.0.17':
+    resolution: {integrity: sha512-4meaaQjg2ZtP9eg0F2LsL0tENmxZ6CTNz4tLheOOyKjqTSjM11yKjSOsMwaEJ8uRyQf+XBDFBmb/IfpHAuCqug==}
+    peerDependencies:
+      react: ^16.8 || ^17 || ^18
+
+  '@bedrock-layout/use-stateful-ref@2.0.17':
+    resolution: {integrity: sha512-pzVUYMTa32E9dGa2xadOFej96gYJEHg+Qh4Tg0fMj6zYT4y5LZpE+XkCiPcFafR3kTFhqSGfjRTIJbnSyeEAxQ==}
+    peerDependencies:
+      react: ^16.8 || ^17 || ^18
 
   '@citizenfx/three@0.100.0':
     resolution: {integrity: sha512-qiJHVGNzhGfZP+poq4X3m9cDoi4H1mK4UgfbBTZoHmtSIiDRAIYEWsb93MHst+ADHtn0vJ8msMRQaAHC3horSA==}
@@ -824,6 +837,9 @@ packages:
     resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}
     engines: {node: '>=8'}
 
+  body-scroll-lock@3.1.5:
+    resolution: {integrity: sha512-Yi1Xaml0EvNA0OYWxXiYNqY24AfWkbA6w5vxE7GWxtKfzIbZM+Qw+aSmkgsbWzbHiy/RCSkUZBplVxTA+E4jJg==}
+
   brace-expansion@1.1.12:
     resolution: {integrity: sha512-9T9UjW3r0UW5c1Q7GTwllptXwhvYmEzFhzMfZ9H7FQWt+uZePjZPjBP/W1ZEyZ1twGWom5/56TF4lPcqjnDHcg==}
 
@@ -889,6 +905,9 @@ packages:
 
   class-validator@0.14.1:
     resolution: {integrity: sha512-2VEG9JICxIqTpoK1eMzZqaV+u/EiwEJkMGzTrZf6sU/fwsnOITVgYJ8yojSy6CaXtO9V0Cc6ZQZ8h8m4UBuLwQ==}
+
+  classnames@2.5.1:
+    resolution: {integrity: sha512-saHYOzhIQs6wy2sVxTM6bUDsQO4F50V9RQ22qBpEdCW+I+/Wmke2HOl6lS6dTpdxVhb88/I6+Hs+438c3lfUow==}
 
   clsx@2.1.1:
     resolution: {integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==}
@@ -1602,6 +1621,12 @@ packages:
       '@types/react':
         optional: true
 
+  react-responsive-modal@7.0.0:
+    resolution: {integrity: sha512-fq3GMAYyU0T105kbztXxfT92Ah3I4vTJC/9e3Kr3DmIdXxRGQCbcoTSVAVxSFiIkTpQibtOGXdhMVU+M9f9PVg==}
+    peerDependencies:
+      react: ^16.8.0 || ^17 || ^18 || ^19
+      react-dom: ^16.8.0 || ^17 || ^18 || ^19
+
   react-style-singleton@2.2.3:
     resolution: {integrity: sha512-b6jSvxvVnyptAiLjbkWLE/lOnR4lfTtDAl+eUC7RZy+QQWc6wRzIV2CE6xBuMmDxc2qIihtDCZD5NPOFl7fRBQ==}
     engines: {node: '>=10'}
@@ -2048,6 +2073,15 @@ snapshots:
     dependencies:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.27.1
+
+  '@bedrock-layout/use-forwarded-ref@2.0.17(react@19.1.0)':
+    dependencies:
+      '@bedrock-layout/use-stateful-ref': 2.0.17(react@19.1.0)
+      react: 19.1.0
+
+  '@bedrock-layout/use-stateful-ref@2.0.17(react@19.1.0)':
+    dependencies:
+      react: 19.1.0
 
   '@citizenfx/three@0.100.0': {}
 
@@ -2589,6 +2623,8 @@ snapshots:
 
   binary-extensions@2.3.0: {}
 
+  body-scroll-lock@3.1.5: {}
+
   brace-expansion@1.1.12:
     dependencies:
       balanced-match: 1.0.2
@@ -2666,6 +2702,8 @@ snapshots:
       '@types/validator': 13.15.2
       libphonenumber-js: 1.12.10
       validator: 13.15.15
+
+  classnames@2.5.1: {}
 
   clsx@2.1.1: {}
 
@@ -3369,6 +3407,14 @@ snapshots:
       use-sidecar: 1.1.3(@types/react@19.1.8)(react@19.1.0)
     optionalDependencies:
       '@types/react': 19.1.8
+
+  react-responsive-modal@7.0.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+    dependencies:
+      '@bedrock-layout/use-forwarded-ref': 2.0.17(react@19.1.0)
+      body-scroll-lock: 3.1.5
+      classnames: 2.5.1
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
   react-style-singleton@2.2.3(@types/react@19.1.8)(react@19.1.0):
     dependencies:

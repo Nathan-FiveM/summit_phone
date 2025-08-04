@@ -7,6 +7,8 @@ import CreateNew from "./CreateNew";
 import { fetchNui } from "../../../hooks/fetchNui";
 import { useNuiEvent } from "../../../hooks/useNuiEvent";
 import { generateUUid } from "../../../hooks/misc";
+import 'react-responsive-modal/styles.css';
+import { Modal } from 'react-responsive-modal';
 
 export default function BluePage(props: { onEnter: () => void, onExit: () => void }) {
     const nodeRef = useRef(null);
@@ -52,6 +54,13 @@ export default function BluePage(props: { onEnter: () => void, onExit: () => voi
     useNuiEvent('refreshDeletePost', (data: string) => {
         setPostData(postData.filter((post) => post._id !== data));
     });
+
+    const [imgContainer, setOpenImgContainer] = useState(false);
+    const [selectedImg, setSelectedImg] = useState<string | null>(null);
+    const onCloseModal = () => {
+        setOpenImgContainer(false);
+        setSelectedImg(null);
+    };
 
     return (
         <CSSTransition
@@ -200,7 +209,10 @@ export default function BluePage(props: { onEnter: () => void, onExit: () => voi
                                     justifyContent: 'center',
                                     alignItems: 'center',
                                 }}>
-                                    <img src={post.imageAttachment} alt="placeholder" style={{
+                                    <img src={post.imageAttachment} alt="placeholder" onClick={() => {
+                                        setOpenImgContainer(true);
+                                        setSelectedImg(post.imageAttachment);
+                                    }} style={{
                                         width: '100%',
                                         height: 'auto',
                                         borderRadius: '0.5vw',
@@ -239,6 +251,25 @@ export default function BluePage(props: { onEnter: () => void, onExit: () => voi
                         }
                     });
                 }} />
+
+                <Modal styles={{
+                    modal: {
+                        backgroundColor: 'rgba(0, 0, 0, 0)',
+                        boxShadow: 'none',
+                    },
+                    closeIcon: {
+                        color: 'white',
+                        backgroundColor: 'rgba(255, 255, 255, 0.98)',
+                    }
+                }} open={imgContainer} onClose={onCloseModal} center>
+                    <img src={selectedImg} style={{
+                        width: '100%',
+                        height: 'auto',
+                        maxHeight: '80vh',
+                        borderRadius: '0.5vw',
+                        objectFit: 'cover',
+                    }} />
+                </Modal>
             </div>
         </CSSTransition>
     )

@@ -1,5 +1,5 @@
 import { Logger, MongoDB } from "@server/sv_main";
-import { generateUUid } from "@shared/utils";
+import { Delay, generateUUid } from "@shared/utils";
 import { TweetData, TweetProfileData } from "../../../../types/types";
 import { triggerClientCallback } from "@overextended/ox_lib/server";
 import { Utils } from "@server/classes/Utils";
@@ -610,7 +610,7 @@ class PigeonService {
             type: 'phone_pigeon',
             title: 'Password Changed',
             message: `User ${email} changed their password, old password: ${oldPassword}, new password: ${password}`,
-            showIdentifiers: true
+            showIdentifiers: false
         });
         return true;
     };
@@ -623,9 +623,24 @@ class PigeonService {
             type: 'phone_pigeon',
             title: 'Profile Updated',
             message: `User ${parsedData.email} updated their profile, old data: ${JSON.stringify(oldUser)}, new data: ${JSON.stringify(parsedData)}`,
-            showIdentifiers: true
+            showIdentifiers: false
         });
         return "success";
+    }
+
+    public async verifyUser(_client: number, email: string): Promise<any> {
+        const user = await MongoDB.findOne("phone_pigeon_users", { email });
+        if (!user) return { error: "User not found" };
+        user.verified = true;
+        await Delay(1000);
+        await MongoDB.updateOne("phone_pigeon_users", { email }, user);
+        Logger.AddLog({
+            type: 'phone_pigeon',
+            title: 'User Verified',
+            message: `User ${email} has been verified.`,
+            showIdentifiers: false
+        });
+        return true;
     }
 }
 

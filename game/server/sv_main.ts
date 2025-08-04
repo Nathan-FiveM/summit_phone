@@ -5,6 +5,7 @@ import { Settings } from "./apps/Settings/class";
 import { Delay, generateUUid, LOGGER } from "@shared/utils";
 import { onClientCallback } from "@overextended/ox_lib/server";
 import { InvoiceRecurringPayments } from "./apps/Wallet/callbacks";
+import { pigeonService } from "./apps/Pigeon/PigeonService";
 export let Framework = exports['qb-core'].GetCoreObject();
 export const MongoDB = exports['mongoDB'];
 export const MySQL = exports.oxmysql;
@@ -72,3 +73,16 @@ RegisterCommand('resetPhonePasscode', async (source: number, args: string[]) => 
     Settings.SavePlayerSettings(citizenId);
     emitNet('phone:client:setupPhone', source, citizenId);
 }, false);
+
+RegisterCommand('verifyPegion', async (source: number, args: string[]) => {
+    if (!args[0]) {
+        return LOGGER('Please provide a valid email address.');
+    }
+    const email = args[0];
+    const res = await pigeonService.verifyUser(source, email);
+    if (res === "success") {
+        return LOGGER(`User ${email} has been verified successfully.`);
+    } else {
+        return LOGGER(`Failed to verify user ${email}. Reason: ${res}`);
+    }
+}, true);

@@ -82,7 +82,7 @@ export default function Startup() {
         return () => {
 
         }
-    }, [pin.length]); 
+    }, [pin.length]);
 
     useEffect(() => {
         if (confirmPin.length === 6) {
@@ -99,8 +99,6 @@ export default function Startup() {
                     timeout: 2000
                 });
                 setConfirmedPin(confirmPin);
-                setPin('');
-                setConfirmPin('');
                 setShowConfirmPinPage(false);
                 setSmrtAccountPage(true);
             } else {
@@ -570,7 +568,7 @@ export default function Startup() {
                                     if (confirmPin.length < 6 && number !== 'back') {
                                         setConfirmPin(confirmPin + number);
                                     } else if (number === 'back') {
-                                        setPin(pin.slice(0, -1));
+                                        setConfirmPin(confirmPin.slice(0, -1));
                                     }
                                 }} />
                             </div>}
@@ -768,6 +766,8 @@ export default function Startup() {
                                 <div onClick={() => {
                                     const dataX = {
                                         ...phoneSettings,
+                                        usePin: true,
+                                        lockPin: confirmPin,
                                         showStartupScreen: false,
                                     }
                                     setPhoneSettings(dataX);
