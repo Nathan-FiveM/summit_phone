@@ -93,10 +93,10 @@ class CallManager {
     public async removeParticipant(callId: number, source: number) {
         const call = this.calls.get(callId);
         if (!call) return;
-        
+
         // NEW: End animation for the leaving participant
         emitNet("phone:client:endCallAnimation", source);
-        
+
         call.participants.delete(source);
         this.playerCallMap.delete(source);
         if (source === call.host.source || call.participants.size <= 1) {
@@ -107,12 +107,12 @@ class CallManager {
     public endCall(callId: number) {
         const call = this.calls.get(callId);
         if (!call) return;
-        
+
         // NEW: End animations for all participants
         for (const participant of call.participants.values()) {
             emitNet("phone:client:endCallAnimation", participant.source);
         }
-        
+
         for (const timeout of call.pending.values()) {
             clearTimeout(timeout);
         }
@@ -147,9 +147,7 @@ class CallManager {
     public async createRingTone(source: any, ringtoneLink: string, volume: number) {
         const ped = GetPlayerPed(source);
         const pedId = NetworkGetNetworkIdFromEntity(ped);
-        const soundId = await exports['summit_soundhandler'].StartAttachSound(ringtoneLink, pedId, 5);
-        exports['summit_soundhandler'].ChangeVolume(soundId, Math.floor(volume / 100));
-        exports['summit_soundhandler'].ChangeLoop(soundId, true);
+        const soundId = await exports['summit_soundhandler'].StartAttachSound(ringtoneLink, pedId, 5, GetGameTimer(), true, 0.15);
         this.ringToneManger.set(source, soundId);
     }
     public async stopRingTone(source: number) {
