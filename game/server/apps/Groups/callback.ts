@@ -95,10 +95,11 @@ function getPlayerCharName(src: number): string {
 }
 
 async function notifyGroup(group: number, msg: string, type: string) {
-    if (!group || !EmploymentGroup[group]) return;
+    if (!group || !EmploymentGroup[group]) return false;
     for (const member of EmploymentGroup[group].members) {
-        await triggerClientCallback('QBCore:Notify', member.Player, msg, type);
+        emitNet('QBCore:Notify', member.Player, msg, type);
     }
+    return true;
 }
 exports('NotifyGroup', notifyGroup);
 exportHandler('NotifyGroup', notifyGroup);
@@ -119,19 +120,21 @@ exports('pNotifyGroup', pNotifyGroup);
 exportHandler('pNotifyGroup', pNotifyGroup);
 
 async function createBlipForGroup(groupID: number, name: string, data: any) {
-    if (!groupID) return;
+    if (!groupID) return false;
     for (const member of EmploymentGroup[groupID].members) {
         await triggerClientCallback('groups:createBlip', member.Player, name, data);
     }
+    return true;
 }
 exports('CreateBlipForGroup', createBlipForGroup);
 exportHandler('CreateBlipForGroup', createBlipForGroup);
 
 async function removeBlipForGroup(groupID: number, name: string) {
-    if (!groupID) return;
+    if (!groupID) return false;
     for (const member of EmploymentGroup[groupID].members) {
         await triggerClientCallback('groups:removeBlip', member.Player, name);
     }
+    return true;
 }
 exports('RemoveBlipForGroup', removeBlipForGroup);
 exportHandler('RemoveBlipForGroup', removeBlipForGroup);
@@ -171,7 +174,7 @@ exports('GetGroupLeader', getGroupLeader);
 exportHandler('GetGroupLeader', getGroupLeader);
 
 async function groupEvent(groupID: number, event: string, args?: any[]) {
-    if (!groupID || !event) return;
+    if (!groupID || !event) return false;
     const members = getGroupMembers(groupID);
     if (members && members.length > 0) {
         for (const member of members) {
@@ -179,16 +182,17 @@ async function groupEvent(groupID: number, event: string, args?: any[]) {
             else await triggerClientCallback(event, member);
         }
     }
+    return true;
 }
 exports('GroupEvent', groupEvent);
 exportHandler('GroupEvent', groupEvent);
 
 async function destroyGroup(groupID: number) {
-    if (!EmploymentGroup[groupID]) return;
+    if (!EmploymentGroup[groupID]) return false;
     const members = getGroupMembers(groupID);
     if (members && members.length > 0) {
         for (const member of members) {
-            await triggerClientCallback('summit_groups:client:UpdateGroupId', member, 0);
+            emitNet('summit_groups:client:UpdateGroupId', member, 0);
             Players[member] = false;
         }
     }
@@ -203,22 +207,23 @@ async function destroyGroup(groupID: number) {
         showIdentifiers: false
     });
     await triggerClientCallback('summit_groups:client:RefreshGroupsApp', -1, EmploymentGroup);
+    return true;
 }
 exports('DestroyGroup', destroyGroup);
 exportHandler('DestroyGroup', destroyGroup);
 
 async function removePlayerFromGroup(src: number, groupID: number) {
-    if (!Players[src] || !EmploymentGroup[groupID]) return;
+    if (!Players[src] || !EmploymentGroup[groupID]) return false;
     const group = EmploymentGroup[groupID];
     for (let i = 0; i < group.members.length; i++) {
         if (group.members[i].Player === src) {
             const member = group.members.splice(i, 1)[0];
             group.Users -= 1;
             Players[src] = false;
-            await triggerClientCallback('summit_groups:client:UpdateGroupId', src, 0);
+            emitNet('summit_groups:client:UpdateGroupId', src, 0);
             pNotifyGroup(groupID, 'Job Center', `${member.name} Has left the group`, 'fas fa-users', '#FFBF00', 7500);
             await triggerClientCallback('summit_groups:client:RefreshGroupsApp', -1, EmploymentGroup);
-            await triggerClientCallback('QBCore:Notify', src, 'You have left the group', 'primary');
+            emitNet('QBCore:Notify', src, 'You have left the group', 'primary');
             Logger.AddLog({
                 type: 'phone_employment_groups',
                 title: 'Player Left Group',
@@ -226,9 +231,10 @@ async function removePlayerFromGroup(src: number, groupID: number) {
                 showIdentifiers: false
             });
             if (group.Users <= 0) destroyGroup(groupID);
-            return;
+            return true;
         }
     }
+    return false;
 }
 
 async function changeGroupLeader(groupID: number) {
@@ -260,15 +266,16 @@ exportHandler('isGroupLeader', isGroupLeader);
 
 // Job functions
 async function setJobStatus(groupID: number, status: string, stages: any[]) {
-    if (!groupID) return;
+    if (!groupID) return false;
     const group = EmploymentGroup[groupID];
     group.status = status;
     group.stage = stages;
     const members = getGroupMembers(groupID);
-    if (!members) return;
+    if (!members) return false;
     for (const member of members) {
         await triggerClientCallback('summit_groups:client:AddGroupStage', member, status, stages);
     }
+    return true;
 }
 exports('setJobStatus', setJobStatus);
 exportHandler('setJobStatus', setJobStatus);
@@ -281,16 +288,17 @@ exports('getJobStatus', getJobStatus);
 exportHandler('getJobStatus', getJobStatus);
 
 async function resetJobStatus(groupID: number) {
-    if (!groupID) return;
+    if (!groupID) return false;
     const group = EmploymentGroup[groupID];
     group.status = 'WAITING';
     group.stage = [];
     const members = getGroupMembers(groupID);
-    if (!members) return;
+    if (!members) return false;
     for (const member of members) {
         await triggerClientCallback('summit_groups:client:AddGroupStage', member, group.status, group.stage);
         await triggerClientCallback('summit_groups:client:RefreshGroupsApp', member, EmploymentGroup, true);
     }
+    return true;
 }
 exports('resetJobStatus', resetJobStatus);
 exportHandler('resetJobStatus', resetJobStatus);
@@ -343,7 +351,7 @@ onClientCallback('summit_groups:server:jobcenter_CreateJobGroup', async (source,
         stage: [],
     };
     await triggerClientCallback('summit_groups:client:RefreshGroupsApp', -1, EmploymentGroup);
-    await triggerClientCallback('summit_groups:client:UpdateGroupId', src, ID);
+    emitNet('summit_groups:client:UpdateGroupId', src, ID);
     Logger.AddLog({
         type: 'phone_employment_groups',
         title: 'Group Created',
@@ -389,7 +397,7 @@ onClientCallback('summit_groups:server:jobcenter_JoinTheGroup', async (source, d
     EmploymentGroup[data.id].members.push({ name, CID: player.PlayerData.citizenid, Player: src });
     EmploymentGroup[data.id].Users += 1;
     Players[src] = true;
-    await triggerClientCallback('summit_groups:client:UpdateGroupId', src, data.id);
+    emitNet('summit_groups:client:UpdateGroupId', src, data.id);
     emitNet('phone:addnotiFication', src, JSON.stringify({
         id: generateUUid(),
         title: 'Joined Group',
@@ -465,7 +473,7 @@ async function createGroup(src: number, name: string, password?: string) {
         stage: [],
         ScriptCreated: true,
     };
-    await triggerClientCallback('summit_groups:client:UpdateGroupId', src, id);
+    emitNet('summit_groups:client:UpdateGroupId', src, id);
     await triggerClientCallback('summit_groups:client:RefreshGroupsApp', -1, EmploymentGroup);
     Logger.AddLog({
         type: 'phone_employment_groups',

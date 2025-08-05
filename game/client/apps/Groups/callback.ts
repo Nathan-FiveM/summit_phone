@@ -108,7 +108,7 @@ RegisterNuiCallback('GetGroupsApp', async (_data: any, cb: Function) => {
 
 onServerCallback('summit_groups:client:RefreshGroupsApp', (groups: any, finish: boolean) => {
     if (finish) inJob = false;
-    if (inJob) return;
+    if (inJob) return true;
     NUI.sendReactMessage('groups:refreshApp', groups);
     return true;
 });
@@ -129,13 +129,11 @@ RegisterNuiCallback('getStatusPage', async (_data: any, cb: Function) => {
     cb('ok');
 });
 
-onServerCallback('summit_groups:client:UpdateGroupId', (id: number) => {
+onNet('summit_groups:client:UpdateGroupId', (id: number) => {
     GroupID = id;
     if (id === 0) {
         isGroupLeader = false;
-        return false;
-    };
-    return true;
+    }
 });
 
 RegisterNuiCallback('groups:CreateJobGroup', async (data: any, cb: Function) => {
