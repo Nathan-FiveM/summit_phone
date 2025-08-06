@@ -206,6 +206,7 @@ onClientCallback("summit_phone:server:call", async (source: number, data: string
 
 onClientCallback("summit_phone:server:declineCall", async (_source: number, data: string) => {
   const { callId, targetSource, callerSource, databaseTableId } = JSON.parse(data);
+  console.log("Declining call", callId, targetSource, callerSource, databaseTableId);
   callManager.declineInvitation(callId, targetSource);
   const call = callManager.getCallByPlayer(callerSource);
   if (call) {
