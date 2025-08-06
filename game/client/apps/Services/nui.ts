@@ -11,7 +11,7 @@ on('__cfx_nui:getAllBusinessData', async (s: any, cb: Function) => {
 
 RegisterNuiCallbackType('setWayPoint');
 on('__cfx_nui:setWayPoint', async (data: any, cb: Function) => {
-    SetNewWaypoint(data.x, data.y);
+    SetNewWaypoint(Number(data.x), Number(data.y));
     emit("phone:addnotiFication", JSON.stringify({
         id: generateUUid(),
         title: "System",
