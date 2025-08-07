@@ -1,6 +1,6 @@
 import { onClientCallback, triggerClientCallback } from "@overextended/ox_lib/server";
 import { Framework, MongoDB, Logger } from "@server/sv_main";
-import { generateUUid } from "@shared/utils";
+import { Delay, generateUUid } from "@shared/utils";
 
 onClientCallback('groups:getmultiPleJobs', async (source: number) => {
     const sourcePlayer = exports['qb-core'].GetPlayer(source);
@@ -30,7 +30,7 @@ onClientCallback('groups:changeJobOfPlayer', async (source: number, data: string
     if (await exports.summit_lib.CheckJobGrade(jobName, String(grade))) {
         sourcePlayer.Functions.SetJob(jobName, String(grade));
         emitNet('QBCore:Notify', source, `Job Changed to ${jobName} Successfully`, 'success');
-        const res = await triggerClientCallback('groups:toggleDuty', Number(sourcePlayer.PlayerData.source));
+        emitNet('groups:toggleDuty', Number(sourcePlayer.PlayerData.source));
         Logger.AddLog({
             type: 'phone_multijobs',
             title: 'Job Changed',
@@ -122,7 +122,7 @@ exportHandler('pNotifyGroup', pNotifyGroup);
 async function createBlipForGroup(groupID: number, name: string, data: any) {
     if (!groupID) return false;
     for (const member of EmploymentGroup[groupID].members) {
-        await triggerClientCallback('groups:createBlip', member.Player, name, data);
+        emitNet('groups:createBlip', member.Player, name, data);
     }
     return true;
 }
@@ -132,7 +132,7 @@ exportHandler('CreateBlipForGroup', createBlipForGroup);
 async function removeBlipForGroup(groupID: number, name: string) {
     if (!groupID) return false;
     for (const member of EmploymentGroup[groupID].members) {
-        await triggerClientCallback('groups:removeBlip', member.Player, name);
+        emitNet('groups:removeBlip', member.Player, name);
     }
     return true;
 }
@@ -206,7 +206,7 @@ async function destroyGroup(groupID: number) {
         message: `Group '${EmploymentGroup[groupID]?.GName}' (ID: ${groupID}) destroyed.`,
         showIdentifiers: false
     });
-    await triggerClientCallback('summit_groups:client:RefreshGroupsApp', -1, EmploymentGroup);
+    emitNet('summit_groups:client:RefreshGroupsApp', -1, EmploymentGroup);
     return true;
 }
 exports('DestroyGroup', destroyGroup);
@@ -222,7 +222,7 @@ async function removePlayerFromGroup(src: number, groupID: number) {
             Players[src] = false;
             emitNet('summit_groups:client:UpdateGroupId', src, 0);
             pNotifyGroup(groupID, 'Job Center', `${member.name} Has left the group`, 'fas fa-users', '#FFBF00', 7500);
-            await triggerClientCallback('summit_groups:client:RefreshGroupsApp', -1, EmploymentGroup);
+            emitNet('summit_groups:client:RefreshGroupsApp', -1, EmploymentGroup);
             emitNet('QBCore:Notify', src, 'You have left the group', 'primary');
             Logger.AddLog({
                 type: 'phone_employment_groups',
@@ -244,6 +244,7 @@ async function changeGroupLeader(groupID: number) {
         for (const member of group.members) {
             if (member.Player !== leader) {
                 group.leader = member.Player;
+                pNotifyGroup(groupID, 'Job Center', `${member.name} is now the leader of the group`, 'fas fa-users', '#FFBF00', 7500);
                 Logger.AddLog({
                     type: 'phone_employment_groups',
                     title: 'Leader Changed',
@@ -273,7 +274,7 @@ async function setJobStatus(groupID: number, status: string, stages: any[]) {
     const members = getGroupMembers(groupID);
     if (!members) return false;
     for (const member of members) {
-        await triggerClientCallback('summit_groups:client:AddGroupStage', member, status, stages);
+        emitNet('summit_groups:client:AddGroupStage', member, status, stages);
     }
     return true;
 }
@@ -295,8 +296,9 @@ async function resetJobStatus(groupID: number) {
     const members = getGroupMembers(groupID);
     if (!members) return false;
     for (const member of members) {
-        await triggerClientCallback('summit_groups:client:AddGroupStage', member, group.status, group.stage);
-        await triggerClientCallback('summit_groups:client:RefreshGroupsApp', member, EmploymentGroup, true);
+        emitNet('summit_groups:client:AddGroupStage', member, group.status, group.stage);
+        await Delay(1000);
+        emitNet('summit_groups:client:RefreshGroupsApp', member, EmploymentGroup, true);
     }
     return true;
 }
@@ -309,8 +311,10 @@ on('playerDropped', async () => {
     const groupID = getGroupByMembers(src);
     if (groupID) {
         if (await isGroupLeader(src, groupID)) {
-            if (await changeGroupLeader(groupID)) await triggerClientCallback('summit_groups:client:RefreshGroupsApp', -1, EmploymentGroup);
-            else destroyGroup(groupID);
+            if (await changeGroupLeader(groupID)) {
+                await removePlayerFromGroup(src, groupID);
+                emitNet('summit_groups:client:RefreshGroupsApp', -1, EmploymentGroup);
+            }
         } else removePlayerFromGroup(src, groupID);
     }
 });
@@ -350,7 +354,7 @@ onClientCallback('summit_groups:server:jobcenter_CreateJobGroup', async (source,
         members: [{ name: getPlayerCharName(src), CID: player.PlayerData.citizenid, Player: src }],
         stage: [],
     };
-    await triggerClientCallback('summit_groups:client:RefreshGroupsApp', -1, EmploymentGroup);
+    emitNet('summit_groups:client:RefreshGroupsApp', -1, EmploymentGroup);
     emitNet('summit_groups:client:UpdateGroupId', src, ID);
     Logger.AddLog({
         type: 'phone_employment_groups',
@@ -405,7 +409,7 @@ onClientCallback('summit_groups:server:jobcenter_JoinTheGroup', async (source, d
         app: 'settings',
         timeout: 5000
     }));
-    await triggerClientCallback('summit_groups:client:RefreshGroupsApp', -1, EmploymentGroup);
+    emitNet('summit_groups:client:RefreshGroupsApp', -1, EmploymentGroup);
     Logger.AddLog({
         type: 'phone_employment_groups',
         title: 'Player Joined Group',
@@ -446,7 +450,7 @@ onClientCallback('summit_groups:server:jobcenter_leave_grouped', async (source, 
     const src = source as number;
     if (!Players[src]) return;
     removePlayerFromGroup(src, data.id);
-    await triggerClientCallback('summit_groups:client:RefreshGroupsApp', -1, EmploymentGroup);
+    emitNet('summit_groups:client:RefreshGroupsApp', -1, EmploymentGroup);
 });
 
 async function isGroupTemp(groupID: number) {
@@ -474,7 +478,7 @@ async function createGroup(src: number, name: string, password?: string) {
         ScriptCreated: true,
     };
     emitNet('summit_groups:client:UpdateGroupId', src, id);
-    await triggerClientCallback('summit_groups:client:RefreshGroupsApp', -1, EmploymentGroup);
+    emitNet('summit_groups:client:RefreshGroupsApp', -1, EmploymentGroup);
     Logger.AddLog({
         type: 'phone_employment_groups',
         title: 'Script Group Created',
@@ -493,5 +497,5 @@ onClientCallback('summit_groups:server:getStageFromApp', async () => {
     const group = getGroupByMembers(src);
     if (!group) return;
     const stages = getGroupStages(group);
-    await triggerClientCallback('summit_groups:client:GetGroupsStatus', src, stages);
+    emitNet('summit_groups:client:GetGroupsStatus', src, stages);
 });

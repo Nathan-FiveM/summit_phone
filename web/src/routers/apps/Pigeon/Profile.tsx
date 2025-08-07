@@ -1,4 +1,4 @@
-import { ActionIcon, Avatar, Button, Textarea, TextInput, Transition } from "@mantine/core";
+import { Avatar, Button, Textarea, TextInput, Transition } from "@mantine/core";
 import { fetchNui } from "../../../hooks/fetchNui";
 import { usePhone } from "../../../store/store";
 import { useEffect, useState } from "react";
@@ -6,6 +6,8 @@ import { TweetData, TweetProfileData } from "../../../../../types/types";
 import InputDialog from "../DarkChat/InputDialog";
 import dayjs from "dayjs";
 import InfiniteScroll from "react-infinite-scroll-component";
+import 'react-responsive-modal/styles.css';
+import { Modal } from 'react-responsive-modal';
 
 export default function Profile(props: { show: boolean, email: string, onClose: () => void, onError: () => void, onReplyClick: (tweet: TweetData) => void, onRetweetClick: (tweet: TweetData) => void, onLikeClick: (tweet: TweetData) => void }) {
     const { phoneSettings, location, setLocation, setPhoneSettings } = usePhone();
@@ -23,7 +25,12 @@ export default function Profile(props: { show: boolean, email: string, onClose: 
         followers: [],
         following: [],
     });
-
+    const [imgContainer, setOpenImgContainer] = useState(false);
+    const [selectedImg, setSelectedImg] = useState<string | null>(null);
+    const onCloseModal = () => {
+        setOpenImgContainer(false);
+        setSelectedImg(null);
+    };
     const [tweets, setTweets] = useState<TweetData[]>([]);
     const [hasMore] = useState(true);
     function formatedDate(date: string) {
@@ -337,7 +344,10 @@ export default function Profile(props: { show: boolean, email: string, onClose: 
                                             marginTop: '1vw',
                                         }}>
                                             {tweet.attachments.map((attachment, index) => {
-                                                return <img key={index} src={attachment} style={{
+                                                return <img key={index} onClick={()=>{
+                                                    setSelectedImg(attachment);
+                                                    setOpenImgContainer(true);
+                                                }} src={attachment} style={{
                                                     width: '100%',
                                                     height: 'auto',
                                                     borderRadius: '0.5vw',
@@ -627,6 +637,24 @@ export default function Profile(props: { show: boolean, email: string, onClose: 
                 }} onCancel={() => {
                     setInputShow(false);
                 }} />
+                <Modal styles={{
+                    modal: {
+                        backgroundColor: 'rgba(0, 0, 0, 0)',
+                        boxShadow: 'none',
+                    },
+                    closeIcon: {
+                        color: 'white',
+                        backgroundColor: 'rgba(255, 255, 255, 0.98)',
+                    }
+                }} open={imgContainer} onClose={onCloseModal} center>
+                    <img src={selectedImg} style={{
+                        width: '100%',
+                        height: 'auto',
+                        maxHeight: '80vh',
+                        borderRadius: '0.5vw',
+                        objectFit: 'cover',
+                    }} />
+                </Modal>
             </div>}
         </Transition>
     )

@@ -9,8 +9,8 @@ on('__cfx_nui:phoneCall', async (data: string, cb: Function) => {
 
 RegisterNuiCallbackType('declineCall');
 on('__cfx_nui:declineCall', async (data: string, cb: Function) => {
-    const res = await triggerServerCallback('summit_phone:server:declineCall', null, data);
-    cb(res);
+    emitNet('summit_phone:server:declineCall', data);
+    cb(true);
 });
 
 RegisterNuiCallbackType('endCall');

@@ -204,9 +204,10 @@ onClientCallback("summit_phone:server:call", async (source: number, data: string
   return true;
 });
 
-onClientCallback("summit_phone:server:declineCall", async (_source: number, data: string) => {
+onNet("summit_phone:server:declineCall", async (data: string) => {
+  const source = global.source as number;
   const { callId, targetSource, callerSource, databaseTableId } = JSON.parse(data);
-  console.log("Declining call", callId, targetSource, callerSource, databaseTableId);
+  console.log(source, "Declining call", callId, targetSource, callerSource, databaseTableId);
   callManager.declineInvitation(callId, targetSource);
   const call = callManager.getCallByPlayer(callerSource);
   if (call) {
@@ -222,7 +223,6 @@ onClientCallback("summit_phone:server:declineCall", async (_source: number, data
     message: `${await Utils.GetPhoneNumberBySource(targetSource)} declined the call from ${await Utils.GetPhoneNumberBySource(callerSource)} (Call ID: ${callId}).`,
     showIdentifiers: false
   });
-  return true;
 });
 
 onClientCallback("summit_phone:server:endCall", async (source: number, data: string) => {

@@ -2,9 +2,8 @@ import { NUI } from "@client/classes/NUI";
 import { onServerCallback, triggerServerCallback } from "@overextended/ox_lib/client";
 import { generateUUid } from "@shared/utils";
 
-onServerCallback('groups:toggleDuty', async () => {
+onNet('groups:toggleDuty', async () => {
     emitNet('QBCore:ToggleDuty');
-    return true;
 });
 
 // Interfaces
@@ -43,7 +42,7 @@ function findBlipByName(name: string): number | undefined {
     return GroupBlips.findIndex((blip) => blip?.name === name);
 }
 
-onServerCallback('groups:removeBlip', (name: string) => {
+onNet('groups:removeBlip', (name: string) => {
     const index = findBlipByName(name);
     if (index !== undefined && GroupBlips[index]) {
         const blip = GroupBlips[index].blip;
@@ -63,7 +62,7 @@ onServerCallback('groups:phoneNotification', (data: { title: string; text: strin
     return true;
 });
 
-onServerCallback('groups:createBlip', (name: string, data: CreateBlipData) => {
+onNet('groups:createBlip', (name: string, data: CreateBlipData) => {
     if (!data) {
         console.log('Invalid Data was passed to the create blip event');
         return;
@@ -106,26 +105,23 @@ RegisterNuiCallback('GetGroupsApp', async (_data: any, cb: Function) => {
     }
 });
 
-onServerCallback('summit_groups:client:RefreshGroupsApp', (groups: any, finish: boolean) => {
+onNet('summit_groups:client:RefreshGroupsApp', (groups: any, finish: boolean) => {
     if (finish) inJob = false;
     if (inJob) return true;
     NUI.sendReactMessage('groups:refreshApp', groups);
-    return true;
 });
 
-onServerCallback('summit_groups:client:AddGroupStage', (_: any, stage: string) => {
+onNet('summit_groups:client:AddGroupStage', (_: any, stage: string) => {
     inJob = true;
     NUI.sendReactMessage('groups:addGroupStage', stage);
-    return true;
 });
 
-onServerCallback('summit_groups:client:GetGroupsStatus', (stage: string) => {
+onNet('summit_groups:client:GetGroupsStatus', (stage: string) => {
     NUI.sendReactMessage('groups:addStatusPage', stage);
-    return true;
 });
 
 RegisterNuiCallback('getStatusPage', async (_data: any, cb: Function) => {
-    await triggerServerCallback('summit_groups:server:getStageFromApp', 1);
+    await triggerServerCallback('summit_groups:server:getStageFromApp', null);
     cb('ok');
 });
 
