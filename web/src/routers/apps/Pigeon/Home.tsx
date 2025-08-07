@@ -962,6 +962,44 @@ export default function Home(props: {
                     setShowProfile(false);
                 }} onError={() => {
                     setShowProfile(false);
+                }} onReplyClick={async (tweet) => {
+                    const res = await fetchNui('getReplies', tweet._id);
+                    setSelectedPost(tweet);
+                    if (res) {
+                        setPostRepliesData(JSON.parse(res as string));
+                    }
+                }} onRetweetClick={async (tweet) => {
+                    if (!tweet.retweetCount.includes(phoneSettings._id)) {
+                        setTweets(tweets.map((t) => {
+                            if (t._id === tweet._id) {
+                                return {
+                                    ...t,
+                                    retweetCount: [...t.retweetCount, phoneSettings._id]
+                                }
+                            }
+                            return t;
+                        }))
+                        await fetchNui('retweetTweet', JSON.stringify({
+                            tweetId: tweet._id,
+                            retweet: true,
+                            pigeonId: phoneSettings.pigeonIdAttached
+                        }))
+                    }
+                }} onLikeClick={async (tweet) => {
+                    setTweets(tweets.map((t) => {
+                        if (t._id === tweet._id) {
+                            return {
+                                ...t,
+                                likeCount: t.likeCount.includes(phoneSettings.pigeonIdAttached) ? t.likeCount.filter((id) => id !== phoneSettings.pigeonIdAttached) : [...t.likeCount, phoneSettings.pigeonIdAttached]
+                            }
+                        }
+                        return t;
+                    }))
+                    await fetchNui('likeTweet', JSON.stringify({
+                        tweetId: tweet._id,
+                        like: !tweet.likeCount.includes(phoneSettings.pigeonIdAttached),
+                        email: phoneSettings.pigeonIdAttached
+                    }))
                 }} />
                 <Modal styles={{
                     modal: {

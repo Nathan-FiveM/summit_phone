@@ -234,7 +234,7 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                         flexDirection: 'column',
                         alignItems: 'center',
                         position: 'absolute',
-                        zIndex: 1,
+                        zIndex: 2,
                         backgroundColor: '#0E0E0E',
                     }}>
                         <div style={{

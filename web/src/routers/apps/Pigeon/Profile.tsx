@@ -7,7 +7,7 @@ import InputDialog from "../DarkChat/InputDialog";
 import dayjs from "dayjs";
 import InfiniteScroll from "react-infinite-scroll-component";
 
-export default function Profile(props: { show: boolean, email: string, onClose: () => void, onError: () => void }) {
+export default function Profile(props: { show: boolean, email: string, onClose: () => void, onError: () => void, onReplyClick: (tweet: TweetData) => void, onRetweetClick: (tweet: TweetData) => void, onLikeClick: (tweet: TweetData) => void }) {
     const { phoneSettings, location, setLocation, setPhoneSettings } = usePhone();
     const [profileData, setProfileData] = useState<TweetProfileData>({
         _id: '',
@@ -74,7 +74,7 @@ export default function Profile(props: { show: boolean, email: string, onClose: 
         return () => {
             setTweets([]);
         }
-    }, [filter, props.email]);
+    }, [filter, props.email, props.show]);
 
     const [editProfile, setEditProfile] = useState(false);
     const [inputTitle, setInputTitle] = useState('');
@@ -359,6 +359,9 @@ export default function Profile(props: { show: boolean, email: string, onClose: 
                                                 display: 'flex',
                                                 alignItems: 'center',
                                                 gap: '0.3vw',
+                                            }} onClick={() => {
+                                                props.onReplyClick(tweet);
+                                                props.onClose();
                                             }}>
                                                 <svg className='clickanimationXl' width="0.78125vw" height="0.78125vw" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path fillRule="evenodd" clipRule="evenodd" d="M7.46822 0C2.99976 0 -0.551448 3.8453 0.0710452 8.34385C0.467791 11.2104 2.64202 13.6172 5.48974 14.3762C6.55023 14.659 7.64522 14.7189 8.74471 14.5292C9.6627 14.3702 10.6047 14.4414 11.5039 14.6664L12.5967 14.9394C14.0134 15.2942 15.3004 14.0334 14.9381 12.6444C14.9381 12.6444 14.7356 11.8674 14.7296 11.8426C14.5031 10.9726 14.4544 10.0539 14.6884 9.1861C14.9779 8.11659 15.0266 6.95182 14.7664 5.74505C14.0779 2.56126 11.1544 0 7.46822 0ZM7.46822 1.50002C10.4322 1.50002 12.7534 3.53255 13.3002 6.06233C13.5004 6.98934 13.4802 7.90811 13.2409 8.79462C12.2284 12.5387 15.1886 14.0417 11.8677 13.2107C10.7629 12.9347 9.6117 12.8567 8.48896 13.0509C7.62272 13.2009 6.74523 13.1582 5.87599 12.9272C3.60576 12.3219 1.86953 10.3974 1.55678 8.13836C1.05353 4.49782 3.9515 1.50002 7.46822 1.50002Z" fill={tweet.repliesCount.includes(phoneSettings._id) ? "#0A84FF" : "#828282"} />
@@ -369,6 +372,9 @@ export default function Profile(props: { show: boolean, email: string, onClose: 
                                                 display: 'flex',
                                                 alignItems: 'center',
                                                 gap: '0.3vw',
+                                            }} onClick={() => {
+                                                props.onRetweetClick(tweet);
+                                                props.onClose();
                                             }}>
                                                 <svg className='clickanimationXl' width="1.1458333333333333vw" height="0.625vw" viewBox="0 0 25 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M6.25 0C5.58696 0 4.95107 0.263392 4.48223 0.732233C4.01339 1.20107 3.75 1.83696 3.75 2.5V10H0L5 15L10 10H6.25V2.5H15L17.5 0H6.25ZM18.75 5H15L20 0L25 5H21.25V12.5C21.25 13.163 20.9866 13.7989 20.5178 14.2678C20.0489 14.7366 19.413 15 18.75 15H7.5L10 12.5H18.75V5Z" fill={tweet.retweetCount.includes(phoneSettings._id) ? "#0A84FF" : "#828282"} />
@@ -379,6 +385,9 @@ export default function Profile(props: { show: boolean, email: string, onClose: 
                                                 display: 'flex',
                                                 alignItems: 'center',
                                                 gap: '0.3vw',
+                                            }} onClick={() => {
+                                                props.onLikeClick(tweet);
+                                                props.onClose();
                                             }}>
                                                 <svg className='clickanimationXl' width="0.8333333333333334vw" height="0.78125vw" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M11.3333 0C10.0275 0 8.84701 0.603333 8 1.57571C7.15308 0.603424 5.97249 0 4.66667 0C2.08936 0 0 2.35052 0 5.25C0 8.14948 2.66667 10.5 8 15C13.3333 10.5 16 8.14948 16 5.25C16 2.35052 13.9106 0 11.3333 0Z" fill={tweet.likeCount.includes(phoneSettings.pigeonIdAttached) ? "#E22514" : "#828282"} />
