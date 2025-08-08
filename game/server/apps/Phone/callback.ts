@@ -215,6 +215,9 @@ onNet("summit_phone:server:declineCall", async (data: string) => {
   }
   callManager.endCall(callId);
   callManager.stopRingTone(targetSource);
+  if (!targetSource || !callerSource) {
+    return;
+  }
   emitNet("phone:client:removeActionNotification", targetSource, databaseTableId);
   emitNet("phone:client:removeCallingInterface", callerSource);
   Logger.AddLog({
