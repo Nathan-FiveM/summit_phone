@@ -6,7 +6,7 @@ onNet('groups:toggleDuty', async () => {
     emitNet('QBCore:ToggleDuty');
 });
 
-// Interfaces
+/* // Interfaces
 interface BlipData {
     name: string;
     blip: number;
@@ -185,4 +185,4 @@ function GetGroupID(): number {
     return GroupID;
 }
 exports('GetGroupID', GetGroupID);
-exportHandler('GetGroupID', GetGroupID);
+exportHandler('GetGroupID', GetGroupID); */

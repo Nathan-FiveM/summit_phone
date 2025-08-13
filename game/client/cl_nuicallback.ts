@@ -71,11 +71,11 @@ on('__cfx_nui:phone:contextMenu:close', () => {
 
 RegisterNuiCallbackType('cameraAppOpen');
 on('__cfx_nui:cameraAppOpen', (data: boolean) => {
-    if (data) {
-      CameraApp.openCameraApp();
-    } else {
-      CameraApp.closeCameraApp();
-    }
+  if (data) {
+    CameraApp.openCameraApp();
+  } else {
+    CameraApp.closeCameraApp();
+  }
 });
 
 // Register NUI callback to switch camera mode
@@ -88,4 +88,59 @@ on('__cfx_nui:cameraMode', (data: string) => {
 RegisterNuiCallbackType('selfiMode');
 on('__cfx_nui:selfiMode', (data: boolean) => {
   CameraApp.toggleSelfieMode(data);
+});
+
+RegisterNuiCallbackType('getPlayerData');
+RegisterNuiCallbackType('getGroupData');
+RegisterNuiCallbackType('getGroupJobSteps');
+RegisterNuiCallbackType('groups:createGroup');
+RegisterNuiCallbackType('joinGroup');
+RegisterNuiCallbackType('leaveGroupx');
+RegisterNuiCallbackType('deleteGroup');
+RegisterNuiCallbackType('getMemberList');
+RegisterNuiCallbackType('removeGroupMember');
+RegisterNuiCallbackType('getSetupAppData');
+on('__cfx_nui:getPlayerData', async (data: any, cb: Function) => {
+  const res = await exports['summit_groups'].getPlayerData()
+  cb(res)
+});
+on('__cfx_nui:groups:createGroup', async (data: any, cb: Function) => {
+  const res = await exports['summit_groups'].createGroup(data)
+  cb(res)
+});
+on('__cfx_nui:getGroupData', async (data: any, cb: Function) => {
+  const res = await exports['summit_groups'].getGroupData()
+  cb(res)
+});
+on('__cfx_nui:getGroupJobSteps', async (data: any, cb: Function) => {
+  const res = await exports['summit_groups'].getGroupJobSteps()
+  cb(res)
+});
+on('__cfx_nui:getSetupAppData', async (data: any, cb: Function) => {
+  const res = await exports['summit_groups'].getSetupAppData()
+  cb(res)
+});
+on('__cfx_nui:joinGroup', async (data: any, cb: Function) => {
+  const res = await exports['summit_groups'].joinGroup(data)
+  cb(res)
+});
+on('__cfx_nui:leaveGroupx', async (data: any, cb: Function) => {
+  const res = await exports['summit_groups'].leaveGroup(data)
+  cb(res)
+});
+on('__cfx_nui:deleteGroup', async (data: any, cb: Function) => {
+  const res = await exports['summit_groups'].deleteGroup()
+  cb(res)
+});
+on('__cfx_nui:getMemberList', async (data: any, cb: Function) => {
+  const res = await exports['summit_groups'].getMemberList()
+  cb(res)
+});
+on('__cfx_nui:removeGroupMember', async (data: any, cb: Function) => {
+  const res = await exports['summit_groups'].removeGroupMember(data)
+  cb(res)
+});
+
+exports('SendCustomAppMessage', (event: string, data: any) => {
+  NUI.sendReactMessage(event, data);
 });

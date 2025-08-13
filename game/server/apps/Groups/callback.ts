@@ -1,4 +1,4 @@
-import { onClientCallback, triggerClientCallback } from "@overextended/ox_lib/server";
+/* import { onClientCallback, triggerClientCallback } from "@overextended/ox_lib/server";
 import { Framework, MongoDB, Logger } from "@server/sv_main";
 import { Delay, generateUUid } from "@shared/utils";
 
@@ -499,3 +499,4 @@ onClientCallback('summit_groups:server:getStageFromApp', async () => {
     const stages = getGroupStages(group);
     emitNet('summit_groups:client:GetGroupsStatus', src, stages);
 });
+ */
