@@ -685,3 +685,16 @@ RegisterCommand('deleteJobs', async (source: any, args: any[]) => {
 }, true);
 
 emit('chat:addSuggestion', '/deleteJobs', 'Delete the Job.', []);
+
+
+on('summit_phone:server:businessCall', async (number: number) => {
+    NUI.sendReactMessage('phone:contextMenu:close', {});
+    emit("phone:addnotiFication", JSON.stringify({
+        id: generateUUid(),
+        title: "System",
+        description: `Calling business`,
+        app: "settings",
+        timeout: 2000,
+    }));
+    const res = await triggerServerCallback('summit_phone:server:businessCall', 1, JSON.stringify({ number: String(number), _id: generateUUid() }));
+});

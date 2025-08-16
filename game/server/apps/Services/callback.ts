@@ -1,6 +1,6 @@
 import { onClientCallback, triggerClientCallback } from "@overextended/ox_lib/server";
 import { Utils } from "@server/classes/Utils";
-import { MongoDB, Logger } from "@server/sv_main";
+import { MongoDB, Logger, Framework } from "@server/sv_main";
 import { generateUUid, LOGGER } from "@shared/utils";
 
 onClientCallback('RegisterNewBusiness', async (client, data: string) => {
@@ -74,7 +74,18 @@ onClientCallback('getBusinessData', async (client, data: string) => {
 });
 onClientCallback('getAllBusinessData', async (client, data: string) => {
     const businesses = await MongoDB.findMany('phone_business', {});
-    return JSON.stringify(businesses);
+    /* console.log(GlobalState[('%s:count'):format(job)]) */
+    let onlineBuss = []
+    let offlineBuss = []
+    for (const business of businesses) {
+        const jobCount = GlobalState[`${business.job}:count`]
+        if (jobCount) {
+            onlineBuss.push(business);
+        } else {
+            offlineBuss.push(business);
+        }
+    }
+    return JSON.stringify({ online: onlineBuss, offline: offlineBuss });
 });
 
 onClientCallback('getBusinessNames', async (client) => {
@@ -183,9 +194,19 @@ onClientCallback('summit_phone:server:getJobCalls', async (client) => {
     return PlayerData.jobCalls;
 });
 
-onClientCallback('summit_phone:server:businessCall', async (client, data: string) => {
+onClientCallback('summit_phone:server:businessCall', async (client: number, data: string) => {
     const { number } = JSON.parse(data);
     const citizenid = await Utils.GetCitizenIdByPhoneNumber(number);
+    const personalNumber = await Utils.GetPhoneNumberBySource(client);
+    if (String(personalNumber) === String(number)) {
+        return emitNet('phone:addnotiFication', client, JSON.stringify({
+            id: generateUUid(),
+            title: "System",
+            description: `You Can't call yourself ${personalNumber}.`,
+            app: "services",
+            timeout: 5000,
+        }));
+    }
     if (!citizenid) {
         return emitNet('phone:addnotiFication', client, JSON.stringify({
             id: generateUUid(),
@@ -490,3 +511,13 @@ onClientCallback('deleteJobs', async (client, data: string) => {
         showIdentifiers: false
     });
 });
+
+onClientCallback('summit_phone:server:getBusinessEmployeesNumbers', async (client: number, job: string) => {
+    const [players] = await Framework.Functions.GetPlayersOnDuty(job);
+    let numbers: number[] = [];
+    for (const player of players) {
+        const number = await Utils.GetPhoneNumberBySource(player);
+        numbers.push(Number(number));
+    }
+    return JSON.stringify(numbers);
+})

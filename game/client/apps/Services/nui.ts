@@ -23,16 +23,36 @@ on('__cfx_nui:setWayPoint', async (data: any, cb: Function) => {
 
 RegisterNuiCallbackType('callBusiness');
 on('__cfx_nui:callBusiness', async (data: any, cb: Function) => {
-    emit("phone:addnotiFication", JSON.stringify({
-        id: generateUUid(),
-        title: "System",
-        description: `Calling business`,
-        app: "settings",
-        timeout: 2000,
-    }));
-    const res = await triggerServerCallback('summit_phone:server:businessCall', 1, JSON.stringify({ number: data, _id: generateUUid() }));
     cb('Ok');
-    /* const res = await triggerServerCallback('summit_phone:server:call', 1, JSON.stringify({ number: data, generateUUid: generateUUid() })); */
+    const res = await triggerServerCallback('summit_phone:server:getBusinessEmployeesNumbers', null, data) as string;
+    const parsedData = JSON.parse(res);
+    const servicesContext = parsedData.map((number: number) => (
+        {
+            name: number,
+            event: 'summit_phone:server:businessCall',
+            isServer: false,
+            args: Number(number)
+        }
+    ));
+
+    if (servicesContext.length > 0) {
+        NUI.sendReactMessage('phone:contextMenu', servicesContext);
+    } else {
+        const notiData: {
+            id: string,
+            title: string,
+            description: string,
+            app: string,
+            timeout: number
+        } = {
+            id: generateUUid(),
+            title: "System",
+            description: `No employees found`,
+            app: "settings",
+            timeout: 2000
+        };
+        NUI.sendReactMessage('addNotification', notiData);        
+    }
 });
 
 RegisterNuiCallbackType('getJobData');
