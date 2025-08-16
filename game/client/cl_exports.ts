@@ -20,15 +20,14 @@ function CloseAndToggleDisablePhone(should: boolean) {
 }
 exports("CloseAndToggleDisablePhone", CloseAndToggleDisablePhone);
 
-exports('sendNotification', (data: string) => {
-    const notiData: {
-        id: string,
-        title: string,
-        description: string,
-        app: string,
-        timeout: number
-    } = JSON.parse(data);
-    NUI.sendReactMessage('addNotification', notiData);
+exports('sendNotification', (data: {
+    id: string | number,
+    title: string,
+    description: string,
+    app: string,
+    timeout: number
+}) => {
+    NUI.sendReactMessage('addNotification', data);
 });
 
 exports('sendActionNotification', (data: string) => {
