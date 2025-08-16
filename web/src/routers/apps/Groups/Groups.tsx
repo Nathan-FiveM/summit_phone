@@ -182,10 +182,8 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                             overflowY: 'scroll',
                         }}>
                             {groupsData && groupsData.filter(group =>
-                                group.name.toLowerCase().includes(searchValue.toLowerCase())
+                                String(group.name).toLowerCase().includes(String(searchValue).toLowerCase())
                             ).map((group, i) => {
-                                console.log(JSON.stringify(group, null, 2));
-
                                 return (
                                     <div key={i} style={{
                                         width: '100%',
@@ -336,7 +334,7 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                         }} mt="0.3vw" />
                         <div style={{ width: '90%', height: '80%', overflowY: 'scroll', marginTop: '0.0vw', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                             {multiJobsData && multiJobsData.filter(
-                                (job) => job.jobLabel.toLowerCase().includes(searchValue.toLowerCase()) || job.jobName.toLowerCase().includes(searchValue.toLowerCase())
+                                (job) => String(job.jobLabel).toLowerCase().includes(String(searchValue).toLowerCase()) || String(job.jobName).toLowerCase().includes(String(searchValue).toLowerCase())
                             ).map((job, i) => {
                                 return (
                                     <div style={{
@@ -480,15 +478,15 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                             });
                         }
                     } else if (inputTitle === 'Delete Group') {
-                        if (e.toLowerCase() === 'yes') {
+                        if (String(e).toLowerCase() === 'yes') {
                             const res = await fetchNui('deleteGroup');
                         }
                     } else if (inputTitle === 'Leave Group') {
-                        if (e.toLowerCase() === 'yes') {
+                        if (String(e).toLowerCase() === 'yes') {
                             const res = await fetchNui('leaveGroupx');
                         }
                     } else if (inputTitle === 'Join Group') {
-                        if (e) {
+                        if (String(e)) {
                             const res = await fetchNui('joinGroup', { id: selectedgroupId, pass: e });
                         }
                     }
