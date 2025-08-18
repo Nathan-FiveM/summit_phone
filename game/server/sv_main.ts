@@ -6,6 +6,7 @@ import { Delay, generateUUid, LOGGER } from "@shared/utils";
 import { onClientCallback } from "@overextended/ox_lib/server";
 import { InvoiceRecurringPayments } from "./apps/Wallet/callbacks";
 import { pigeonService } from "./apps/Pigeon/PigeonService";
+import { title } from "process";
 export let Framework = exports['qb-core'].GetCoreObject();
 export const MongoDB = exports['mongoDB'];
 export const MySQL = exports.oxmysql;
@@ -42,20 +43,74 @@ onClientCallback('phone:server:shareNumber', async (source: any, comingSource: a
     }
     const res = await MongoDB.findOne('phone_contacts', { personalNumber: acNumber, contactNumber: sourceNumber });
     if (res) {
-        return;
+        return emitNet("phone:addnotiFication", sourceX, JSON.stringify({
+            id: generateUUid(),
+            title: "System",
+            description: `Number Already Shared.`,
+            app: "settings",
+            timeout: 5000,
+        }));
     }
-    emitNet("phone:addnotiFication", Number(comingSource), JSON.stringify({
+    emitNet("phone:addnotiFication", Number(sourceX), JSON.stringify({
         id: generateUUid(),
-        title: "System",
-        description: `${fullname} has shared their number with you.`,
+        title: "Phone",
+        description: `You have shared your Phone Number.`,
         app: "settings",
         timeout: 5000,
     }));
-    await MongoDB.insertOne('phone_contacts', contactData);
+    const sendId = generateUUid();
+    emitNet('phone:addActionNotification', Number(comingSource), JSON.stringify({
+        id: sendId,
+        title: "Phone",
+        description: `${fullname} wants to share their number with you.`,
+        app: "settings",
+        icons: {
+            "0": {
+                icon: "https://cdn.summitrp.gg/uploads/server/phone/cross-circle.svg",
+                isServer: true,
+                event: "phone:server:addContact",
+                args: {}
+            },
+            "1": {
+                icon: "https://cdn.summitrp.gg/uploads/server/phone/tick.svg",
+                isServer: true,
+                event: "phone:server:addContact",
+                args: {
+                    contactData,
+                    comingSource,
+                    fullname,
+                }
+            }
+        }
+    }));
+
+});
+
+onNet('phone:server:addContact', async (id: string, data: {
+    comingSource: any,
+    fullname: string,
+    contactData: any,
+    id: string
+}) => {
+    const src = global.source;
+    console.log('Adding contact', id, data);
+    emitNet("phone:client:removeActionNotification", src, id);
+    if (!data.contactData || !data.comingSource || !data.fullname) {
+        return;
+    }
+    await Delay(500);
+    emitNet("phone:addnotiFication", src, JSON.stringify({
+        id: generateUUid(),
+        title: "System",
+        description: `Number Saved.`,
+        app: "settings",
+        timeout: 5000,
+    }));
+    await MongoDB.insertOne('phone_contacts', data.contactData);
     Logger.AddLog({
         type: 'phone_contacts',
         title: 'Contact Shared',
-        message: `${fullname} , ${sourceNumber} has shared their number with ${acNumber}`,
+        message: `${data.fullname} , ${data.contactData.contactNumber} has shared their number with ${data.contactData.personalNumber}`,
         showIdentifiers: false
     });
 });
