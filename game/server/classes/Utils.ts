@@ -283,6 +283,18 @@ class Util {
         if (!res) return false;
         return res._id;
     };
+
+    async IsPlayerInJail(source: number): Promise<boolean> {
+        try {
+            const player = await exports['qb-core'].GetPlayer(source);
+            if (!player) return false;
+            
+            const metadata = player.PlayerData.metadata;
+            return metadata && metadata.injail && metadata.injail > 0;
+        } catch (error) {
+            return false;
+        }
+    };
 }
 
 export const Utils = new Util();

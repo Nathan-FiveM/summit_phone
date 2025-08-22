@@ -44,3 +44,9 @@ on('__cfx_nui:blockNumber', async (data: string, cb: Function) => {
     const res = await triggerServerCallback('phone:server:toggleBlockNumber', 1, data);
     cb(res);
 });
+
+RegisterNuiCallbackType('jailPhoneCall');
+on('__cfx_nui:jailPhoneCall', async (data: string, cb: Function) => {
+    const res = await triggerServerCallback('summit_phone:server:jailCall', 1, data);
+    cb(res);
+});

@@ -6,6 +6,7 @@ import { NUI } from "@client/classes/NUI";
 import { generateUUid } from "@shared/utils";
 import { Animation } from "@client/classes/Animation";
 import { Utils } from "@client/classes/Utils";
+import { triggerServerCallback } from "@overextended/ox_lib/client";
 
 onNet('summit_phone:server:addCallingNotification', (dataX: string) => {
     const data: {
@@ -105,4 +106,29 @@ onNet('phone:client:phoneOpenedDuringCall', () => {
     // This ensures the phone state is properly tracked
     const state = LocalPlayer.state;
     state.set('onPhone', true, true);
+});
+
+// Jail phone call events
+onNet('summit_phone:client:jailPhoneCall', async (phoneNumber: string) => {
+    // Trigger the jail call callback
+    const result = await triggerServerCallback("summit_phone:server:jailCall", 1, JSON.stringify({
+        number: phoneNumber,
+        volume: 1.0
+    }));
+    
+    if (!result) {
+        // Call failed, show notification
+        NUI.sendReactMessage('addNotification', {
+            id: generateUUid(),
+            title: 'Call Failed',
+            description: 'Unable to make call from jail phone',
+            app: 'phone',
+            timeout: 3000,
+        });
+    }
+});
+
+onNet('summit_phone:client:endJailCall', () => {
+    // End any active jail call
+    NUI.sendReactMessage('endCall', {});
 });
