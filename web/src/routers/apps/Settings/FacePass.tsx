@@ -77,12 +77,12 @@ export default function FacePass() {
                             <path d="M7 16.5L1.34983 9.43729C1.14531 9.18163 1.14531 8.81837 1.34983 8.56271L7 1.5" stroke="#0A84FF" strokeWidth="2" strokeLinecap="round" />
                         </svg>
                         <div style={{
-                            width: "1.71875vw",
-                            height: "0.9375vw",
+                            width: "3.06vh",
+                            height: "1.67vh",
                             fontStyle: "normal",
                             fontWeight: 500,
-                            fontSize: "0.78125vw",
-                            lineHeight: "0.9375vw",
+                            fontSize: "1.39vh",
+                            lineHeight: "1.67vh",
                             textAlign: "center",
                             color: "#0A84FF",
                             flex: "none",
@@ -90,7 +90,7 @@ export default function FacePass() {
                             flexGrow: 0,
                         }}>Back</div>
                     </div>
-                    <div className="name" style={{ width: 'auto', marginLeft: '0.7vw' }}>Privacy Settings</div>
+                    <div className="name" style={{ width: 'auto', marginLeft: '1.24vh' }}>Privacy Settings</div>
                 </div>
                 <div className="contasa" style={{
                     cursor: 'pointer'
@@ -111,7 +111,7 @@ export default function FacePass() {
                     <div className="title">Change Passcode</div>
                     <svg onClick={() => {
                         setShowPasscode(true);
-                    }} xmlns="http://www.w3.org/2000/svg" width="0.4166666666666667vw" height="0.8854166666666666vw" viewBox="0 0 8 17" fill="none">
+                    }} xmlns="http://www.w3.org/2000/svg" width="0.74vh" height="1.57vh" viewBox="0 0 8 17" fill="none">
                         <path d="M1 16L6.65017 8.93729C6.85469 8.68163 6.85469 8.31837 6.65017 8.06271L1 1" stroke="#D0D0D0" strokeWidth="2" strokeLinecap="round" />
                     </svg>
                 </div>
@@ -155,12 +155,12 @@ export default function FacePass() {
                                     <path d="M7 16.5L1.34983 9.43729C1.14531 9.18163 1.14531 8.81837 1.34983 8.56271L7 1.5" stroke="#0A84FF" strokeWidth="2" strokeLinecap="round" />
                                 </svg>
                                 <div style={{
-                                    width: "1.71875vw",
-                                    height: "0.9375vw",
+                                    width: "3.06vh",
+                                    height: "1.67vh",
                                     fontStyle: "normal",
                                     fontWeight: 500,
-                                    fontSize: "0.78125vw",
-                                    lineHeight: "0.9375vw",
+                                    fontSize: "1.39vh",
+                                    lineHeight: "1.67vh",
                                     textAlign: "center",
                                     color: "#0A84FF",
                                     flex: "none",
@@ -168,22 +168,22 @@ export default function FacePass() {
                                     flexGrow: 0,
                                 }}>Back</div>
                             </div>
-                            <div className="name" style={{ width: 'auto', marginLeft: '0.6vw' }}>Passcode Change</div>
+                            <div className="name" style={{ width: 'auto', marginLeft: '1.07vh' }}>Passcode Change</div>
                         </div>
                         <div style={{
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
-                            marginTop: '2.5vw'
+                            marginTop: '4.44vh'
                         }}>
                             <div style={{
                                 color: "#FFF",
                                 textAlign: "center",
-                                fontSize: "0.9375vw",
+                                fontSize: "1.67vh",
                                 fontStyle: "normal",
                                 fontWeight: 500,
                                 lineHeight: "normal",
-                                marginBottom: '0.5vw'
+                                marginBottom: '0.89vh'
                             }}>Enter Passcode</div>
                             <CircleFillers type={phoneSettings.lockPin.length} length={newPasscode.length} mt="" error={false} />
                         </div>
@@ -195,7 +195,7 @@ export default function FacePass() {
                             } else if(newPasscode.length < phoneSettings.lockPin.length) {
                                 setNewPasscode(newPasscode + e);
                             }
-                        }} mt="17.5vw"/>
+                        }} mt="31.11vh"/>
                     </div>}
                 </Transition>
                 <Transition
@@ -224,12 +224,12 @@ export default function FacePass() {
                                     <path d="M7 16.5L1.34983 9.43729C1.14531 9.18163 1.14531 8.81837 1.34983 8.56271L7 1.5" stroke="#0A84FF" strokeWidth="2" strokeLinecap="round" />
                                 </svg>
                                 <div style={{
-                                    width: "1.71875vw",
-                                    height: "0.9375vw",
+                                    width: "3.06vh",
+                                    height: "1.67vh",
                                     fontStyle: "normal",
                                     fontWeight: 500,
-                                    fontSize: "0.78125vw",
-                                    lineHeight: "0.9375vw",
+                                    fontSize: "1.39vh",
+                                    lineHeight: "1.67vh",
                                     textAlign: "center",
                                     color: "#0A84FF",
                                     flex: "none",
@@ -237,22 +237,22 @@ export default function FacePass() {
                                     flexGrow: 0,
                                 }}>Back</div>
                             </div>
-                            <div className="name" style={{ width: 'auto', marginLeft: '0.6vw' }}>Passcode Change</div>
+                            <div className="name" style={{ width: 'auto', marginLeft: '1.07vh' }}>Passcode Change</div>
                         </div>
                         <div style={{
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
-                            marginTop: '2.5vw'
+                            marginTop: '4.44vh'
                         }}>
                             <div style={{
                                 color: "#FFF",
                                 textAlign: "center",
-                                fontSize: "0.9375vw",
+                                fontSize: "1.67vh",
                                 fontStyle: "normal",
                                 fontWeight: 500,
                                 lineHeight: "normal",
-                                marginBottom: '0.5vw'
+                                marginBottom: '0.89vh'
                             }}>Enter New Passcode</div>
                             <CircleFillers type={phoneSettings.lockPin.length} length={confirmPasscode.length} mt="" error={false} />
                         </div>
@@ -264,7 +264,7 @@ export default function FacePass() {
                             } else if(confirmPasscode.length < phoneSettings.lockPin.length) {
                                 setConfirmPasscode(confirmPasscode + e);
                             }
-                        }} mt="17.5vw"/>
+                        }} mt="31.11vh"/>
                     </div>}
                 </Transition>
                 <Transition
@@ -294,12 +294,12 @@ export default function FacePass() {
                                     <path d="M7 16.5L1.34983 9.43729C1.14531 9.18163 1.14531 8.81837 1.34983 8.56271L7 1.5" stroke="#0A84FF" strokeWidth="2" strokeLinecap="round" />
                                 </svg>
                                 <div style={{
-                                    width: "1.71875vw",
-                                    height: "0.9375vw",
+                                    width: "3.06vh",
+                                    height: "1.67vh",
                                     fontStyle: "normal",
                                     fontWeight: 500,
-                                    fontSize: "0.78125vw",
-                                    lineHeight: "0.9375vw",
+                                    fontSize: "1.39vh",
+                                    lineHeight: "1.67vh",
                                     textAlign: "center",
                                     color: "#0A84FF",
                                     flex: "none",
@@ -307,22 +307,22 @@ export default function FacePass() {
                                     flexGrow: 0,
                                 }}>Back</div>
                             </div>
-                            <div className="name" style={{ width: 'auto', marginLeft: '0.6vw' }}>Passcode Change</div>
+                            <div className="name" style={{ width: 'auto', marginLeft: '1.07vh' }}>Passcode Change</div>
                         </div>
                         <div style={{
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
-                            marginTop: '2.5vw'
+                            marginTop: '4.44vh'
                         }}>
                             <div style={{
                                 color: "#FFF",
                                 textAlign: "center",
-                                fontSize: "0.9375vw",
+                                fontSize: "1.67vh",
                                 fontStyle: "normal",
                                 fontWeight: 500,
                                 lineHeight: "normal",
-                                marginBottom: '0.5vw'
+                                marginBottom: '0.89vh'
                             }}>Confirm New Passcode</div>
                             <CircleFillers type={phoneSettings.lockPin.length} length={newConfirmPasscode.length} mt="" error={false} />
                         </div>
@@ -334,7 +334,7 @@ export default function FacePass() {
                             } else if(newConfirmPasscode.length < phoneSettings.lockPin.length) {
                                 setNewConfirmPasscode(newConfirmPasscode + e);
                             }
-                        }} mt="17.5vw"/>
+                        }} mt="31.11vh"/>
                     </div>}
                 </Transition>
             </div>}

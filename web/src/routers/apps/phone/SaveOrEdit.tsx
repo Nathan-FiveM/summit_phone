@@ -32,7 +32,7 @@ export default function SaveOrEdit(props: { data: PhoneContacts, onCancel(): voi
                     height: '80%',
                     width: '100%',
                     backgroundColor: "#1C1C1E",
-                    borderRadius: '0.5208333333333334vw 0.5208333333333334vw 2.2395833333333335vw 2.2395833333333335vw'
+                    borderRadius: '0.93vh 0.93vh 3.98vh 3.98vh'
                 }}>
                     <div className="save-or-edit-top-buttons">
                         <div onClick={() => {
@@ -63,23 +63,23 @@ export default function SaveOrEdit(props: { data: PhoneContacts, onCancel(): voi
                     </div>
                     <Avatar
                         src={image ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"}
-                        size={'6.614583333333333vw'}
-                        mt={'1.0416666666666667vw'}
+                        size={'11.76vh'}
+                        mt={'1.85vh'}
                     />
                     <TextInput value={image} placeholder="Photo URL" styles={{
                         input: {
-                            width: '11.25vw',
-                            minHeight: '0.78125vw',
-                            height: '1.0416666666666667vw',
+                            width: '20.00vh',
+                            minHeight: '1.39vh',
+                            height: '1.85vh',
                             border: 'none',
                             background: '#313035',
-                            borderRadius: '0.15625vw',
-                            marginTop: '0.5vw',
+                            borderRadius: '0.28vh',
+                            marginTop: '0.89vh',
                             fontFamily: 'SFPro',
                             fontStyle: 'normal',
                             fontWeight: 500,
-                            fontSize: '0.5208333333333334vw',
-                            lineHeight: '0.5729166666666666vw',
+                            fontSize: '0.93vh',
+                            lineHeight: '1.02vh',
                             letterSpacing: '0.04em',
                             color: 'rgba(255, 255, 255, 0.5)'
                         }
@@ -88,18 +88,18 @@ export default function SaveOrEdit(props: { data: PhoneContacts, onCancel(): voi
                         onBlur={() => fetchNui('disableControls', false)}
                         onChange={(e) => setImage(e.currentTarget.value)}
                     />
-                    <TextInput value={firstName} placeholder="First Name" w={'100%'} h={'1.5625vw'} mt={'1.0416666666666667vw'} styles={{
+                    <TextInput value={firstName} placeholder="First Name" w={'100%'} h={'2.78vh'} mt={'1.85vh'} styles={{
                         input: {
                             width: '100%',
-                            minHeight: '0.78125vw',
-                            height: '1.5625vw',
+                            minHeight: '1.39vh',
+                            height: '2.78vh',
                             border: 'none',
                             background: '#313035',
                             fontFamily: 'SFPro',
                             fontWeight: 500,
-                            borderRadius: '0vw',
-                            fontSize: '0.5729166666666666vw',
-                            lineHeight: '0.5729166666666666vw',
+                            borderRadius: '0.00vh',
+                            fontSize: '1.02vh',
+                            lineHeight: '1.02vh',
                             letterSpacing: '0.04em',
                             color: 'rgba(255, 255, 255, 0.5)'
                         }
@@ -108,18 +108,18 @@ export default function SaveOrEdit(props: { data: PhoneContacts, onCancel(): voi
                         onBlur={() => fetchNui('disableControls', false)}
                         onChange={(e) => setFirstName(e.currentTarget.value)}
                     />
-                    <TextInput value={lastName} placeholder="Last Name" w={'100%'} h={'1.5625vw'} mt={'0.152083333333333336vw'} styles={{
+                    <TextInput value={lastName} placeholder="Last Name" w={'100%'} h={'2.78vh'} mt={'0.27vh'} styles={{
                         input: {
                             width: '100%',
-                            minHeight: '0.78125vw',
-                            height: '1.5625vw',
+                            minHeight: '1.39vh',
+                            height: '2.78vh',
                             border: 'none',
                             background: '#313035',
                             fontFamily: 'SFPro',
                             fontWeight: 500,
-                            borderRadius: '0vw',
-                            fontSize: '0.5729166666666666vw',
-                            lineHeight: '0.5729166666666666vw',
+                            borderRadius: '0.00vh',
+                            fontSize: '1.02vh',
+                            lineHeight: '1.02vh',
                             letterSpacing: '0.04em',
                             color: 'rgba(255, 255, 255, 0.5)'
                         }
@@ -128,18 +128,18 @@ export default function SaveOrEdit(props: { data: PhoneContacts, onCancel(): voi
                         onBlur={() => fetchNui('disableControls', false)}
                         onChange={(e) => setLastName(e.currentTarget.value)}
                     />
-                    <NumberInput value={phoneNumber} placeholder="Phone Number" w={'100%'} h={'1.5625vw'} mt={'0.152083333333333336vw'} styles={{
+                    <NumberInput value={phoneNumber} placeholder="Phone Number" w={'100%'} h={'2.78vh'} mt={'0.27vh'} styles={{
                         input: {
                             width: '100%',
-                            minHeight: '0.78125vw',
-                            height: '1.5625vw',
+                            minHeight: '1.39vh',
+                            height: '2.78vh',
                             border: 'none',
                             background: '#313035',
                             fontFamily: 'SFPro',
                             fontWeight: 500,
-                            borderRadius: '0vw',
-                            fontSize: '0.5729166666666666vw',
-                            lineHeight: '0.5729166666666666vw',
+                            borderRadius: '0.00vh',
+                            fontSize: '1.02vh',
+                            lineHeight: '1.02vh',
                             letterSpacing: '0.04em',
                             color: 'rgba(255, 255, 255, 0.5)'
                         }
@@ -150,18 +150,18 @@ export default function SaveOrEdit(props: { data: PhoneContacts, onCancel(): voi
                         rightSection={<></>}
                     />
 
-                    <Textarea value={notes} placeholder="Notes" w={'100%'} h={'5.9375vw'} mt={'0.6770833333333334vw'} styles={{
+                    <Textarea value={notes} placeholder="Notes" w={'100%'} h={'10.56vh'} mt={'1.20vh'} styles={{
                         input: {
                             width: '100%',
-                            minHeight: '1.5625vw',
-                            height: '5.9375vw',
+                            minHeight: '2.78vh',
+                            height: '10.56vh',
                             border: 'none',
                             background: '#313035',
                             fontFamily: 'SFPro',
                             fontWeight: 500,
-                            borderRadius: '0vw',
-                            fontSize: '0.5729166666666666vw',
-                            lineHeight: '0.5729166666666666vw',
+                            borderRadius: '0.00vh',
+                            fontSize: '1.02vh',
+                            lineHeight: '1.02vh',
                             letterSpacing: '0.04em',
                             color: 'rgba(255, 255, 255, 0.5)'
                         }
@@ -171,24 +171,24 @@ export default function SaveOrEdit(props: { data: PhoneContacts, onCancel(): voi
                         onChange={(e) => setNotes(e.currentTarget.value)}
                     />
 
-                    <TextInput value={email} placeholder="Email" w={'100%'} h={'1.5625vw'} mt={'0.5729166666666666vw'} styles={{
+                    <TextInput value={email} placeholder="Email" w={'100%'} h={'2.78vh'} mt={'1.02vh'} styles={{
                         input: {
                             width: '100%',
-                            minHeight: '0.78125vw',
-                            height: '1.5625vw',
+                            minHeight: '1.39vh',
+                            height: '2.78vh',
                             border: 'none',
                             background: '#313035',
                             fontFamily: 'SFPro',
                             fontWeight: 500,
-                            borderRadius: '0vw',
-                            fontSize: '0.5729166666666666vw',
-                            lineHeight: '0.5729166666666666vw',
+                            borderRadius: '0.00vh',
+                            fontSize: '1.02vh',
+                            lineHeight: '1.02vh',
                             letterSpacing: '0.04em',
                             color: 'rgba(255, 255, 255, 0.5)'
                         }
                     }}
                         leftSection={
-                            <svg width="0.7291666666666666vw" height="0.7291666666666666vw" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <svg width="1.30vh" height="1.30vh" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <circle cx="7" cy="7" r="7" fill="url(#paint0_linear_241_190)" />
                                 <path d="M6.65714 6.65714V3H7.34286V6.65714H11V7.34286H7.34286V11H6.65714V7.34286H3V6.65714H6.65714Z" fill="white" />
                                 <defs>

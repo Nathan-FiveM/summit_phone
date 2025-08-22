@@ -44,11 +44,11 @@ export default function PhoneContextMenu() {
             }}>
                 <div style={{
                     display: 'flex',
-                    width: '15.416666666666666vw',
-                    padding: '0.5208333333333334vw 0px 0.46875vw 0px',
+                    width: '27.41vh',
+                    padding: '0.93vh 0px 0.83vh 0px',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    borderRadius: '0.3125vw',
+                    borderRadius: '0.56vh',
                     background: '#373737',
                 }} onClick={()=>{
                     fetchNui('phone:contextMenu:close');
@@ -58,7 +58,7 @@ export default function PhoneContextMenu() {
                         alignSelf: 'stretch',
                         color: '#FF3E41',
                         textAlign: 'center',
-                        fontSize: '1.0416666666666667vw',
+                        fontSize: '1.85vh',
                         fontStyle: 'normal',
                         fontWeight: 500,
                         lineHeight: 'normal',
@@ -66,23 +66,23 @@ export default function PhoneContextMenu() {
                 </div>
 
                 <div style={{
-                    maxHeight: '14vw',
-                    marginBottom: '0.5208333333333334vw',
+                    maxHeight: '24.89vh',
+                    marginBottom: '0.93vh',
                     overflowY: 'auto',
                     overflowX: 'hidden',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '0.05vw'
+                    gap: '0.09vh'
                 }}>
                     {contextData.map((data, index) => {
                         return (
                             <div key={index} style={{
                                 display: 'flex',
-                                width: '15.416666666666666vw',
-                                padding: '0.5208333333333334vw 0px 0.46875vw 0px',
+                                width: '27.41vh',
+                                padding: '0.93vh 0px 0.83vh 0px',
                                 justifyContent: 'center',
                                 alignItems: 'center',
-                                borderRadius: '0.2125vw',
+                                borderRadius: '0.38vh',
                                 background: '#373737',
                             }} onClick={async () => {
                                 await fetchNui('phone:contextMenu:click', data);
@@ -91,7 +91,7 @@ export default function PhoneContextMenu() {
                                     alignSelf: 'stretch',
                                     color: 'rgba(255, 255, 255, 0.79)',
                                     textAlign: 'center',
-                                    fontSize: '0.9895833333333334vw',
+                                    fontSize: '1.76vh',
                                     fontStyle: 'normal',
                                     fontWeight: 400,
                                     lineHeight: 'normal',

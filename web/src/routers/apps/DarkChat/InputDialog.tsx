@@ -23,13 +23,13 @@ export default function InputDialog(props: { show: boolean, title: string, descr
                 zIndex: 10,
             }}>
                 <div style={{
-                    width: '14.739583333333334vw',
-                    height: '8.072916666666666vw',
+                    width: '26.20vh',
+                    height: '14.35vh',
                     flexShrink: 0,
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    borderRadius: '0.6770833333333334vw',
+                    borderRadius: '1.20vh',
                     backgroundColor: '#3C3C3C'
                 }}>
                     <div style={{
@@ -37,8 +37,8 @@ export default function InputDialog(props: { show: boolean, title: string, descr
                         height: '10%',
                         textAlign: 'center',
                         color: '#FFF',
-                        marginTop: '0.3645833333333333vw',
-                        fontSize: '0.8854166666666666vw',
+                        marginTop: '0.65vh',
+                        fontSize: '1.57vh',
                         fontStyle: 'normal',
                         fontWeight: 500,
                         lineHeight: 'normal',
@@ -50,37 +50,37 @@ export default function InputDialog(props: { show: boolean, title: string, descr
                         height: '10%',
                         textAlign: 'center',
                         color: '#FFF',
-                        marginTop: '0.8vw',
-                        fontSize: '0.5729166666666666vw',
+                        marginTop: '1.42vh',
+                        fontSize: '1.02vh',
                         fontStyle: 'normal',
                         fontWeight: 500,
                         lineHeight: 'normal',
                     }}>
                         {props.description}
                     </div>
-                    <TextInput onFocus={() => fetchNui("disableControls", true)} onBlur={() => fetchNui("disableControls", false)} placeholder={props.placeholder} style={{ width: '80%', marginTop: '1.3vw' }} styles={{
+                    <TextInput onFocus={() => fetchNui("disableControls", true)} onBlur={() => fetchNui("disableControls", false)} placeholder={props.placeholder} style={{ width: '80%', marginTop: '2.31vh' }} styles={{
                         root: {
-                            minHeight: '0vw',
-                            height: '1.3vw',
+                            minHeight: '0.00vh',
+                            height: '2.31vh',
                         },
                         input: {
-                            minHeight: '0vw',
-                            height: '1.3vw',
+                            minHeight: '0.00vh',
+                            height: '2.31vh',
                             backgroundColor: 'rgba(182, 182, 182, 0.12)',
                             color: '#FFF',
-                            fontSize: '0.7vw',
+                            fontSize: '1.24vh',
                             border: 'none',
-                            borderRadius: '0.2604166666666667vw',
+                            borderRadius: '0.46vh',
                             textAlign: 'center',
                         },
                     }} value={value} onChange={(e) => setValue(e.currentTarget.value)} />
                     <div style={{
                         width: '100%',
-                        height: '1.9vw',
-                        borderTop: '0.052083333333333336vw solid rgba(255, 255, 255, 0.17)',
+                        height: '3.38vh',
+                        borderTop: '0.09vh solid rgba(255, 255, 255, 0.17)',
                         display: 'flex',
                         justifyContent: 'space-between',
-                        marginTop: '0.7645833333333333vw',
+                        marginTop: '1.36vh',
                     }}>
                         <div style={{
                             width: '50%',
@@ -88,11 +88,11 @@ export default function InputDialog(props: { show: boolean, title: string, descr
                             alignItems: 'center',
                             justifyContent: 'center',
                             color: '#FFF',
-                            fontSize: '0.725vw',
+                            fontSize: '1.29vh',
                             fontStyle: 'normal',
                             fontWeight: 500,
                             lineHeight: 'normal',
-                            borderRight: '0.052083333333333336vw solid rgba(255, 255, 255, 0.17)',
+                            borderRight: '0.09vh solid rgba(255, 255, 255, 0.17)',
                             cursor: 'pointer',
                         }} onClick={() => {
                             props.onCancel();
@@ -106,7 +106,7 @@ export default function InputDialog(props: { show: boolean, title: string, descr
                             alignItems: 'center',
                             justifyContent: 'center',
                             color: '#FFF',
-                            fontSize: '0.725vw',
+                            fontSize: '1.29vh',
                             fontStyle: 'normal',
                             fontWeight: 500,
                             lineHeight: 'normal',

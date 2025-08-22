@@ -81,7 +81,7 @@ export default function App() {
           show: true,
           type: 'success',
           timeout: 1000,
-          content: <svg xmlns="http://www.w3.org/2000/svg" width="2.8vw" height="2.8vw" viewBox="0 0 55 55" fill="none">
+          content: <svg xmlns="http://www.w3.org/2000/svg" width="4.98vh" height="4.98vh" viewBox="0 0 55 55" fill="none">
             <path d="M16.1667 2H15.6C10.8395 2 8.45932 2 6.64109 2.92644C5.0417 3.74137 3.74137 5.0417 2.92644 6.64109C2 8.45932 2 10.8395 2 15.6V16.1667M16.1667 53H15.6C10.8395 53 8.45932 53 6.64109 52.0735C5.0417 51.2586 3.74137 49.9584 2.92644 48.359C2 46.5406 2 44.1606 2 39.4V38.8333M53 16.1667V15.6C53 10.8395 53 8.45932 52.0735 6.64109C51.2586 5.0417 49.9584 3.74137 48.359 2.92644C46.5406 2 44.1606 2 39.4 2H38.8333M53 38.8333V39.4C53 44.1606 53 46.5406 52.0735 48.359C51.2586 49.9584 49.9584 51.2586 48.359 52.0735C46.5406 53 44.1606 53 39.4 53H38.8333M14.75 16.1667V20.4167M40.25 16.1667V20.4167M24.6667 29.2003C26.9333 29.2003 28.9167 27.2169 28.9167 24.9503V16.1667M36.5672 36.5667C31.4672 41.6667 23.2506 41.6667 18.1506 36.5667" stroke="rgba(0,255,0,0.8)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         });
@@ -158,19 +158,19 @@ export default function App() {
 
   return (
     <div style={{
-      width: '20.083333333333332vw',
-      height: '37.208333333333336vw',
+      width: '35.70vh',
+      height: '66.15vh',
       display: 'flex',
       justifyContent: 'start',
       alignItems: 'start',
-      marginTop: visible && location.page.camera === 'landscape' ? '45vh' : visible ? '0vh' : (notificationPush || inCall || showNotiy) && !cursor ? '80vh' : '100vh',
+      marginTop: visible && location.page.camera === 'landscape' ? '45.00vh' : visible ? '0.00vh' : (notificationPush || inCall || showNotiy) && !cursor ? '80.00vh' : '100.00vh',
       transition: 'all 0.9s ease',
       backgroundImage: `url(${primaryColor === 'blue' ? blueFrame : primaryColor === 'gold' ? goldFrame : primaryColor === 'green' ? greenFrame : primaryColor === 'purple' ? purpleFrame : primaryColor === 'red' ? redFrame : ''})`,
       backgroundRepeat: 'no-repeat',
       backgroundSize: 'contain',
       filter: `brightness(${brightness + 30}%)`,
       transform: location.page.camera === 'landscape' ? 'rotate(-90deg)' : 'rotate(0deg)',
-      marginRight: location.page.camera === 'landscape' ? '9vw' : '0vw',
+      marginRight: location.page.camera === 'landscape' ? '16.00vh' : '0.00vh',
     }}>
       <div className="innerFrame" style={{
         backgroundImage: `url(${phoneSettings?.background?.current || phoneBg})`,

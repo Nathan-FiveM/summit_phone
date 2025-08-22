@@ -1,10 +1,10 @@
 export default function Title(props: { title: string, mt?: string, mb?: string, fontSize?: string }) {
     return (
         <div style={{
-            width: '15.052083333333334vw',
+            width: '26.76vh',
             color: '#FFF',
             fontFamily: "SFPro",
-            fontSize: props.fontSize ?? '1.5625vw',
+            fontSize: props.fontSize ?? '2.78vh',
             fontStyle: 'normal',
             fontWeight: 700,
             lineHeight: 'normal',

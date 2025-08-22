@@ -78,7 +78,7 @@ export default function Phone() {
                         ...styles,
                         position: 'absolute',
                         width: '100%',
-                        top: '1.60vw',
+                        top: '2.84vh',
                         height: '85.5%',
                         display: 'flex',
                         flexDirection: 'column',
@@ -87,7 +87,7 @@ export default function Phone() {
                         <div className="NumberDialing">
                             {dialedNumber}
                         </div>
-                        <DialpadV3 len={dialedNumber.length} mt="2vw" onClick={async (n) => {
+                        <DialpadV3 len={dialedNumber.length} mt="3.56vh" onClick={async (n) => {
                             if (dialedNumber.length !== 10) {
                                 setDialedNumber(dialedNumber + n);
                             }
@@ -112,7 +112,7 @@ export default function Phone() {
                         ...styles,
                         position: 'absolute',
                         width: '100%',
-                        top: '1.60vw',
+                        top: '2.84vh',
                         height: '85.5%',
                         display: 'flex',
                         flexDirection: 'column',
@@ -123,14 +123,14 @@ export default function Phone() {
                             { label: 'Missed', value: 'missed' },
                         ]} defaultValue={allMissed} onChange={(data) => {
                             setAllMissed(data);
-                        }} mt="0.6vw" w={'6.145833333333333vw'} styles={{
+                        }} mt="1.07vh" w={'10.93vh'} styles={{
                             label: {
                                 color: '#FFF',
                                 fontFamily: 'SFPro',
-                                fontSize: '0.5vw',
+                                fontSize: '0.89vh',
                                 fontWeight: 400,
                                 lineHeight: 'normal',
-                                letterSpacing: '0.05vw',
+                                letterSpacing: '0.09vh',
                             },
                             indicator: {
                                 color: 'white !important',
@@ -144,10 +144,10 @@ export default function Phone() {
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
-                            gap: '0.3125vw',
+                            gap: '0.56vh',
                             overflowY: 'scroll',
                             overflowX: 'hidden',
-                            marginTop: '0.625vw',
+                            marginTop: '1.11vh',
                         }}>
                             {recentCallData && recentCallData.filter(
                                 (call) => allMissed === 'all' ? true : call.status === 'missed'
@@ -156,16 +156,16 @@ export default function Phone() {
                                 return (
                                     <>
                                         <div key={index + "/*-_ds"} style={{
-                                            width: '15.052083333333334vw',
+                                            width: '26.76vh',
                                             display: 'flex',
                                             alignItems: 'center',
                                         }}>
-                                            <Avatar src={contactData?.image ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} size={'1.875vw'} />
+                                            <Avatar src={contactData?.image ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} size={'3.33vh'} />
                                             <div className="" style={{
                                                 display: 'flex',
                                                 flexDirection: 'column',
                                                 alignItems: 'flex-start',
-                                                gap: '0.15625vw',
+                                                gap: '0.28vh',
                                                 flex: '1 0 0',
 
                                                 cursor: 'pointer',
@@ -181,16 +181,16 @@ export default function Phone() {
                                                     display: 'flex',
                                                     alignItems: 'flex-end',
                                                     alignSelf: 'stretch',
-                                                    marginLeft: '0.325vw',
+                                                    marginLeft: '0.58vh',
                                                 }}>
                                                     <div style={{
-                                                        width: '9.1vw',
+                                                        width: '16.18vh',
                                                         whiteSpace: 'nowrap',
                                                         overflow: 'hidden',
                                                         textOverflow: 'ellipsis',
                                                         color: '#FFF',
                                                         fontFamily: 'SFPro',
-                                                        fontSize: '0.78125vw',
+                                                        fontSize: '1.39vh',
                                                         fontStyle: 'normal',
                                                         fontWeight: 700,
                                                         lineHeight: '118.596%',
@@ -201,9 +201,9 @@ export default function Phone() {
                                                     <div style={{
                                                         flex: '1 0 0',
                                                         color: 'rgba(255, 255, 255, 0.41)',
-                                                        fontSize: '0.5208333333333334vw',
+                                                        fontSize: '0.93vh',
                                                         lineHeight: '118.596%',
-                                                        letterSpacing: '0.015625vw',
+                                                        letterSpacing: '0.03vh',
                                                     }}>
                                                         {dayjs(call.callTimestamp).format('hh:mm A')}
                                                     </div>
@@ -211,19 +211,19 @@ export default function Phone() {
                                                 <div style={{
                                                     display: 'flex',
                                                     alignItems: 'center',
-                                                    gap: '0.1665625vw',
+                                                    gap: '0.30vh',
                                                     alignSelf: 'stretch',
-                                                    marginLeft: '0.325vw',
+                                                    marginLeft: '0.58vh',
                                                 }}>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="0.5729166666666666vw" height="0.5729166666666666vw" viewBox="0 0 11 10" fill="none">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.02vh" height="1.02vh" viewBox="0 0 11 10" fill="none">
                                                         <path d="M10.103 8.95457C10.5057 8.25376 10.2827 7.71551 9.56956 7.17697C8.73125 6.54385 7.91198 6.11799 7.3229 6.80015C7.3229 6.80015 6.69775 7.54437 4.85805 5.80284C2.71879 3.76361 3.61662 3.04037 3.61662 3.04037C4.36064 2.29238 3.88769 1.73437 3.26369 0.889256C2.63975 0.0441589 2.00944 -0.223321 1.10457 0.503506C-0.63913 1.90419 1.81959 5.19302 3.06273 6.47184L3.06268 6.47193C3.06268 6.47193 4.95307 8.42728 6.14265 9.07821L6.77903 9.43405C7.69176 9.90243 8.71698 10.1168 9.43876 9.68191C9.43876 9.68194 9.78669 9.50297 10.103 8.95457Z" fill="white" fillOpacity="0.41" />
                                                         <path d="M8.11731 2.11713H6.46304C6.34238 2.11713 6.24456 2.21494 6.24456 2.33561C6.24456 2.45627 6.34238 2.55409 6.46304 2.55409H7.59587L6.09487 4.04209C6.00917 4.12704 6.00856 4.26538 6.09353 4.35106C6.13625 4.39416 6.19246 4.41573 6.24871 4.41573C6.3043 4.41573 6.35991 4.39464 6.40251 4.35241L7.89883 2.86906V4.01586C7.89883 4.13652 7.99665 4.23434 8.11731 4.23434C8.23797 4.23434 8.33579 4.13652 8.33579 4.01586V2.33561C8.33579 2.21494 8.23797 2.11713 8.11731 2.11713Z" fill="white" fillOpacity="0.41" />
                                                     </svg>
                                                     <div style={{
                                                         color: 'rgba(255, 255, 255, 0.41)',
-                                                        fontSize: '0.55vw',
+                                                        fontSize: '0.98vh',
                                                         lineHeight: '118.596%',
-                                                        letterSpacing: '0.0140625vw',
+                                                        letterSpacing: '0.03vh',
                                                     }}>Mobile</div>
                                                 </div>
                                             </div>
@@ -237,13 +237,13 @@ export default function Phone() {
                                                         phone: 'savedcontact'
                                                     }
                                                 })
-                                            }} className='clickanimation' xmlns="http://www.w3.org/2000/svg" width="0.88125vw" height="0.88125vw" viewBox="0 0 15 15" fill="none">
+                                            }} className='clickanimation' xmlns="http://www.w3.org/2000/svg" width="1.57vh" height="1.57vh" viewBox="0 0 15 15" fill="none">
                                                 <path d="M6.67551 4.67308C6.67551 4.85159 6.74642 5.02279 6.87265 5.14902C6.99887 5.27524 7.17007 5.34616 7.34859 5.34616C7.5271 5.34616 7.6983 5.27524 7.82452 5.14902C7.95075 5.02279 8.02166 4.85159 8.02166 4.67308C8.02166 4.49457 7.95075 4.32337 7.82452 4.19714C7.6983 4.07091 7.5271 4 7.34859 4C7.17007 4 6.99887 4.07091 6.87265 4.19714C6.74642 4.32337 6.67551 4.49457 6.67551 4.67308Z" fill="#0A84FF" />
                                                 <path d="M8.03848 10.4615V6.15381H6.4231V6.42304H6.96156L6.96156 10.4615H6.4231V10.7307H8.57695V10.4615H8.03848Z" fill="#0A84FF" />
                                                 <path d="M7.50002 0.5C3.63318 0.5 0.5 3.63318 0.5 7.50002C0.5 11.3669 3.63318 14.5 7.50002 14.5C11.3669 14.5 14.5 11.3669 14.5 7.50002C14.5 3.63318 11.3669 0.5 7.50002 0.5ZM7.50002 13.9178C3.96299 13.9178 1.08221 11.0404 1.08221 7.50002C1.08221 3.96299 3.95962 1.08221 7.50002 1.08221C11.037 1.08221 13.9178 3.95962 13.9178 7.50002C13.9178 11.037 11.037 13.9178 7.50002 13.9178Z" fill="#0A84FF" />
                                             </svg>
                                         </div>
-                                        {index === recentCallData.length - 1 ? '' : <div className="divider" key={index + '////_+'} style={{ marginTop: '0.1vw' }} />}
+                                        {index === recentCallData.length - 1 ? '' : <div className="divider" key={index + '////_+'} style={{ marginTop: '0.18vh' }} />}
                                     </>
                                 )
                             })}
@@ -260,7 +260,7 @@ export default function Phone() {
                         ...styles,
                         position: 'absolute',
                         width: '100%',
-                        top: '1.60vw',
+                        top: '2.84vh',
                         height: '85.5%',
                         display: 'flex',
                         flexDirection: 'column',
@@ -273,15 +273,15 @@ export default function Phone() {
                             justifyContent: 'end'
                         }}>
                             <svg style={{
-                                marginTop: '0.5645833333333333vw',
+                                marginTop: '1.00vh',
                             }} className='clickanimation' onClick={() => {
                                 setVisible(true);
-                            }} width="0.8333333333333334vw" height="0.8333333333333334vw" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            }} width="1.48vh" height="1.48vh" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M7.31429 7.31429V0H8.68571V7.31429H16V8.68571H8.68571V16H7.31429V8.68571H0V7.31429H7.31429Z" fill="#0A84FF" />
                             </svg>
                         </div>
                         <Title title="Contacts" mt="0" />
-                        <Searchbar mt="0.3125vw" value={searchValue} onChange={(e) => {
+                        <Searchbar mt="0.56vh" value={searchValue} onChange={(e) => {
                             setSearchValue(e);
                         }} />
                         <div className="divider"></div>
@@ -306,7 +306,7 @@ export default function Phone() {
                                 }
                             })
                         }}>
-                            <Avatar src={playerPhoneCard?.avatar ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} w={'2.74375vw'} h={'2.74375vw  '} />
+                            <Avatar src={playerPhoneCard?.avatar ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} w={'4.88vh'} h={'4.88vh  '} />
                             <div className="details">
                                 <div className="FullName">
                                     {playerPhoneCard.firstName} {playerPhoneCard.lastName}
@@ -328,17 +328,17 @@ export default function Phone() {
                                             <div style={{
                                                 color: 'rgba(255, 255, 255, 0.40)',
                                                 fontFamily: 'SFPro',
-                                                fontSize: '0.78125vw',
+                                                fontSize: '1.39vh',
                                                 fontStyle: 'normal',
                                                 fontWeight: 700,
                                                 lineHeight: '118.596%',
-                                                marginTop: index === 0 ? '' : '0.2125vw',
-                                                letterSpacing: '0.01875vw',
+                                                marginTop: index === 0 ? '' : '0.38vh',
+                                                letterSpacing: '0.03vh',
                                             }}>
                                                 {letter}
                                                 <div style={{
-                                                    width: '14.427083333333334vw',
-                                                    height: '0.026041666666666668vw',
+                                                    width: '25.65vh',
+                                                    height: '0.05vh',
                                                     background: 'rgba(255, 255, 255, 0.15)',
                                                 }} />
                                             </div>
@@ -348,11 +348,11 @@ export default function Phone() {
                                                 return (
                                                     <div style={{
                                                         display: 'flex',
-                                                        height: '1.39375vw',
+                                                        height: '2.48vh',
                                                         flexDirection: 'column',
                                                         justifyContent: 'flex-end',
                                                         alignItems: 'flex-start',
-                                                        gap: '0.15625vw',
+                                                        gap: '0.28vh',
                                                         flexShrink: 0,
                                                         alignSelf: 'stretch',
                                                         cursor: 'pointer',
@@ -369,17 +369,17 @@ export default function Phone() {
                                                         <div style={{
                                                             color: '#FFF',
                                                             fontFamily: 'SFPro',
-                                                            fontSize: '0.78125vw',
+                                                            fontSize: '1.39vh',
                                                             fontStyle: 'normal',
                                                             fontWeight: 700,
                                                             lineHeight: '120.596%',
-                                                            letterSpacing: '0.01875vw',
+                                                            letterSpacing: '0.03vh',
                                                         }}>
                                                             {contact.firstName} {contact.lastName}
                                                         </div>
                                                         <div style={{
-                                                            width: '14.427083333333334vw',
-                                                            height: '0.026041666666666668vw',
+                                                            width: '25.65vh',
+                                                            height: '0.05vh',
                                                             background: 'rgba(255, 255, 255, 0.15)',
                                                         }} />
                                                     </div>
@@ -409,7 +409,7 @@ export default function Phone() {
                         ...styles,
                         position: 'absolute',
                         width: '100%',
-                        top: '1.60vw',
+                        top: '2.84vh',
                         height: '85.5%',
                         display: 'flex',
                         flexDirection: 'column',
@@ -421,7 +421,7 @@ export default function Phone() {
                             display: 'flex',
                             justifyContent: 'space-between',
                             alignItems: 'center',
-                            marginTop: '0.5645833333333333vw',
+                            marginTop: '1.00vh',
                         }}>
                             <div style={{
                                 width: '6%',
@@ -430,8 +430,8 @@ export default function Phone() {
                                 fontFamily: 'SFPro',
                                 fontStyle: 'normal',
                                 fontWeight: 700,
-                                fontSize: '1.0416666666666667vw',
-                                lineHeight: '0.9375vw',
+                                fontSize: '1.85vh',
+                                lineHeight: '1.67vh',
                                 textAlign: 'center',
                                 color: '#FFFFFF',
                             }}>
@@ -439,7 +439,7 @@ export default function Phone() {
                             </div>
                             <svg className='clickanimation' onClick={() => {
                                 setVisible(true);
-                            }} width="0.8333333333333334vw" height="0.8333333333333334vw" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            }} width="1.48vh" height="1.48vh" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M7.31429 7.31429V0H8.68571V7.31429H16V8.68571H8.68571V16H7.31429V8.68571H0V7.31429H7.31429Z" fill="#0A84FF" />
                             </svg>
                         </div>
@@ -448,10 +448,10 @@ export default function Phone() {
                             flexDirection: 'column',
                             alignItems: 'flex-start',
                             padding: '0px',
-                            gap: '0.3125vw',
+                            gap: '0.56vh',
                             width: '93%',
                             height: '90%',
-                            marginTop: '1.2vw'
+                            marginTop: '2.13vh'
                         }}>
                             {Object.keys(phoneContacts).filter(
                                 letter => phoneContacts[letter].filter((letter) => letter.isFav).length > 0
@@ -467,57 +467,57 @@ export default function Phone() {
                                                         justifyContent: 'center',
                                                         alignItems: 'center',
                                                         padding: '0px',
-                                                        gap: '0.3125vw',
+                                                        gap: '0.56vh',
                                                         width: '100%',
-                                                        height: '2.2395833333333335vw',
+                                                        height: '3.98vh',
                                                         flex: 'none',
                                                         order: 0,
                                                         alignSelf: 'stretch',
                                                         flexGrow: 0,
-                                                        marginTop: index === 0 ? '0vw' : '0.4125vw',
+                                                        marginTop: index === 0 ? '0.00vh' : '0.73vh',
                                                     }} key={index + '__+'}>
-                                                        <Avatar src={contact?.image ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} size={'2.2395833333333335vw'} style={{ minHeight: '2.2395833333333335vw' }} radius={'50vw'} />
+                                                        <Avatar src={contact?.image ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} size={'3.98vh'} style={{ minHeight: '3.98vh' }} radius={'88.89vh'} />
                                                         <div style={{
                                                             display: 'flex',
                                                             flexDirection: 'column',
                                                             alignItems: 'flex-start',
                                                             padding: '0px',
-                                                            width: '10.979166666666666vw',
-                                                            height: '1.4583333333333333vw',
+                                                            width: '19.52vh',
+                                                            height: '2.59vh',
                                                         }}>
                                                             <div style={{
                                                                 display: 'flex',
                                                                 flexDirection: 'row',
                                                                 alignItems: 'flex-end',
                                                                 padding: '0px',
-                                                                width: '11.979166666666666vw',
-                                                                height: '0.7291666666666666vw',
+                                                                width: '21.30vh',
+                                                                height: '1.30vh',
                                                                 flex: 'none',
                                                                 order: 0,
                                                                 alignSelf: 'stretch',
                                                                 flexGrow: 0,
                                                                 color: '#FFF',
                                                                 fontFamily: 'SFPro',
-                                                                fontSize: '0.78125vw',
+                                                                fontSize: '1.39vh',
                                                                 fontStyle: 'normal',
                                                                 fontWeight: 700,
                                                                 lineHeight: '118.596%',
-                                                                letterSpacing: '0.01875vw',
+                                                                letterSpacing: '0.03vh',
                                                             }}>
                                                                 {contact.firstName} {contact.lastName}
                                                             </div>
                                                             <div style={{
                                                                 display: 'flex',
                                                                 alignItems: 'center',
-                                                                gap: '0.1665625vw',
+                                                                gap: '0.30vh',
                                                                 alignSelf: 'stretch',
                                                                 color: 'rgba(255, 255, 255, 0.41)',
                                                                 fontFamily: 'SFPro',
-                                                                fontSize: '0.5208333333333334vw',
+                                                                fontSize: '0.93vh',
                                                                 fontStyle: 'normal',
                                                                 fontWeight: 700,
                                                                 lineHeight: '180.596%',
-                                                                letterSpacing: '0.0140625vw',
+                                                                letterSpacing: '0.03vh',
                                                             }}>
                                                                 Mobile
                                                             </div>
@@ -531,13 +531,13 @@ export default function Phone() {
                                                                 }
                                                             })
                                                             setSelectedContact(contact);
-                                                        }} className='clickanimation' xmlns="http://www.w3.org/2000/svg" width="1.1458333333333333vw" height="1.1458333333333333vw" viewBox="0 0 15 15" fill="none">
+                                                        }} className='clickanimation' xmlns="http://www.w3.org/2000/svg" width="2.04vh" height="2.04vh" viewBox="0 0 15 15" fill="none">
                                                             <path d="M6.67554 4.67308C6.67554 4.85159 6.74645 5.02279 6.87268 5.14902C6.9989 5.27524 7.1701 5.34616 7.34862 5.34616C7.52713 5.34616 7.69833 5.27524 7.82455 5.14902C7.95078 5.02279 8.02169 4.85159 8.02169 4.67308C8.02169 4.49457 7.95078 4.32337 7.82455 4.19714C7.69833 4.07091 7.52713 4 7.34862 4C7.1701 4 6.9989 4.07091 6.87268 4.19714C6.74645 4.32337 6.67554 4.49457 6.67554 4.67308Z" fill="#0A84FF" />
                                                             <path d="M8.03848 10.4615V6.15381H6.4231V6.42304H6.96156L6.96156 10.4615H6.4231V10.7307H8.57695V10.4615H8.03848Z" fill="#0A84FF" />
                                                             <path d="M7.50002 0.5C3.63318 0.5 0.5 3.63318 0.5 7.50002C0.5 11.3669 3.63318 14.5 7.50002 14.5C11.3669 14.5 14.5 11.3669 14.5 7.50002C14.5 3.63318 11.3669 0.5 7.50002 0.5ZM7.50002 13.9178C3.96299 13.9178 1.08221 11.0404 1.08221 7.50002C1.08221 3.96299 3.95962 1.08221 7.50002 1.08221C11.037 1.08221 13.9178 3.95962 13.9178 7.50002C13.9178 11.037 11.037 13.9178 7.50002 13.9178Z" fill="#0A84FF" />
                                                         </svg>
                                                     </div>
-                                                    <div className="divider" key={index} style={{ marginTop: '0.3vw' }} />
+                                                    <div className="divider" key={index} style={{ marginTop: '0.53vh' }} />
                                                 </>
                                             )
                                         })}

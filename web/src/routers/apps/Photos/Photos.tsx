@@ -77,9 +77,9 @@ export default function Photos(props: { onExit: () => void; onEnter: () => void 
                 className="settings"
             >
                 <div style={{
-                    marginLeft: '0vw',
-                    marginTop: '2vw',
-                    letterSpacing: '0.1vw',
+                    marginLeft: '0.00vh',
+                    marginTop: '3.56vh',
+                    letterSpacing: '0.18vh',
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
@@ -91,7 +91,7 @@ export default function Photos(props: { onExit: () => void; onEnter: () => void 
                         setInputTitle('Import Image');
                         setInputDescription('Import an image from URL.');
                         setInputPlaceholder('Link to image');
-                    }} style={{ marginTop: '0.5vw' }} className='clickanimation' width="1.25vw" height="1.25vw" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    }} style={{ marginTop: '0.89vh' }} className='clickanimation' width="2.22vh" height="2.22vh" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M7.55556 12H12M12 12H16.4444M12 12V16.4444M12 12V7.55556M12 22C6.47716 22 2 17.5229 2 12C2 6.47716 6.47716 2 12 2C17.5229 2 22 6.47716 22 12C22 17.5229 17.5229 22 12 22Z" stroke="#0A84FF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                 </div>
@@ -101,17 +101,17 @@ export default function Photos(props: { onExit: () => void; onEnter: () => void 
                     overflowY: 'auto',
                     overflowX: 'hidden',
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(3.125vw, 1fr))',
-                    gridAutoRows: '3.125vw',
-                    gap: '0.5208333333333334vw',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(5.56vh, 1fr))',
+                    gridAutoRows: '5.56vh',
+                    gap: '0.93vh',
                 }}>
                     {photos && photos.map((photo, i) => {
                         return (
                             <Image onClick={async () => {
                                 await fetchNui('selectPhoto', photo._id);
                             }} key={i} src={photo.link} alt="photo" style={{
-                                width: '3.125vw',
-                                height: '3.125vw',
+                                width: '5.56vh',
+                                height: '5.56vh',
                                 cursor: 'pointer',
                             }} />
                         )
@@ -127,10 +127,10 @@ export default function Photos(props: { onExit: () => void; onEnter: () => void 
                             flexDirection: 'column',
                             justifyContent: 'center',
                             alignItems: 'flex-end',
-                            width: '40vw',
-                            height: '40vw',
+                            width: '71.11vh',
+                            height: '71.11vh',
                         }}>
-                            <ActionIcon onClick={close} size={'1.0416666666666667vw'} variant="default" aria-label="ActionIcon with size as a number">
+                            <ActionIcon onClick={close} size={'1.85vh'} variant="default" aria-label="ActionIcon with size as a number">
                                 X
                             </ActionIcon>
                             <Image src={seletedLink} alt="photo" style={{

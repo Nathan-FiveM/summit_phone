@@ -34,7 +34,7 @@ export default function Header() {
                 <div className="timeText">
                     {time}
                 </div>
-                <svg width="5.4375vw" height="0.625vw" viewBox="0 0 66 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="9.67vh" height="1.11vh" viewBox="0 0 66 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g clipPath="url(#clip0_410_305)">
                         <path d="M11.2778 3.66645C11.2778 3.2369 11.626 2.88867 12.0556 2.88867H12.8334C13.263 2.88867 13.6112 3.23689 13.6112 3.66645V9.8887C13.6112 10.3183 13.263 10.6665 12.8334 10.6665H12.0556C11.626 10.6665 11.2778 10.3183 11.2778 9.8887V3.66645Z" fill="white" />
                         <path d="M15.1666 2.11079C15.1666 1.68123 15.5148 1.33301 15.9444 1.33301H16.7222C17.1517 1.33301 17.5 1.68123 17.5 2.11079V9.88859C17.5 10.3182 17.1517 10.6664 16.7222 10.6664H15.9444C15.5148 10.6664 15.1666 10.3182 15.1666 9.88859V2.11079Z" fill="white" />
@@ -52,7 +52,7 @@ export default function Header() {
                 </svg>
             </div>
 
-            <svg style={{ position: 'relative', zIndex: 100, transition: 'all 0.5s ease' }} width={dynamicNoti.show && dynamicNoti.type === 'error' ? "10vw" : "4.522916666666666vw"} height={dynamicNoti.show && dynamicNoti.type === 'success' ? '7.8vw' : '1.25vw'} viewBox="0 0 87 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg style={{ position: 'relative', zIndex: 100, transition: 'all 0.5s ease' }} width={dynamicNoti.show && dynamicNoti.type === 'error' ? "17.78vh" : "8.04vh"} height={dynamicNoti.show && dynamicNoti.type === 'success' ? '13.87vh' : '2.22vh'} viewBox="0 0 87 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect className={dynamicNoti.show && dynamicNoti.type === 'error' ? 'vibrateAnimation' : ''} width="87" height={dynamicNoti.show && dynamicNoti.type === 'success' ? "87" : '24'} rx={dynamicNoti.show && dynamicNoti.type === 'success' ? "20" : "12"} fill="black" style={{ transition: 'all 0.5s ease' }} />
                 <path d="M69 17C71.7614 17 74 14.7614 74 12C74 9.23858 71.7614 7 69 7C66.2386 7 64 9.23858 64 12C64 14.7614 66.2386 17 69 17Z" fill="#252527" />
                 <circle cx="68.9969" cy="11.9996" r="4.70274" fill="black" stroke="black" strokeWidth="0.392568" />

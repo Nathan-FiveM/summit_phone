@@ -69,8 +69,8 @@ const DraggableIcon: React.FC<DraggableIconProps> = ({ icon, slotId, index, link
                 //@ts-ignore
                 ref={(node) => drag(drop(node))}
                 style={{
-                    width: '2.604vw',
-                    height: '2.604vw',
+                    width: '4.63vh',
+                    height: '4.63vh',
                     backgroundImage: icon ? `url(${icon})` : 'none',
                     backgroundRepeat: 'no-repeat',
                     backgroundSize: 'contain',
@@ -92,8 +92,8 @@ const DraggableIcon: React.FC<DraggableIconProps> = ({ icon, slotId, index, link
                     <svg
                         style={{
                             position: 'absolute',
-                            left: '-0.2vw',
-                            top: '-0.3vw',
+                            left: '-0.36vh',
+                            top: '-0.53vh',
                             zIndex: 2,
                         }}
                         onClick={() => {
@@ -101,8 +101,8 @@ const DraggableIcon: React.FC<DraggableIconProps> = ({ icon, slotId, index, link
                             const updatedSlots = deleteIconById(id, slots);
                             setSlots(updatedSlots);
                         }}
-                        width="0.78125vw"
-                        height="0.78125vw"
+                        width="1.39vh"
+                        height="1.39vh"
                         viewBox="0 0 15 15"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"

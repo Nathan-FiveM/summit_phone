@@ -49,15 +49,15 @@ export default function CreateNew(props: { location: string }) {
             }}>
                 <div className="headerButtons" style={{
                     width: '100%',
-                    marginTop: '2.2vw',
-                    marginLeft: '-0.4vw',
+                    marginTop: '3.91vh',
+                    marginLeft: '-0.71vh',
                     display: 'flex',
                     justifyContent: 'space-between',
                 }}>
                     <Button variant="transparent" style={{
                         color: 'white',
-                        height: '1.8vw',
-                        borderRadius: '0.7vw',
+                        height: '3.20vh',
+                        borderRadius: '1.24vh',
                     }} onClick={() => {
                         setLocation({
                             app: 'pigeon',
@@ -69,8 +69,8 @@ export default function CreateNew(props: { location: string }) {
                     }}>Cancel</Button>
                     <Button variant="filled" style={{
                         color: 'white',
-                        height: '1.7vw',
-                        borderRadius: '1vw',
+                        height: '3.02vh',
+                        borderRadius: '1.78vh',
                     }} onClick={() => {
                         fetchNui('postTweet', JSON.stringify({
                             content: content,
@@ -96,16 +96,16 @@ export default function CreateNew(props: { location: string }) {
                     <div style={{
                         display: 'flex',
                         flexDirection: 'column',
-                        gap: '1vw',
+                        gap: '1.78vh',
                     }}>
-                        <Avatar src={profileData.avatar.length > 0 ? profileData.avatar : "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} size={'1.5vw'} />
+                        <Avatar src={profileData.avatar.length > 0 ? profileData.avatar : "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} size={'2.67vh'} />
                         <ActionIcon variant="filled" onClick={() => {
                             setInputTitle('Attach Image');
                             setInputDescription('Attach an image to your post');
                             setInputPlaceholder('Image URL');
                             setInputShow(true);
                         }}>
-                            <svg width="0.78125vw" height="0.78125vw" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <svg width="1.39vh" height="1.39vh" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M8.4375 0.9375C8.4375 0.419733 8.01777 0 7.5 0C6.98223 0 6.5625 0.419733 6.5625 0.9375V6.5625H0.9375C0.419733 6.5625 0 6.98223 0 7.5C0 8.01777 0.419733 8.4375 0.9375 8.4375H6.5625V14.0625C6.5625 14.5803 6.98223 15 7.5 15C8.01777 15 8.4375 14.5803 8.4375 14.0625V8.4375H14.0625C14.5803 8.4375 15 8.01777 15 7.5C15 6.98223 14.5803 6.5625 14.0625 6.5625H8.4375V0.9375Z" fill="white" />
                             </svg>
                         </ActionIcon>
@@ -114,14 +114,14 @@ export default function CreateNew(props: { location: string }) {
                         setContent(e.currentTarget.value)
                     }} value={content} styles={{
                         root: {
-                            height: '15vw',
+                            height: '26.67vh',
                             width: '100%',
                             backgroundColor: 'rgba(240, 23, 23, 0)',
                         },
                         input: {
                             color: 'white',
                             backgroundColor: 'rgba(255, 255, 255, 0)',
-                            height: '15vw',
+                            height: '26.67vh',
                             outline: 'none',
                             border: 'none',
                         }
@@ -132,16 +132,16 @@ export default function CreateNew(props: { location: string }) {
                     height: '41%',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '0.3vw',
+                    gap: '0.53vh',
                     overflowX: 'hidden',
                     overflowY: 'auto',
                 }}>
                     {imageAttachment.map((image, index) => {
                         return <img key={index} src={image} style={{
-                            width: '15vw',
-                            height: '10vw',
+                            width: '26.67vh',
+                            height: '17.78vh',
                             objectFit: 'cover',
-                            borderRadius: '0.5vw',
+                            borderRadius: '0.89vh',
                         }} onError={() => {
                             setImageAttachment(imageAttachment.filter((_, i) => i !== index));
                         }} />

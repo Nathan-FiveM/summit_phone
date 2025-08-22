@@ -31,19 +31,19 @@ export default function SelectedData(props: { show: boolean, data: GarageData, o
                 backgroundColor: 'rgb(36, 36, 36)',
                 zIndex: 1,
                 bottom: 0,
-                borderTopLeftRadius: '1.5vw',
-                borderTopRightRadius: '1.5vw',
+                borderTopLeftRadius: '2.67vh',
+                borderTopRightRadius: '2.67vh',
             }}>
                 <div style={{
                     width: '100%',
                     display: 'flex',
                     justifyContent: 'start',
-                    marginTop: '0.5vw',
+                    marginTop: '0.89vh',
                 }}>
                     <div style={{
-                        fontSize: '0.7vw',
+                        fontSize: '1.24vh',
                         color: 'rgba(255, 255, 255, 0.5)',
-                        marginLeft: '0.5vw',
+                        marginLeft: '0.89vh',
                         cursor: 'pointer',
                     }} onClick={() => {
                         props.onExit();
@@ -51,7 +51,7 @@ export default function SelectedData(props: { show: boolean, data: GarageData, o
                     <div style={{
                         width: '60%',
                         textAlign: 'center',
-                        marginLeft: '1.3vw',
+                        marginLeft: '2.31vh',
                     }}>
                         {props.data.garage?.toUpperCase()}
                     </div>
@@ -60,7 +60,7 @@ export default function SelectedData(props: { show: boolean, data: GarageData, o
                     width: '100%',
                     display: 'flex',
                     justifyContent: 'center',
-                    marginTop: '0.5vw',
+                    marginTop: '0.89vh',
                 }}>
                     {!imageErrors.has(props.data.category)
                         ? <Image
@@ -69,7 +69,7 @@ export default function SelectedData(props: { show: boolean, data: GarageData, o
                             alt="vehicle"
                             width={180}
                             height={180}
-                            style={{ borderRadius: '0.5vw' }}
+                            style={{ borderRadius: '0.89vh' }}
                         />
                         :
                         <Image
@@ -78,7 +78,7 @@ export default function SelectedData(props: { show: boolean, data: GarageData, o
                             alt="vehicle"
                             width={180}
                             height={180}
-                            style={{ borderRadius: '0.5vw' }}
+                            style={{ borderRadius: '0.89vh' }}
                         />
                     }
                 </div>
@@ -87,7 +87,7 @@ export default function SelectedData(props: { show: boolean, data: GarageData, o
                     display: 'flex',
                     justifyContent: 'center',
                     flexWrap: 'wrap',
-                    gap: '1.3vw',
+                    gap: '2.31vh',
                     alignItems: 'center',
                 }}>
                     <CircularProgressbarWithChildren
@@ -97,8 +97,8 @@ export default function SelectedData(props: { show: boolean, data: GarageData, o
                         maxValue={100}
                         styles={{
                             root: {
-                                width: "3vw",
-                                height: "3vw",
+                                width: "5.33vh",
+                                height: "5.33vh",
                                 transform: "rotate(-135deg)",
                                 overflow: "visible",
                             },
@@ -109,19 +109,19 @@ export default function SelectedData(props: { show: boolean, data: GarageData, o
                         strokeWidth={8}
                     >
                         <div style={{
-                            width: "3vw",
-                            height: "3vw",
+                            width: "5.33vh",
+                            height: "5.33vh",
                             display: "flex",
                             flexDirection: "column",
                             justifyContent: "center",
                             alignItems: "center",
-                            letterSpacing: "0.1vw",
-                            fontSize: "0.6vw",
+                            letterSpacing: "0.18vh",
+                            fontSize: "1.07vh",
                             textTransform: "uppercase",
                             color: "#FFFFFF",
                             userSelect: "none",
-                            marginLeft: "0.1vw",
-                            marginBottom: "0.1vw",
+                            marginLeft: "0.18vh",
+                            marginBottom: "0.18vh",
                         }}>
                             Fuel
                         </div>
@@ -133,8 +133,8 @@ export default function SelectedData(props: { show: boolean, data: GarageData, o
                         maxValue={1000}
                         styles={{
                             root: {
-                                width: "3vw",
-                                height: "3vw",
+                                width: "5.33vh",
+                                height: "5.33vh",
                                 transform: "rotate(-135deg)"
                             },
                             path: {
@@ -144,19 +144,19 @@ export default function SelectedData(props: { show: boolean, data: GarageData, o
                         strokeWidth={8}
                     >
                         <div style={{
-                            width: "3vw",
-                            height: "3vw",
+                            width: "5.33vh",
+                            height: "5.33vh",
                             display: "flex",
                             flexDirection: "column",
                             justifyContent: "center",
                             alignItems: "center",
-                            letterSpacing: "0.1vw",
-                            fontSize: "0.6vw",
+                            letterSpacing: "0.18vh",
+                            fontSize: "1.07vh",
                             textTransform: "uppercase",
                             color: "#FFFFFF",
                             userSelect: "none",
-                            marginLeft: "0.1vw",
-                            marginBottom: "0.1vw",
+                            marginLeft: "0.18vh",
+                            marginBottom: "0.18vh",
                         }}>
                             Body
                         </div>
@@ -168,8 +168,8 @@ export default function SelectedData(props: { show: boolean, data: GarageData, o
                         maxValue={1000}
                         styles={{
                             root: {
-                                width: "3vw",
-                                height: "3vw",
+                                width: "5.33vh",
+                                height: "5.33vh",
                                 transform: "rotate(-135deg)",
                                 overflow: "visible",
                             },
@@ -180,19 +180,19 @@ export default function SelectedData(props: { show: boolean, data: GarageData, o
                         strokeWidth={8}
                     >
                         <div style={{
-                            width: "3vw",
-                            height: "3vw",
+                            width: "5.33vh",
+                            height: "5.33vh",
                             display: "flex",
                             flexDirection: "column",
                             justifyContent: "center",
                             alignItems: "center",
-                            letterSpacing: "0.1vw",
-                            fontSize: "0.6vw",
+                            letterSpacing: "0.18vh",
+                            fontSize: "1.07vh",
                             textTransform: "uppercase",
                             color: "#FFFFFF",
                             userSelect: "none",
-                            marginLeft: "0.1vw",
-                            marginBottom: "0.1vw",
+                            marginLeft: "0.18vh",
+                            marginBottom: "0.18vh",
                         }}>
                             Tank
                         </div>
@@ -204,8 +204,8 @@ export default function SelectedData(props: { show: boolean, data: GarageData, o
                         maxValue={1000}
                         styles={{
                             root: {
-                                width: "3vw",
-                                height: "3vw",
+                                width: "5.33vh",
+                                height: "5.33vh",
                                 transform: "rotate(-135deg)",
                                 overflow: "visible",
                             },
@@ -216,19 +216,19 @@ export default function SelectedData(props: { show: boolean, data: GarageData, o
                         strokeWidth={8}
                     >
                         <div style={{
-                            width: "3vw",
-                            height: "3vw",
+                            width: "5.33vh",
+                            height: "5.33vh",
                             display: "flex",
                             flexDirection: "column",
                             justifyContent: "center",
                             alignItems: "center",
-                            letterSpacing: "0.1vw",
-                            fontSize: "0.5vw",
+                            letterSpacing: "0.18vh",
+                            fontSize: "0.89vh",
                             textTransform: "uppercase",
                             color: "#FFFFFF",
                             userSelect: "none",
-                            marginLeft: "0.1vw",
-                            marginBottom: "0.1vw",
+                            marginLeft: "0.18vh",
+                            marginBottom: "0.18vh",
                         }}>
                             Engine
                         </div>
@@ -236,13 +236,13 @@ export default function SelectedData(props: { show: boolean, data: GarageData, o
                 </div>
                 <div className="divider" />
                 <div style={{
-                    marginTop: '0.5vw',
+                    marginTop: '0.89vh',
                     width: '100%',
                     display: 'flex',
                     justifyContent: 'center',
                     flexWrap: 'wrap',
-                    rowGap: '1.3vw',
-                    columnGap: '2vw',
+                    rowGap: '2.31vh',
+                    columnGap: '3.56vh',
                     alignItems: 'center',
                 }}>
                     <CircularProgressbarWithChildren
@@ -252,8 +252,8 @@ export default function SelectedData(props: { show: boolean, data: GarageData, o
                         maxValue={5}
                         styles={{
                             root: {
-                                width: "6vw",
-                                height: "6vw",
+                                width: "10.67vh",
+                                height: "10.67vh",
                                 transform: "rotate(-135deg)",
                                 overflow: "visible",
                             },
@@ -264,19 +264,19 @@ export default function SelectedData(props: { show: boolean, data: GarageData, o
                         strokeWidth={8}
                     >
                         <div style={{
-                            width: "6vw",
-                            height: "6vw",
+                            width: "10.67vh",
+                            height: "10.67vh",
                             display: "flex",
                             flexDirection: "column",
                             justifyContent: "center",
                             alignItems: "center",
-                            letterSpacing: "0.1vw",
-                            fontSize: "0.5vw",
+                            letterSpacing: "0.18vh",
+                            fontSize: "0.89vh",
                             textTransform: "uppercase",
                             color: "#FFFFFF",
                             userSelect: "none",
-                            marginLeft: "0.1vw",
-                            marginBottom: "0.1vw",
+                            marginLeft: "0.18vh",
+                            marginBottom: "0.18vh",
                         }}>
                             <div>Engine</div>
                             <div>Lvl.</div>
@@ -289,8 +289,8 @@ export default function SelectedData(props: { show: boolean, data: GarageData, o
                         maxValue={5}
                         styles={{
                             root: {
-                                width: "6vw",
-                                height: "6vw",
+                                width: "10.67vh",
+                                height: "10.67vh",
                                 transform: "rotate(-135deg)",
                                 overflow: "visible",
                             },
@@ -301,19 +301,19 @@ export default function SelectedData(props: { show: boolean, data: GarageData, o
                         strokeWidth={8}
                     >
                         <div style={{
-                            width: "6vw",
-                            height: "6vw",
+                            width: "10.67vh",
+                            height: "10.67vh",
                             display: "flex",
                             flexDirection: "column",
                             justifyContent: "center",
                             alignItems: "center",
-                            letterSpacing: "0.1vw",
-                            fontSize: "0.5vw",
+                            letterSpacing: "0.18vh",
+                            fontSize: "0.89vh",
                             textTransform: "uppercase",
                             color: "#FFFFFF",
                             userSelect: "none",
-                            marginLeft: "0.1vw",
-                            marginBottom: "0.1vw",
+                            marginLeft: "0.18vh",
+                            marginBottom: "0.18vh",
                         }}>
                             <div>Brakes</div>
                             <div>Lvl.</div>
@@ -326,8 +326,8 @@ export default function SelectedData(props: { show: boolean, data: GarageData, o
                         maxValue={5}
                         styles={{
                             root: {
-                                width: "6vw",
-                                height: "6vw",
+                                width: "10.67vh",
+                                height: "10.67vh",
                                 transform: "rotate(-135deg)",
                                 overflow: "visible",
                             },
@@ -338,19 +338,19 @@ export default function SelectedData(props: { show: boolean, data: GarageData, o
                         strokeWidth={8}
                     >
                         <div style={{
-                            width: "6vw",
-                            height: "6vw",
+                            width: "10.67vh",
+                            height: "10.67vh",
                             display: "flex",
                             flexDirection: "column",
                             justifyContent: "center",
                             alignItems: "center",
-                            letterSpacing: "0.1vw",
-                            fontSize: "0.5vw",
+                            letterSpacing: "0.18vh",
+                            fontSize: "0.89vh",
                             textTransform: "uppercase",
                             color: "#FFFFFF",
                             userSelect: "none",
-                            marginLeft: "0.1vw",
-                            marginBottom: "0.1vw",
+                            marginLeft: "0.18vh",
+                            marginBottom: "0.18vh",
                         }}>
                             <div>TransMission</div>
                             <div>Lvl.</div>
@@ -363,8 +363,8 @@ export default function SelectedData(props: { show: boolean, data: GarageData, o
                         maxValue={5}
                         styles={{
                             root: {
-                                width: "6vw",
-                                height: "6vw",
+                                width: "10.67vh",
+                                height: "10.67vh",
                                 transform: "rotate(-135deg)",
                                 overflow: "visible",
                             },
@@ -375,19 +375,19 @@ export default function SelectedData(props: { show: boolean, data: GarageData, o
                         strokeWidth={8}
                     >
                         <div style={{
-                            width: "6vw",
-                            height: "6vw",
+                            width: "10.67vh",
+                            height: "10.67vh",
                             display: "flex",
                             flexDirection: "column",
                             justifyContent: "center",
                             alignItems: "center",
-                            letterSpacing: "0.1vw",
-                            fontSize: "0.5vw",
+                            letterSpacing: "0.18vh",
+                            fontSize: "0.89vh",
                             textTransform: "uppercase",
                             color: "#FFFFFF",
                             userSelect: "none",
-                            marginLeft: "0.1vw",
-                            marginBottom: "0.1vw",
+                            marginLeft: "0.18vh",
+                            marginBottom: "0.18vh",
                         }}>
                             <div>Suspension</div>
                             <div>Lvl.</div>
@@ -397,13 +397,13 @@ export default function SelectedData(props: { show: boolean, data: GarageData, o
                 <div className="divider" style={{}} />
                 <Button style={{
                     width: '90%',
-                    marginTop: '1vw',
+                    marginTop: '1.78vh',
                     backgroundColor: 'rgb(12, 113, 221)',
                     color: 'white',
                     fontWeight: 'bold',
-                    borderRadius: '0.5vw',
-                    height: '2.5vw',
-                    fontSize: '1vw',
+                    borderRadius: '0.89vh',
+                    height: '4.44vh',
+                    fontSize: '1.78vh',
                 }} onClick={() => {
                     fetchNui('garage:valet', JSON.stringify(props.data));
                 }}>

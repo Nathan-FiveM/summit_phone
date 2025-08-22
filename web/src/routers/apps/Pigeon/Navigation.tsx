@@ -1,17 +1,17 @@
 export default function Navigation(props: { onClick(locate: string): void, location: string }) {
     return (
         <div className="fotterNavigation" style={{
-            height: '3.2vw',
+            height: '5.69vh',
         }}>
-            <div className="innerContx" style={{ gap: '4vw', marginTop: '1vw' }}>
-                <svg style={{ cursor: 'pointer' }} onClick={() => props.onClick('home')} className="hoverhere" width="0.9375vw" height="1.0416666666666667vw" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <div className="innerContx" style={{ gap: '7.11vh', marginTop: '1.78vh' }}>
+                <svg style={{ cursor: 'pointer' }} onClick={() => props.onClick('home')} className="hoverhere" width="1.67vh" height="1.85vh" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M0 8V20H6.42857V14.6667C6.42857 13.1939 7.57984 12 9 12C10.4202 12 11.5714 13.1939 11.5714 14.6667V20H18V8L9 0L0 8Z" fill={props.location === "home" ? "#0A84FF" : "#828282"} />
                 </svg>
-                <svg style={{ cursor: 'pointer' }} onClick={() => props.onClick('search')} width="1.0416666666666667vw" height="1.0416666666666667vw" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg style={{ cursor: 'pointer' }} onClick={() => props.onClick('search')} width="1.85vh" height="1.85vh" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M8 4C8 3.44772 8.44772 3 9 3C12.3137 3 15 5.68629 15 9C15 9.55228 14.5523 10 14 10C13.4477 10 13 9.55228 13 9C13 6.79087 11.2091 5 9 5C8.44772 5 8 4.55228 8 4Z" fill={props.location === "search" ? "#0A84FF" : "#828282"} />
                     <path fillRule="evenodd" clipRule="evenodd" d="M16.0334 14.6159C17.2641 13.0765 18 11.1242 18 9C18 4.02944 13.9706 0 9 0C4.02944 0 0 4.02944 0 9C0 13.9706 4.02944 18 9 18C11.1259 18 13.0796 17.2629 14.6195 16.0304L18.2926 19.7068C18.6829 20.0975 19.3161 20.0978 19.7068 19.7074C20.0975 19.3171 20.0978 18.6839 19.7074 18.2932L16.0334 14.6159ZM9 2C5.134 2 2 5.134 2 9C2 12.866 5.134 16 9 16C10.9319 16 12.681 15.2174 13.9476 13.952C13.949 13.9505 13.9505 13.949 13.952 13.9475C13.9531 13.9464 13.9542 13.9453 13.9554 13.9441C15.2188 12.6778 16 10.9302 16 9C16 5.134 12.866 2 9 2Z" fill={props.location === "search" ? "#0A84FF" : "#828282"} />
                 </svg>
-                <svg style={{ cursor: 'pointer' }} onClick={() => props.onClick('notification')} width="0.78125vw" height="1.0416666666666667vw" viewBox="0 0 15 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg style={{ cursor: 'pointer' }} onClick={() => props.onClick('notification')} width="1.39vh" height="1.85vh" viewBox="0 0 15 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M14.6546 12.49L13.6795 10.83C13.4748 10.46 13.2895 9.76 13.2895 9.35V6.82C13.2895 4.47 11.9439 2.44 10.0035 1.49C9.49649 0.57 8.56043 0 7.48786 0C6.42504 0 5.46952 0.59 4.96249 1.52C3.06111 2.49 1.74477 4.5 1.74477 6.82V9.35C1.74477 9.76 1.55951 10.46 1.35475 10.82L0.369935 12.49C-0.0200904 13.16 -0.107846 13.9 0.13592 14.58C0.369935 15.25 0.925721 15.77 1.64727 16.02C3.53889 16.68 5.52802 17 7.51711 17C9.50625 17 11.4954 16.68 13.387 16.03C14.0695 15.8 14.5961 15.27 14.8496 14.58C15.1031 13.89 15.0349 13.13 14.6546 12.49Z" fill={props.location === "notification" ? "#0A84FF" : "#828282"} />
                     <path d="M10.2568 18.01C9.84732 19.17 8.765 20 7.49742 20C6.72712 20 5.96657 19.68 5.43027 19.11C5.11825 18.81 4.88424 18.41 4.74773 18C4.87449 18.02 5.00124 18.03 5.13775 18.05C5.36202 18.08 5.59604 18.11 5.83006 18.13C6.38584 18.18 6.95138 18.21 7.51692 18.21C8.07271 18.21 8.62849 18.18 9.17453 18.13C9.37929 18.11 9.58405 18.1 9.77907 18.07C9.93508 18.05 10.0911 18.03 10.2568 18.01Z" fill={props.location === "notification" ? "#0A84FF" : "#828282"} />
                 </svg>

@@ -3,21 +3,21 @@ export default function AlphabetSearch(props: { onClick(letter: string): void })
         <div style={{
             display: 'flex',
             flexDirection: 'column',
-            width: '0.46875vw',
-            height: '0.46875vw',
+            width: '0.83vh',
+            height: '0.83vh',
             position: 'absolute',
             alignItems: 'center',
-            gap: '0.2604166666666667vw',
-            right: '0.2604166666666667vw',
+            gap: '0.46vh',
+            right: '0.46vh',
             top: '22%',
             color: '#0A84FF',
             textAlign: 'center',
             fontFamily: "SFPro",
-            fontSize: '0.5208333333333334vw',
+            fontSize: '0.93vh',
             fontStyle: 'normal',
             fontWeight: 700,
             lineHeight: '118.596%',
-            letterSpacing: '0.0140625vw',
+            letterSpacing: '0.03vh',
         }}>
             <div className='clickanimation' onClick={() => props.onClick('A')}>A</div>
             <div className='clickanimation' onClick={() => props.onClick('B')}>B</div>

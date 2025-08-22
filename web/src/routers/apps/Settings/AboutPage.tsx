@@ -83,12 +83,12 @@ export default function AboutPage() {
                             <path d="M7 16.5L1.34983 9.43729C1.14531 9.18163 1.14531 8.81837 1.34983 8.56271L7 1.5" stroke="#0A84FF" strokeWidth="2" strokeLinecap="round" />
                         </svg>
                         <div style={{
-                            width: "1.71875vw",
-                            height: "0.9375vw",
+                            width: "3.06vh",
+                            height: "1.67vh",
                             fontStyle: "normal",
                             fontWeight: 500,
-                            fontSize: "0.78125vw",
-                            lineHeight: "0.9375vw",
+                            fontSize: "1.39vh",
+                            lineHeight: "1.67vh",
                             textAlign: "center",
                             color: "#0A84FF",
                             flex: "none",
@@ -96,9 +96,9 @@ export default function AboutPage() {
                             flexGrow: 0,
                         }}>Back</div>
                     </div>
-                    <div className="name" style={{ marginLeft: '1.3vw' }}>About Phone</div>
+                    <div className="name" style={{ marginLeft: '2.31vh' }}>About Phone</div>
                 </div>
-                <div className="innerCont" style={{ marginTop: '1vw' }}>
+                <div className="innerCont" style={{ marginTop: '1.78vh' }}>
                     <div className="conta1">
                         <div className="innerConta1">
                             <div className="textConta" style={{
@@ -114,7 +114,7 @@ export default function AboutPage() {
                             width: 'auto',
                             justifyContent: 'flex-end',
                             alignItems: 'center',
-                            gap: '0.5208333333333334vw',
+                            gap: '0.93vh',
                             fontWeight: 500,
                             flexShrink: 0
                         }}>
@@ -122,8 +122,8 @@ export default function AboutPage() {
                         </div>
                     </div>
                     <div className="divider" style={{
-                        marginTop: '.15vw',
-                        marginBottom: '.15vw',
+                        marginTop: '0.27vh',
+                        marginBottom: '0.27vh',
                     }}></div>
                     <div className="conta1">
                         <div className="innerConta1">
@@ -140,7 +140,7 @@ export default function AboutPage() {
                             width: 'auto',
                             justifyContent: 'flex-end',
                             alignItems: 'center',
-                            gap: '0.5208333333333334vw',
+                            gap: '0.93vh',
                             fontWeight: 500,
                             flexShrink: 0
                         }}>
@@ -148,8 +148,8 @@ export default function AboutPage() {
                         </div>
                     </div>
                     <div className="divider" style={{
-                        marginTop: '.15vw',
-                        marginBottom: '.15vw',
+                        marginTop: '0.27vh',
+                        marginBottom: '0.27vh',
                     }}></div>
                     <div className="conta1">
                         <div className="innerConta1">
@@ -166,7 +166,7 @@ export default function AboutPage() {
                             width: 'auto',
                             justifyContent: 'flex-end',
                             alignItems: 'center',
-                            gap: '0.5208333333333334vw',
+                            gap: '0.93vh',
                             fontWeight: 500,
                             flexShrink: 0
                         }}>
@@ -174,8 +174,8 @@ export default function AboutPage() {
                         </div>
                     </div>
                     <div className="divider" style={{
-                        marginTop: '.15vw',
-                        marginBottom: '.15vw',
+                        marginTop: '0.27vh',
+                        marginBottom: '0.27vh',
                     }}></div>
                     <div className="conta1">
                         <div className="innerConta1">
@@ -192,7 +192,7 @@ export default function AboutPage() {
                             width: 'auto',
                             justifyContent: 'flex-end',
                             alignItems: 'center',
-                            gap: '0.5208333333333334vw',
+                            gap: '0.93vh',
                             fontWeight: 500,
                             flexShrink: 0
                         }}>
@@ -200,8 +200,8 @@ export default function AboutPage() {
                         </div>
                     </div>
                     <div className="divider" style={{
-                        marginTop: '.15vw',
-                        marginBottom: '.15vw',
+                        marginTop: '0.27vh',
+                        marginBottom: '0.27vh',
                     }}></div>
                     <div className="conta1">
                         <div className="innerConta1">
@@ -218,7 +218,7 @@ export default function AboutPage() {
                             width: 'auto',
                             justifyContent: 'flex-end',
                             alignItems: 'center',
-                            gap: '0.5208333333333334vw',
+                            gap: '0.93vh',
                             fontWeight: 500,
                             flexShrink: 0
                         }}>

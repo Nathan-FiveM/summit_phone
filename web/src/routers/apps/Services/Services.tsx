@@ -85,17 +85,17 @@ export default function Services(props: { onExit: () => void, onEnter: () => voi
                 alignItems: 'flex-start',
             }} className="settings">
                 <div style={{
-                    marginLeft: '0.8vw',
-                    marginTop: '2.5vw',
-                    letterSpacing: '0.07vw',
+                    marginLeft: '1.42vh',
+                    marginTop: '4.44vh',
+                    letterSpacing: '0.12vh',
                 }}>
-                    <Title title={location.page.services === 'company' ? "Companies" : "Actions"} fontSize="1.9vw" />
+                    <Title title={location.page.services === 'company' ? "Companies" : "Actions"} fontSize="3.38vh" />
                 </div>
                 {location.page.services === 'company' ? (
                     <div className="company">
                         <div style={{
                             color: 'rgba(255, 255, 255, 0.38)',
-                            letterSpacing: '0.07vw',
+                            letterSpacing: '0.12vh',
                         }}>Online</div>
 
                         {businessData && businessData.online && businessData.online.length > 0 && businessData.online.map((business, index) => {
@@ -103,7 +103,7 @@ export default function Services(props: { onExit: () => void, onEnter: () => voi
                                 <div className="containerXSa" key={index}>
                                     <div className="innerContXassda">
                                         <div className="moreInnerContX">
-                                            <Avatar size="1.71875vw" src={business.businessLogo ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} radius="xl" />
+                                            <Avatar size="3.06vh" src={business.businessLogo ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} radius="xl" />
                                             <div className="moreInnerContX2">
                                                 <div className="title">{business.businessName}</div>
                                                 <div style={{
@@ -122,17 +122,17 @@ export default function Services(props: { onExit: () => void, onEnter: () => voi
                                         <div style={{
                                             display: 'flex',
                                             alignItems: 'center',
-                                            gap: '0.3125vw'
+                                            gap: '0.56vh'
                                         }}>
                                             <svg className='clickanimationXl' onClick={() => {
                                                 fetchNui('setWayPoint', business.coords);
-                                            }} xmlns="http://www.w3.org/2000/svg" width="1.40625vw" height="1.40625vw" viewBox="0 0 21 21" fill="none">
+                                            }} xmlns="http://www.w3.org/2000/svg" width="2.50vh" height="2.50vh" viewBox="0 0 21 21" fill="none">
                                                 <rect x="0.5" y="0.5" width="20" height="20" rx="2" fill="#3A3A3A" />
                                                 <path d="M10.5002 9.96081C11.3321 9.96081 12.0128 9.23287 12.0128 8.34316C12.0128 7.45346 11.3321 6.72552 10.5002 6.72552C9.6682 6.72552 8.98751 7.45346 8.98751 8.34316C8.98751 9.23287 9.6682 9.96081 10.5002 9.96081ZM10.5002 7.80395C10.7775 7.80395 11.0044 8.04659 11.0044 8.34316C11.0044 8.63973 10.7775 8.88238 10.5002 8.88238C10.2228 8.88238 9.99594 8.63973 9.99594 8.34316C9.99594 8.04659 10.2228 7.80395 10.5002 7.80395ZM7.4093 11.1201C7.5404 11.2927 7.66646 11.4598 7.7673 11.627L7.81268 11.6917L10.117 14.5711C10.2128 14.6897 10.3539 14.7598 10.5002 14.7598C10.6464 14.7598 10.7876 14.6897 10.8834 14.5711L13.1876 11.6917L13.233 11.627C13.3339 11.4544 13.4599 11.2873 13.5961 11.1147L13.6313 11.0662C14.2649 10.2391 14.5875 9.18918 14.5363 8.12139C14.485 7.05361 14.0635 6.04457 13.354 5.29121C12.98 4.88952 12.5352 4.57117 12.0453 4.35459C11.5554 4.138 11.0302 4.02749 10.5002 4.02944C9.42113 4.02944 8.40766 4.47699 7.64629 5.29121C6.93787 6.04518 6.51709 7.05405 6.46583 8.12149C6.41457 9.18892 6.7365 10.2386 7.36897 11.0662L7.4093 11.1201ZM8.36228 6.05689C8.93204 5.44219 9.69341 5.10787 10.5002 5.10787C11.3069 5.10787 12.0683 5.44219 12.638 6.05689C13.17 6.62178 13.4859 7.37845 13.5242 8.1791C13.5624 8.97975 13.3201 9.76689 12.8448 10.3868L12.8095 10.4299C12.6683 10.6133 12.5221 10.802 12.396 11.0177L10.5002 13.3902L8.6043 11.0177C8.47825 10.802 8.33202 10.6133 8.19588 10.4353L8.15555 10.3868C7.67897 9.76745 7.43596 8.98003 7.47421 8.17899C7.51245 7.37795 7.82919 6.6211 8.36228 6.05689ZM17.5189 16.2211L16.0062 12.4466C15.9255 12.2471 15.744 12.1177 15.5423 12.1177H13.5255V13.1961H15.2096L16.2886 15.8922H4.71174L5.79077 13.1961H7.47485V12.1177H5.45798C5.2563 12.1177 5.07478 12.2471 4.9941 12.4466L3.48145 16.2211C3.4159 16.3882 3.43103 16.577 3.52179 16.7279C3.61759 16.8789 3.7739 16.9706 3.94533 16.9706H17.055C17.2264 16.9706 17.3827 16.8789 17.4735 16.7279C17.5693 16.577 17.5844 16.3882 17.5189 16.2211Z" fill="white" />
                                             </svg>
                                             <svg onClick={() => {
                                                 fetchNui('callBusiness', business.job);
-                                            }} className='clickanimationXl' xmlns="http://www.w3.org/2000/svg" width="1.40625vw" height="1.40625vw" viewBox="0 0 21 21" fill="none">
+                                            }} className='clickanimationXl' xmlns="http://www.w3.org/2000/svg" width="2.50vh" height="2.50vh" viewBox="0 0 21 21" fill="none">
                                                 <rect x="0.5" y="0.5" width="20" height="20" rx="2" fill="#3A3A3A" />
                                                 <path d="M5.56401 6.12893C6.26972 5.32749 7.09613 4.92052 7.60791 5.43346L9.31505 7.14272C9.74797 7.57628 9.64295 8.15046 9.14526 8.74278C8.92245 9.00783 8.79085 9.33773 8.76998 9.68357C8.7491 10.0294 8.84007 10.3728 9.02938 10.6628C9.25872 11.0141 9.54599 11.3631 9.8912 11.7088C10.312 12.1303 10.7462 12.474 11.1932 12.7411C11.4764 12.9103 11.8046 12.9882 12.1334 12.9644C12.4623 12.9406 12.7759 12.8163 13.0319 12.6082C13.6523 12.1037 14.086 11.9212 14.4361 12.2713L16.1432 13.981C17.1619 15.0012 14.7048 17.2488 12.9446 16.9422C11.5243 16.6943 9.33154 15.137 7.89277 13.6961C6.62297 12.4244 4.91302 9.94877 4.65311 8.64648C4.49378 7.84987 4.88486 6.89894 5.56401 6.12812V6.12893Z" fill="white" />
                                             </svg>
@@ -148,7 +148,7 @@ export default function Services(props: { onExit: () => void, onEnter: () => voi
                                                         mail: `compose/${business.businessEmail}`
                                                     }
                                                 });
-                                            }} className='clickanimationXl' xmlns="http://www.w3.org/2000/svg" width="1.40625vw" height="1.40625vw" viewBox="0 0 21 21" fill="none">
+                                            }} className='clickanimationXl' xmlns="http://www.w3.org/2000/svg" width="2.50vh" height="2.50vh" viewBox="0 0 21 21" fill="none">
                                                 <rect x="0.5" y="0.5" width="20" height="20" rx="2" fill="#3A3A3A" />
                                                 <path d="M17.8774 7.27184L13.9976 11.2207C13.9688 11.2495 13.9688 11.2927 13.9976 11.3215L16.7127 14.2111C16.8966 14.3949 16.8966 14.6903 16.7127 14.874C16.6226 14.9641 16.5 15.011 16.381 15.011C16.262 15.011 16.1394 14.9641 16.0493 14.874L13.345 11.9953C13.3161 11.9665 13.2692 11.9665 13.2404 11.9953L12.5805 12.6654C12.0288 13.2239 11.2969 13.5338 10.5108 13.5374C9.71394 13.541 8.95673 13.2059 8.39784 12.6402L7.76322 11.9953C7.73438 11.9665 7.6875 11.9665 7.65865 11.9953L4.95433 14.874C4.86418 14.9641 4.74159 15.011 4.6226 15.011C4.50361 15.011 4.38101 14.9641 4.29087 14.874C4.10697 14.6903 4.10697 14.3949 4.29087 14.2111L7.00601 11.3215C7.03125 11.2927 7.03125 11.2495 7.00601 11.2207L3.1226 7.27184C3.07572 7.225 3 7.25743 3 7.32228V15.2235C3 15.8576 3.51923 16.3765 4.15385 16.3765H16.8462C17.4808 16.3765 18 15.8576 18 15.2235V7.32228C18 7.25743 17.9207 7.2286 17.8774 7.27184Z" fill="white" />
                                                 <path d="M10.5 12.597C11.0337 12.597 11.5349 12.388 11.9099 12.0061L17.5673 6.25221C17.369 6.09368 17.1238 6 16.8534 6H4.15024C3.87981 6 3.63101 6.09368 3.4363 6.25221L9.09375 12.0061C9.46514 12.3844 9.96635 12.597 10.5 12.597Z" fill="white" />
@@ -161,14 +161,14 @@ export default function Services(props: { onExit: () => void, onEnter: () => voi
                         })}
                         <div style={{
                             color: 'rgba(255, 255, 255, 0.38)',
-                            letterSpacing: '0.07vw',
+                            letterSpacing: '0.12vh',
                         }}>Offline</div>
                         {businessData && businessData.offline && businessData.offline.length > 0 && businessData.offline.map((business, index) => {
                             return (
                                 <div className="containerXSa" key={index}>
                                     <div className="innerContXassda">
                                         <div className="moreInnerContX">
-                                            <Avatar size="1.71875vw" src={business.businessLogo ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} radius="xl" />
+                                            <Avatar size="3.06vh" src={business.businessLogo ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} radius="xl" />
                                             <div className="moreInnerContX2">
                                                 <div className="title">{business.businessName}</div>
                                                 <div style={{
@@ -187,17 +187,17 @@ export default function Services(props: { onExit: () => void, onEnter: () => voi
                                         <div style={{
                                             display: 'flex',
                                             alignItems: 'center',
-                                            gap: '0.3125vw'
+                                            gap: '0.56vh'
                                         }}>
                                             <svg className='clickanimationXl' onClick={() => {
                                                 fetchNui('setWayPoint', business.coords);
-                                            }} xmlns="http://www.w3.org/2000/svg" width="1.40625vw" height="1.40625vw" viewBox="0 0 21 21" fill="none">
+                                            }} xmlns="http://www.w3.org/2000/svg" width="2.50vh" height="2.50vh" viewBox="0 0 21 21" fill="none">
                                                 <rect x="0.5" y="0.5" width="20" height="20" rx="2" fill="#3A3A3A" />
                                                 <path d="M10.5002 9.96081C11.3321 9.96081 12.0128 9.23287 12.0128 8.34316C12.0128 7.45346 11.3321 6.72552 10.5002 6.72552C9.6682 6.72552 8.98751 7.45346 8.98751 8.34316C8.98751 9.23287 9.6682 9.96081 10.5002 9.96081ZM10.5002 7.80395C10.7775 7.80395 11.0044 8.04659 11.0044 8.34316C11.0044 8.63973 10.7775 8.88238 10.5002 8.88238C10.2228 8.88238 9.99594 8.63973 9.99594 8.34316C9.99594 8.04659 10.2228 7.80395 10.5002 7.80395ZM7.4093 11.1201C7.5404 11.2927 7.66646 11.4598 7.7673 11.627L7.81268 11.6917L10.117 14.5711C10.2128 14.6897 10.3539 14.7598 10.5002 14.7598C10.6464 14.7598 10.7876 14.6897 10.8834 14.5711L13.1876 11.6917L13.233 11.627C13.3339 11.4544 13.4599 11.2873 13.5961 11.1147L13.6313 11.0662C14.2649 10.2391 14.5875 9.18918 14.5363 8.12139C14.485 7.05361 14.0635 6.04457 13.354 5.29121C12.98 4.88952 12.5352 4.57117 12.0453 4.35459C11.5554 4.138 11.0302 4.02749 10.5002 4.02944C9.42113 4.02944 8.40766 4.47699 7.64629 5.29121C6.93787 6.04518 6.51709 7.05405 6.46583 8.12149C6.41457 9.18892 6.7365 10.2386 7.36897 11.0662L7.4093 11.1201ZM8.36228 6.05689C8.93204 5.44219 9.69341 5.10787 10.5002 5.10787C11.3069 5.10787 12.0683 5.44219 12.638 6.05689C13.17 6.62178 13.4859 7.37845 13.5242 8.1791C13.5624 8.97975 13.3201 9.76689 12.8448 10.3868L12.8095 10.4299C12.6683 10.6133 12.5221 10.802 12.396 11.0177L10.5002 13.3902L8.6043 11.0177C8.47825 10.802 8.33202 10.6133 8.19588 10.4353L8.15555 10.3868C7.67897 9.76745 7.43596 8.98003 7.47421 8.17899C7.51245 7.37795 7.82919 6.6211 8.36228 6.05689ZM17.5189 16.2211L16.0062 12.4466C15.9255 12.2471 15.744 12.1177 15.5423 12.1177H13.5255V13.1961H15.2096L16.2886 15.8922H4.71174L5.79077 13.1961H7.47485V12.1177H5.45798C5.2563 12.1177 5.07478 12.2471 4.9941 12.4466L3.48145 16.2211C3.4159 16.3882 3.43103 16.577 3.52179 16.7279C3.61759 16.8789 3.7739 16.9706 3.94533 16.9706H17.055C17.2264 16.9706 17.3827 16.8789 17.4735 16.7279C17.5693 16.577 17.5844 16.3882 17.5189 16.2211Z" fill="white" />
                                             </svg>
                                             <svg onClick={() => {
                                                 fetchNui('callBusiness', String(business.businessPhoneNumber));
-                                            }} className='clickanimationXl' xmlns="http://www.w3.org/2000/svg" width="1.40625vw" height="1.40625vw" viewBox="0 0 21 21" fill="none">
+                                            }} className='clickanimationXl' xmlns="http://www.w3.org/2000/svg" width="2.50vh" height="2.50vh" viewBox="0 0 21 21" fill="none">
                                                 <rect x="0.5" y="0.5" width="20" height="20" rx="2" fill="#3A3A3A" />
                                                 <path d="M5.56401 6.12893C6.26972 5.32749 7.09613 4.92052 7.60791 5.43346L9.31505 7.14272C9.74797 7.57628 9.64295 8.15046 9.14526 8.74278C8.92245 9.00783 8.79085 9.33773 8.76998 9.68357C8.7491 10.0294 8.84007 10.3728 9.02938 10.6628C9.25872 11.0141 9.54599 11.3631 9.8912 11.7088C10.312 12.1303 10.7462 12.474 11.1932 12.7411C11.4764 12.9103 11.8046 12.9882 12.1334 12.9644C12.4623 12.9406 12.7759 12.8163 13.0319 12.6082C13.6523 12.1037 14.086 11.9212 14.4361 12.2713L16.1432 13.981C17.1619 15.0012 14.7048 17.2488 12.9446 16.9422C11.5243 16.6943 9.33154 15.137 7.89277 13.6961C6.62297 12.4244 4.91302 9.94877 4.65311 8.64648C4.49378 7.84987 4.88486 6.89894 5.56401 6.12812V6.12893Z" fill="white" />
                                             </svg>
@@ -213,7 +213,7 @@ export default function Services(props: { onExit: () => void, onEnter: () => voi
                                                         mail: `compose/${business.businessEmail}`
                                                     }
                                                 });
-                                            }} className='clickanimationXl' xmlns="http://www.w3.org/2000/svg" width="1.40625vw" height="1.40625vw" viewBox="0 0 21 21" fill="none">
+                                            }} className='clickanimationXl' xmlns="http://www.w3.org/2000/svg" width="2.50vh" height="2.50vh" viewBox="0 0 21 21" fill="none">
                                                 <rect x="0.5" y="0.5" width="20" height="20" rx="2" fill="#3A3A3A" />
                                                 <path d="M17.8774 7.27184L13.9976 11.2207C13.9688 11.2495 13.9688 11.2927 13.9976 11.3215L16.7127 14.2111C16.8966 14.3949 16.8966 14.6903 16.7127 14.874C16.6226 14.9641 16.5 15.011 16.381 15.011C16.262 15.011 16.1394 14.9641 16.0493 14.874L13.345 11.9953C13.3161 11.9665 13.2692 11.9665 13.2404 11.9953L12.5805 12.6654C12.0288 13.2239 11.2969 13.5338 10.5108 13.5374C9.71394 13.541 8.95673 13.2059 8.39784 12.6402L7.76322 11.9953C7.73438 11.9665 7.6875 11.9665 7.65865 11.9953L4.95433 14.874C4.86418 14.9641 4.74159 15.011 4.6226 15.011C4.50361 15.011 4.38101 14.9641 4.29087 14.874C4.10697 14.6903 4.10697 14.3949 4.29087 14.2111L7.00601 11.3215C7.03125 11.2927 7.03125 11.2495 7.00601 11.2207L3.1226 7.27184C3.07572 7.225 3 7.25743 3 7.32228V15.2235C3 15.8576 3.51923 16.3765 4.15385 16.3765H16.8462C17.4808 16.3765 18 15.8576 18 15.2235V7.32228C18 7.25743 17.9207 7.2286 17.8774 7.27184Z" fill="white" />
                                                 <path d="M10.5 12.597C11.0337 12.597 11.5349 12.388 11.9099 12.0061L17.5673 6.25221C17.369 6.09368 17.1238 6 16.8534 6H4.15024C3.87981 6 3.63101 6.09368 3.4363 6.25221L9.09375 12.0061C9.46514 12.3844 9.96635 12.597 10.5 12.597Z" fill="white" />
@@ -230,17 +230,17 @@ export default function Services(props: { onExit: () => void, onEnter: () => voi
                         <div style={{
                             alignSelf: 'stretch',
                             color: 'rgba(255, 255, 255, 0.17)',
-                            fontSize: '0.7291666666666666vw',
-                            marginTop: '0.5vw',
-                            marginLeft: '0.8vw',
+                            fontSize: '1.30vh',
+                            marginTop: '0.89vh',
+                            marginLeft: '1.42vh',
                             fontStyle: 'normal',
                             fontWeight: 500,
                             lineHeight: 'normal',
                         }}>SETTINGS</div>
-                        <div className="innerCont" style={{ marginTop: '0.5vw' }}>
+                        <div className="innerCont" style={{ marginTop: '0.89vh' }}>
                             <div className="conta1">
                                 <div className="innerConta1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.3541666666666667vw" height="1.3541666666666667vw" viewBox="0 0 23 23" fill="none">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="2.41vh" height="2.41vh" viewBox="0 0 23 23" fill="none">
                                         <rect width="23" height="23" rx="4" fill="#FFA600" />
                                         <path d="M15.6824 20H7.31768C7.04433 20 6.82273 19.7942 6.82273 19.5404V15.8757C6.82273 13.4808 8.92097 11.5323 11.5 11.5323C11.7734 11.5323 11.995 11.7381 11.995 11.9919C11.995 12.2457 11.7734 12.4515 11.5 12.4515C9.46677 12.4515 7.81264 13.9876 7.81264 15.8757V19.0808H15.1874V15.8757C15.1874 15.1356 14.9374 14.4313 14.4643 13.8388C14.3016 13.6349 14.3476 13.347 14.5672 13.1958C14.7867 13.0446 15.0968 13.0874 15.2595 13.2913C15.86 14.0433 16.1773 14.937 16.1773 15.8757V19.5404C16.1773 19.7942 15.9557 20 15.6824 20Z" fill="white" />
                                         <path d="M16.505 20H6.49496C6.2216 20 6 19.7942 6 19.5404C6 19.2866 6.2216 19.0808 6.49496 19.0808H16.505C16.7784 19.0808 17 19.2866 17 19.5404C17 19.7942 16.7784 20 16.505 20Z" fill="white" />
@@ -268,12 +268,12 @@ export default function Services(props: { onExit: () => void, onEnter: () => voi
                                 }} />
                             </div>
                             <div className="divider" style={{
-                                marginTop: '.15vw',
-                                marginBottom: '.15vw',
+                                marginTop: '0.27vh',
+                                marginBottom: '0.27vh',
                             }}></div>
                             <div className="conta1">
                                 <div className="innerConta1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.3541666666666667vw" height="1.3541666666666667vw" viewBox="0 0 23 23" fill="none">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="2.41vh" height="2.41vh" viewBox="0 0 23 23" fill="none">
                                         <rect width="23" height="23" rx="4" fill="#23AF00" />
                                         <path d="M6.94633 6.92299C7.65204 6.12155 8.47845 5.71459 8.99023 6.22752L10.6974 7.93678C11.1303 8.37035 11.0253 8.94453 10.5276 9.53685C10.3048 9.8019 10.1732 10.1318 10.1523 10.4776C10.1314 10.8235 10.2224 11.1668 10.4117 11.4568C10.641 11.8082 10.9283 12.1571 11.2735 12.5029C11.6944 12.9243 12.1285 13.268 12.5755 13.5352C12.8587 13.7043 13.1869 13.7823 13.5158 13.7585C13.8446 13.7347 14.1582 13.6103 14.4142 13.4022C15.0346 12.8977 15.4683 12.7152 15.8184 13.0654L17.5255 14.775C18.5443 15.7953 16.0871 18.0429 14.3269 17.7362C12.9066 17.4884 10.7139 15.9311 9.27509 14.4902C8.0053 13.2185 6.29534 10.7428 6.03543 9.44055C5.8761 8.64394 6.26718 7.69301 6.94633 6.92219V6.92299Z" fill="white" />
                                     </svg>
@@ -296,23 +296,23 @@ export default function Services(props: { onExit: () => void, onEnter: () => voi
                             <div style={{
                                 alignSelf: 'stretch',
                                 color: 'rgba(255, 255, 255, 0.17)',
-                                fontSize: '0.7291666666666666vw',
-                                marginTop: '0.5vw',
-                                marginLeft: '0.8vw',
+                                fontSize: '1.30vh',
+                                marginTop: '0.89vh',
+                                marginLeft: '1.42vh',
                                 fontStyle: 'normal',
                                 fontWeight: 500,
                                 lineHeight: 'normal',
                             }}>ACTIONS</div>
-                            <div className="innerCont" style={{ marginTop: '0.5vw', paddingBottom: 0 }}>
+                            <div className="innerCont" style={{ marginTop: '0.89vh', paddingBottom: 0 }}>
                                 <div style={{
                                     display: 'flex',
-                                    gap: '0.4vw',
+                                    gap: '0.71vh',
                                     alignItems: 'center',
-                                    height: '2.5vw',
+                                    height: '4.44vh',
                                 }}>
                                     <svg style={{
                                         flexShrink: 0,
-                                    }} xmlns="http://www.w3.org/2000/svg" width="1.3541666666666667vw" height="1.3541666666666667vw" viewBox="0 0 23 23" fill="none">
+                                    }} xmlns="http://www.w3.org/2000/svg" width="2.41vh" height="2.41vh" viewBox="0 0 23 23" fill="none">
                                         <rect width="23" height="23" rx="4" fill="#1CDAA4" />
                                         <path d="M11.5001 7.71875C11.1376 7.71875 10.8438 7.42494 10.8438 7.0625C10.8438 6.70006 11.1376 6.40625 11.5001 6.40625C11.8625 6.40625 12.1563 6.70006 12.1563 7.0625C12.1563 7.42494 11.8625 7.71875 11.5001 7.71875Z" fill="white" />
                                         <path d="M17.625 9.46875H5.37512C4.98269 9.46875 4.63838 9.20756 4.5325 8.82956C4.42663 8.45156 4.58544 8.0495 4.92078 7.84584L11.0457 4.12709C11.1855 4.04222 11.3428 4 11.5001 4C11.6573 4 11.8146 4.04222 11.9542 4.12709L18.0791 7.84584C18.4145 8.0495 18.5735 8.45178 18.4674 8.82956C18.3618 9.20756 18.0174 9.46875 17.625 9.46875ZM11.5001 5.96875C10.8959 5.96875 10.4063 6.45831 10.4063 7.0625C10.4063 7.66669 10.8959 8.15625 11.5001 8.15625C12.1042 8.15625 12.5938 7.66669 12.5938 7.0625C12.5938 6.45831 12.1042 5.96875 11.5001 5.96875Z" fill="white" />
@@ -329,7 +329,7 @@ export default function Services(props: { onExit: () => void, onEnter: () => voi
                                     }}>
                                         <div style={{
                                             color: "#FFF",
-                                            fontSize: "0.78125vw",
+                                            fontSize: "1.39vh",
                                             fontStyle: "normal",
                                             fontWeight: 500,
                                             lineHeight: "normal",
@@ -337,7 +337,7 @@ export default function Services(props: { onExit: () => void, onEnter: () => voi
                                         <div style={{
                                             width: '98px',
                                             color: 'rgba(255, 255, 255, 0.21)',
-                                            fontSize: '0.5208333333333334vw',
+                                            fontSize: '0.93vh',
                                             fontStyle: 'normal',
                                             fontWeight: 500,
                                             lineHeight: 'normal',
@@ -346,20 +346,20 @@ export default function Services(props: { onExit: () => void, onEnter: () => voi
                                         </div>
                                     </div>
                                     <div style={{
-                                        width: '7vw',
+                                        width: '12.44vh',
                                         whiteSpace: 'nowrap',
                                         overflow: 'hidden',
                                         textOverflow: 'ellipsis',
                                         textAlign: 'right',
                                         color: 'rgba(255, 255, 255, 0.50)',
-                                        fontSize: '0.7291666666666666vw',
+                                        fontSize: '1.30vh',
                                         lineHeight: 'normal'
                                     }}><NumberFormatter suffix=" $" value={bankBalance} thousandSeparator /></div>
                                 </div>
                                 <div style={{
                                     width: '100%',
-                                    height: '1.9vw',
-                                    borderTop: '0.052083333333333336vw solid rgba(255, 255, 255, 0.17)',
+                                    height: '3.38vh',
+                                    borderTop: '0.09vh solid rgba(255, 255, 255, 0.17)',
                                     display: 'flex',
                                     justifyContent: 'space-between'
                                 }}>
@@ -369,11 +369,11 @@ export default function Services(props: { onExit: () => void, onEnter: () => voi
                                         alignItems: 'center',
                                         justifyContent: 'center',
                                         color: '#FFF',
-                                        fontSize: '0.725vw',
+                                        fontSize: '1.29vh',
                                         fontStyle: 'normal',
                                         fontWeight: 500,
                                         lineHeight: 'normal',
-                                        borderRight: '0.052083333333333336vw solid rgba(255, 255, 255, 0.17)',
+                                        borderRight: '0.09vh solid rgba(255, 255, 255, 0.17)',
                                         cursor: 'pointer',
                                     }} onClick={() => {
                                         setInputTitle('Deposit');
@@ -389,7 +389,7 @@ export default function Services(props: { onExit: () => void, onEnter: () => voi
                                         alignItems: 'center',
                                         justifyContent: 'center',
                                         color: '#FFF',
-                                        fontSize: '0.725vw',
+                                        fontSize: '1.29vh',
                                         fontStyle: 'normal',
                                         fontWeight: 500,
                                         lineHeight: 'normal',
@@ -405,24 +405,24 @@ export default function Services(props: { onExit: () => void, onEnter: () => voi
                                 </div>
                             </div>
                             <div style={{
-                                maxHeight: '14vw',
+                                maxHeight: '24.89vh',
                                 overflowY: 'auto',
                                 overflowX: 'hidden',
                             }}>
                                 <div style={{
                                     alignSelf: 'stretch',
                                     color: 'rgba(255, 255, 255, 0.17)',
-                                    fontSize: '0.7291666666666666vw',
-                                    marginTop: '0.5vw',
-                                    marginLeft: '0.8vw',
+                                    fontSize: '1.30vh',
+                                    marginTop: '0.89vh',
+                                    marginLeft: '1.42vh',
                                     fontStyle: 'normal',
                                     fontWeight: 500,
                                     lineHeight: 'normal',
                                 }}>MANAGE EMPLOYEES</div>
-                                <div className="innerCont" style={{ marginTop: '0.5vw' }}>
+                                <div className="innerCont" style={{ marginTop: '0.89vh' }}>
                                     <div className="conta1">
                                         <div className="innerConta1">
-                                            <svg width="1.3541666666666667vw" height="1.3541666666666667vw" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <svg width="2.41vh" height="2.41vh" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <rect width="23" height="23" rx="4" fill="#0095E0" />
                                                 <path d="M15.6824 20H7.31768C7.04433 20 6.82273 19.7942 6.82273 19.5404V15.8757C6.82273 13.4808 8.92097 11.5323 11.5 11.5323C11.7734 11.5323 11.995 11.7381 11.995 11.9919C11.995 12.2457 11.7734 12.4515 11.5 12.4515C9.46677 12.4515 7.81264 13.9876 7.81264 15.8757V19.0808H15.1874V15.8757C15.1874 15.1356 14.9374 14.4313 14.4643 13.8388C14.3016 13.6349 14.3476 13.347 14.5672 13.1958C14.7867 13.0446 15.0968 13.0874 15.2595 13.2913C15.86 14.0433 16.1773 14.937 16.1773 15.8757V19.5404C16.1773 19.7942 15.9557 20 15.6824 20Z" fill="white" />
                                                 <path d="M16.505 20H6.49496C6.2216 20 6 19.7942 6 19.5404C6 19.2866 6.2216 19.0808 6.49496 19.0808H16.505C16.7784 19.0808 17 19.2866 17 19.5404C17 19.7942 16.7784 20 16.505 20Z" fill="white" />
@@ -446,20 +446,20 @@ export default function Services(props: { onExit: () => void, onEnter: () => voi
                                             setInputDescription('Hire a new employee hopefully they are good.');
                                             setInputPlaceholder('Enter Server ID.');
                                             setInputShow(true);
-                                        }} width="0.78125vw" height="0.8333333333333334vw" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        }} width="1.39vh" height="1.48vh" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M5.97143 6.47143V11.5H5.02857V6.47143H0V5.52857H5.02857V0.5H5.97143V5.52857H11V6.47143H5.97143Z" fill="white" />
                                         </svg>
                                     </div>
                                 </div>
 
-                                <div className="innerCont" style={{ marginTop: '0.5vw', maxHeight: '9vw', overflowY: 'auto', overflowX: 'hidden' }}>
+                                <div className="innerCont" style={{ marginTop: '0.89vh', maxHeight: '16.00vh', overflowY: 'auto', overflowX: 'hidden' }}>
                                     {employeeData && employeeData.sort((a: any, b: any) => {
                                         return b?.grade?.level - a?.grade?.level;
                                     }).map((employee, index) => {
                                         return (
                                             <div className="conta1" key={index}>
                                                 <div className="innerConta1">
-                                                    <svg width="1.3541666666666667vw" height="1.3541666666666667vw" viewBox="0 0 23 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <svg width="2.41vh" height="2.41vh" viewBox="0 0 23 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                         <rect y="0.5" width="23" height="23" rx="4" fill={employee.status === 'online' ? "rgba(52, 199, 89, 0.7)" : "rgba(255, 62, 65, 0.7)"} />
                                                         <path d="M17.5 17.1393C17.5 17.8685 17.2926 18.4442 16.8778 18.8665C16.4631 19.2888 15.9119 19.5 15.2244 19.5H7.77557C7.08807 19.5 6.53693 19.2888 6.12216 18.8665C5.70739 18.4442 5.5 17.8685 5.5 17.1393C5.5 16.8173 5.50994 16.5028 5.52983 16.196C5.54972 15.8891 5.58949 15.5579 5.64915 15.2025C5.70881 14.847 5.78409 14.5174 5.875 14.2135C5.96591 13.9097 6.08807 13.6135 6.24148 13.3249C6.39489 13.0362 6.57102 12.7901 6.76989 12.5866C6.96875 12.383 7.21165 12.2205 7.49858 12.099C7.78551 11.9774 8.10227 11.9167 8.44886 11.9167C8.5 11.9167 8.61932 11.982 8.80682 12.1126C8.99432 12.2433 9.20597 12.3891 9.44176 12.5501C9.67756 12.7112 9.98438 12.857 10.3622 12.9876C10.7401 13.1183 11.1193 13.1836 11.5 13.1836C11.8807 13.1836 12.2599 13.1183 12.6378 12.9876C13.0156 12.857 13.3224 12.7112 13.5582 12.5501C13.794 12.3891 14.0057 12.2433 14.1932 12.1126C14.3807 11.982 14.5 11.9167 14.5511 11.9167C14.8977 11.9167 15.2145 11.9774 15.5014 12.099C15.7884 12.2205 16.0313 12.383 16.2301 12.5866C16.429 12.7901 16.6051 13.0362 16.7585 13.3249C16.9119 13.6135 17.0341 13.9097 17.125 14.2135C17.2159 14.5174 17.2912 14.847 17.3509 15.2025C17.4105 15.5579 17.4503 15.8891 17.4702 16.196C17.4901 16.5028 17.5 16.8173 17.5 17.1393ZM14.7727 9C14.7727 9.96615 14.4531 10.791 13.8139 11.4746C13.1747 12.1582 12.4034 12.5 11.5 12.5C10.5966 12.5 9.82528 12.1582 9.18608 11.4746C8.54688 10.791 8.22727 9.96615 8.22727 9C8.22727 8.03385 8.54688 7.20898 9.18608 6.52539C9.82528 5.8418 10.5966 5.5 11.5 5.5C12.4034 5.5 13.1747 5.8418 13.8139 6.52539C14.4531 7.20898 14.7727 8.03385 14.7727 9Z" fill="white" />
                                                     </svg>
@@ -474,7 +474,7 @@ export default function Services(props: { onExit: () => void, onEnter: () => voi
                                                 </div>
                                                 <svg className='clickanimation' onClick={async () => {
                                                     await fetchNui('MangeEmployee', employee.empSource);
-                                                }} width="0.15625vw" height="0.7291666666666666vw" viewBox="0 0 3 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                }} width="0.28vh" height="1.30vh" viewBox="0 0 3 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M3 2C3 2.82843 2.32843 3.5 1.5 3.5C0.671573 3.5 0 2.82843 0 2C0 1.17157 0.671573 0.5 1.5 0.5C2.32843 0.5 3 1.17157 3 2Z" fill="#D9D9D9" />
                                                     <path d="M3 7C3 7.82843 2.32843 8.5 1.5 8.5C0.671573 8.5 0 7.82843 0 7C0 6.17157 0.671573 5.5 1.5 5.5C2.32843 5.5 3 6.17157 3 7Z" fill="#D9D9D9" />
                                                     <path d="M3 12C3 12.8284 2.32843 13.5 1.5 13.5C0.671573 13.5 0 12.8284 0 12C0 11.1716 0.671573 10.5 1.5 10.5C2.32843 10.5 3 11.1716 3 12Z" fill="#D9D9D9" />
@@ -486,21 +486,21 @@ export default function Services(props: { onExit: () => void, onEnter: () => voi
                                 <div style={{
                                     alignSelf: 'stretch',
                                     color: 'rgba(255, 255, 255, 0.17)',
-                                    fontSize: '0.7291666666666666vw',
-                                    marginTop: '0.5vw',
-                                    marginLeft: '0.8vw',
+                                    fontSize: '1.30vh',
+                                    marginTop: '0.89vh',
+                                    marginLeft: '1.42vh',
                                     fontStyle: 'normal',
                                     fontWeight: 500,
                                     lineHeight: 'normal',
                                 }}>INACTIVE EMPLOYEES</div>
-                                <div className="innerCont" style={{ marginTop: '0.5vw', maxHeight: '9vw', overflowY: 'auto', overflowX: 'hidden' }}>
+                                <div className="innerCont" style={{ marginTop: '0.89vh', maxHeight: '16.00vh', overflowY: 'auto', overflowX: 'hidden' }}>
                                     {inActiveEmployees && inActiveEmployees.sort((a: any, b: any) => {
                                         return b?.grade?.level - a?.grade?.level;
                                     }).map((employee, index) => {
                                         return (
                                             <div className="conta1" key={index}>
                                                 <div className="innerConta1">
-                                                    <svg width="1.3541666666666667vw" height="1.3541666666666667vw" viewBox="0 0 23 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <svg width="2.41vh" height="2.41vh" viewBox="0 0 23 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                         <rect y="0.5" width="23" height="23" rx="4" fill="#4D4D4D" />
                                                         <path d="M17.5 17.1393C17.5 17.8685 17.2926 18.4442 16.8778 18.8665C16.4631 19.2888 15.9119 19.5 15.2244 19.5H7.77557C7.08807 19.5 6.53693 19.2888 6.12216 18.8665C5.70739 18.4442 5.5 17.8685 5.5 17.1393C5.5 16.8173 5.50994 16.5028 5.52983 16.196C5.54972 15.8891 5.58949 15.5579 5.64915 15.2025C5.70881 14.847 5.78409 14.5174 5.875 14.2135C5.96591 13.9097 6.08807 13.6135 6.24148 13.3249C6.39489 13.0362 6.57102 12.7901 6.76989 12.5866C6.96875 12.383 7.21165 12.2205 7.49858 12.099C7.78551 11.9774 8.10227 11.9167 8.44886 11.9167C8.5 11.9167 8.61932 11.982 8.80682 12.1126C8.99432 12.2433 9.20597 12.3891 9.44176 12.5501C9.67756 12.7112 9.98438 12.857 10.3622 12.9876C10.7401 13.1183 11.1193 13.1836 11.5 13.1836C11.8807 13.1836 12.2599 13.1183 12.6378 12.9876C13.0156 12.857 13.3224 12.7112 13.5582 12.5501C13.794 12.3891 14.0057 12.2433 14.1932 12.1126C14.3807 11.982 14.5 11.9167 14.5511 11.9167C14.8977 11.9167 15.2145 11.9774 15.5014 12.099C15.7884 12.2205 16.0313 12.383 16.2301 12.5866C16.429 12.7901 16.6051 13.0362 16.7585 13.3249C16.9119 13.6135 17.0341 13.9097 17.125 14.2135C17.2159 14.5174 17.2912 14.847 17.3509 15.2025C17.4105 15.5579 17.4503 15.8891 17.4702 16.196C17.4901 16.5028 17.5 16.8173 17.5 17.1393ZM14.7727 9C14.7727 9.96615 14.4531 10.791 13.8139 11.4746C13.1747 12.1582 12.4034 12.5 11.5 12.5C10.5966 12.5 9.82528 12.1582 9.18608 11.4746C8.54688 10.791 8.22727 9.96615 8.22727 9C8.22727 8.03385 8.54688 7.20898 9.18608 6.52539C9.82528 5.8418 10.5966 5.5 11.5 5.5C12.4034 5.5 13.1747 5.8418 13.8139 6.52539C14.4531 7.20898 14.7727 8.03385 14.7727 9Z" fill="white" />
                                                     </svg>
@@ -515,7 +515,7 @@ export default function Services(props: { onExit: () => void, onEnter: () => voi
                                                 </div>
                                                 <svg className='clickanimation' onClick={async () => {
                                                     await fetchNui('MangeInactiveEmployee', employee.empSource);
-                                                }} width="0.15625vw" height="0.7291666666666666vw" viewBox="0 0 3 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                }} width="0.28vh" height="1.30vh" viewBox="0 0 3 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M3 2C3 2.82843 2.32843 3.5 1.5 3.5C0.671573 3.5 0 2.82843 0 2C0 1.17157 0.671573 0.5 1.5 0.5C2.32843 0.5 3 1.17157 3 2Z" fill="#D9D9D9" />
                                                     <path d="M3 7C3 7.82843 2.32843 8.5 1.5 8.5C0.671573 8.5 0 7.82843 0 7C0 6.17157 0.671573 5.5 1.5 5.5C2.32843 5.5 3 6.17157 3 7Z" fill="#D9D9D9" />
                                                     <path d="M3 12C3 12.8284 2.32843 13.5 1.5 13.5C0.671573 13.5 0 12.8284 0 12C0 11.1716 0.671573 10.5 1.5 10.5C2.32843 10.5 3 11.1716 3 12Z" fill="#D9D9D9" />

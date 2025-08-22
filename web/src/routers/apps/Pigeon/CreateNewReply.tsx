@@ -52,15 +52,15 @@ export default function CreateNewReply(props: { show: boolean, tweetId: string, 
             }}>
                 <div className="headerButtons" style={{
                     width: '100%',
-                    marginTop: '2.2vw',
-                    marginLeft: '-0.4vw',
+                    marginTop: '3.91vh',
+                    marginLeft: '-0.71vh',
                     display: 'flex',
                     justifyContent: 'space-between',
                 }}>
                     <Button variant="transparent" style={{
                         color: 'white',
-                        height: '1.8vw',
-                        borderRadius: '0.7vw',
+                        height: '3.20vh',
+                        borderRadius: '1.24vh',
                     }} onClick={() => {
                         props.onCancel();
                         setContent('');
@@ -68,8 +68,8 @@ export default function CreateNewReply(props: { show: boolean, tweetId: string, 
                     }}>Cancel</Button>
                     <Button variant="filled" style={{
                         color: 'white',
-                        height: '1.7vw',
-                        borderRadius: '1vw',
+                        height: '3.02vh',
+                        borderRadius: '1.78vh',
                     }} onClick={() => {
                         fetchNui('postReply', JSON.stringify({
                             tweetId: props.tweetId,
@@ -90,9 +90,9 @@ export default function CreateNewReply(props: { show: boolean, tweetId: string, 
                     <div style={{
                         display: 'flex',
                         flexDirection: 'column',
-                        gap: '1vw',
+                        gap: '1.78vh',
                     }}>
-                        <Avatar src={profileData.avatar.length > 0 ? profileData.avatar : "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} size={'1.5vw'} />
+                        <Avatar src={profileData.avatar.length > 0 ? profileData.avatar : "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} size={'2.67vh'} />
                         <ActionIcon variant="filled" onClick={() => {
                             setInputTitle('Attach Image');
                             setInputDescription('Attach an image to your post');
@@ -108,14 +108,14 @@ export default function CreateNewReply(props: { show: boolean, tweetId: string, 
                         setContent(e.currentTarget.value)
                     }} value={content} styles={{
                         root: {
-                            height: '15vw',
+                            height: '26.67vh',
                             width: '100%',
                             backgroundColor: 'rgba(240, 23, 23, 0)',
                         },
                         input: {
                             color: 'white',
                             backgroundColor: 'rgba(255, 255, 255, 0)',
-                            height: '15vw',
+                            height: '26.67vh',
                             outline: 'none',
                             border: 'none',
                         }
@@ -126,16 +126,16 @@ export default function CreateNewReply(props: { show: boolean, tweetId: string, 
                     height: '41%',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '0.3vw',
+                    gap: '0.53vh',
                     overflowX: 'hidden',
                     overflowY: 'auto',
                 }}>
                     {imageAttachment.map((image, index) => {
                         return <img key={index} src={image} style={{
-                            width: '15vw',
-                            height: '10vw',
+                            width: '26.67vh',
+                            height: '17.78vh',
                             objectFit: 'cover',
-                            borderRadius: '0.5vw',
+                            borderRadius: '0.89vh',
                         }} onError={() => {
                             setImageAttachment(imageAttachment.filter((img) => img !== image));
                         }} />

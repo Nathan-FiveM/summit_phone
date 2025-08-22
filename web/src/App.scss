@@ -1,14 +1,14 @@
 #root {
-  padding: 1vw;
+  padding: 1.78vh;
   user-select: none;
 }
 
 .innerFrame {
-  width: 16.757291666666666vw;
-  height: 36.12500000000001vw;
-  margin-top: 0.55vw;
-  margin-left: 0.64vw;
-  border-radius: 2.48vw;
+  width: 29.79vh;
+  height: 64.22vh;
+  margin-top: 0.98vh;
+  margin-left: 1.14vh;
+  border-radius: 4.41vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -20,31 +20,31 @@
 
   .headerFrame {
     position: absolute;
-    width: 16.757291666666666vw;
-    height: 2.34375vw;
+    width: 29.79vh;
+    height: 4.17vh;
     flex-shrink: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 2.2395833333333335vw 2.2395833333333335vw 0 0;
+    border-radius: 3.98vh 3.98vh 0 0;
     background: rgba(83, 36, 36, 0);
 
     .headerText {
       position: absolute;
-      left: 1.5625vw;
-      top: 0.6vw;
+      left: 2.78vh;
+      top: 1.07vh;
       color: white;
       display: inline-flex;
       justify-content: center;
       align-items: center;
-      gap: 7.864583333333333vw;
+      gap: 13.98vh;
       z-index: 52;
 
       .timeText {
-        width: 2vw;
+        width: 3.56vh;
         color: #FFF;
         font-family: "SFPro";
-        font-size: 0.6770833333333334vw;
+        font-size: 1.20vh;
         font-style: normal;
         font-weight: 500;
         text-align: center;
@@ -56,7 +56,7 @@
   .contentFrame {
     width: 100%;
     height: 100%;
-    border-radius: 2.44vw;
+    border-radius: 4.34vh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -73,11 +73,11 @@
       align-items: center;
 
       .closeAll {
-        margin-top: 2vw;
-        width: 3vw;
-        height: 1.2vw;
+        margin-top: 3.56vh;
+        width: 5.33vh;
+        height: 2.13vh;
         background-color: #535353af;
-        border-radius: 2vw;
+        border-radius: 3.56vh;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -85,53 +85,53 @@
       }
 
       .firstRow {
-        width: 14.635416666666666vw;
-        height: 8.229166666666666vw;
-        margin-top: 3.5828125000000006vw;
+        width: 26.02vh;
+        height: 14.63vh;
+        margin-top: 6.37vh;
         flex-shrink: 0;
         display: flex;
         justify-content: center;
 
         .fourApps {
-          width: 5.98125vw;
+          width: 10.63vh;
           display: flex;
-          height: 7.604166666666667vw;
+          height: 13.52vh;
           align-items: flex-start;
           align-content: flex-start;
-          gap: 1.3vw 0.5729166666666666vw;
+          gap: 2.31vh 1.02vh;
           flex-shrink: 0;
           flex-wrap: wrap;
-          margin-left: 0.6770833333333334vw;
+          margin-left: 1.20vh;
         }
       }
 
       .secondRow {
         position: relative;
         display: flex;
-        width: 14.245833333333334vw;
-        height: 12.927083333333334vw;
+        width: 25.33vh;
+        height: 22.98vh;
         align-items: flex-start;
         align-content: flex-start;
-        gap: 1.277vw;
+        gap: 2.27vh;
         flex-wrap: wrap;
-        margin-top: 1.3020833333333333vw;
+        margin-top: 2.31vh;
         transition: all 0.3s ease;
       }
 
       .thirdRow {
         display: flex;
-        width: 14.6vw;
-        height: 3.4895833333333335vw;
-        padding: 0.5208333333333334vw;
+        width: 25.96vh;
+        height: 6.20vh;
+        padding: 0.93vh;
         align-items: center;
-        gap: 1.0729166666666667vw;
+        gap: 1.91vh;
         flex-shrink: 0;
-        border-radius: 0.625vw;
+        border-radius: 1.11vh;
         position: relative;
         overflow: hidden;
         background: rgba(0, 0, 0, 0.2);
-        backdrop-filter: blur(0.3541666766007741vw);
-        margin-top: 3.75vw;
+        backdrop-filter: blur(0.63vh);
+        margin-top: 6.67vh;
       }
     }
 
@@ -148,24 +148,24 @@
       background-size: cover;
 
       .bottomButton {
-        width: 14.229166666666666vw;
-        height: 2.1066145833333336vw;
+        width: 25.30vh;
+        height: 3.75vh;
         flex-shrink: 0;
         display: flex;
         justify-content: space-between;
         position: relative;
-        top: 22.2vw;
+        top: 39.47vh;
 
         .button1 {
-          width: 2.03125vw;
-          height: 2.03125vw;
+          width: 3.61vh;
+          height: 3.61vh;
           display: inline-flex;
           justify-content: center;
           align-items: center;
-          gap: 0.5208333333333334vw;
-          border-radius: 10vw;
+          gap: 0.93vh;
+          border-radius: 17.78vh;
           background: rgba(70, 70, 70, 0.66);
-          backdrop-filter: blur(0.10416666666666667vw);
+          backdrop-filter: blur(0.19vh);
           cursor: pointer;
         }
       }
@@ -186,37 +186,37 @@
 
 
       .title1 {
-        width: 13vw;
+        width: 23.11vh;
         color: #FFF;
         text-align: center;
         font-family: "SFPro";
-        font-size: 1.3020833333333333vw;
+        font-size: 2.31vh;
         font-style: normal;
         font-weight: 600;
         line-height: 119.414%;
-        margin-top: 0.6770833333333334vw;
+        margin-top: 1.20vh;
       }
 
       .usabox {
-        width: 15.21875vw;
-        height: 2.3958333333333335vw;
+        width: 27.06vh;
+        height: 4.26vh;
         flex-shrink: 0;
-        border-radius: 0.2604166666666667vw;
-        margin-top: 1.25vw;
+        border-radius: 0.46vh;
+        margin-top: 2.22vh;
         background: rgba(255, 255, 255, 0.31);
         display: flex;
         justify-content: center;
         align-items: center;
 
         .text {
-          width: 5vw;
-          letter-spacing: 0.02vw;
-          height: 0.825vw;
+          width: 8.89vh;
+          letter-spacing: 0.04vh;
+          height: 1.47vh;
           flex-shrink: 0;
           color: #FFF;
           text-align: center;
           font-family: "SFPro";
-          font-size: 0.74vw;
+          font-size: 1.32vh;
           font-style: normal;
           font-weight: 600;
           line-height: 119.414%;
@@ -224,15 +224,15 @@
       }
 
       .othertext {
-        width: 12.03125vw;
-        height: 0.8333333333333334vw;
+        width: 21.39vh;
+        height: 1.48vh;
         flex-shrink: 0;
-        margin-top: 1.40625vw;
-        margin-left: -1.8vw;
+        margin-top: 2.50vh;
+        margin-left: -3.20vh;
         color: #FFF;
         text-align: center;
         font-family: "SFPro";
-        font-size: 0.9375vw;
+        font-size: 1.67vh;
         font-style: normal;
         font-weight: 700;
         line-height: 119.414%;
@@ -240,13 +240,13 @@
 
       .otherCountry {
         display: flex;
-        width: 15.21875vw;
-        height: 18.4vw;
+        width: 27.06vh;
+        height: 32.71vh;
         flex-direction: column;
         align-items: flex-start;
         flex-shrink: 0;
-        margin-top: 1.71875vw;
-        border-radius: 0.5208333333333334vw 0.5208333333333334vw 1.4583333333333333vw 1.4583333333333333vw;
+        margin-top: 3.06vh;
+        border-radius: 0.93vh 0.93vh 2.59vh 2.59vh;
         background: rgba(255, 255, 255, 0.30);
         display: flex;
         flex-direction: column;
@@ -255,12 +255,12 @@
 
         .text {
 
-          letter-spacing: 0.02vw;
-          height: 0.825vw;
+          letter-spacing: 0.04vh;
+          height: 1.47vh;
           flex-shrink: 0;
           color: #FFF;
           font-family: "SFPro";
-          font-size: 0.74vw;
+          font-size: 1.32vh;
           font-style: normal;
           font-weight: 600;
           line-height: 119.414%;
@@ -268,13 +268,13 @@
       }
 
       .mayTake {
-        width: 14vw;
-        height: 1.9791666666666667vw;
+        width: 24.89vh;
+        height: 3.52vh;
         flex-shrink: 0;
         color: #FFF;
         text-align: center;
         font-family: "SFPro";
-        font-size: 0.8vw;
+        font-size: 1.42vh;
         font-style: normal;
         font-weight: 600;
         line-height: 119.414%;
@@ -282,48 +282,48 @@
 
       .unnderText {
         position: absolute;
-        bottom: 1.6677083333333336vw;
-        width: 16vw;
+        bottom: 2.96vh;
+        width: 28.44vh;
         color: #FFF;
         text-align: center;
         font-family: "SFPro";
-        font-size: 0.55vw;
+        font-size: 0.98vh;
         font-style: normal;
         font-weight: 600;
         line-height: 119.414%;
       }
 
       .dataPrivytext {
-        width: 10.751565762004175vw;
+        width: 19.11vh;
         color: #FFF;
         text-align: center;
         font-family: "SFPro";
-        font-size: 1.5657620041753653vw;
+        font-size: 2.78vh;
         font-style: normal;
         font-weight: 700;
-        margin-top: 0.3914405010438413vw;
+        margin-top: 0.70vh;
         line-height: 119.414%;
       }
 
       .inoftext {
-        width: 15.413361169102297vw;
-        height: 17.849686847599166vw;
+        width: 27.40vh;
+        height: 31.73vh;
         flex-shrink: 0;
         color: #FFF;
         text-align: center;
         font-family: "SFPro";
-        font-size: 0.8828810020876826vw;
+        font-size: 1.57vh;
         font-style: normal;
         font-weight: 500;
         line-height: 119.414%;
-        margin-top: 1.6179540709812108vw;
+        margin-top: 2.88vh;
       }
 
       .startupContinue {
         display: flex;
 
 
-        border-radius: 0.20876826722338204vw;
+        border-radius: 0.37vh;
         background: #1F53D8;
         justify-content: center;
         align-items: center;
@@ -333,74 +333,74 @@
         color: #8CADFF;
         text-align: center;
         font-family: "SFPro";
-        font-size: 0.7306889352818372vw;
-        margin-top: 0.7828810020876826vw;
+        font-size: 1.30vh;
+        margin-top: 1.39vh;
         font-style: normal;
         font-weight: 600;
         line-height: 119.414%;
       }
 
       .faceIdtext {
-        width: 6vw;
-        height: 1.8789144050104385vw;
+        width: 10.67vh;
+        height: 3.34vh;
         flex-shrink: 0;
         color: #FFF;
         text-align: center;
         font-family: "SFPro";
-        font-size: 1.7657620041753653vw;
+        font-size: 3.14vh;
         font-style: normal;
         font-weight: 600;
         line-height: 119.414%;
-        margin-top: 0.4697286012526096vw;
+        margin-top: 0.84vh;
       }
 
       .faceidDesc {
-        width: 13.8vw;
-        height: 4.697286012526096vw;
+        width: 24.53vh;
+        height: 8.35vh;
         flex-shrink: 0;
         color: #FFF;
         text-align: center;
         font-family: "SFPro";
-        font-size: 0.8828810020876826vw;
+        font-size: 1.57vh;
         font-style: normal;
         font-weight: 500;
-        margin-top: 0.9394572025052192vw;
+        margin-top: 1.67vh;
         line-height: 119.414%;
       }
 
       .pinPageTitle1 {
-        width: 15.875vw;
-        margin-top: 1.25vw;
+        width: 28.22vh;
+        margin-top: 2.22vh;
         color: #FFF;
         text-align: center;
         font-family: "SFPro";
-        font-size: 1.29375vw;
+        font-size: 2.30vh;
         font-style: normal;
         font-weight: 700;
         line-height: normal;
       }
 
       .pinPageTitle2 {
-        width: 15.697916666666666vw;
+        width: 27.91vh;
         color: #FFF;
         text-align: center;
         font-family: "SFPro";
-        font-size: 0.84vw;
+        font-size: 1.49vh;
         font-style: normal;
         font-weight: 500;
         line-height: normal;
-        margin-top: 1.6666666666666667vw;
+        margin-top: 2.96vh;
       }
 
       .pinPageTitle3 {
-        width: 10.739583333333334vw;
-        height: 1.6666666666666667vw;
-        margin-top: 1.5104166666666667vw;
+        width: 19.09vh;
+        height: 2.96vh;
+        margin-top: 2.69vh;
         flex-shrink: 0;
         color: #FFF;
         text-align: center;
         font-family: "SFPro";
-        font-size: 0.84vw;
+        font-size: 1.49vh;
         font-style: normal;
         font-weight: 500;
         line-height: normal;
@@ -409,55 +409,55 @@
       .smrtAccount {
         color: #FFF;
         font-family: Saira;
-        font-size: 1.250420168067227vw;
+        font-size: 2.22vh;
         font-style: normal;
         font-weight: 700;
         line-height: normal;
-        margin-top: 0.9474789915966386vw;
+        margin-top: 1.68vh;
       }
 
       .smrDescription {
-        width: 13.659663865546218vw;
-        height: 2.2058823529411766vw;
+        width: 24.28vh;
+        height: 3.92vh;
         flex-shrink: 0;
         color: #FFF;
-        margin-top: 0.4726890756302521vw;
+        margin-top: 0.84vh;
         text-align: center;
-        font-size: 0.6777310924369747vw;
+        font-size: 1.20vh;
         font-style: normal;
         font-weight: 500;
         line-height: normal;
       }
 
       .smrtDesc {
-        width: 14.375vw;
+        width: 25.56vh;
         color: #FFF;
         text-align: center;
         font-family: "SFPro";
-        font-size: 0.41vw;
+        font-size: 0.73vh;
         font-style: normal;
         font-weight: 500;
         line-height: 119.414%;
-        margin-top: 0.18229166666666666vw;
+        margin-top: 0.32vh;
       }
 
     }
 
     .NumberDialing {
       display: flex;
-      width: 15.052083333333334vw;
-      height: 2.5vw;
+      width: 26.76vh;
+      height: 4.44vh;
       justify-content: center;
       align-items: flex-start;
-      gap: 0.3125vw;
+      gap: 0.56vh;
       flex-shrink: 0;
       color: #FFF;
       text-align: center;
       font-family: "SFPro";
-      font-size: 2.0833333333333335vw;
+      font-size: 3.70vh;
       font-weight: 500;
       line-height: normal;
-      margin-top: 2.8645833333333335vw;
+      margin-top: 5.09vh;
     }
 
     .speakerButton {
@@ -483,10 +483,10 @@
         display: flex;
         flex-direction: row;
         align-items: center;
-        padding: 0px 0.15625vw;
-        gap: 0.3619791666666667vw;
-        width: 14.895833333333334vw;
-        height: 0.8333333333333334vw;
+        padding: 0px 0.28vh;
+        gap: 0.64vh;
+        width: 26.48vh;
+        height: 1.48vh;
         flex: none;
         order: 0;
         align-self: stretch;
@@ -497,17 +497,17 @@
           flex-direction: row;
           justify-content: space-between;
           align-items: center;
-          height: 0.6770833333333334vw;
+          height: 1.20vh;
           flex: none;
           order: 1;
           flex-grow: 1;
 
           .text {
-            width: 4.427083333333333vw;
-            height: 0.6770833333333334vw;
+            width: 7.87vh;
+            height: 1.20vh;
             font-weight: 400;
-            font-size: 0.7291666666666666vw;
-            line-height: 0.6770833333333334vw;
+            font-size: 1.30vh;
+            line-height: 1.20vh;
             text-align: center;
             letter-spacing: 0.03em;
             color: #FFFFFF;
@@ -522,19 +522,19 @@
             padding: 0px;
             align-items: center;
             justify-content: space-between;
-            width: 1.9791666666666667vw;
-            height: 0.6770833333333334vw;
+            width: 3.52vh;
+            height: 1.20vh;
             flex: none;
             order: 1;
             flex-grow: 0;
 
             .textX {
-              width: 1.0416666666666667vw;
-              height: 0.6770833333333334vw;
+              width: 1.85vh;
+              height: 1.20vh;
               font-style: normal;
               font-weight: 500;
-              font-size: 0.6770833333333334vw;
-              line-height: 0.6770833333333334vw;
+              font-size: 1.20vh;
+              line-height: 1.20vh;
               text-align: center;
               letter-spacing: 0.03em;
               color: rgba(255, 255, 255, 0.3);
@@ -547,7 +547,7 @@
       }
 
       .topBar {
-        margin-top: 2vw;
+        margin-top: 3.56vh;
         display: flex;
         align-items: center;
         width: 100%;
@@ -556,9 +556,9 @@
           font-family: 'SFPro';
           font-style: normal;
           font-weight: 700;
-          font-size: 0.9375vw;
-          line-height: 0.9375vw;
-          margin-left: 2.4vw;
+          font-size: 1.67vh;
+          line-height: 1.67vh;
+          margin-left: 4.27vh;
           text-align: center;
           color: #FFFFFF;
         }
@@ -568,16 +568,16 @@
           flex-direction: row;
           align-items: center;
           padding: 0px;
-          gap: 0.3125vw;
-          margin-left: 1vw;
+          gap: 0.56vh;
+          margin-left: 1.78vh;
 
           .text {
-            width: 2.0833333333333335vw;
-            height: 0.9375vw;
+            width: 3.70vh;
+            height: 1.67vh;
             font-style: normal;
             font-weight: 500;
-            font-size: 0.78125vw;
-            line-height: 0.9375vw;
+            font-size: 1.39vh;
+            line-height: 1.67vh;
             text-align: center;
             color: #0A84FF;
             flex: none;
@@ -590,11 +590,11 @@
       .messageContent {
         display: flex;
         width: 90%;
-        height: 29vw;
-        margin-top: 1vw;
+        height: 51.56vh;
+        margin-top: 1.78vh;
         flex-direction: column;
         align-items: flex-start;
-        gap: 0.20833333333333334vw;
+        gap: 0.37vh;
         flex-shrink: 0;
         overflow-y: auto;
         overflow-x: hidden;
@@ -604,11 +604,11 @@
           width: 90%;
           flex-direction: column;
           align-items: center;
-          gap: 0.3125vw;
+          gap: 0.56vh;
 
           .channelContent {
             display: flex;
-            width: 14.8vw;
+            width: 26.31vh;
             justify-content: space-between;
             align-items: flex-start;
             align-self: stretch;
@@ -616,10 +616,10 @@
 
             .messageCont {
               display: flex;
-              width: 12.760416666666666vw;
+              width: 22.69vh;
               flex-direction: column;
               align-items: flex-start;
-              margin-left: 0.5vw;
+              margin-left: 0.89vh;
 
               .title {
                 display: flex;
@@ -629,7 +629,7 @@
 
                 .name {
                   color: #FFF;
-                  font-size: 0.78125vw;
+                  font-size: 1.39vh;
                   font-style: normal;
                   font-weight: 700;
                   line-height: normal;
@@ -638,11 +638,11 @@
                 .timeStamp {
                   display: flex;
                   align-items: center;
-                  gap: 0.625vw;
+                  gap: 1.11vh;
 
                   .text {
                     color: rgba(255, 255, 255, 0.50);
-                    font-size: 0.625vw;
+                    font-size: 1.11vh;
                     font-style: normal;
                     font-weight: 500;
                     line-height: normal;
@@ -651,11 +651,11 @@
               }
 
               .description {
-                height: 1.3vw;
+                height: 2.31vh;
                 overflow: hidden;
                 
                 color: rgba(255, 255, 255, 0.50);
-                font-size: 0.5208333333333334vw;
+                font-size: 0.93vh;
                 font-style: normal;
                 font-weight: 500;
                 line-height: normal;
@@ -671,9 +671,9 @@
 
         .headerbar {
           width: 100%;
-          height: 6vw;
+          height: 10.67vh;
           flex-shrink: 0;
-          border-radius: 2.2395833333333335vw 2.2395833333333335vw 0px 0px;
+          border-radius: 3.98vh 3.98vh 0px 0px;
           background: rgb(36, 36, 36);
           display: flex;
           flex-direction: row;
@@ -686,15 +686,15 @@
             flex-direction: column;
             align-items: center;
 
-            margin-top: 1.3vw;
+            margin-top: 2.31vh;
 
 
             .name {
-              margin-top: 0.3vw;
-              min-width: 10vw;
+              margin-top: 0.53vh;
+              min-width: 17.78vh;
               color: #FFF;
               text-align: center;
-              font-size: 0.88125vw;
+              font-size: 1.57vh;
               font-style: normal;
               font-weight: 700;
               line-height: normal;
@@ -718,7 +718,7 @@
           display: flex;
           align-items: center;
           justify-content: space-between;
-          margin-top: 0.8vw;
+          margin-top: 1.42vh;
           position: relative;
         }
       }
@@ -735,41 +735,41 @@
     .settings {
       .card {
         display: flex;
-        width: 15.052083333333334vw;
-        padding: 0.46875vw 0.4166666666666667vw;
+        width: 26.76vh;
+        padding: 0.83vh 0.74vh;
         align-items: center;
-        gap: 0.5208333333333334vw;
-        border-radius: 0.2604166666666667vw;
+        gap: 0.93vh;
+        border-radius: 0.46vh;
         background: rgba(255, 255, 255, 0.12);
-        margin-left: 0.8vw;
-        margin-top: 0.7vw;
+        margin-left: 1.42vh;
+        margin-top: 1.24vh;
 
         .NameAndBottoer {
           display: flex;
-          width: 8.645833333333334vw;
+          width: 15.37vh;
           flex-direction: column;
           align-items: flex-start;
-          gap: 0.10416666666666667vw;
+          gap: 0.19vh;
           flex-shrink: 0;
 
           .name {
-            height: 1.1416666666666667vw;
+            height: 2.03vh;
             color: #FFF;
-            font-size: 1.0416666666666667vw;
+            font-size: 1.85vh;
             font-style: normal;
             font-weight: 700;
             line-height: normal;
-            width: 8.6vw;
+            width: 15.29vh;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            margin-bottom: 0.1vw;
+            margin-bottom: 0.18vh;
           }
 
           .small {
             align-self: stretch;
             color: rgba(255, 255, 255, 0.50);
-            font-size: 0.625vw;
+            font-size: 1.11vh;
             font-style: normal;
             font-weight: 700;
             line-height: normal;
@@ -778,37 +778,37 @@
 
         .right {
           display: flex;
-          width: 0.8333333333333334vw;
+          width: 1.48vh;
           justify-content: flex-end;
           align-items: center;
-          gap: 0.5208333333333334vw;
+          gap: 0.93vh;
           flex-shrink: 0;
         }
       }
 
       .innerCont {
-        width: 15.052083333333334vw;
+        width: 26.76vh;
         flex-shrink: 0;
-        border-radius: 0.2604166666666667vw;
+        border-radius: 0.46vh;
         background: rgba(255, 255, 255, 0.12);
-        margin-left: 0.8vw;
-        margin-top: 1.5vw;
+        margin-left: 1.42vh;
+        margin-top: 2.67vh;
         display: flex;
-        padding: 0.3645833333333333vw 0px;
+        padding: 0.65vh 0px;
         flex-direction: column;
         align-items: center;
-        gap: 0.3645833333333333vw;
+        gap: 0.65vh;
 
         .conta1 {
           display: flex;
-          width: 14.010416666666666vw;
+          width: 24.91vh;
           justify-content: space-between;
           align-items: center;
 
           .innerConta1 {
             display: flex;
             align-items: center;
-            gap: 0.5645833333333333vw;
+            gap: 1.00vh;
             flex: 1 0 0;
 
             .textConta {
@@ -819,7 +819,7 @@
 
               .text1 {
                 color: #FFF;
-                font-size: 0.78125vw;
+                font-size: 1.39vh;
                 font-style: normal;
                 font-weight: 500;
                 line-height: normal;
@@ -829,7 +829,7 @@
               .text2 {
                 align-self: stretch;
                 color: rgba(255, 255, 255, 0.20);
-                font-size: 0.5729166666666666vw;
+                font-size: 1.02vh;
                 font-style: normal;
                 font-weight: 500;
                 line-height: normal;
@@ -840,30 +840,30 @@
       }
 
       .soundheader {
-        margin-top: 2.3vw;
+        margin-top: 4.09vh;
         display: flex;
         flex-direction: row;
         align-items: center;
         padding: 0px;
-        gap: 1.7vw;
-        margin-left: 0.6vw;
+        gap: 3.02vh;
+        margin-left: 1.07vh;
 
         .back {
           display: flex;
           align-items: center;
           padding: 0px;
-          gap: 0.3125vw;
-          width: 2.34375vw;
-          height: 0.9895833333333334vw;
+          gap: 0.56vh;
+          width: 4.17vh;
+          height: 1.76vh;
         }
 
         .name {
-          width: 8.072916666666666vw;
-          height: 0.9895833333333334vw;
+          width: 14.35vh;
+          height: 1.76vh;
           font-style: normal;
           font-weight: 500;
-          font-size: 0.8854166666666666vw;
-          line-height: 0.9895833333333334vw;
+          font-size: 1.57vh;
+          line-height: 1.76vh;
           display: flex;
           align-items: center;
           text-align: center;
@@ -881,15 +881,15 @@
 
       .cancelButton {
         display: flex;
-        width: 14.583333333333334vw;
-        padding: 0.5208333333333334vw 0px 0.46875vw 0px;
+        width: 25.93vh;
+        padding: 0.93vh 0px 0.83vh 0px;
         justify-content: center;
         align-items: center;
-        border-radius: 0.3125vw;
+        border-radius: 0.56vh;
         background: #373737;
         color: #FF3E41;
         text-align: center;
-        font-size: 1.0416666666666667vw;
+        font-size: 1.85vh;
         font-style: normal;
         font-weight: 500;
         line-height: normal;
@@ -897,18 +897,18 @@
       }
 
       .inputPage {
-        width: 14.583333333333334vw;
-        height: 4.6875vw;
-        margin-bottom: 0.5vw;
+        width: 25.93vh;
+        height: 8.33vh;
+        margin-bottom: 0.89vh;
         flex-shrink: 0;
-        border-radius: 0.3125vw;
+        border-radius: 0.56vh;
         background: #373737;
 
         .title {
           color: #ffffff;
           text-align: center;
-          font-size: 0.8854166666666666vw;
-          margin-top: 0.4vw;
+          font-size: 1.57vh;
+          margin-top: 0.71vh;
           font-style: normal;
           font-weight: 500;
           line-height: normal;
@@ -917,8 +917,8 @@
         .Dsadsadsa {
           ::placeholder {
             color: #ffffff;
-            letter-spacing: 0.05vw;
-            font-size: 0.7854166666666666vw;
+            letter-spacing: 0.09vh;
+            font-size: 1.40vh;
             font-style: normal;
             font-weight: 500;
             line-height: normal;
@@ -929,7 +929,7 @@
       .contasa {
         width: 90%;
         margin-left: 4%;
-        margin-top: 1vw;
+        margin-top: 1.78vh;
         font-weight: 500;
         display: flex;
         justify-content: space-between;
@@ -939,19 +939,19 @@
 
       .mainMailBox {
         display: flex;
-        width: 15.572916666666666vw;
-        max-height: 3.125vw;
+        width: 27.69vh;
+        max-height: 5.56vh;
         overflow: hidden;
         align-items: flex-start;
-        gap: 0.2604166666666667vw;
+        gap: 0.46vh;
         cursor: pointer;
 
         .mailsemiContainer {
           display: flex;
-          padding: 0px 0.052083333333333336vw;
+          padding: 0px 0.09vh;
           flex-direction: column;
           align-items: flex-start;
-          gap: 0.052083333333333336vw;
+          gap: 0.09vh;
           flex: 1 0 0;
 
           .titleCont {
@@ -960,58 +960,58 @@
             align-self: stretch;
 
             .title {
-              width: 7.90625vw;
+              width: 14.06vh;
               color: #FFF;
-              font-size: 0.78125vw;
+              font-size: 1.39vh;
               font-style: normal;
               white-space: nowrap;
               text-overflow: ellipsis;
               overflow: hidden;
               font-weight: 700;
               line-height: normal;
-              letter-spacing: 0.026041666666666668vw;
+              letter-spacing: 0.05vh;
             }
 
             .dateTime {
               display: flex;
-              width: 5.21875vw;
+              width: 9.28vh;
               justify-content: end;
               align-items: center;
-              gap: 0.15625vw;
+              gap: 0.28vh;
               color: #5E5E5E;
               text-align: right;
-              font-size: 0.625vw;
+              font-size: 1.11vh;
               font-style: normal;
               font-weight: 700;
               line-height: normal;
-              letter-spacing: 0.021875vw;
+              letter-spacing: 0.04vh;
             }
           }
 
           .description {
             align-self: stretch;
             color: rgba(255, 255, 255, 0.70);
-            font-size: 0.5729166666666666vw;
+            font-size: 1.02vh;
             font-style: normal;
             font-weight: 500;
             line-height: normal;
-            letter-spacing: 0.011458333333333333vw;
+            letter-spacing: 0.02vh;
           }
         }
       }
 
       .mailMessageheader {
         display: flex;
-        width: 15.625vw;
+        width: 27.78vh;
         align-items: flex-start;
-        gap: 0.3645833333333333vw;
+        gap: 0.65vh;
 
         .semicontexsa {
           display: flex;
-          padding: 0px 0.052083333333333336vw;
+          padding: 0px 0.09vh;
           flex-direction: column;
           align-items: flex-start;
-          gap: 0.052083333333333336vw;
+          gap: 0.09vh;
           flex: 1 0 0;
 
           .titleCont {
@@ -1020,60 +1020,60 @@
             align-self: stretch;
 
             .title {
-              width: 8.427083333333334vw;
+              width: 14.98vh;
               color: #FFF;
-              font-size: 0.78125vw;
+              font-size: 1.39vh;
               font-style: normal;
               font-weight: 700;
               line-height: normal;
-              letter-spacing: 0.026041666666666668vw;
+              letter-spacing: 0.05vh;
             }
 
             .timestamp {
               display: flex;
-              width: 4.6979166666666665vw;
+              width: 8.35vh;
               align-items: center;
-              gap: 0.15625vw;
+              gap: 0.28vh;
 
               .treasa {
-                width: 4.6979166666666665vw;
+                width: 8.35vh;
                 flex-shrink: 0;
                 color: #5E5E5E;
                 text-align: right;
-                font-size: 0.6770833333333334vw;
+                font-size: 1.20vh;
                 font-style: normal;
                 font-weight: 700;
                 line-height: normal;
-                letter-spacing: 0.021875vw;
+                letter-spacing: 0.04vh;
               }
             }
           }
 
           .toCont {
             display: flex;
-            height: 0.6770833333333334vw;
+            height: 1.20vh;
             align-self: stretch;
             color: #FFF;
-            font-size: 0.625vw;
+            font-size: 1.11vh;
             font-style: normal;
             font-weight: 700;
             line-height: normal;
-            letter-spacing: 0.020416666666666666vw;
+            letter-spacing: 0.04vh;
 
             .toEmail {
               color: rgba(255, 255, 255, 0.4);
-              font-size: 0.625vw;
+              font-size: 1.11vh;
               font-style: normal;
               font-weight: 700;
               line-height: normal;
-              letter-spacing: 0.020416666666666666vw;
+              letter-spacing: 0.04vh;
             }
           }
         }
       }
 
       .mailMessageBody {
-        width: 15.625vw;
+        width: 27.78vh;
         max-height: 80%;
         overflow-y: auto;
         overflow-x: hidden;
@@ -1081,14 +1081,14 @@
 
       .headerOfComposeMail {
         display: flex;
-        width: 14.558333333333334vw;
+        width: 25.88vh;
         justify-content: space-between;
         align-items: flex-start;
-        margin-top: 0.5vw;
+        margin-top: 0.89vh;
 
         .cancelBut {
           color: #0A84FF;
-          font-size: 0.78125vw;
+          font-size: 1.39vh;
           font-style: normal;
           font-weight: 500;
           line-height: normal;
@@ -1097,23 +1097,23 @@
 
       .headerOfComposeMailx {
         display: flex;
-        width: 14.958333333333334vw;
+        width: 26.59vh;
         justify-content: space-between;
         align-items: flex-start;
-        margin-top: 1vw;
+        margin-top: 1.78vh;
 
         .cancelBut {
           color: #0A84FF;
-          font-size: 0.78125vw;
+          font-size: 1.39vh;
           font-style: normal;
           font-weight: 500;
           line-height: normal;
         }
 
         .composeMailTitle {
-          width: 12.760416666666666vw;
+          width: 22.69vh;
           color: #FFF;
-          font-size: 1.3020833333333333vw;
+          font-size: 2.31vh;
           font-style: normal;
           font-weight: 700;
           line-height: normal;
@@ -1121,11 +1121,11 @@
       }
 
       .composeMailContent {
-        width: 14.958333333333334vw;
+        width: 26.59vh;
         max-height: 83%;
         overflow-y: auto;
         overflow-x: hidden;
-        margin-top: 0.6vw;
+        margin-top: 1.07vh;
 
         .composeMailData {
           .toMail {
@@ -1134,7 +1134,7 @@
 
             .title {
               color: rgba(255, 255, 255, 0.40);
-              font-size: 0.78125vw;
+              font-size: 1.39vh;
               font-style: normal;
               font-weight: 700;
               line-height: normal;
@@ -1143,15 +1143,15 @@
             .inputSsd {
               ::placeholder {
                 color: #ffffff;
-                letter-spacing: 0.05vw;
-                font-size: 0.7854166666666666vw;
+                letter-spacing: 0.09vh;
+                font-size: 1.40vh;
                 font-style: normal;
                 font-weight: 500;
                 line-height: normal;
               }
 
               font-weight: 500;
-              width: 13.5vw;
+              width: 24.00vh;
               color: #ffffff;
               background-color: #0a84ff00;
               outline: none;
@@ -1163,47 +1163,47 @@
 
       .appstore {
         display: flex;
-        width: 15.625vw;
-        height: 28.645833333333332vw;
+        width: 27.78vh;
+        height: 50.93vh;
         overflow-y: auto;
         overflow-x: hidden;
         flex-direction: column;
         align-items: flex-start;
-        gap: 0.5208333333333334vw;
+        gap: 0.93vh;
         flex-shrink: 0;
-        margin-left: 0.6vw;
-        margin-top: 0.5vw;
+        margin-left: 1.07vh;
+        margin-top: 0.89vh;
 
         .appStoreBox {
           display: flex;
-          padding: 0.46875vw 0.15625vw;
+          padding: 0.83vh 0.28vh;
           align-items: center;
-          gap: 1.1979166666666667vw;
+          gap: 2.13vh;
           align-self: stretch;
 
           .installIcons {
             display: flex;
-            width: 3vw;
-            height: 1.2vw;
-            padding: 0.052083333333333336vw 0.3645833333333333vw;
+            width: 5.33vh;
+            height: 2.13vh;
+            padding: 0.09vh 0.65vh;
             justify-content: center;
             align-items: center;
-            gap: 0.5208333333333334vw;
-            border-radius: 0.20833333333333334vw;
+            gap: 0.93vh;
+            border-radius: 0.37vh;
             background: #5c5c5c;
             color: #E8F3FF;
             text-align: center;
-            font-size: 0.625vw;
+            font-size: 1.11vh;
             font-style: normal;
             font-weight: 500;
             line-height: normal;
-            letter-spacing: 0.041666666666666664vw;
+            letter-spacing: 0.07vh;
           }
 
           .appStoreDetails {
             display: flex;
             align-items: center;
-            gap: 0.3125vw;
+            gap: 0.56vh;
             flex: 1 0 0;
 
             .appStoreDetailsTexts {
@@ -1215,21 +1215,21 @@
               .titles {
                 align-self: stretch;
                 color: #FFF;
-                font-size: 0.8854166666666666vw;
+                font-size: 1.57vh;
                 font-style: normal;
                 font-weight: 700;
                 line-height: normal;
-                letter-spacing: 0.052083333333333336vw;
+                letter-spacing: 0.09vh;
               }
 
               .descriptions {
                 align-self: stretch;
                 color: #9C9C9C;
-                font-size: 0.5729166666666666vw;
+                font-size: 1.02vh;
                 font-style: normal;
                 font-weight: 700;
                 line-height: normal;
-                letter-spacing: 0.036458333333333336vw;
+                letter-spacing: 0.06vh;
               }
             }
           }
@@ -1238,37 +1238,37 @@
 
       .wallet-header {
         display: flex;
-        height: 0.8854166666666666vw;
+        height: 1.57vh;
         flex-direction: column;
         justify-content: center;
         align-self: stretch;
         color: rgba(255, 255, 255, 0.78);
-        font-size: 0.7291666666666666vw;
+        font-size: 1.30vh;
         font-style: normal;
         font-weight: 500;
-        line-height: 1.3541666666666667vw;
+        line-height: 2.41vh;
       }
 
       .wallet-subheader {
         align-self: stretch;
         color: #FFF;
         font-family: "SFPro";
-        font-size: 1.3020833333333333vw;
+        font-size: 2.31vh;
         font-style: normal;
         font-weight: 700;
-        line-height: 1.3541666666666667vw;
+        line-height: 2.41vh;
       }
     }
 
     .company {
       display: flex;
-      width: 15.625vw;
-      height: 26.145833333333332vw;
-      margin-left: 0.6vw;
-      margin-top: 0.8vw;
+      width: 27.78vh;
+      height: 46.48vh;
+      margin-left: 1.07vh;
+      margin-top: 1.42vh;
       flex-direction: column;
       align-items: flex-start;
-      gap: 0.2604166666666667vw;
+      gap: 0.46vh;
       flex-shrink: 0;
       overflow-y: auto;
 
@@ -1277,46 +1277,46 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        gap: 0.3125vw;
+        gap: 0.56vh;
         align-self: stretch;
 
         .innerContXassda {
           display: flex;
-          width: 15.625vw;
+          width: 27.78vh;
           align-items: center;
-          gap: 0.20833333333333334vw;
+          gap: 0.37vh;
 
           .moreInnerContX {
             display: flex;
-            width: 10.3vw;
+            width: 18.31vh;
             align-items: center;
-            gap: 0.4166666666666667vw;
+            gap: 0.74vh;
             flex-shrink: 0;
 
             .moreInnerContX2 {
               display: flex;
               flex-direction: column;
               align-items: flex-start;
-              gap: 0.15625vw;
+              gap: 0.28vh;
               flex: 1 0 0;
 
               .title {
                 color: #FFF;
-                font-size: 0.78125vw;
+                font-size: 1.39vh;
                 font-style: normal;
                 font-weight: 500;
                 line-height: 118.596%;
-                letter-spacing: 0.01875vw;
+                letter-spacing: 0.03vh;
               }
 
               .text {
                 color: #545454;
                 text-align: center;
-                font-size: 0.6770833333333334vw;
+                font-size: 1.20vh;
                 font-style: normal;
                 font-weight: 500;
                 line-height: 118.596%;
-                letter-spacing: 0.0171875vw;
+                letter-spacing: 0.03vh;
               }
             }
           }
@@ -1328,23 +1328,23 @@
   }
 
   .backButton {
-    width: 8.854166666666666vw;
-    height: 0.2604166666666667vw;
+    width: 15.74vh;
+    height: 0.46vh;
     flex-shrink: 0;
-    border-radius: 0.3645833333333333vw;
+    border-radius: 0.65vh;
     background: #D9D9D9;
     position: absolute;
-    bottom: 0.4vw;
-    margin-left: 0.2vw;
+    bottom: 0.71vh;
+    margin-left: 0.36vh;
     z-index: 49;
     cursor: pointer;
   }
 
   .divider {
-    width: 15.052083333333334vw;
-    height: 0.026041666666666668vw;
+    width: 26.76vh;
+    height: 0.05vh;
     background: rgba(255, 255, 255, 0.15);
-    margin-top: 0.46875vw;
+    margin-top: 0.83vh;
   }
 
   .myCard {
@@ -1352,10 +1352,10 @@
     flex-direction: row;
     align-items: center;
     padding: 0px;
-    gap: 0.46875vw;
-    margin-top: 0.66875vw;
-    width: 15.052083333333334vw;
-    height: 2.34375vw;
+    gap: 0.83vh;
+    margin-top: 1.19vh;
+    width: 26.76vh;
+    height: 4.17vh;
 
     .details {
       display: flex;
@@ -1368,22 +1368,22 @@
         align-self: stretch;
         color: #FFF;
         font-family: "SFPro";
-        font-size: 1.0416666666666667vw;
+        font-size: 1.85vh;
         font-style: normal;
         font-weight: 700;
         line-height: 118.596%;
-        letter-spacing: 0.03125vw;
+        letter-spacing: 0.06vh;
       }
 
       .mydsa {
         align-self: stretch;
         color: rgba(255, 255, 255, 0.30);
         font-family: "SFPro";
-        font-size: 0.6208333333333334vw;
+        font-size: 1.10vh;
         font-style: normal;
         font-weight: 500;
         line-height: 118.745%;
-        letter-spacing: 0.026041666666666668vw;
+        letter-spacing: 0.05vh;
       }
     }
 
@@ -1391,14 +1391,14 @@
 
   .phoneContacts {
     display: flex;
-    width: 14.427083333333334vw;
-    height: 21.614583333333332vw;
-    padding: 0.052083333333333336vw 0px;
+    width: 25.65vh;
+    height: 38.43vh;
+    padding: 0.09vh 0px;
     flex-direction: column;
     align-items: center;
-    gap: 0.10416666666666667vw;
+    gap: 0.19vh;
     flex-shrink: 0;
-    margin-top: 0.8vw;
+    margin-top: 1.42vh;
     overflow-x: hidden;
     overflow-y: auto;
 
@@ -1411,36 +1411,36 @@
   }
 
   .savedContactTop {
-    width: 16.770833333333332vw;
-    height: 14.0625vw;
+    width: 29.81vh;
+    height: 25.00vh;
     flex-shrink: 0;
-    border-radius: 2.2395833333333335vw 2.2395833333333335vw 0px 0px;
+    border-radius: 3.98vh 3.98vh 0px 0px;
     background: linear-gradient(180deg, #4E4F54 0%, #282B34 100%);
     display: flex;
     flex-direction: column;
     align-items: center;
 
     .topButtons {
-      width: 15.625vw;
+      width: 27.78vh;
       display: flex;
       flex-direction: row;
       justify-content: space-between;
       align-items: center;
       padding: 0px;
-      gap: 10.677083333333334vw;
-      margin-top: 2.1vw;
+      gap: 18.98vh;
+      margin-top: 3.73vh;
     }
 
     .savedFullName {
       display: inline-flex;
       justify-content: center;
       align-items: center;
-      margin-top: 0.6333333333333334vw;
+      margin-top: 1.13vh;
 
       .text {
         color: #FFF;
         font-family: "SFPro";
-        font-size: 1.5625vw;
+        font-size: 2.78vh;
         font-style: normal;
         font-weight: 700;
         line-height: normal;
@@ -1449,11 +1449,11 @@
 
     .bottomButton {
       display: flex;
-      width: 14.479166666666666vw;
+      width: 25.74vh;
       justify-content: center;
       align-items: center;
-      gap: 0.4vw;
-      margin-top: 0.6vw;
+      gap: 0.71vh;
+      margin-top: 1.07vh;
     }
   }
 
@@ -1461,22 +1461,22 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    padding: 0.3645833333333333vw 0.7291666666666666vw;
-    gap: 0.15625vw;
-    width: 15.520833333333334vw;
-    height: 2.74375vw;
-    margin-top: 1.25vw;
+    padding: 0.65vh 1.30vh;
+    gap: 0.28vh;
+    width: 27.59vh;
+    height: 4.88vh;
+    margin-top: 2.22vh;
     background: rgba(255, 255, 255, 0.08);
-    border-radius: 0.3645833333333333vw;
+    border-radius: 0.65vh;
 
     .title {
-      width: 13.020833333333334vw;
+      width: 23.15vh;
 
       font-family: 'SFPro';
       font-style: normal;
       font-weight: 500;
-      font-size: 0.6770833333333334vw;
-      line-height: 0.5729166666666666vw;
+      font-size: 1.20vh;
+      line-height: 1.02vh;
       color: #FFFFFF;
       flex: none;
       order: 0;
@@ -1485,13 +1485,13 @@
     }
 
     .number {
-      width: 13.020833333333334vw;
-      margin-top: 0.4vw;
+      width: 23.15vh;
+      margin-top: 0.71vh;
       font-family: 'SFPro';
       font-style: normal;
       font-weight: 500;
-      font-size: 0.7770833333333334vw;
-      line-height: 0.5729166666666666vw;
+      font-size: 1.38vh;
+      line-height: 1.02vh;
       color: #0A84FF;
       flex: none;
       order: 1;
@@ -1504,22 +1504,22 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    padding: 0.3645833333333333vw 0.7291666666666666vw;
-    gap: 0.15625vw;
-    width: 15.520833333333334vw;
-    height: 2.74375vw;
-    margin-top: 0.8vw;
+    padding: 0.65vh 1.30vh;
+    gap: 0.28vh;
+    width: 27.59vh;
+    height: 4.88vh;
+    margin-top: 1.42vh;
     background: rgba(255, 255, 255, 0.08);
-    border-radius: 0.3645833333333333vw;
+    border-radius: 0.65vh;
 
     .title {
-      width: 13.020833333333334vw;
+      width: 23.15vh;
 
       font-family: 'SFPro';
       font-style: normal;
       font-weight: 500;
-      font-size: 0.6770833333333334vw;
-      line-height: 0.5729166666666666vw;
+      font-size: 1.20vh;
+      line-height: 1.02vh;
       color: #FFFFFF;
       flex: none;
       order: 0;
@@ -1528,13 +1528,13 @@
     }
 
     .number {
-      width: 13.020833333333334vw;
-      margin-top: 0.4vw;
+      width: 23.15vh;
+      margin-top: 0.71vh;
       font-family: 'SFPro';
       font-style: normal;
       font-weight: 500;
-      font-size: 0.7770833333333334vw;
-      line-height: 0.5729166666666666vw;
+      font-size: 1.38vh;
+      line-height: 1.02vh;
       color: #0A84FF;
       flex: none;
       order: 1;
@@ -1549,18 +1549,18 @@
     align-items: center;
     justify-content: space-between;
     padding: 0px;
-    width: 14.270833333333334vw;
-    height: 0.6770833333333334vw;
-    margin-top: 0.5vw;
+    width: 25.37vh;
+    height: 1.20vh;
+    margin-top: 0.89vh;
 
     .cancel {
 
-      height: 0.6770833333333334vw;
+      height: 1.20vh;
       font-family: 'SFPro';
       font-style: normal;
       font-weight: 500;
-      font-size: 0.625vw;
-      line-height: 0.6770833333333334vw;
+      font-size: 1.11vh;
+      line-height: 1.20vh;
       color: #0D73D9;
       flex: none;
       order: 0;
@@ -1571,8 +1571,8 @@
       font-family: 'SFPro';
       font-style: normal;
       font-weight: 500;
-      font-size: 0.625vw;
-      line-height: 0.6770833333333334vw;
+      font-size: 1.11vh;
+      line-height: 1.20vh;
       letter-spacing: 0.04em;
       color: #FFFFFF;
       flex: none;
@@ -1582,12 +1582,12 @@
 
     .done {
 
-      height: 0.6770833333333334vw;
+      height: 1.20vh;
       font-family: 'SFPro';
       font-style: normal;
       font-weight: 500;
-      font-size: 0.625vw;
-      line-height: 0.6770833333333334vw;
+      font-size: 1.11vh;
+      line-height: 1.20vh;
       color: #0D73D9;
       flex: none;
       order: 2;
@@ -1606,38 +1606,38 @@
 .circleFillers {
   display: inline-flex;
   align-items: center;
-  gap: 0.625vw;
+  gap: 1.11vh;
 }
 
 .dialpad1 {
   display: flex;
-  width: 16.757291666666666vw;
+  width: 29.79vh;
   user-select: none;
-  height: 10.625vw;
-  padding: 0.3125vw 0.052083333333333336vw;
+  height: 18.89vh;
+  padding: 0.56vh 0.09vh;
   justify-content: center;
   align-items: flex-start;
   align-content: flex-start;
-  gap: 0.6729166666666666vw;
+  gap: 1.20vh;
   flex-shrink: 0;
-  margin-top: 4.0vw;
+  margin-top: 7.11vh;
   background: rgba(255, 255, 255, 0.30);
   flex-wrap: wrap;
 
   .button {
     display: flex;
-    width: 4.666666666666667vw;
-    height: 1.6583333333333333vw;
-    padding: 0.052083333333333336vw 1.09375vw;
+    width: 8.30vh;
+    height: 2.95vh;
+    padding: 0.09vh 1.94vh;
     flex-direction: column;
     align-items: center;
     flex-shrink: 0;
-    border-radius: 0.15625vw;
+    border-radius: 0.28vh;
     background: rgba(255, 255, 255, 0.80);
 
     .text {
       display: flex;
-      height: 0.9vw;
+      height: 1.60vh;
       flex-direction: column;
       justify-content: center;
       flex-shrink: 0;
@@ -1645,37 +1645,37 @@
       color: #000;
       text-align: center;
       font-family: "SFPro";
-      font-size: 0.7729166666666666vw;
+      font-size: 1.37vh;
       font-style: normal;
       font-weight: 700;
       line-height: normal;
     }
 
     .text2 {
-      height: 0.3645833333333333vw;
+      height: 0.65vh;
       flex-shrink: 0;
       align-self: stretch;
       color: #000;
-      width: 2.55vw;
+      width: 4.53vh;
       text-align: center;
       font-family: "SFPro";
-      font-size: 0.43vw;
+      font-size: 0.76vh;
       font-style: normal;
       font-weight: 500;
       line-height: 119.419%;
-      letter-spacing: 0.0546875vw;
+      letter-spacing: 0.10vh;
     }
   }
 }
 
 .DialpadV3 {
   display: flex;
-  width: 13.2vw;
-  height: 20.052083333333332vw;
+  width: 23.47vh;
+  height: 35.65vh;
   justify-content: flex-end;
   align-items: flex-start;
   align-content: flex-start;
-  gap: 1.09375vw;
+  gap: 1.94vh;
   flex-shrink: 0;
   flex-wrap: wrap;
 }
@@ -1683,19 +1683,19 @@
 .fotterNavigation {
   display: inline-flex;
   width: 100%;
-  height: 3.48125vw;
+  height: 6.19vh;
   justify-content: center;
   align-items: start;
-  border-radius: 0px 0px 2.2395833333333335vw 2.2395833333333335vw;
+  border-radius: 0px 0px 3.98vh 3.98vh;
   background: #1A1A1A;
   position: absolute;
   bottom: 0;
 
   .innerContx {
-    margin-top: 0.6vw;
+    margin-top: 1.07vh;
     display: flex;
     align-items: center;
-    gap: 1.7vw;
+    gap: 3.02vh;
 
   }
 
@@ -1747,33 +1747,33 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.3125vw;
+  gap: 0.56vh;
   flex-shrink: 0;
   overflow-x: hidden;
   overflow-y: auto;
 
   .notiRegisterar {
     display: flex;
-    padding: 0.5208333333333334vw 0.5729166666666666vw;
+    padding: 0.93vh 1.02vh;
     align-items: center;
     align-content: center;
-    gap: 0.5208333333333334vw;
+    gap: 0.93vh;
     align-self: stretch;
     flex-wrap: wrap;
-    border-radius: 0.8333333333333334vw;
+    border-radius: 1.48vh;
     background: rgba(255, 255, 255, 0.25);
-    box-shadow: 0px 0px 0.20833333333333334vw 0.052083333333333336vw rgba(0, 0, 0, 0.20);
+    box-shadow: 0px 0px 0.37vh 0.09vh rgba(0, 0, 0, 0.20);
 
     .notiXrt {
       display: flex;
-      width: 10.46875vw;
+      width: 18.61vh;
       flex-direction: column;
       align-items: flex-start;
 
       .notiXtitle {
         color: #FFF;
         font-family: "SFPro";
-        font-size: 0.7291666666666666vw;
+        font-size: 1.30vh;
         font-style: normal;
         font-weight: 700;
         line-height: normal;
@@ -1782,7 +1782,7 @@
       .notiXDescription {
         color: #FFF;
         font-family: "SFPro";
-        font-size: 0.5208333333333334vw;
+        font-size: 0.93vh;
         font-style: normal;
         font-weight: 500;
         line-height: normal;
@@ -1793,9 +1793,9 @@
 
 .controlSliders {
   height: 100%;
-  width: 2.7083333333333335vw;
+  width: 4.81vh;
   background: rgba(0, 0, 0, 0.42);
-  border-radius: 0.9375vw;
+  border-radius: 1.67vh;
   position: relative;
   overflow: hidden;
   pointer-events: all;
@@ -1824,8 +1824,8 @@
 
 .swiper {
 
-  width: 16.666666666666668vw;
-  height: 12.5vw;
+  width: 29.63vh;
+  height: 22.22vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1836,26 +1836,26 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1458333333333333vw;
+  font-size: 2.04vh;
   font-weight: bold;
   color: #fff;
 }
 
 .dialpadV2 {
   display: flex;
-  width: 12.1875vw;
-  height: 16.197916666666668vw;
+  width: 21.67vh;
+  height: 28.80vh;
   justify-content: center;
   align-items: flex-start;
   align-content: flex-start;
-  gap: 1.09375vw;
+  gap: 1.94vh;
   flex-shrink: 0;
   flex-wrap: wrap;
 
   .dialpadV2button {
     display: flex;
-    width: 3.125vw;
-    height: 3.125vw;
+    width: 5.56vh;
+    height: 5.56vh;
     flex-direction: column;
     align-items: center;
     flex-shrink: 0;
@@ -1865,8 +1865,8 @@
 
     .text1 {
       display: flex;
-      width: 0.3645833333333333vw;
-      height: 2.1875vw;
+      width: 0.65vh;
+      height: 3.89vh;
       flex-direction: column;
       justify-content: center;
       align-items: center;
@@ -1874,7 +1874,7 @@
       color: #FFF;
 
       font-family: "SFPro";
-      font-size: 1.3020833333333333vw;
+      font-size: 2.31vh;
       font-weight: 500;
       line-height: normal;
     }
@@ -1883,38 +1883,38 @@
       color: #FFF;
       text-align: center;
       font-family: "SFPro";
-      font-size: 0.5208333333333334vw;
+      font-size: 0.93vh;
       font-style: normal;
       font-weight: 500;
       line-height: normal;
-      letter-spacing: 0.13541666666666666vw;
-      margin-left: 0.3vw;
-      margin-top: -0.24vw;
+      letter-spacing: 0.24vh;
+      margin-left: 0.53vh;
+      margin-top: -0.43vh;
     }
   }
 
   .dialpadV2button1 {
     display: flex;
-    width: 3.125vw;
-    height: 3.125vw;
+    width: 5.56vh;
+    height: 5.56vh;
     flex-direction: column;
     align-items: center;
-    gap: 0.5208333333333334vw;
+    gap: 0.93vh;
     flex-shrink: 0;
-    border-radius: 5.208333333333334vw;
+    border-radius: 9.26vh;
     background: rgba(144, 144, 144, 0.40);
 
     .text3 {
       display: flex;
-      width: 1vw;
-      height: 3.125vw;
+      width: 1.78vh;
+      height: 5.56vh;
       flex-direction: column;
       justify-content: center;
       flex-shrink: 0;
       color: #FFF;
       text-align: center;
       font-family: "SFPro";
-      font-size: 1.3020833333333333vw;
+      font-size: 2.31vh;
       font-weight: 500;
       line-height: normal;
     }
@@ -1922,8 +1922,8 @@
 }
 
 .emeButtons {
-  width: 11.927083333333334vw;
-  height: 0.9375vw;
+  width: 21.20vh;
+  height: 1.67vh;
   flex-shrink: 0;
   display: flex;
   justify-content: space-between;
@@ -1932,7 +1932,7 @@
     color: #FFF;
     text-align: center;
     font-family: "SFPro";
-    font-size: 0.78125vw;
+    font-size: 1.39vh;
     font-style: normal;
     font-weight: 500;
     line-height: normal;
@@ -2000,19 +2000,19 @@
   color: #FFF;
   text-align: center;
   font-family: "SFPro";
-  font-size: 0.5208333333333334vw;
+  font-size: 0.93vh;
   font-style: normal;
   font-weight: 500;
-  line-height: 0.8333333333333334vw;
+  line-height: 1.48vh;
 }
 
 .pushNotiFication {
   display: flex;
-  width: 15.520833333333334vw;
-  padding: 0.4166666666666667vw 1.1979166666666667vw 0.46875vw 0.6770833333333334vw;
+  width: 27.59vh;
+  padding: 0.74vh 2.13vh 0.83vh 1.20vh;
   align-items: center;
-  gap: 0.4166666666666667vw;
-  border-radius: 2.2916666666666665vw;
+  gap: 0.74vh;
+  border-radius: 4.07vh;
   background: #0B0B0B;
 
 
@@ -2020,26 +2020,26 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.052083333333333336vw;
+    gap: 0.09vh;
     flex: 1 0 0;
 
     .title {
-      width: 8.041666666666666vw;
+      width: 14.30vh;
 
       color: #FFF;
       font-family: "SFPro";
-      font-size: 0.7291666666666666vw;
+      font-size: 1.30vh;
       font-style: normal;
       font-weight: 700;
       line-height: normal;
     }
 
     .description {
-      width: 8.041666666666666vw;
-      margin-top: 0.06vw;
+      width: 14.30vh;
+      margin-top: 0.11vh;
       color: #575757;
       font-family: "SFPro";
-      font-size: 0.5729166666666666vw;
+      font-size: 1.02vh;
       font-style: normal;
       font-weight: 600;
       line-height: normal;
@@ -2048,10 +2048,10 @@
 }
 
 .customSwitch {
-  width: 1.5625vw;
-  height: 1.0416666666666667vw;
+  width: 2.78vh;
+  height: 1.85vh;
   background: #787880;
-  border-radius: 5.208333333333333vw;
+  border-radius: 9.26vh;
   flex: none;
   order: 1;
   flex-grow: 0;
@@ -2060,46 +2060,46 @@
   align-items: center;
 
   .thumb {
-    width: 0.8333333333333334vw;
-    height: 0.8333333333333334vw;
+    width: 1.48vh;
+    height: 1.48vh;
     background: #FFFFFF;
-    box-shadow: 0px 0px 0px 0.052083333333333336vw rgba(0, 0, 0, 0.04), 0px 0.15625vw 0.4166666666666667vw rgba(0, 0, 0, 0.15), 0px 0.15625vw 0.052083333333333336vw rgba(0, 0, 0, 0.06);
+    box-shadow: 0px 0px 0px 0.09vh rgba(0, 0, 0, 0.04), 0px 0.28vh 0.74vh rgba(0, 0, 0, 0.15), 0px 0.28vh 0.09vh rgba(0, 0, 0, 0.06);
     border-radius: 100%;
   }
 }
 
 .pushActionNotiFication {
   display: flex;
-  width: 15.520833333333334vw;
-  padding: 0.4166666666666667vw 1.1979166666666667vw 0.46875vw 0.6770833333333334vw;
+  width: 27.59vh;
+  padding: 0.74vh 2.13vh 0.83vh 1.20vh;
   align-items: center;
-  gap: 0.4166666666666667vw;
-  border-radius: 2.2916666666666665vw;
+  gap: 0.74vh;
+  border-radius: 4.07vh;
   background: #0B0B0B;
 
   .contextArea {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.052083333333333336vw;
+    gap: 0.09vh;
     flex: 1 0 0;
 
     .title {
-      width: 8.041666666666666vw;
+      width: 14.30vh;
       color: #FFF;
       font-family: "SFPro";
-      font-size: 0.7291666666666666vw;
+      font-size: 1.30vh;
       font-style: normal;
       font-weight: 700;
       line-height: normal;
     }
 
     .description {
-      width: 8.041666666666666vw;
-      margin-top: 0.06vw;
+      width: 14.30vh;
+      margin-top: 0.11vh;
       color: #575757;
       font-family: "SFPro";
-      font-size: 0.5729166666666666vw;
+      font-size: 1.02vh;
       font-style: normal;
       font-weight: 600;
       line-height: normal;
@@ -2109,36 +2109,36 @@
 
 .pushActionNotiFication1 {
   display: flex;
-  width: 15.520833333333334vw;
-  padding: 0.4166666666666667vw 1.1979166666666667vw 0.46875vw 0.6770833333333334vw;
+  width: 27.59vh;
+  padding: 0.74vh 2.13vh 0.83vh 1.20vh;
   align-items: center;
-  gap: 0.4166666666666667vw;
-  border-radius: 2.2916666666666665vw;
+  gap: 0.74vh;
+  border-radius: 4.07vh;
   background: #0B0B0B;
 
   .contextArea {
     display: flex;
-    width: 10.072916666666666vw;
+    width: 17.91vh;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.052083333333333336vw;
+    gap: 0.09vh;
     flex-shrink: 0;
 
     .title {
-      width: 11.072916666666666vw;
+      width: 19.69vh;
       color: #FFF;
       font-family: "SFPro";
-      font-size: 0.7291666666666666vw;
+      font-size: 1.30vh;
       font-style: normal;
       font-weight: 700;
       line-height: normal;
     }
 
     .description {
-      width: 8.072916666666666vw;
+      width: 14.35vh;
       color: #575757;
       font-family: "SFPro";
-      font-size: 0.5729166666666666vw;
+      font-size: 1.02vh;
       font-style: normal;
       font-weight: 600;
       line-height: normal;
@@ -2147,7 +2147,7 @@
 }
 
 ::-webkit-scrollbar {
-  width: 0.0vw;
+  width: 0.00vh;
 }
 
 .vibrateAnimation {
@@ -2160,7 +2160,7 @@
   }
 
   25% {
-    transform: translateX(0.15vw);
+    transform: translateX(0.27vh);
   }
 
   50% {
@@ -2168,7 +2168,7 @@
   }
 
   75% {
-    transform: translateX(-0.15vw);
+    transform: translateX(-0.27vh);
   }
 
   100% {

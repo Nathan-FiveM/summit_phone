@@ -67,18 +67,18 @@ export default function GarageApp(props: { onEnter: () => void, onExit: () => vo
             >
                 <div style={{
                     width: '90%',
-                    marginTop: '2vw',
-                    letterSpacing: '0.07vw',
+                    marginTop: '3.56vh',
+                    letterSpacing: '0.12vh',
                 }}>
                     <Title title="Garage" />
                 </div>
                 <Searchbar value={searchValue} onChange={(e) => {
                     setSearchValue(e);
-                }} mt="0.3vw" />
+                }} mt="0.53vh" />
                 <div style={{
                     width: '90%',
                     height: '80%',
-                    marginTop: '0.5vw',
+                    marginTop: '0.89vh',
                     overflowY: 'auto',
                     overflowX: 'hidden',
                     display: 'flex',
@@ -92,33 +92,33 @@ export default function GarageApp(props: { onEnter: () => void, onExit: () => vo
                         return (
                             <div key={i} style={{
                                 width: '100%',
-                                minHeight: '3.3vw',
-                                marginTop: i === 0 ? '' : '0.5vw',
+                                minHeight: '5.87vh',
+                                marginTop: i === 0 ? '' : '0.89vh',
                                 backgroundColor: 'rgba(255,255,255,0.1)',
                                 flexShrink: 0,
-                                borderRadius: '0.5vw',
-                                paddingBottom: '0.2vw',
+                                borderRadius: '0.89vh',
+                                paddingBottom: '0.36vh',
                                 cursor: 'pointer',
                             }} onClick={() => {
                                 setSelectedData(data);
                                 setShowSelectedData(true);
                             }}>
                                 <div style={{
-                                    marginLeft: '0.5vw',
-                                    marginTop: '0.2vw',
+                                    marginLeft: '0.89vh',
+                                    marginTop: '0.36vh',
                                     width: '97%',
                                     height: '100%',
                                     display: 'flex',
                                 }}>
                                     <div style={{ width: '60%', display: 'flex', flexDirection: 'column' }}>
-                                        <div style={{ fontSize: '0.7vw' }}>{data.brand} {data.name} {data.plate}</div>
-                                        <div style={{ fontSize: '0.6vw', fontWeight: 500, width: '100%' }}>{data.state} - {data.garage}</div>
-                                        <div style={{ fontSize: '0.6vw', width: '100%' }}>{data.category?.toUpperCase()}</div>
+                                        <div style={{ fontSize: '1.24vh' }}>{data.brand} {data.name} {data.plate}</div>
+                                        <div style={{ fontSize: '1.07vh', fontWeight: 500, width: '100%' }}>{data.state} - {data.garage}</div>
+                                        <div style={{ fontSize: '1.07vh', width: '100%' }}>{data.category?.toUpperCase()}</div>
                                     </div>
                                     {!hasImageError ? (
-                                        <Image onError={() => handleImageError(data.category)} src={`https://cdn.summitrp.gg/uploads/server/phone/${data.category?.toUpperCase()}.png`} alt="vehicle" width={80} height={80} style={{ borderRadius: '0.5vw', marginRight: '0.5vw' }} />
+                                        <Image onError={() => handleImageError(data.category)} src={`https://cdn.summitrp.gg/uploads/server/phone/${data.category?.toUpperCase()}.png`} alt="vehicle" width={80} height={80} style={{ borderRadius: '0.89vh', marginRight: '0.89vh' }} />
                                     ) : (
-                                        <Image src={`https://cdn.summitrp.gg/uploads/server/phone/SPORTS.png`} alt="vehicle" width={80} height={80} style={{ borderRadius: '0.5vw', marginRight: '0.5vw' }} />
+                                        <Image src={`https://cdn.summitrp.gg/uploads/server/phone/SPORTS.png`} alt="vehicle" width={80} height={80} style={{ borderRadius: '0.89vh', marginRight: '0.89vh' }} />
                                     )}
                                 </div>
                             </div>

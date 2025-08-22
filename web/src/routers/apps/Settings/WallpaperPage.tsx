@@ -50,12 +50,12 @@ export default function WallpaperPage() {
                             <path d="M7 16.5L1.34983 9.43729C1.14531 9.18163 1.14531 8.81837 1.34983 8.56271L7 1.5" stroke="#0A84FF" strokeWidth="2" strokeLinecap="round" />
                         </svg>
                         <div style={{
-                            width: "1.71875vw",
-                            height: "0.9375vw",
+                            width: "3.06vh",
+                            height: "1.67vh",
                             fontStyle: "normal",
                             fontWeight: 500,
-                            fontSize: "0.78125vw",
-                            lineHeight: "0.9375vw",
+                            fontSize: "1.39vh",
+                            lineHeight: "1.67vh",
                             textAlign: "center",
                             color: "#0A84FF",
                             flex: "none",
@@ -63,12 +63,12 @@ export default function WallpaperPage() {
                             flexGrow: 0,
                         }}>Back</div>
                     </div>
-                    <div className="name" style={{ width: 'auto', marginLeft: '2vw' }}>Wallpaper</div>
+                    <div className="name" style={{ width: 'auto', marginLeft: '3.56vh' }}>Wallpaper</div>
                     <div style={{
-                        marginLeft: '3vw',
+                        marginLeft: '5.33vh',
                         display: 'flex',
                         justifyContent: 'end',
-                        marginTop: '0.3vw',
+                        marginTop: '0.53vh',
                     }}>
                         <svg onClick={() => {
                             setShowWallpaper(true);
@@ -85,14 +85,14 @@ export default function WallpaperPage() {
                     gridTemplateRows: 'repeat(3, 1fr)',
                     justifyItems: 'center',
                     alignItems: 'center',
-                    gap: '0.1vw',
+                    gap: '0.18vh',
                     overflowX: 'hidden',
                     overflowY: 'auto',
                 }}>
                     <BackgroundImage src={phoneBg} style={{
-                        width: '5.364583333333333vw',
-                        height: '9.947916666666666vw',
-                        borderRadius: '0.4vw',
+                        width: '9.54vh',
+                        height: '17.69vh',
+                        borderRadius: '0.71vh',
                         imageRendering: 'crisp-edges',
                         cursor: 'pointer',
                         flexShrink: 0
@@ -121,9 +121,9 @@ export default function WallpaperPage() {
                         </div>
                     </BackgroundImage>
                     <BackgroundImage src={lockScreenBg} style={{
-                        width: '5.364583333333333vw',
-                        height: '9.947916666666666vw',
-                        borderRadius: '0.4vw',
+                        width: '9.54vh',
+                        height: '17.69vh',
+                        borderRadius: '0.71vh',
                         cursor: 'pointer',
                         imageRendering: 'crisp-edges',
                         flexShrink: 0
@@ -152,9 +152,9 @@ export default function WallpaperPage() {
                         </div>
                     </BackgroundImage>
                     <BackgroundImage src={startupBg} style={{
-                        width: '5.364583333333333vw',
-                        height: '9.947916666666666vw',
-                        borderRadius: '0.4vw',
+                        width: '9.54vh',
+                        height: '17.69vh',
+                        borderRadius: '0.71vh',
                         cursor: 'pointer',
                         imageRendering: 'crisp-edges',
                         flexShrink: 0
@@ -183,9 +183,9 @@ export default function WallpaperPage() {
                         </div>
                     </BackgroundImage>
                     <BackgroundImage src={wall1} style={{
-                        width: '5.364583333333333vw',
-                        height: '9.947916666666666vw',
-                        borderRadius: '0.4vw',
+                        width: '9.54vh',
+                        height: '17.69vh',
+                        borderRadius: '0.71vh',
                         cursor: 'pointer',
                         imageRendering: 'crisp-edges',
                         flexShrink: 0
@@ -214,9 +214,9 @@ export default function WallpaperPage() {
                         </div>
                     </BackgroundImage>
                     <BackgroundImage src={wall2} style={{
-                        width: '5.364583333333333vw',
-                        height: '9.947916666666666vw',
-                        borderRadius: '0.4vw',
+                        width: '9.54vh',
+                        height: '17.69vh',
+                        borderRadius: '0.71vh',
                         cursor: 'pointer',
                         imageRendering: 'crisp-edges',
                         flexShrink: 0
@@ -245,9 +245,9 @@ export default function WallpaperPage() {
                         </div>
                     </BackgroundImage>
                     <BackgroundImage src={wall3} style={{
-                        width: '5.364583333333333vw',
-                        height: '9.947916666666666vw',
-                        borderRadius: '0.4vw',
+                        width: '9.54vh',
+                        height: '17.69vh',
+                        borderRadius: '0.71vh',
                         cursor: 'pointer',
                         imageRendering: 'crisp-edges',
                         flexShrink: 0
@@ -276,9 +276,9 @@ export default function WallpaperPage() {
                         </div>
                     </BackgroundImage>
                     <BackgroundImage src={wall4} style={{
-                        width: '5.364583333333333vw',
-                        height: '9.947916666666666vw',
-                        borderRadius: '0.4vw',
+                        width: '9.54vh',
+                        height: '17.69vh',
+                        borderRadius: '0.71vh',
                         cursor: 'pointer',
                         imageRendering: 'crisp-edges',
                         flexShrink: 0
@@ -309,9 +309,9 @@ export default function WallpaperPage() {
                     {phoneSettings?.background && phoneSettings?.background?.wallpapers?.map((wallpape, index) => {
                         return (
                             <BackgroundImage src={wallpape} style={{
-                                width: '5.364583333333333vw',
-                                height: '9.947916666666666vw',
-                                borderRadius: '0.4vw',
+                                width: '9.54vh',
+                                height: '17.69vh',
+                                borderRadius: '0.71vh',
                                 cursor: 'pointer',
                                 imageRendering: 'crisp-edges',
                                 flexShrink: 0
@@ -355,7 +355,7 @@ export default function WallpaperPage() {
                         width: '100%',
                         height: '50%',
                         position: 'absolute',
-                        bottom: '1.2vw',
+                        bottom: '2.13vh',
                         zIndex: 2,
                         display: 'flex',
                         flexDirection: 'column-reverse',
@@ -381,7 +381,7 @@ export default function WallpaperPage() {
                             setShowWallpaper(false);
                         }} className="cancelButton" style={{
                             color: '#0A84FF',
-                            marginBottom: '0.5vw',
+                            marginBottom: '0.89vh',
                         }}>
                             Save
                         </div>
@@ -391,14 +391,14 @@ export default function WallpaperPage() {
                                 setWallpaper(e.currentTarget.value);
                             }} placeholder="Link" styles={{
                                 root: {
-                                    padding: '0.5vw 0px',
+                                    padding: '0.89vh 0px',
                                 },
                                 input: {
                                     width: '100%',
-                                    height: '1.5vw',
+                                    height: '2.67vh',
                                     backgroundColor: 'rgba(255, 255, 255, 0.0)',
                                     border: 'none',
-                                    borderBottom: '0.052083333333333336vw solid rgba(255, 255, 255, 0.2)',
+                                    borderBottom: '0.09vh solid rgba(255, 255, 255, 0.2)',
                                     color: '#FFF',
                                     textAlign: 'center',
                                 },

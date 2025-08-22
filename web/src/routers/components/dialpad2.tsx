@@ -1,7 +1,7 @@
 export default function DialpadV2({ onClick, mt }: { onClick(number: string): void, mt?: string }) {
     return (
         <div className="dialpadV2" style={{
-            marginTop: mt ? mt : '0vw'
+            marginTop: mt ? mt : '0.00vh'
         }}>
             <div className="dialpadV2button clickanimation" onClick={() => {
                 onClick("1")

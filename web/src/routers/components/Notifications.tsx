@@ -118,9 +118,9 @@ export default function Notifications() {
                         classNames="popDown"
                     >
                         <div ref={noti.nodeRef} className="pushNotiFication" style={{
-                            marginTop: index === 0 ? '0.38vw' : '0.2604166666666667vw',
+                            marginTop: index === 0 ? '0.68vh' : '0.46vh',
                         }}>
-                            <Image src={notiIcons(noti.app)} w={noti.app === 'phone' ? '1.41875vw' : noti.app === 'messsage' ? '1.41875vw' : '1.71875vw'} h={noti.app === 'phone' ? '1.41875vw' : noti.app === 'messsage' ? '1.41875vw' : '1.71875vw'} />
+                            <Image src={notiIcons(noti.app)} w={noti.app === 'phone' ? '2.52vh' : noti.app === 'messsage' ? '2.52vh' : '3.06vh'} h={noti.app === 'phone' ? '2.52vh' : noti.app === 'messsage' ? '2.52vh' : '3.06vh'} />
                             <div className="contextArea">
                                 <div className="title">{noti.title}</div>
                                 <div className="description">{noti.description}</div>
@@ -138,15 +138,15 @@ export default function Notifications() {
                         classNames="popDown"
                     >
                         <div ref={noti.nodeRef} className="pushActionNotiFication" style={{
-                            marginTop: index === 0 ? '0.38vw' : '0.2604166666666667vw',
+                            marginTop: index === 0 ? '0.68vh' : '0.46vh',
                         }}>
-                            <Image src={notiIcons(noti.app)} w={noti.app === 'phone' ? '1.41875vw' : noti.app === 'messsage' ? '1.41875vw' : '1.71875vw'} h={noti.app === 'phone' ? '1.41875vw' : noti.app === 'messsage' ? '1.41875vw' : '1.71875vw'} />
+                            <Image src={notiIcons(noti.app)} w={noti.app === 'phone' ? '2.52vh' : noti.app === 'messsage' ? '2.52vh' : '3.06vh'} h={noti.app === 'phone' ? '2.52vh' : noti.app === 'messsage' ? '2.52vh' : '3.06vh'} />
                             <div className="contextArea">
                                 <div className="title">{noti.title}</div>
                                 <div className="description">{noti.description}</div>
                             </div>
-                            <Image src={noti.icons["0"].icon} w={'1.71875vw'} h={'1.71875vw'} style={{
-                                minHeight: '1.71875vw',
+                            <Image src={noti.icons["0"].icon} w={'3.06vh'} h={'3.06vh'} style={{
+                                minHeight: '3.06vh',
                                 cursor: 'pointer',
                             }} onClick={() => {
                                 fetchNui('actionNotiButtonOne', {
@@ -156,8 +156,8 @@ export default function Notifications() {
                                     isServer: noti.icons["0"].isServer,
                                 });
                             }} />
-                            <Image src={noti.icons["1"].icon} w={'1.71875vw'} h={'1.71875vw'} style={{
-                                minHeight: '1.71875vw',
+                            <Image src={noti.icons["1"].icon} w={'3.06vh'} h={'3.06vh'} style={{
+                                minHeight: '3.06vh',
                                 cursor: 'pointer',
                             }} onClick={() => {
                                 fetchNui('actionNotiButtonTwo', {
@@ -181,15 +181,15 @@ export default function Notifications() {
 
                     >
                         <div ref={noti.nodeRef} className="pushActionNotiFication1" style={{
-                            marginTop: index === 0 ? '0.38vw' : '0.2604166666666667vw',
+                            marginTop: index === 0 ? '0.68vh' : '0.46vh',
                         }}>
-                            <Image src={notiIcons(noti.app)} w={noti.app === 'phone' ? '1.41875vw' : noti.app === 'messsage' ? '1.41875vw' : '1.71875vw'} h={noti.app === 'phone' ? '1.41875vw' : noti.app === 'messsage' ? '1.41875vw' : '1.71875vw'} />
+                            <Image src={notiIcons(noti.app)} w={noti.app === 'phone' ? '2.52vh' : noti.app === 'messsage' ? '2.52vh' : '3.06vh'} h={noti.app === 'phone' ? '2.52vh' : noti.app === 'messsage' ? '2.52vh' : '3.06vh'} />
                             <div className="contextArea">
                                 <div className="title">{noti.title}</div>
                                 <div className="description">{noti.description}</div>
                             </div>
-                            <Image src={noti.icons["0"].icon} w={'1.71875vw'} h={'1.71875vw'} style={{
-                                minHeight: '1.71875vw',
+                            <Image src={noti.icons["0"].icon} w={'3.06vh'} h={'3.06vh'} style={{
+                                minHeight: '3.06vh',
                                 cursor: 'pointer',
                             }} onClick={() => {
                                 fetchNui('actionNotiButtonOne', {

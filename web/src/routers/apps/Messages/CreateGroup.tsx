@@ -44,19 +44,19 @@ export default function CreateGroup() {
                         app: 'message',
                         page: data
                     })
-                }} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', marginTop: '2vw', gap: '0.2vw', justifyContent: 'center', marginLeft:'-13vw' }}>
+                }} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', marginTop: '3.56vh', gap: '0.36vh', justifyContent: 'center', marginLeft:'-23.11vh' }}>
                     <svg style={{
                         flexShrink: '0'
                     }} width="8" height="18" viewBox="0 0 8 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M7 16.5L1.34983 9.43729C1.14531 9.18163 1.14531 8.81837 1.34983 8.56271L7 1.5" stroke="#0A84FF" strokeWidth="2" strokeLinecap="round" />
                     </svg>
                     <div style={{
-                        width: "1.71875vw",
-                        height: "0.9375vw",
+                        width: "3.06vh",
+                        height: "1.67vh",
                         fontStyle: "normal",
                         fontWeight: 500,
-                        fontSize: "0.78125vw",
-                        lineHeight: "0.9375vw",
+                        fontSize: "1.39vh",
+                        lineHeight: "1.67vh",
                         textAlign: "center",
                         color: "#0A84FF",
                         flex: "none",
@@ -64,8 +64,8 @@ export default function CreateGroup() {
                         flexGrow: 0,
                     }}>Back</div>
                 </div>
-                <Avatar size={'4vw'} src={avatar ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} mt={'2vw'} />
-                <TextInput value={avatar} placeholder={'Enter Avatar Link'} mt={'0vw'} styles={{
+                <Avatar size={'7.11vh'} src={avatar ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} mt={'3.56vh'} />
+                <TextInput value={avatar} placeholder={'Enter Avatar Link'} mt={'0.00vh'} styles={{
                     root: {
                         width: '90%',
                     },
@@ -81,7 +81,7 @@ export default function CreateGroup() {
                 }} onFocus={() => fetchNui("disableControls", true)}
                     onBlur={() => fetchNui("disableControls", false)}
                 />
-                <TextInput value={name} placeholder={'Enter Group Name'} mt={'1.5vw'} styles={{
+                <TextInput value={name} placeholder={'Enter Group Name'} mt={'2.67vh'} styles={{
                     root: {
                         width: '90%',
                     },
@@ -100,8 +100,8 @@ export default function CreateGroup() {
                 />
                 <div className="members" style={{
                     width: '100%',
-                    marginTop: '1vw',
-                    marginLeft: '1vw',
+                    marginTop: '1.78vh',
+                    marginLeft: '1.78vh',
                 }}>
                     {members.map((member, index) => {
                         return (
@@ -111,7 +111,7 @@ export default function CreateGroup() {
                                 justifyContent: 'space-between',
                                 width: '90%',
 
-                                padding: '0.5vw 0',
+                                padding: '0.89vh 0',
                             }}>
                                 <div style={{
                                     display: 'flex',
@@ -125,7 +125,7 @@ export default function CreateGroup() {
                                         fontWeight: 700,
                                         lineHeight: '120.596%',
                                         letterSpacing: '0.36px',
-                                        marginLeft: '0.5vw',
+                                        marginLeft: '0.89vh',
                                     }}>
                                         {member}
                                     </div>
@@ -150,9 +150,9 @@ export default function CreateGroup() {
                     })}
                 </div>
                 <div style={{
-                    marginTop: '1.5vw',
-                    padding: '0.3vw',
-                    borderRadius: '0.5vw',
+                    marginTop: '2.67vh',
+                    padding: '0.53vh',
+                    borderRadius: '0.89vh',
                     backgroundColor: '#0A84FF',
                     cursor: 'pointer',
                 }} onClick={() => {
@@ -161,9 +161,9 @@ export default function CreateGroup() {
                     Add Members
                 </div>
                 <div style={{
-                    marginTop: '1.5vw',
-                    padding: '0.5vw',
-                    borderRadius: '0.5vw',
+                    marginTop: '2.67vh',
+                    padding: '0.89vh',
+                    borderRadius: '0.89vh',
                     backgroundColor: '#0A84FF',
                     cursor: 'pointer',
                 }} onClick={async () => {
@@ -212,26 +212,26 @@ export default function CreateGroup() {
                         width: '100%',
                         height: '80%',
                         position: 'absolute',
-                        bottom: '0.5vw',
+                        bottom: '0.89vh',
                         zIndex: 1,
                         backgroundColor: 'rgba(0, 0, 0, 1)',
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
-                        borderTopLeftRadius: '1.0416666666666667vw',
-                        borderTopRightRadius: '1.0416666666666667vw',
+                        borderTopLeftRadius: '1.85vh',
+                        borderTopRightRadius: '1.85vh',
                     }}>
                         <div style={{
                             width: '100%',
                             display: 'flex',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            marginTop: '0.25vw',
+                            marginTop: '0.44vh',
                         }} >
                             <div style={{
                                 width: '34%',
                                 fontWeight: 500,
-                                fontSize: '.7vw',
+                                fontSize: '1.24vh',
                                 color: '#0A84FF',
                                 cursor: 'pointer',
                             }} onClick={() => {
@@ -242,7 +242,7 @@ export default function CreateGroup() {
                             <div style={{
                                 width: '34%',
                                 fontWeight: 500,
-                                fontSize: '0.7vw',
+                                fontSize: '1.24vh',
                                 color: 'white',
                             }}>
                                 Select Contact
@@ -250,14 +250,14 @@ export default function CreateGroup() {
                             <div style={{
                                 width: '21%',
                                 textAlign: 'end',
-                                fontSize: '.7vw',
+                                fontSize: '1.24vh',
                                 color: '#0A84FF',
                                 fontWeight: 500
                             }}>
                                 Done
                             </div>
                         </div>
-                        <Searchbar mt="0.8vw" value={searchValue} onChange={(e: string) => {
+                        <Searchbar mt="1.42vh" value={searchValue} onChange={(e: string) => {
                             setSearchValue(e);
                         }} />
                         <div className="phoneContacts">
@@ -272,17 +272,17 @@ export default function CreateGroup() {
                                             <div style={{
                                                 color: 'rgba(255, 255, 255, 0.40)',
                                                 fontFamily: 'SFPro',
-                                                fontSize: '0.78125vw',
+                                                fontSize: '1.39vh',
                                                 fontStyle: 'normal',
                                                 fontWeight: 700,
                                                 lineHeight: '118.596%',
-                                                marginTop: index === 0 ? '' : '0.2125vw',
-                                                letterSpacing: '0.01875vw',
+                                                marginTop: index === 0 ? '' : '0.38vh',
+                                                letterSpacing: '0.03vh',
                                             }}>
                                                 {letter}
                                                 <div style={{
-                                                    width: '14.427083333333334vw',
-                                                    height: '0.026041666666666668vw',
+                                                    width: '25.65vh',
+                                                    height: '0.05vh',
                                                     background: 'rgba(255, 255, 255, 0.15)',
                                                 }} />
                                             </div>
@@ -292,11 +292,11 @@ export default function CreateGroup() {
                                                 return (
                                                     <div style={{
                                                         display: 'flex',
-                                                        height: '1.39375vw',
+                                                        height: '2.48vh',
                                                         flexDirection: 'column',
                                                         justifyContent: 'flex-end',
                                                         alignItems: 'flex-start',
-                                                        gap: '0.15625vw',
+                                                        gap: '0.28vh',
                                                         flexShrink: 0,
                                                         alignSelf: 'stretch',
                                                         cursor: 'pointer',
@@ -318,8 +318,8 @@ export default function CreateGroup() {
                                                             {contact.firstName} {contact.lastName}
                                                         </div>
                                                         <div style={{
-                                                            width: '14.427083333333334vw',
-                                                            height: '0.026041666666666668vw',
+                                                            width: '25.65vh',
+                                                            height: '0.05vh',
                                                             background: 'rgba(255, 255, 255, 0.15)',
                                                         }} />
                                                     </div>
@@ -332,8 +332,8 @@ export default function CreateGroup() {
                         </div>
                         <div style={{
                             position: 'absolute',
-                            right: '-0.2vw',
-                            top: '4vw',
+                            right: '-0.36vh',
+                            top: '7.11vh',
                         }}>
                             <AlphabetSearch onClick={(letter: string) => {
                                 if (alphabetArrange === letter) {
