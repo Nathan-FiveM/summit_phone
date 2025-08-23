@@ -7,6 +7,7 @@ import { Avatar, Image, TextInput, Transition } from "@mantine/core";
 import { PhoneContacts } from "../../../../../types/types";
 import { useNuiEvent } from "../../../hooks/useNuiEvent";
 import { useDebouncedCallback } from "@mantine/hooks";
+import dayjs from "dayjs";
 
 export interface Message {
     message: string;
@@ -321,27 +322,39 @@ export default function MessageDetails() {
                                 position: "relative",
                             }}
                         >
-                            {messages.map((message, index) => (
-                                <div
-                                    className={message.senderId === phoneSettings.phoneNumber ? "sender" : "receiver"}
-                                    key={index}
-                                    style={{
-                                        backgroundColor: message.senderId === phoneSettings.phoneNumber ? "#0A84FF" : "#2A2A2A",
-                                        color: "white",
-                                        padding: "1.00vh",
-                                        borderRadius: "1.00vh",
-                                        maxWidth: "80%",
-                                        alignSelf: message.senderId === phoneSettings.phoneNumber ? "flex-end" : "flex-start",
-                                    }}
-                                >
-                                    {message.message}
-                                    {message.attachments.length > 0 &&
-                                        message.attachments.map((attachment, idx) => (
-                                            attachment.type === "image" && (
-                                                <Image key={idx} src={attachment.url} h="17.78vh" alt="attachment" />
-                                            )
-                                        ))}
-                                    {conversationType === 'group' && message.senderId !== phoneSettings.phoneNumber && (
+                            {messages.map((message, index) => {
+                                return (
+                                    <div
+                                        className={message.senderId === phoneSettings.phoneNumber ? "sender" : "receiver"}
+                                        key={index}
+                                        style={{
+                                            backgroundColor: message.senderId === phoneSettings.phoneNumber ? "#0A84FF" : "#2A2A2A",
+                                            color: "white",
+                                            padding: "1.00vh",
+                                            borderRadius: "1.00vh",
+                                            maxWidth: "80%",
+                                            alignSelf: message.senderId === phoneSettings.phoneNumber ? "flex-end" : "flex-start",
+                                        }}
+                                    >
+                                        {message.message}
+                                        {message.attachments.length > 0 &&
+                                            message.attachments.map((attachment, idx) => (
+                                                attachment.type === "image" && (
+                                                    <Image key={idx} src={attachment.url} h="17.78vh" alt="attachment" />
+                                                )
+                                            ))
+                                        }
+                                        {conversationType === 'group' && message.senderId !== phoneSettings.phoneNumber && (
+                                            <div style={{
+                                                display: 'flex',
+                                                justifyContent: 'flex-end',
+                                                fontSize: '0.89vh',
+                                                color: 'rgba(255,255,255,0.5)',
+                                                marginTop: '0.36vh',
+                                            }}>
+                                                {getNameFromContactNumber(message.senderId)}
+                                            </div>
+                                        )}
                                         <div style={{
                                             display: 'flex',
                                             justifyContent: 'flex-end',
@@ -349,11 +362,11 @@ export default function MessageDetails() {
                                             color: 'rgba(255,255,255,0.5)',
                                             marginTop: '0.36vh',
                                         }}>
-                                            {getNameFromContactNumber(message.senderId)}
+                                            {dayjs(message.timestamp).format('DD MMM YYYY hh:mm A')}
                                         </div>
-                                    )}
-                                </div>
-                            ))}
+                                    </div>
+                                )
+                            })}
                         </InfiniteScroll>
                     </div>
                     <div style={{
