@@ -14,7 +14,7 @@ const generatePhoneNumber = async (): Promise<string> => {
     return number;
 };
 
-async function GeneratePlayerPhoneNumber(citizenId: string, source: number) {
+async function GeneratePlayerPhoneNumber(citizenId: string, source: number | undefined) {
     const number = await generatePhoneNumber();
     await MongoDB.insertOne('phone_numbers', {
         _id: generateUUid(),
@@ -66,7 +66,9 @@ async function GeneratePlayerPhoneNumber(citizenId: string, source: number) {
         avatar: '',
     });
     Settings.RegisterNewSettings(citizenId, number);
-    emitNet('phone:client:setupPhone', source, citizenId);
+	if (source) {
+		emitNet('phone:client:setupPhone', source, citizenId);
+	}
     Logger.AddLog({
         type: 'phone_settings',
         title: 'Phone Number Generated',
