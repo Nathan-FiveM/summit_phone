@@ -450,6 +450,11 @@ class PigeonService {
 
     public async deleteTweet(_client: number, tweetId: string) {
         const tweet = await MongoDB.findOne("phone_pigeon_tweets", { _id: tweetId });
+        if (!tweet) {
+            console.error(`Tweet not found for deletion: ${tweetId}`);
+            return { error: "Tweet not found" };
+        }
+
         await MongoDB.deleteOne("phone_pigeon_tweets", { _id: tweetId });
         Logger.AddLog({
             type: 'phone_pigeon',
@@ -457,10 +462,17 @@ class PigeonService {
             message: `Tweet (ID: ${tweetId}) deleted by user ${tweet.email}, content: ${tweet.content}`,
             showIdentifiers: false
         });
+
+        return { success: true };
     }
 
     public async deleteRepliesTweet(_client: number, tweetId: string) {
         const tweet = await MongoDB.findOne("phone_pigeon_tweets_replies", { _id: tweetId });
+        if (!tweet) {
+            console.error(`Reply tweet not found for deletion: ${tweetId}`);
+            return { error: "Reply tweet not found" };
+        }
+
         await MongoDB.deleteOne("phone_pigeon_tweets_replies", { _id: tweetId });
         Logger.AddLog({
             type: 'phone_pigeon',
@@ -468,7 +480,7 @@ class PigeonService {
             message: `Reply (ID: ${tweetId}) deleted, content: ${tweet.content} by user ${tweet.email}`,
             showIdentifiers: false
         });
-        return true;
+        return { success: true };
     }
 
     public async getPostReplies(_client: number, tweetId: string) {
