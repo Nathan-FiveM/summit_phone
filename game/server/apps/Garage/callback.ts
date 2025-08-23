@@ -17,13 +17,26 @@ onClientCallback('garage:getGarageData', async (source: number) => {
     const citizenId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(source);
     const res = await Utils.query(`SELECT vehicle,plate,garage,mods,state,depotprice FROM player_vehicles WHERE citizenid = ?`, [citizenId]) as VehicleData[];
     const vehicleData = Framework.Shared.Vehicles;
+    
     for (const vehicle of res) {
         const data = vehicleData[vehicle.vehicle];
         if (data) {
+            // Determine vehicle state with better logic
+            let state: string;
+            if (vehicle.state === 2) {
+                state = "Impounded";
+            } else if (vehicle.state === 1) {
+                state = "Parked";
+            } else if (Number(vehicle.depotprice) > 0) {
+                state = "Depot"; // Changed from "Depoted" to "Depot" as requested
+            } else {
+                state = "Out";
+            }
+
             resData.push({
                 plate: vehicle.plate,
                 garage: vehicle.garage,
-                state: vehicle.state === 2 ? "Impounded" : vehicle.state === 1 ? "Parked" : Number(vehicle.depotprice) > 0 ? `Depoted ${vehicle.depotprice}` : "Out",
+                state: state,
                 category: data.category,
                 brand: data.brand,
                 name: data.name,

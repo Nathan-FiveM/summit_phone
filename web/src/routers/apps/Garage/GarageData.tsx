@@ -38,6 +38,21 @@ export default function GarageApp(props: { onEnter: () => void, onExit: () => vo
         setImageErrors(prev => new Set(prev).add(category));
     };
 
+    const getStateColor = (state: string) => {
+        switch (state) {
+            case "Parked":
+                return "rgb(14, 169, 55)"; // Green
+            case "Out":
+                return "rgb(255, 165, 0)"; // Orange
+            case "Depot":
+                return "rgb(255, 0, 0)"; // Red
+            case "Impounded":
+                return "rgb(128, 0, 128)"; // Purple
+            default:
+                return "rgb(255, 255, 255)"; // White
+        }
+    };
+
     return (
         <CSSTransition
             nodeRef={nodeRef}
@@ -112,7 +127,12 @@ export default function GarageApp(props: { onEnter: () => void, onExit: () => vo
                                 }}>
                                     <div style={{ width: '60%', display: 'flex', flexDirection: 'column' }}>
                                         <div style={{ fontSize: '1.24vh' }}>{data.brand} {data.name} {data.plate}</div>
-                                        <div style={{ fontSize: '1.07vh', fontWeight: 500, width: '100%' }}>{data.state} - {data.garage}</div>
+                                        <div style={{ 
+                                            fontSize: '1.07vh', 
+                                            fontWeight: 500, 
+                                            width: '100%',
+                                            color: getStateColor(data.state)
+                                        }}>{data.state} - {data.garage}</div>
                                         <div style={{ fontSize: '1.07vh', width: '100%' }}>{data.category?.toUpperCase()}</div>
                                     </div>
                                     {!hasImageError ? (

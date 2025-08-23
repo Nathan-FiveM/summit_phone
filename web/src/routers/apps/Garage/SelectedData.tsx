@@ -4,11 +4,50 @@ import { CircularProgressbarWithChildren } from "react-circular-progressbar";
 import 'react-circular-progressbar/dist/styles.css';
 import { fetchNui } from "../../../hooks/fetchNui";
 import { useState } from "react";
+import { usePhone } from "../../../store/store";
 
 export default function SelectedData(props: { show: boolean, data: GarageData, onExit: () => void }) {
     const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
+    const [locating, setLocating] = useState(false);
+    const { setDynamicNoti } = usePhone();
+    
     const handleImageError = (category: string) => {
         setImageErrors(prev => new Set(prev).add(category));
+    };
+
+    const handleLocateVehicle = async () => {
+        if (props.data.state === "Out") {
+            setLocating(true);
+            try {
+                const result = await fetchNui('garage:locateVehicle', JSON.stringify({ plate: props.data.plate })) as boolean;
+                if (result) {
+                    setDynamicNoti({
+                        show: true,
+                        type: 'success',
+                        timeout: 3000,
+                        content: <svg xmlns="http://www.w3.org/2000/svg" width="4.98vh" height="4.98vh" viewBox="0 0 55 55" fill="none">
+                            <path d="M27.5 2C13.5 2 2 13.5 2 27.5S13.5 53 27.5 53 53 41.5 53 27.5 41.5 2 27.5 2ZM24.5 38.5L16.5 30.5L19.5 27.5L24.5 32.5L35.5 21.5L38.5 24.5L24.5 38.5Z" fill="rgba(0,255,0,0.8)" />
+                        </svg>
+                    });
+                    
+                } else {
+                    setDynamicNoti({
+                        show: true,
+                        type: 'success',
+                        timeout: 3000,
+                        content: <svg xmlns="http://www.w3.org/2000/svg" width="4.98vh" height="4.98vh" viewBox="0 0 55 55" fill="none">
+                            <path d="M27.5 2C13.5 2 2 13.5 2 27.5S13.5 53 27.5 53 53 41.5 53 27.5 41.5 2 27.5 2ZM20 20L35 35M35 20L20 35" stroke="rgba(255,0,0,0.8)" strokeWidth="3" strokeLinecap="round" />
+                        </svg>
+                    });
+                    setTimeout(() => {
+                        setLocating(false);
+                    });
+                }
+            } catch (error) {
+            } finally {
+                setLocating(false);
+            }
+        }
     };
 
     return (
@@ -395,20 +434,49 @@ export default function SelectedData(props: { show: boolean, data: GarageData, o
                     </CircularProgressbarWithChildren>
                 </div>
                 <div className="divider" style={{}} />
-                <Button style={{
+                
+                {/* Action Buttons */}
+                <div style={{
                     width: '90%',
                     marginTop: '1.78vh',
-                    backgroundColor: 'rgb(12, 113, 221)',
-                    color: 'white',
-                    fontWeight: 'bold',
-                    borderRadius: '0.89vh',
-                    height: '4.44vh',
-                    fontSize: '1.78vh',
-                }} onClick={() => {
-                    fetchNui('garage:valet', JSON.stringify(props.data));
+                    display: 'flex',
+                    gap: '1.78vh',
+                    flexDirection: 'column',
                 }}>
-                    Valet
-                </Button>
+                    {/* Locate Vehicle Button - Only show for vehicles that are "Out" */}
+                    {props.data.state === "Out" && (
+                        <Button 
+                            style={{
+                                width: '100%',
+                                backgroundColor: 'rgb(255, 165, 0)',
+                                color: 'white',
+                                fontWeight: 'bold',
+                                borderRadius: '0.89vh',
+                                height: '4.44vh',
+                                fontSize: '1.78vh',
+                            }} 
+                            onClick={handleLocateVehicle}
+                            loading={locating}
+                        >
+                            {locating ? 'Locating...' : 'Locate Vehicle'}
+                        </Button>
+                    )}
+                    
+                    {/* Valet Button - Always show for all vehicles */}
+                    <Button style={{
+                        width: '100%',
+                        backgroundColor: 'rgb(12, 113, 221)',
+                        color: 'white',
+                        fontWeight: 'bold',
+                        borderRadius: '0.89vh',
+                        height: '4.44vh',
+                        fontSize: '1.78vh',
+                    }} onClick={() => {
+                        fetchNui('garage:valet', JSON.stringify(props.data));
+                    }}>
+                        Valet
+                    </Button>
+                </div>
             </div>}
         </Transition>
     )
