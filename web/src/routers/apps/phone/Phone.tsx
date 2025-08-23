@@ -39,7 +39,6 @@ export default function Phone() {
         key: 'volume',
         defaultValue: 50,
     });
-    console.log(JSON.stringify(recentCallData, null, 2))
     return (
         <CSSTransition nodeRef={nodeRef} in={location.app === 'phone'} timeout={450} classNames="enterandexitfromtop" unmountOnExit mountOnEnter onEntering={async () => {
             const data: string = await fetchNui('getContacts', JSON.stringify({}));
