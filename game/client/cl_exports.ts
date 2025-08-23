@@ -1,5 +1,6 @@
 import { generateUUid } from "@shared/utils";
 import { NUI } from "./classes/NUI";
+import { Utils } from "./classes/Utils";
 
 function ForceFullyClosePhone() {
     if (LocalPlayer.state.onPhone) {
@@ -27,6 +28,11 @@ exports('sendNotification', (data: {
     app: string,
     timeout: number
 }) => {
+    const phoneItem = Utils.GetPhoneItem();
+    if (!phoneItem) {
+        emit("QBCore:Notify", "No phone item found", "error");
+        return;
+    };
     NUI.sendReactMessage('addNotification', data);
 });
 
@@ -41,13 +47,13 @@ exports('sendActionNotification', (data: string) => {
                 icon: string,
                 isServer: boolean,
                 event: string,
-                args:any
+                args: any
             },
             "1": {
                 icon: string,
                 isServer: boolean,
                 event: string,
-                args:any
+                args: any
             }
         }
     } = JSON.parse(data);

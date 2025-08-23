@@ -2,6 +2,7 @@ import { generateUUid } from "@shared/utils";
 import { NUI } from "./classes/NUI";
 import { triggerServerCallback } from "@overextended/ox_lib/client";
 import { CameraApp } from "./classes/Camera";
+import { Utils } from "./classes/Utils";
 RegisterNuiCallbackType('hideFrame');
 on('__cfx_nui:hideFrame', () => {
   NUI.closeUI();
@@ -38,6 +39,11 @@ on('__cfx_nui:showNoti', (data: {
   description: string,
   app: string,
 }) => {
+  const phoneItem = Utils.GetPhoneItem();
+  if (!phoneItem) {
+    emit("QBCore:Notify", "No phone item found", "error");
+    return;
+  };
   NUI.sendReactMessage('addNotification', {
     id: generateUUid(),
     title: data.title,

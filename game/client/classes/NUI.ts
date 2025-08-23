@@ -12,6 +12,12 @@ export class NU {
 
     public async init() {
         RegisterCommand('phoneopen', () => {
+            const state = LocalPlayer.state;
+            if (state.onPhone) {
+                this.closeUI();
+                this.sendReactMessage('toggleCloseClear', "ok")
+                return;
+            };
             if (this.shouldNotOpen) return;
             const phoneItem = Utils.GetPhoneItem();
             if (Utils.phoneList.includes(phoneItem)) {
@@ -37,7 +43,7 @@ export class NU {
                 }
             }, 1000);
         }, false);
-        RegisterKeyMapping('phoneopen', 'Open Phone', 'keyboard', 'M');
+        RegisterKeyMapping('phoneopen', 'Toggle Phone', 'keyboard', 'M');
         RegisterKeyMapping('+toggleNuiFocus', 'Toggle NUI Focus', 'keyboard', 'LMENU');
     };
 

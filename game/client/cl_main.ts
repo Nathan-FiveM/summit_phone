@@ -5,6 +5,7 @@ import { NUI } from "./classes/NUI";
 import { generateUUid } from "@shared/utils";
 import { triggerServerCallback } from "@overextended/ox_lib/client";
 import { PhoneSettings } from "../../types/types";
+import { Utils } from "./classes/Utils";
 
 export let FrameWork = exports['qb-core'].GetCoreObject();
 on('QBCore:Client:UpdateObject', () => {
@@ -28,6 +29,11 @@ setImmediate(() => {
 });
 
 onNet('phone:addnotiFication', (data: string) => {
+    const phoneItem = Utils.GetPhoneItem();
+    if (!phoneItem) {
+        emit("QBCore:Notify", "No phone item found", "error");
+        return;
+    };
     const notiData: {
         id: string,
         title: string,

@@ -2,7 +2,7 @@ import { Transition } from "@mantine/core";
 import { useNuiEvent } from "../../hooks/useNuiEvent";
 import { useEffect, useState } from "react";
 import { usePhone } from "../../store/store";
-import { useTimeout } from "@mantine/hooks";
+import { useLocalStorage, useTimeout } from "@mantine/hooks";
 
 export default function Header() {
     const { dynamicNoti, setDynamicNoti } = usePhone();
@@ -27,12 +27,23 @@ export default function Header() {
             clear();
         }
     }, [dynamicNoti.show]);
-
+    const [militaryTime] = useLocalStorage<boolean>({
+        key: 'militaryTime',
+        defaultValue: true
+    });
     return (
         <div>
-            <div className="headerText">
-                <div className="timeText">
-                    {time}
+            <div className="headerText" style={{
+                gap: militaryTime ? '11.5vh' : '11.5vh',
+            }}>
+                <div className="timeText" style={{ width: militaryTime ? '5.5vh' : '5.5vh' }}>
+                    {militaryTime ? time : (() => {
+                        const [hours, minutes] = time.split(':');
+                        const hourNum = parseInt(hours, 10);
+                        const newHours = (hourNum % 12) || 12;
+                        const period = hourNum >= 12 ? 'PM' : 'AM';
+                        return `${newHours}:${minutes} ${period}`;
+                    })()}
                 </div>
                 <svg width="9.67vh" height="1.11vh" viewBox="0 0 66 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g clipPath="url(#clip0_410_305)">

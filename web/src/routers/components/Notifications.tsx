@@ -99,7 +99,10 @@ export default function Notifications() {
             setShowNotiy(false);
         }
     }, [actionNotiQueue.values]);
-
+    const [notificationsEnabled] = useLocalStorage<boolean>({
+        key: 'notificationsEnabled',
+        defaultValue: true
+    });
     return (
         <TransitionGroup className="" style={{
             position: 'absolute',
@@ -109,7 +112,7 @@ export default function Notifications() {
             overflow: 'hidden',
             zIndex: 101,
         }}>
-            {notiQueue.values.map((noti, index) => {
+            {notificationsEnabled && notiQueue.values.map((noti, index) => {
                 return (
                     <CSSTransition
                         key={index}

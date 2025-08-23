@@ -137,6 +137,10 @@ export default function App() {
     return () => window.removeEventListener("keydown", keyHandler);
   }, [visible, phoneSettings.usePin, phoneSettings.showStartupScreen]);
 
+  useNuiEvent('toggleCloseClear', () => {
+    closeCallback(phoneSettings);
+  })
+
   const [brightness] = useLocalStorage({
     key: 'brightness',
     defaultValue: 60,
@@ -356,7 +360,7 @@ export default function App() {
           }
         }} />
       </div>
-      
+
     </div>
   )
 }
