@@ -87,14 +87,16 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
     const [billingData, setBillingData] = useState({
         description: '',
         amount: 0,
+        isBusiness: 'No',
         paymentTime: '',
         numberOfPayments: '',
-        receiver: '',
+        receiver: 0,
     });
     const [invoiceData, setInvoiceData] = useState<InvoiceData[]>([]);
     function isStringNumber(value: string) {
         return /^\d+$/.test(value);
     }
+    /* const [businessBilling, setBusinessBilling] = useState("No") */
 
     return (
         <CSSTransition
@@ -714,6 +716,7 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
                         }} />
                     </div>}
                 </Transition>
+
                 <Transition
                     mounted={location.app === "wallet" && location.page.wallet === "invoice"}
                     transition="fade"
@@ -993,6 +996,7 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
                         </div>
                     </div>}
                 </Transition>
+
                 <Transition
                     mounted={showNewInvoicePage}
                     transition="fade"
@@ -1039,116 +1043,92 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
                                 <path d="M18.5356 14H14.2949V3.43115H18.5137C20.3887 3.43115 21.6191 4.47119 21.6191 6.06787C21.6191 7.18848 20.7915 8.19189 19.7368 8.36768V8.42627C21.1724 8.5874 22.1392 9.60547 22.1392 11.0117C22.1392 12.8721 20.7842 14 18.5356 14ZM15.9355 4.77148V7.92822H17.7739C19.1948 7.92822 19.9785 7.34229 19.9785 6.29492C19.9785 5.31348 19.3047 4.77148 18.1182 4.77148H15.9355ZM15.9355 12.6597H18.1987C19.6782 12.6597 20.4619 12.0518 20.4619 10.9092C20.4619 9.7666 19.6562 9.18066 18.1035 9.18066H15.9355V12.6597ZM26.0576 12.8794C27.1636 12.8794 28.0278 12.1177 28.0278 11.1143V10.5063L26.1309 10.6235C25.186 10.6895 24.6514 11.1069 24.6514 11.7661C24.6514 12.4399 25.208 12.8794 26.0576 12.8794ZM25.6182 14.1318C24.1094 14.1318 23.0547 13.1943 23.0547 11.8101C23.0547 10.4624 24.0874 9.63477 25.9185 9.53223L28.0278 9.40771V8.81445C28.0278 7.95752 27.4492 7.44482 26.4824 7.44482C25.5669 7.44482 24.9956 7.88428 24.8564 8.57275H23.3623C23.4502 7.18115 24.6367 6.15576 26.541 6.15576C28.4087 6.15576 29.6025 7.14453 29.6025 8.68994V14H28.0864V12.7329H28.0498C27.603 13.5898 26.6289 14.1318 25.6182 14.1318ZM37.7544 8.94629H36.2456C36.0845 8.12598 35.4692 7.47412 34.4365 7.47412C33.2134 7.47412 32.4077 8.49219 32.4077 10.1475C32.4077 11.8394 33.2207 12.8208 34.4512 12.8208C35.4253 12.8208 36.0625 12.2861 36.2456 11.3926H37.769C37.6006 13.0332 36.2896 14.1465 34.4365 14.1465C32.2319 14.1465 30.7964 12.6377 30.7964 10.1475C30.7964 7.70117 32.2319 6.15576 34.4219 6.15576C36.4067 6.15576 37.6152 7.43018 37.7544 8.94629ZM40.5449 9.59814L43.6577 6.29492H45.5181L42.3247 9.61279L45.6426 14H43.8042L41.1895 10.5796L40.5303 11.2314V14H38.9482V3.43115H40.5303V9.59814H40.5449Z" fill="#0A84FF" />
                             </svg>
                         </div>
-                        <Autocomplete
-                            label="Sender"
-                            placeholder="Pick value"
-                            data={[
-                                'Me'
-                            ]}
-                            styles={{
-                                root: {
-                                    width: '90%',
-                                    marginTop: '0.89vh',
-                                    height: '7.11vh',
-                                },
-                                label: {
-                                    fontSize: '1.24vh',
-                                    fontWeight: 500,
-                                    letterSpacing: '0.09vh',
-                                    color: 'white',
-                                },
-                                input: {
-                                    backgroundColor: 'rgb(48, 48, 48)',
-                                    color: 'white',
-                                    border: 'none',
-                                    fontSize: '1.24vh',
-                                    height: '3.56vh',
-                                    minHeight: '10px',
-                                    outline: 'none',
-                                    borderRadius: '0.89vh',
-                                }
-                            }}
-                            disabled
-                            defaultValue="Me"
-                            value="Me"
-                        />
-                        <Autocomplete
-                            label="Receiver"
-                            placeholder="Select or Enter a contact or PayPal ID"
-                            data={contactsData && Array.from(new Set(contactsData.map(contact => contact.contactNumber))).map((uniqueContactNumber) => {
-                                const contact = contactsData.find(c => c.contactNumber === uniqueContactNumber);
-                                return {
-                                    label: contact?.firstName + ' ' + contact?.lastName,
-                                    value: contact?.contactNumber,
-                                };
-                            })}
-                            onOptionSubmit={(value) => {
-                                setBillingData({
-                                    ...billingData,
-                                    receiver: value,
-                                });
-                            }}
-                            value={billingData.receiver}
-                            styles={{
-                                root: {
-                                    width: '90%',
-                                    marginTop: '1.78vh',
-                                    height: '7.11vh',
-                                },
-                                label: {
-                                    fontSize: '1.24vh',
-                                    fontWeight: 500,
-                                    letterSpacing: '0.09vh',
-                                    color: 'white',
-                                },
-                                input: {
-                                    backgroundColor: 'rgb(48, 48, 48)',
-                                    color: 'white',
-                                    border: 'none',
-                                    outline: 'none',
-                                    height: '3.56vh',
-                                    fontSize: '1.24vh',
-                                    minHeight: '10px',
-                                    borderRadius: '0.89vh',
-                                },
-                                dropdown: {
-                                    backgroundColor: 'rgb(48, 48, 48)',
-                                    color: 'white',
-                                    border: 'none',
-                                },
-                                option: {
-                                    fontWeight: 500,
-                                    letterSpacing: '0.09vh',
-                                }
-                            }}
-                            onChange={(e) => {
-                                if (isStringNumber(e)){
+                        <div style={{
+                            width: '90%',
+                            display: 'flex',
+                            justifyContent: 'space-between'
+                        }}>
+                            <Autocomplete
+                                label="Sender"
+                                placeholder="Pick value"
+                                data={[
+                                    'Me'
+                                ]}
+                                styles={{
+                                    root: {
+                                        width: '45%',
+                                        marginTop: '0.89vh',
+                                        height: '7.11vh',
+                                    },
+                                    label: {
+                                        fontSize: '1.24vh',
+                                        fontWeight: 500,
+                                        letterSpacing: '0.09vh',
+                                        color: 'white',
+                                    },
+                                    input: {
+                                        backgroundColor: 'rgb(48, 48, 48)',
+                                        color: 'white',
+                                        border: 'none',
+                                        fontSize: '1.24vh',
+                                        height: '3.56vh',
+                                        minHeight: '10px',
+                                        outline: 'none',
+                                        borderRadius: '0.89vh',
+                                    }
+                                }}
+                                disabled
+                                defaultValue="Me"
+                                value="Me"
+                            />
+                            <NumberInput
+                                label="Receiver ID"
+                                rightSection={<></>}
+                                value={billingData.receiver}
+                                onChange={(e) => {
                                     setBillingData({
                                         ...billingData,
-                                        receiver: e,
-                                    });
-                                }
-                            }}
-                            clearable
-                            onClear={() => {
-                                setBillingData({
-                                    ...billingData,
-                                    receiver: '',
-                                });
-                            }}
-                            onFocus={() => fetchNui('disableControls', true)} onBlur={() => fetchNui('disableControls', false)}
-                        />
+                                        receiver: Number(e)
+                                    })
+                                }}
+                                styles={{
+                                    root: {
+                                        width: '45%',
+                                        marginTop: '0.89vh',
+                                        height: '7.11vh',
+                                    },
+                                    label: {
+                                        fontSize: '1.24vh',
+                                        fontWeight: 500,
+                                        letterSpacing: '0.09vh',
+                                        color: 'white',
+                                    },
+                                    input: {
+                                        backgroundColor: 'rgb(48, 48, 48)',
+                                        color: 'white',
+                                        border: 'none',
+                                        fontSize: '1.24vh',
+                                        height: '3.56vh',
+                                        minHeight: '10px',
+                                        outline: 'none',
+                                        borderRadius: '0.89vh',
+                                    }
+                                }}
+                            />
+                        </div>
                         <div className="divider" style={{ marginTop: '1.78vh' }} />
                         <div style={{
                             width: '90%',
                             marginTop: '1.78vh',
+                            display: 'flex',
+                            justifyContent: 'space-between'
                         }}>
                             <NumberInput
                                 label="Amount"
                                 placeholder="$ 0"
                                 styles={{
                                     root: {
-                                        width: '50%',
+                                        width: '48%',
                                         height: '5.33vh',
                                     },
                                     label: {
@@ -1178,6 +1158,55 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
                                 rightSection={<></>}
                                 onFocus={() => fetchNui('disableControls', true)} onBlur={() => fetchNui('disableControls', false)}
                             />
+                            <Select
+                                label="Billing For Business"
+                                placeholder=""
+                                value={billingData.isBusiness}
+                                onOptionSubmit={(value) => {
+                                    setBillingData({
+                                        ...billingData,
+                                        isBusiness: value
+                                    })
+                                }}
+                                styles={{
+                                    root: {
+                                        width: '48%',
+                                        height: '5.33vh',
+                                    },
+                                    label: {
+                                        fontSize: '1.24vh',
+                                        fontWeight: 500,
+                                        letterSpacing: '0.09vh',
+                                        color: 'white',
+                                    },
+                                    input: {
+                                        backgroundColor: 'rgb(48, 48, 48)',
+                                        color: 'white',
+                                        border: 'none',
+                                        outline: 'none',
+                                        height: '3.56vh',
+                                        fontSize: '1.24vh',
+                                        minHeight: '10px',
+                                        borderRadius: '0.89vh',
+                                    },
+                                    dropdown: {
+                                        backgroundColor: 'rgb(48, 48, 48)',
+                                        color: 'white',
+                                        border: 'none',
+                                    },
+                                    option: {
+                                        fontWeight: 500,
+                                        letterSpacing: '0.09vh',
+                                    }
+                                }}
+                                data={[
+                                    "Yes",
+                                    "No"
+                                ]}
+                                rightSection={<></>}
+                                onFocus={() => fetchNui('disableControls', true)} onBlur={() => fetchNui('disableControls', false)}
+                            />
+
                         </div>
                         <div style={{
                             width: '90%',
@@ -1204,9 +1233,9 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
                                 ]}
                                 styles={{
                                     root: {
-                                        width: '43%',
+                                        width: '48%',
                                         marginTop: '0.36vh',
-                                        height: '7.11vh'
+
                                     },
                                     label: {
                                         fontSize: '1.07vh',
@@ -1262,8 +1291,7 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
                                 ]}
                                 styles={{
                                     root: {
-                                        width: '43%',
-                                        height: '3.91vh',
+                                        width: '48%',
                                         marginTop: '0.36vh',
                                     },
                                     label: {
@@ -1363,7 +1391,7 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
                                 borderRadius: '0.65vh',
                                 background: '#394538'
                             }} onClick={async () => {
-                                if (billingData.receiver === '' || billingData.amount === 0) {
+                                if (billingData.receiver === 0 || billingData.amount === 0) {
                                     return;
                                 }
                                 const res = await fetchNui('createInvoice', JSON.stringify(billingData));

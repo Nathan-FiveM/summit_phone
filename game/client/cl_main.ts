@@ -2,7 +2,7 @@ import "./cl_nuicallback";
 import "./cl_exports";
 import "./apps/index";
 import { NUI } from "./classes/NUI";
-import { generateUUid } from "@shared/utils";
+import { Delay, generateUUid } from "@shared/utils";
 import { triggerServerCallback } from "@overextended/ox_lib/client";
 import { PhoneSettings } from "../../types/types";
 import { Utils } from "./classes/Utils";
@@ -89,6 +89,8 @@ onNet('phone:client:setupPhone', async (citizenId: string) => {
     const response = await triggerServerCallback('GetClientSettings', 1) as string;
     const res = JSON.parse(response) as PhoneSettings;
     if (!res) return;
+    await Delay(1000);
+    console.log(response);
     NUI.sendReactMessage('setSettings', response);
 });
 

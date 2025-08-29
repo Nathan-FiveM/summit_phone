@@ -141,3 +141,16 @@ RegisterCommand('verifyPegion', async (source: number, args: string[]) => {
         return LOGGER(`Failed to verify user ${email}. Reason: ${res}`);
     }
 }, true);
+
+on('QBCore:Server:OnPlayerUnload', async (src: number) => {
+    const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(src);
+    if (!citizenId) return;
+    await Settings.SavePlayerSettings(citizenId);
+});
+
+on('playerDropped', async () => {
+    const src = global.source;
+    const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(src);
+    if (!citizenId) return;
+    await Settings.SavePlayerSettings(citizenId);
+})
