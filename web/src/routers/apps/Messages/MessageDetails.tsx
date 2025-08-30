@@ -3,7 +3,7 @@ import { usePhone } from "../../../store/store"
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useCallback, useEffect, useRef, useState } from "react"
 import { fetchNui } from "../../../hooks/fetchNui";
-import { Avatar, Image, TextInput, Transition } from "@mantine/core";
+import { Avatar, Image, Menu, TextInput, Transition } from "@mantine/core";
 import { PhoneContacts } from "../../../../../types/types";
 import { useNuiEvent } from "../../../hooks/useNuiEvent";
 import { useDebouncedCallback } from "@mantine/hooks";
@@ -158,12 +158,11 @@ export default function MessageDetails() {
     const [showMemberModal, setShowMemberModal] = useState(false);
     const [showAddMemberModal, setShowAddMemberModal] = useState(false);
     const [typedPhoneNumber, setTypedPhoneNumber] = useState("");
-
+    const [opened, setOpened] = useState(-1);
     function getNameFromContactNumber(phoneNumber: string) {
         const contact = contactList.find((contact) => contact.contactNumber === phoneNumber);
         return contact ? `${contact.firstName} ${contact.lastName}` : phoneNumber;
     }
-
     return (
         <CSSTransition
             nodeRef={nodeRef}
@@ -322,49 +321,77 @@ export default function MessageDetails() {
                                 position: "relative",
                             }}
                         >
-                            {messages.map((message, index) => {
+                            {messages.map((message, indexX) => {
                                 return (
-                                    <div
-                                        className={message.senderId === phoneSettings.phoneNumber ? "sender" : "receiver"}
-                                        key={index}
-                                        style={{
-                                            backgroundColor: message.senderId === phoneSettings.phoneNumber ? "#0A84FF" : "#2A2A2A",
-                                            color: "white",
-                                            padding: "1.00vh",
-                                            borderRadius: "1.00vh",
-                                            maxWidth: "80%",
-                                            alignSelf: message.senderId === phoneSettings.phoneNumber ? "flex-end" : "flex-start",
-                                        }}
-                                    >
-                                        {message.message}
-                                        {message.attachments.length > 0 &&
-                                            message.attachments.map((attachment, idx) => (
-                                                attachment.type === "image" && (
-                                                    <Image key={idx} src={attachment.url} h="17.78vh" alt="attachment" />
-                                                )
-                                            ))
-                                        }
-                                        {conversationType === 'group' && message.senderId !== phoneSettings.phoneNumber && (
-                                            <div style={{
-                                                display: 'flex',
-                                                justifyContent: 'flex-end',
-                                                fontSize: '0.89vh',
-                                                color: 'rgba(255,255,255,0.5)',
-                                                marginTop: '0.36vh',
-                                            }}>
-                                                {getNameFromContactNumber(message.senderId)}
+                                    <Menu shadow="md" width={200} key={indexX} opened={opened === indexX}>
+                                        <Menu.Target>
+                                            <div
+                                                className={message.senderId === phoneSettings.phoneNumber ? "sender" : "receiver"}
+                                                key={indexX}
+                                                style={{
+                                                    backgroundColor: message.senderId === phoneSettings.phoneNumber ? "#0A84FF" : "#2A2A2A",
+                                                    color: "white",
+                                                    padding: "1.00vh",
+                                                    borderRadius: "1.00vh",
+                                                    maxWidth: "80%",
+                                                    alignSelf: message.senderId === phoneSettings.phoneNumber ? "flex-end" : "flex-start",
+                                                }}
+                                                onMouseDown={(e) => {
+                                                    e.preventDefault();
+                                                    if (e.button === 2 && message.senderId === phoneSettings.phoneNumber) {
+                                                        setOpened(opened === indexX ? -1 : indexX);
+                                                    }
+                                                }}
+                                            >
+                                                {message.message}
+                                                {message.attachments.length > 0 &&
+                                                    message.attachments.map((attachment, idx) => (
+                                                        attachment.type === "image" && (
+                                                            <Image key={idx} src={attachment.url} h="17.78vh" alt="attachment" />
+                                                        )
+                                                    ))
+                                                }
+                                                {conversationType === 'group' && message.senderId !== phoneSettings.phoneNumber && (
+                                                    <div style={{
+                                                        display: 'flex',
+                                                        justifyContent: 'flex-end',
+                                                        fontSize: '0.89vh',
+                                                        color: 'rgba(255,255,255,0.5)',
+                                                        marginTop: '0.36vh',
+                                                    }}>
+                                                        {getNameFromContactNumber(message.senderId)}
+                                                    </div>
+                                                )}
+                                                <div style={{
+                                                    display: 'flex',
+                                                    justifyContent: 'flex-end',
+                                                    fontSize: '0.89vh',
+                                                    color: 'rgba(255,255,255,0.5)',
+                                                    marginTop: '0.36vh',
+                                                }}>
+                                                    {dayjs(message.timestamp).format('DD MMM YYYY hh:mm A')}
+                                                </div>
                                             </div>
-                                        )}
-                                        <div style={{
-                                            display: 'flex',
-                                            justifyContent: 'flex-end',
-                                            fontSize: '0.89vh',
-                                            color: 'rgba(255,255,255,0.5)',
-                                            marginTop: '0.36vh',
+                                        </Menu.Target>
+                                        <Menu.Dropdown style={{
+                                            width: '10vh',
+                                            backgroundColor: '#494949ff',
+                                            border: '0.09vh solid rgba(87, 87, 87, 0.63)',
                                         }}>
-                                            {dayjs(message.timestamp).format('DD MMM YYYY hh:mm A')}
-                                        </div>
-                                    </div>
+                                            <Menu.Item color="white" onClick={async () => {
+                                                setOpened(-1);
+                                                const res = await fetchNui('deleteMessage', JSON.stringify({
+                                                    conversationType,
+                                                    phoneNumber: identifier,
+                                                    messageIndex: message.page,
+                                                    groupId: conversationType === 'group' ? identifier : undefined
+                                                }));
+                                                console.log(res);
+                                            }}>
+                                                Delete
+                                            </Menu.Item>
+                                        </Menu.Dropdown>
+                                    </Menu>
                                 )
                             })}
                         </InfiniteScroll>

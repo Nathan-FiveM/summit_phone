@@ -1,7 +1,7 @@
 import { onClientCallback } from "@overextended/ox_lib/server";
 import { Utils } from "@server/classes/Utils";
 import { MongoDB, Logger } from "@server/sv_main";
-import { generateUUid } from "@shared/utils";
+import { Delay, generateUUid } from "@shared/utils";
 
 onClientCallback('phone_message:sendMessage', async (client, data: string) => {
     const { type, phoneNumber, groupId, messageData } = JSON.parse(data);
@@ -71,7 +71,7 @@ onClientCallback('phone_message:sendMessage', async (client, data: string) => {
     Logger.AddLog({
         type: 'phone_messages',
         title: 'Message Sent',
-        message: `Sender ${senderPhoneNumber} sent a message to ${type === 'private' ? phoneNumber : 'group ' + groupId } with content: ${messageData.message}`,
+        message: `Sender ${senderPhoneNumber} sent a message to ${type === 'private' ? phoneNumber : 'group ' + groupId} with content: ${messageData.message}`,
         showIdentifiers: false
     });
     // Handle recipients
@@ -123,7 +123,7 @@ onClientCallback('phone_message:sendMessage', async (client, data: string) => {
                         app: "message",
                         timeout: 2000,
                     }));
-                    emitNet('phone_messages:client:updateMessages', CVXCS, JSON.stringify({...newMessage, groupId}));
+                    emitNet('phone_messages:client:updateMessages', CVXCS, JSON.stringify({ ...newMessage, groupId }));
                 }
             }
         }
@@ -767,53 +767,85 @@ onClientCallback('phone_message:deleteMessage', async (client, data: string) => 
     const { conversationType, phoneNumber, groupId, messageIndex } = JSON.parse(data);
     const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
     const senderPhoneNumber = await Utils.GetPhoneNumberByCitizenId(senderId);
+    const target = await Utils.GetCitizenIdByPhoneNumber(phoneNumber);
+    const targetSource = await Utils.GetSourceFromCitizenId(target);
+
     if (!senderId) {
         return JSON.stringify({ success: false, message: 'Sender not found' });
     }
 
     let userMessages = await MongoDB.findOne('phone_messages', { citizenId: senderId });
+    let targetMessages = await MongoDB.findOne('phone_messages', { citizenId: target });
     if (!userMessages) {
         return JSON.stringify({ success: false, message: 'Messages not found' });
     }
 
     let conversation;
     if (conversationType === 'private') {
-        conversation = userMessages.messages.find((msg: { type: string, phoneNumber?: string }) =>
-            msg.type === 'private' && msg.phoneNumber === phoneNumber);
+        conversation = userMessages.messages.find((msg: {
+            type: string,
+            name: string,
+            avatar: string | null,
+            phoneNumber: string,
+            messages: Array<{
+                message: string,
+                read: boolean,
+                page: number,
+                timestamp: string,
+                senderId: string,
+                attachments: Array<any>
+            }>
+        }) => msg.type === 'private' && Number(msg.phoneNumber) === Number(phoneNumber));
     } else if (conversationType === 'group') {
         conversation = userMessages.messages.find((msg: { type: string, groupId?: string }) =>
-            msg.type === 'group' && msg.groupId === groupId);
+            msg.type === 'group' && String(msg.groupId) === String(groupId));
     }
 
-    if (!conversation || messageIndex < 0 || messageIndex >= conversation.messages.length) {
+    if (!conversation) {
         return JSON.stringify({ success: false, message: 'Message not found' });
     }
-
-    const deletedMessage = conversation.messages.splice(messageIndex, 1)[0];
-    const messageId = generateUUid();
-
-    if (!userMessages.deletedMessages) {
-        userMessages.deletedMessages = [];
-    }
-
-    userMessages.deletedMessages.push({
-        messageId: messageId,
-        timestamp: new Date().toISOString(),
-        conversationType: conversation.type,
-        phoneNumber: conversation.phoneNumber,
-        groupId: conversation.groupId
+    const filteredMessages = conversation.messages.filter((msg: any) => Number(msg.page) !== Number(messageIndex));
+    conversation.messages = filteredMessages;
+    userMessages.messages = userMessages.messages.map((msg: any) => {
+        if (Number(msg.phoneNumber) === Number(phoneNumber)) {
+            return conversation;
+        }
+        return msg;
     });
 
-    const thirtyDaysAgo = new Date(new Date().getTime() - 30 * 24 * 60 * 60 * 1000);
-    userMessages.deletedMessages = userMessages.deletedMessages.filter((deleted: any) =>
-        deleted.timestamp > thirtyDaysAgo
-    );
+    let targetConversation: any;
+    if (conversationType === 'private') {
+        targetConversation = targetMessages?.messages.find((msg: { type: string, phoneNumber?: string }) =>
+            msg.type === 'private' && Number(msg.phoneNumber) === Number(senderPhoneNumber)
+        );
+    } else if (conversationType === 'group') {
+        targetConversation = targetMessages?.messages.find((msg: { type: string, groupId?: string }) =>
+            msg.type === 'group' && String(msg.groupId) === String(groupId)
+        );
+    }
+
+    const filterTargetMessages = targetConversation.messages.filter((msg: any) => Number(msg.page) !== Number(messageIndex));
+    targetConversation.messages = filterTargetMessages;
+    targetMessages.messages = targetMessages.messages.map((msg: any) => {
+        if (Number(msg.phoneNumber) === Number(senderPhoneNumber)) {
+            //@ts-ignore
+            return targetConversation;
+        }
+        return msg;
+    });
 
     await MongoDB.updateOne('phone_messages', { _id: userMessages._id }, userMessages);
+    await Delay(1000);
+    await MongoDB.updateOne('phone_messages', { _id: targetMessages._id }, targetMessages);
+
+    emitNet('phone_messages:client:updateMessages', Number(client), JSON.stringify(userMessages));
+    if (await exports['qb-core'].DoesPlayerExist(targetSource)) {
+        emitNet('phone_messages:client:updateMessages', Number(targetSource), JSON.stringify(targetMessages));
+    }
     Logger.AddLog({
         type: 'phone_messages',
         title: 'Message Deleted',
-        message: `Message deleted from ${conversationType} conversation with ${phoneNumber || groupId} by ${senderPhoneNumber} with content: ${deletedMessage.message}`,
+        message: `Message deleted from ${conversationType} conversation with ${phoneNumber || groupId} by ${senderPhoneNumber}`,
         showIdentifiers: false
     });
     return JSON.stringify({ success: true });

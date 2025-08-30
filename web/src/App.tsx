@@ -162,7 +162,7 @@ export default function App() {
 
   return (
     <div style={{
-      width: '35.70vh',
+      width: '32.1vh',
       height: '66.15vh',
       display: 'flex',
       justifyContent: 'start',

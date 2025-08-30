@@ -71,3 +71,9 @@ on(`__cfx_nui:addMember`, async (data: any, cb: Function) => {
     const res = await triggerServerCallback('phone_message:addMember', 1, data);
     cb(res);
 });
+
+RegisterNuiCallbackType('deleteMessage');
+on(`__cfx_nui:deleteMessage`, async (message: string, cb: Function) => {
+    const res = await triggerServerCallback('phone_message:deleteMessage', 1, message);
+    cb(res);
+});
