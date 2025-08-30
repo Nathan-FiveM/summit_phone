@@ -27,7 +27,7 @@ export default function MessageData(props: { show: boolean, message: PhoneMailMe
             return `${newDate.getDate().toString().padStart(2, '0')}/${(newDate.getMonth() + 1).toString().padStart(2, '0')}/${newDate.getFullYear()}`;
         }
     }
-    
+
     return (
         <Transition
             mounted={props.show}
@@ -69,7 +69,9 @@ export default function MessageData(props: { show: boolean, message: PhoneMailMe
                     <div className="semicontexsa">
                         <div className="titleCont">
                             <div className="title">{props.message.subject}</div>
-                            <div className="timestamp"><div className="treasa">{formatedDate(props.message.date)}</div></div>
+                            <div className="timestamp">
+                                <div className="treasa">{formatedDate(props.message.date)}</div>
+                            </div>
                         </div>
                         <div className="toCont">
                             <div className="to">To:</div>
