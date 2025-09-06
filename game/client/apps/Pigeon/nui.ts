@@ -149,6 +149,50 @@ on('__cfx_nui:pigeon:updateProfile', async (data: string, cb: Function) => {
     cb(res);
 });
 
+// Private Messaging Callbacks
+RegisterNuiCallbackType('pigeon:sendPrivateMessage');
+on('__cfx_nui:pigeon:sendPrivateMessage', async (data: string, cb: Function) => {
+    const res = await triggerServerCallback('pigeon:sendPrivateMessage', 1, data);
+    cb(res);
+});
+
+RegisterNuiCallbackType('pigeon:getPrivateMessages');
+on('__cfx_nui:pigeon:getPrivateMessages', async (data: string, cb: Function) => {
+    const res = await triggerServerCallback('pigeon:getPrivateMessages', 1, data);
+    cb(res);
+});
+
+RegisterNuiCallbackType('pigeon:getConversations');
+on('__cfx_nui:pigeon:getConversations', async (data: string, cb: Function) => {
+    const res = await triggerServerCallback('pigeon:getConversations', 1, data);
+    cb(res);
+});
+
+RegisterNuiCallbackType('pigeon:markMessageAsRead');
+on('__cfx_nui:pigeon:markMessageAsRead', async (data: string, cb: Function) => {
+    const res = await triggerServerCallback('pigeon:markMessageAsRead', 1, data);
+    cb(res);
+});
+
+RegisterNuiCallbackType('pigeon:deleteMessage');
+on('__cfx_nui:pigeon:deleteMessage', async (data: string, cb: Function) => {
+    const res = await triggerServerCallback('pigeon:deleteMessage', 1, data);
+    cb(res);
+});
+
+// Enhanced Followers/Following Callbacks
+RegisterNuiCallbackType('pigeon:getFollowers');
+on('__cfx_nui:pigeon:getFollowers', async (data: string, cb: Function) => {
+    const res = await triggerServerCallback('pigeon:getFollowers', 1, data);
+    cb(res);
+});
+
+RegisterNuiCallbackType('pigeon:getFollowing');
+on('__cfx_nui:pigeon:getFollowing', async (data: string, cb: Function) => {
+    const res = await triggerServerCallback('pigeon:getFollowing', 1, data);
+    cb(res);
+});
+
 // RegisterCommand('testPost', async (source: any, args: any) => {
 //     const res = await triggerServerCallback('pigeon:postTweet', 1, JSON.stringify({
 //         email: 'test@smrt.com',

@@ -21,3 +21,9 @@ onServerCallback('bluepage:refreshDeletePost', (data: string) => {
     }
     return true;
 });
+
+onNet('phone:refreshPrivateMessage', (data: string) => {
+    if (LocalPlayer.state.onPhone) {
+        NUI.sendReactMessage('pigeonRefreshPrivateMessage', data);
+    }
+});

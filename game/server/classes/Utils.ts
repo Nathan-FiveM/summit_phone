@@ -278,6 +278,12 @@ class Util {
         return res._id;
     };
 
+    async GetCidsFromPigeonEmail(email: string) {
+        const res = await MongoDB.findMany('phone_settings', { pigeonIdAttached: email });
+        if (!res || res.length === 0) return [];
+        return res.map((setting: any) => setting._id);
+    };
+
     async GetCidFromDarkEmail(email: string) {
         const res = await MongoDB.findOne('phone_settings', { darkMailIdAttached: email });
         if (!res) return false;
@@ -288,7 +294,7 @@ class Util {
         try {
             const player = await exports['qb-core'].GetPlayer(source);
             if (!player) return false;
-            
+
             const metadata = player.PlayerData.metadata;
             return metadata && metadata.injail && metadata.injail > 0;
         } catch (error) {

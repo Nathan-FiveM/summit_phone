@@ -9,6 +9,9 @@ import CreateNew from "./CreateNew";
 import { TweetProfileData } from "../../../../../types/types";
 import SearchUser from "./SearchUsers";
 import Notifications from "./Notifications";
+import Messages from "./Messages";
+import Chat from "./Chat";
+import FollowersFollowing from "./FollowersFollowing";
 
 export default function Pigeon(props: { onExit: () => void; onEnter: () => void }) {
     const nodeRef = useRef(null);
@@ -53,6 +56,10 @@ export default function Pigeon(props: { onExit: () => void; onEnter: () => void 
         following: [],
         banner: '',
     });
+
+    // New state for messaging and followers
+    const [selectedUser, setSelectedUser] = useState<TweetProfileData | null>(null);
+    const [followersFollowingUser, setFollowersFollowingUser] = useState<string>('');
 
     return (
         <CSSTransition
@@ -402,10 +409,77 @@ export default function Pigeon(props: { onExit: () => void; onEnter: () => void 
                         width: '100%',
                         height: '100%',
                     }}>
-                        <Home location={location.page.pigeon} profileData={profileData} />
+                        <Home 
+                            location={location.page.pigeon} 
+                            profileData={profileData} 
+                            onMessageClick={(user) => {
+                                setSelectedUser(user);
+                                setLocation({
+                                    app: 'pigeon',
+                                    page: { ...location.page, pigeon: 'chat' }
+                                });
+                            }}
+                        />
                         <CreateNew location={location.page.pigeon} />
-                        <SearchUser show={location.page.pigeon === 'search'} profileData={profileData} />
+                        <SearchUser 
+                            show={location.page.pigeon === 'search'} 
+                            profileData={profileData} 
+                            onStartChat={(user) => {
+                                setSelectedUser(user);
+                                setLocation({
+                                    app: 'pigeon',
+                                    page: { ...location.page, pigeon: 'chat' }
+                                });
+                            }}
+                        />
                         <Notifications show={location.page.pigeon === 'notification'} profileData={profileData} />
+                        
+                        {/* New Components */}
+                        <Messages 
+                            show={location.page.pigeon === 'messages'} 
+                            onClose={() => setLocation({
+                                app: 'pigeon',
+                                page: { ...location.page, pigeon: 'home' }
+                            })}
+                            onStartChat={(user) => {
+                                setSelectedUser(user);
+                                setLocation({
+                                    app: 'pigeon',
+                                    page: { ...location.page, pigeon: 'chat' }
+                                });
+                            }}
+                        />
+                        
+                        <Chat 
+                            show={location.page.pigeon === 'chat'} 
+                            otherUser={selectedUser}
+                            onClose={() => setLocation({
+                                app: 'pigeon',
+                                page: { ...location.page, pigeon: 'home' }
+                            })}
+                            onBack={() => setLocation({
+                                app: 'pigeon',
+                                page: { ...location.page, pigeon: 'messages' }
+                            })}
+                        />
+                        
+                        <FollowersFollowing 
+                            show={location.page.pigeon === 'followers' || location.page.pigeon === 'following'} 
+                            type={location.page.pigeon === 'followers' ? 'followers' : 'following'}
+                            userEmail={followersFollowingUser || profileData.email}
+                            onClose={() => setLocation({
+                                app: 'pigeon',
+                                page: { ...location.page, pigeon: 'home' }
+                            })}
+                            onUserClick={() => {
+                                setLocation({
+                                    app: 'pigeon',
+                                    page: { ...location.page, pigeon: 'profile' }
+                                });
+                                // You might want to pass the user data to the profile component
+                            }}
+                        />
+                        
                         <Navigation location={location.page.pigeon} onClick={(e) => {
                             setLocation({
                                 app: 'pigeon',

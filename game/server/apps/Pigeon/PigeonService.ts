@@ -654,6 +654,275 @@ class PigeonService {
         });
         return true;
     }
+
+    // Private Messaging Functions
+    public async sendPrivateMessage(_client: number, data: string): Promise<any> {
+        try {
+            const { senderEmail, recipientEmail, content, attachments = [] } = JSON.parse(data);
+
+            // Verify both users exist
+            const sender = await MongoDB.findOne("phone_pigeon_users", { email: senderEmail });
+            const recipient = await MongoDB.findOne("phone_pigeon_users", { email: recipientEmail });
+
+            if (!sender || !recipient) {
+                return { error: "User not found" };
+            }
+
+            const message = {
+                _id: generateUUid(),
+                senderEmail,
+                recipientEmail,
+                content,
+                attachments,
+                createdAt: new Date().toISOString(),
+                read: false,
+                deletedBySender: false,
+                deletedByRecipient: false
+            };
+
+            await MongoDB.insertOne("phone_pigeon_private_messages", message);
+
+            // Get all Citizen IDs for both sender and recipient (multiple devices support)
+            const senderCids = await Utils.GetCidsFromPigeonEmail(senderEmail);
+            const recipientCids = await Utils.GetCidsFromPigeonEmail(recipientEmail);
+
+            // Send notifications and refresh events to all recipient devices
+            for (const recipientCid of recipientCids) {
+                const recipientPlayer = await exports['qb-core'].GetPlayerByCitizenId(recipientCid);
+                if (recipientPlayer) {
+                    emitNet('phone:addnotiFication', recipientPlayer.PlayerData.source, JSON.stringify({
+                        id: generateUUid(),
+                        title: 'New Message',
+                        description: `You received a message from ${sender.displayName}`,
+                        app: 'pigeon',
+                        timeout: 5000
+                    }));
+
+                    // Send NUI event to refresh chat if recipient is in chat
+                    emitNet('phone:refreshPrivateMessage', recipientPlayer.PlayerData.source, JSON.stringify({
+                        message: message,
+                        senderEmail: senderEmail,
+                        recipientEmail: recipientEmail
+                    }));
+                }
+            }
+
+            // Send refresh event to all sender devices
+            for (const senderCid of senderCids) {
+                const senderPlayer = await exports['qb-core'].GetPlayerByCitizenId(senderCid);
+                if (senderPlayer) {
+                    emitNet('phone:refreshPrivateMessage', senderPlayer.PlayerData.source, JSON.stringify({
+                        message: message,
+                        senderEmail: senderEmail,
+                        recipientEmail: recipientEmail
+                    }));
+                }
+            }
+
+            Logger.AddLog({
+                type: 'phone_pigeon',
+                title: 'Private Message Sent',
+                message: `${senderEmail} sent a private message to ${recipientEmail}`,
+                showIdentifiers: false
+            });
+
+            return { success: true, messageId: message._id };
+        } catch (error) {
+            console.error("Error in sendPrivateMessage:", error);
+            return { error: "An error occurred while sending message" };
+        }
+    }
+
+    public async getPrivateMessages(_client: number, data: string): Promise<any> {
+        try {
+            const { userEmail, otherUserEmail, limit = 50, offset = 0 } = JSON.parse(data);
+
+            const messages = await MongoDB.findMany("phone_pigeon_private_messages", {
+                $or: [
+                    { senderEmail: userEmail, recipientEmail: otherUserEmail },
+                    { senderEmail: otherUserEmail, recipientEmail: userEmail }
+                ],
+                $and: [
+                    { deletedBySender: { $ne: true } },
+                    { deletedByRecipient: { $ne: true } }
+                ]
+            }, null, false, {
+                sort: { createdAt: -1 },
+                skip: offset,
+                limit: limit
+            });
+
+            return JSON.stringify(messages);
+        } catch (error) {
+            console.error("Error in getPrivateMessages:", error);
+            return { error: "An error occurred while fetching messages" };
+        }
+    }
+
+    public async getConversations(_client: number, userEmail: string): Promise<any> {
+        try {
+            // Get all unique conversations for the user
+            const conversations = await MongoDB.aggregate("phone_pigeon_private_messages", [
+                {
+                    $match: {
+                        $or: [
+                            { senderEmail: userEmail },
+                            { recipientEmail: userEmail }
+                        ],
+                        $and: [
+                            { deletedBySender: { $ne: true } },
+                            { deletedByRecipient: { $ne: true } }
+                        ]
+                    }
+                },
+                {
+                    $sort: { createdAt: -1 }
+                },
+                {
+                    $group: {
+                        _id: {
+                            $cond: [
+                                { $eq: ["$senderEmail", userEmail] },
+                                "$recipientEmail",
+                                "$senderEmail"
+                            ]
+                        },
+                        lastMessage: { $first: "$$ROOT" },
+                        unreadCount: {
+                            $sum: {
+                                $cond: [
+                                    { $and: [{ $eq: ["$recipientEmail", userEmail] }, { $eq: ["$read", false] }] },
+                                    1,
+                                    0
+                                ]
+                            }
+                        }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "phone_pigeon_users",
+                        localField: "_id",
+                        foreignField: "email",
+                        as: "userInfo"
+                    }
+                },
+                {
+                    $unwind: "$userInfo"
+                },
+                {
+                    $project: {
+                        otherUser: {
+                            email: "$userInfo.email",
+                            displayName: "$userInfo.displayName",
+                            avatar: "$userInfo.avatar",
+                            verified: "$userInfo.verified"
+                        },
+                        lastMessage: 1,
+                        unreadCount: 1
+                    }
+                },
+                {
+                    $sort: { "lastMessage.createdAt": -1 }
+                }
+            ]);
+
+            return JSON.stringify(conversations);
+        } catch (error) {
+            console.error("Error in getConversations:", error);
+            return { error: "An error occurred while fetching conversations" };
+        }
+    }
+
+    public async markMessageAsRead(_client: number, data: string): Promise<any> {
+        try {
+            const { messageId, userEmail } = JSON.parse(data);
+
+            const message = await MongoDB.findOne("phone_pigeon_private_messages", { _id: messageId });
+            if (!message) return { error: "Message not found" };
+
+            // Only mark as read if the user is the recipient
+            if (message.recipientEmail === userEmail) {
+                message.read = true;
+                await MongoDB.updateOne("phone_pigeon_private_messages", { _id: messageId }, message);
+            }
+
+            return { success: true };
+        } catch (error) {
+            console.error("Error in markMessageAsRead:", error);
+            return { error: "An error occurred while marking message as read" };
+        }
+    }
+
+    public async deleteMessage(_client: number, data: string): Promise<any> {
+        try {
+            const { messageId, userEmail } = JSON.parse(data);
+
+            const message = await MongoDB.findOne("phone_pigeon_private_messages", { _id: messageId });
+            if (!message) return { error: "Message not found" };
+
+            // Mark as deleted by the appropriate user
+            if (message.senderEmail === userEmail) {
+                message.deletedBySender = true;
+            } else if (message.recipientEmail === userEmail) {
+                message.deletedByRecipient = true;
+            } else {
+                return { error: "Unauthorized" };
+            }
+
+            await MongoDB.updateOne("phone_pigeon_private_messages", { _id: messageId }, message);
+
+            Logger.AddLog({
+                type: 'phone_pigeon',
+                title: 'Message Deleted',
+                message: `User ${userEmail} deleted a private message`,
+                showIdentifiers: false
+            });
+
+            return { success: true };
+        } catch (error) {
+            console.error("Error in deleteMessage:", error);
+            return { error: "An error occurred while deleting message" };
+        }
+    }
+
+    // Enhanced Followers/Following Functions
+    public async getFollowers(_client: number, email: string): Promise<any> {
+        try {
+            const user = await MongoDB.findOne("phone_pigeon_users", { email });
+            if (!user) return { error: "User not found" };
+
+            const followers = await MongoDB.findMany("phone_pigeon_users",
+                { email: { $in: user.followers } },
+                null, false,
+                { sort: { displayName: 1 } }
+            );
+
+            return JSON.stringify(followers);
+        } catch (error) {
+            console.error("Error in getFollowers:", error);
+            return { error: "An error occurred while fetching followers" };
+        }
+    }
+
+    public async getFollowing(_client: number, email: string): Promise<any> {
+        try {
+            const user = await MongoDB.findOne("phone_pigeon_users", { email });
+            if (!user) return { error: "User not found" };
+
+            const following = await MongoDB.findMany("phone_pigeon_users",
+                { email: { $in: user.following } },
+                null, false,
+                { sort: { displayName: 1 } }
+            );
+
+            return JSON.stringify(following);
+        } catch (error) {
+            console.error("Error in getFollowing:", error);
+            return { error: "An error occurred while fetching following" };
+        }
+    }
+
 }
 
 export const pigeonService = new PigeonService();

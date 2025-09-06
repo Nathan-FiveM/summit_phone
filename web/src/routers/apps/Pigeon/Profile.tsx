@@ -9,7 +9,18 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import 'react-responsive-modal/styles.css';
 import { Modal } from 'react-responsive-modal';
 
-export default function Profile(props: { show: boolean, email: string, onClose: () => void, onError: () => void, onReplyClick: (tweet: TweetData) => void, onRetweetClick: (tweet: TweetData) => void, onLikeClick: (tweet: TweetData) => void }) {
+export default function Profile(props: { 
+    show: boolean, 
+    email: string, 
+    onClose: () => void, 
+    onError: () => void, 
+    onReplyClick: (tweet: TweetData) => void, 
+    onRetweetClick: (tweet: TweetData) => void, 
+    onLikeClick: (tweet: TweetData) => void,
+    onFollowersClick?: (userEmail: string) => void,
+    onFollowingClick?: (userEmail: string) => void,
+    onMessageClick?: (user: TweetProfileData) => void
+}) {
     const { phoneSettings, location, setLocation, setPhoneSettings } = usePhone();
     const [profileData, setProfileData] = useState<TweetProfileData>({
         _id: '',
@@ -194,7 +205,26 @@ export default function Profile(props: { show: boolean, email: string, onClose: 
                             fontSize: '1.24vh',
                             fontWeight: 500,
                         }}>
-                            {profileData.followers.length} Followers {profileData.following.length} Following
+                            <span 
+                                style={{ 
+                                    cursor: 'pointer',
+                                    color: '#0A84FF',
+                                    textDecoration: 'underline'
+                                }}
+                                onClick={() => props.onFollowersClick?.(profileData.email)}
+                            >
+                                {profileData.followers.length} Followers
+                            </span>
+                            <span 
+                                style={{ 
+                                    cursor: 'pointer',
+                                    color: '#0A84FF',
+                                    textDecoration: 'underline'
+                                }}
+                                onClick={() => props.onFollowingClick?.(profileData.email)}
+                            >
+                                {profileData.following.length} Following
+                            </span>
                         </div>
                     </div>
                     <div style={{
@@ -203,7 +233,8 @@ export default function Profile(props: { show: boolean, email: string, onClose: 
                         flexDirection: 'column',
                         alignItems: 'end',
                         justifyContent: 'center',
-                        marginTop: '1.78vh',
+                        marginTop: '6vh',
+                        gap: '0.89vh',
                     }}>
                         {phoneSettings.pigeonIdAttached === profileData.email ? <Button style={{
                             borderRadius: '3.56vh',
@@ -215,26 +246,42 @@ export default function Profile(props: { show: boolean, email: string, onClose: 
                         }} onClick={() => {
                             setEditProfile(true);
                             setDuplicateProfileData({ ...profileData });
-                        }} variant="outline">Edit Profile</Button> : <Button style={{
-                            borderRadius: '3.56vh',
-                            width: '8.89vh',
-                            fontSize: '1.42vh',
-                            padding: '0.00vh',
-                            color: 'white',
-                            fontWeight: 500,
-                            marginTop: '0.89vh',
-                        }} onClick={async () => {
-                            await fetchNui('followUser', JSON.stringify({ targetEmail: profileData.email, currentEmail: phoneSettings.pigeonIdAttached, follow: !profileData.followers.includes(phoneSettings.pigeonIdAttached) }));
-                            const res = await fetchNui('getProfile', profileData.email);
-                            if (res === 'User not found') {
-                                fetchNui('showNoti', { app: 'pigeon', title: 'Pigeon', description: 'Something Went Wrong, User Can\'t be fetched' })
-                                props.onError();
-                                return;
-                            }
-                            setProfileData(JSON.parse(res as string));
-                        }} variant="outline">
-                            {profileData.followers.includes(phoneSettings.pigeonIdAttached) ? 'Unfollow' : 'Follow'}
-                        </Button>}
+                        }} variant="outline">Edit Profile</Button> : (
+                            <>
+                                <Button style={{
+                                    borderRadius: '3.56vh',
+                                    width: '7.89vh',
+                                    fontSize: '1.42vh',
+                                    padding: '0.00vh',
+                                    color: 'white',
+                                    fontWeight: 500,
+                                }} onClick={async () => {
+                                    await fetchNui('followUser', JSON.stringify({ targetEmail: profileData.email, currentEmail: phoneSettings.pigeonIdAttached, follow: !profileData.followers.includes(phoneSettings.pigeonIdAttached) }));
+                                    const res = await fetchNui('getProfile', profileData.email);
+                                    if (res === 'User not found') {
+                                        fetchNui('showNoti', { app: 'pigeon', title: 'Pigeon', description: 'Something Went Wrong, User Can\'t be fetched' })
+                                        props.onError();
+                                        return;
+                                    }
+                                    setProfileData(JSON.parse(res as string));
+                                }} variant="outline">
+                                    {profileData.followers.includes(phoneSettings.pigeonIdAttached) ? 'Unfollow' : 'Follow'}
+                                </Button>
+                                <Button style={{
+                                    borderRadius: '3.56vh',
+                                    width: '7.89vh',
+                                    fontSize: '1.24vh',
+                                    padding: '0.00vh',
+                                    color: 'white',
+                                    fontWeight: 500,
+                                    backgroundColor: '#0A84FF',
+                                }} onClick={() => {
+                                    props.onMessageClick?.(profileData);
+                                }} variant="filled">
+                                    Message
+                                </Button>
+                            </>
+                        )}
                     </div>
                 </div>
                 <div>

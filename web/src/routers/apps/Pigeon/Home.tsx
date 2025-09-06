@@ -23,7 +23,8 @@ export default function Home(props: {
         bio: string;
         followers: string[];
         following: string[];
-    }
+    },
+    onMessageClick?: (user: any) => void
 }) {
 
     const [imgContainer, setOpenImgContainer] = useState(false);
@@ -112,7 +113,7 @@ export default function Home(props: {
         fetchTweets(1, 20);
         setStart(1);
         setEnd(20);
-    }, [filter]);
+    }, [filter, location.page.pigeon]);
 
     const loadMore = () => {
         const newStart = end + 1;
@@ -962,6 +963,20 @@ export default function Home(props: {
                     setShowProfile(false);
                 }} onError={() => {
                     setShowProfile(false);
+                }} onFollowersClick={() => {
+                    // Store the user email for the followers/following component
+                    // This would need to be passed up to the parent component
+                    setLocation({
+                        app: 'pigeon',
+                        page: { ...location.page, pigeon: 'followers' }
+                    });
+                }} onFollowingClick={() => {
+                    // Store the user email for the followers/following component
+                    // This would need to be passed up to the parent component
+                    setLocation({
+                        app: 'pigeon',
+                        page: { ...location.page, pigeon: 'following' }
+                    });
                 }} onReplyClick={async (tweet) => {
                     const res = await fetchNui('getReplies', tweet._id);
                     setSelectedPost(tweet);
@@ -1000,7 +1015,7 @@ export default function Home(props: {
                         like: !tweet.likeCount.includes(phoneSettings.pigeonIdAttached),
                         email: phoneSettings.pigeonIdAttached
                     }))
-                }} />
+                }} onMessageClick={props.onMessageClick} />
                 <Modal styles={{
                     modal: {
                         backgroundColor: 'rgba(0, 0, 0, 0)',

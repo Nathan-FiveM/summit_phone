@@ -26,3 +26,16 @@ onClientCallback('pigeon:searchUsersX', pigeonService.searchUsers);
 onClientCallback('pigeon:getNotifications', pigeonService.getNotifications);
 onClientCallback('pigeon:changePassword', pigeonService.changePassword);
 onClientCallback('pigeon:updateProfile', pigeonService.updateProfile);
+
+// Private Messaging Callbacks
+onClientCallback('pigeon:sendPrivateMessage', pigeonService.sendPrivateMessage);
+onClientCallback('pigeon:getPrivateMessages', pigeonService.getPrivateMessages);
+onClientCallback('pigeon:getConversations', (client: number, data: string) => {
+    return pigeonService.getConversations(client, data);
+});
+onClientCallback('pigeon:markMessageAsRead', pigeonService.markMessageAsRead);
+onClientCallback('pigeon:deleteMessage', pigeonService.deleteMessage);
+
+// Enhanced Followers/Following Callbacks
+onClientCallback('pigeon:getFollowers', pigeonService.getFollowers);
+onClientCallback('pigeon:getFollowing', pigeonService.getFollowing);

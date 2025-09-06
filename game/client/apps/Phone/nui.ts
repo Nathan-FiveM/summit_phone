@@ -1,4 +1,3 @@
-import { NUI } from "@client/classes/NUI";
 import { triggerServerCallback } from "@overextended/ox_lib/client";
 
 RegisterNuiCallbackType('phoneCall');
@@ -33,9 +32,8 @@ on('__cfx_nui:getCallRecentData', async (data: string, cb: Function) => {
 
 RegisterNuiCallbackType('callFromDialPad');
 on('__cfx_nui:callFromDialPad', async (data: string, cb: Function) => {
-    const fetchData: any = await triggerServerCallback('phone:server:getDataFromDBwithNumber', 1, data);
-    const { _id, contactNumber } = JSON.parse(fetchData);
-    const res = await triggerServerCallback('summit_phone:server:call', 1, JSON.stringify({ number: contactNumber, _id, volume: JSON.parse(data).volume }));
+    const { _id, number, volume } = JSON.parse(data);
+    const res = await triggerServerCallback('summit_phone:server:call', 1, JSON.stringify({ number, _id, volume }));
     cb(res);
 });
 
