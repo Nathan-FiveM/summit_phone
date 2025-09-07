@@ -10,7 +10,8 @@ import { Settings } from "../Settings/class";
 onClientCallback("summit_phone:server:call", async (source: number, data: string) => {
   const { number, _id, volume } = JSON.parse(data);
   const targetPlayer = await Utils.GetPlayerFromPhoneNumber(number);
-  const targetData: PhoneContacts = await MongoDB.findOne('phone_contacts', { _id });
+  const targetData: PhoneContacts = await MongoDB.findOne('phone_contacts', { contactNumber: number, personalNumber: await Utils.GetPhoneNumberBySource(source) });
+
   const sourceData: PhoneContacts = await MongoDB.findOne('phone_contacts', {
     contactNumber: await Utils.GetPhoneNumberBySource(source),
     personalNumber: number
@@ -148,9 +149,7 @@ onClientCallback("summit_phone:server:call", async (source: number, data: string
     emitNet("phone:client:removeCallingInterface", source);
   }, 20000);
 
-  const sourceName = sourceData
-    ? `${sourceData.firstName} ${sourceData.lastName}`
-    : await Utils.GetPhoneNumberBySource(source);
+  const sourceName = sourceData ? `${sourceData.firstName} ${sourceData.lastName}` : await Utils.GetPhoneNumberBySource(source);
   const targetName = targetData ? `${targetData.firstName} ${targetData.lastName}` : number;
 
   emitNet("phone:addActionNotification", targetSource, JSON.stringify({
@@ -188,6 +187,7 @@ onClientCallback("summit_phone:server:call", async (source: number, data: string
     },
   }));
 
+  console.log(source, "Calling", targetSource, targetName, _id);
   emitNet("summit_phone:server:addCallinginterface", source, JSON.stringify({
     callId,
     targetSource,
@@ -492,10 +492,10 @@ onClientCallback('phone:server:toggleBlockNumber', async (source: number, data: 
 onClientCallback("summit_phone:server:jailCall", async (source: number, data: string) => {
   const { number, volume } = JSON.parse(data);
   const targetPlayer = await Utils.GetPlayerFromPhoneNumber(number);
-  
+
   // For jail calls, we don't need to check if the caller has a phone
   // We also don't need to check flight mode since it's a jail phone
-  
+
   if (!targetPlayer) {
     emitNet("phone:addnotiFication", source, JSON.stringify({
       id: generateUUid(),
@@ -535,10 +535,10 @@ onClientCallback("summit_phone:server:jailCall", async (source: number, data: st
   const targetPhone = await Utils.GetPhoneNumberBySource(targetSource);
   const sourceCitizenId = await global.exports["qb-core"].GetPlayerCitizenIdBySource(source);
   const targetCitizenId = await global.exports["qb-core"].GetPlayerCitizenIdBySource(targetSource);
-  
+
   // For jail calls, we don't check blocked numbers or flight mode
   // This allows incarcerated players to make calls even if they're blocked
-  
+
   const targetHasPhone = await Utils.HasPhone(targetSource);
   if (!targetHasPhone) {
     emitNet("phone:addnotiFication", source, JSON.stringify({
@@ -550,7 +550,7 @@ onClientCallback("summit_phone:server:jailCall", async (source: number, data: st
     }));
     return false;
   }
-  
+
   const hostParticipant = {
     source,
     citizenId: sourceCitizenId,
@@ -561,7 +561,7 @@ onClientCallback("summit_phone:server:jailCall", async (source: number, data: st
   const callId = callManager.createCall(hostParticipant);
 
   callManager.createRingTone(targetSource, String(Settings.ringtone.get(targetCitizenId)?.current), volume);
-  
+
   // Jail calls have a shorter timeout (15 minutes instead of 20)
   callManager.addPendingInvitation(callId, targetSource, () => {
     emitNet("phone:addnotiFication", source, JSON.stringify({
@@ -637,7 +637,7 @@ onClientCallback("summit_phone:server:jailCall", async (source: number, data: st
     callerSource: source,
     databaseTableId: "jail_call",
   }));
-  
+
   // Start a timer to automatically end jail calls after 10 minutes
   // This prevents abuse and simulates real jail phone limitations
   setTimeout(async () => {
@@ -657,7 +657,7 @@ onClientCallback("summit_phone:server:jailCall", async (source: number, data: st
         app: "settings",
         timeout: 3000,
       }));
-      
+
       await callHistoryManager.recordTwoPartyCallHistory(call, "completed", "completed", new Date(), targetPhone);
       callManager.endCall(callId);
       exports["pma-voice"].setPlayerCall(source, 0);
@@ -666,13 +666,13 @@ onClientCallback("summit_phone:server:jailCall", async (source: number, data: st
       emitNet("phone:client:removeCallingInterface", source);
     }
   }, 600000); // 10 minutes
-  
+
   Logger.AddLog({
     type: 'phone_calls',
     title: 'Jail Call Initiated',
     message: `Jail call initiated from ${source} to ${targetSource} (${targetPhone})`,
     showIdentifiers: true,
   });
-  
+
   return true;
 });
