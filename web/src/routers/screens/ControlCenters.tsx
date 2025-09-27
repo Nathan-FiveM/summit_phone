@@ -5,8 +5,6 @@ import { useState, useRef, useEffect, SetStateAction, createRef } from 'react';
 import { useNuiEvent } from '../../hooks/useNuiEvent';
 import { clamp, useLocalStorage, useMove } from '@mantine/hooks';
 import dayjs from 'dayjs';
-import useNotiQueue from '../../hooks/useNotiQueue';
-import { usePhone } from '../../store/store';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { Image } from '@mantine/core';
 import { notiIcons } from '../../utils/icons';

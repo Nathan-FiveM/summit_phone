@@ -12,6 +12,7 @@ import housingIcon from "../../images/icons/House.svg?url";
 import bluePageicon from "../../images/icons/BluePages.svg?url";
 import pixieIcon from "../../images/icons/Pixie.svg?url";
 import groupsIcon from "../../images/icons/Groups.svg?url";
+import loveLinkIcon from "../../images/icons/LoveLink.svg?url";
 import phoneIcon from '../../images/icons/Phone.svg?url';
 import messageIcon from "../../images/icons/Message.svg?url";
 import settingsIcon from "../../images/icons/Settings.svg?url";
@@ -34,6 +35,7 @@ import notiPixie from "../../images/notiIcons/Pixie.svg?url";
 import notiServices from "../../images/notiIcons/Services.svg?url";
 import notiSettings from "../../images/notiIcons/Settings.svg?url";
 import notiWallet from "../../images/notiIcons/Wallet.svg?url";
+import notiLoveLink from "../../images/notiIcons/LoveLink.svg?url";
 
 export const icons = [
     {
@@ -168,6 +170,7 @@ export const iconList = [
     'bluepage',
     /* 'pixie', */
     'groups',
+    'heartsync',
     'services'
 ]
 
@@ -282,30 +285,37 @@ export const fullIconsDetails = [
         id: 12,
     },
     {
+        icon: loveLinkIcon,
+        name: 'HeartSync',
+        link: 'heartsync',
+        description: 'Find your perfect match and connect with people who share your interests.',
+        id: 13,
+    },
+    {
         icon: phoneIcon,
         name: 'Phone',
         link: 'phone',
         description: 'A phone is a device that allows you to make calls.',
-        id: 17,
+        id: 14,
     },
     {
         icon: messageIcon,
         name: 'Message',
         link: 'message',
-        id: 18,
+        id: 15,
     },
     {
         icon: settingsIcon,
         name: 'Settings',
         link: 'settings',
-        id: 19,
+        id: 16,
     },
     {
         icon: servicesIcon,
         name: 'Services',
         link: 'services',
         description: 'Usually Business owners loves this app.',
-        id: 20,
+        id: 17,
     }
 ]
 
@@ -393,6 +403,8 @@ export const notiIcons = (icon: string) => {
             return notiSettings;
         case 'wallet':
             return notiWallet;
+        case 'heartsync':
+            return notiLoveLink; // Using LoveLink icon as placeholder
         default:
             return "";
     }

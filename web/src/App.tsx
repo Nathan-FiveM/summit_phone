@@ -21,7 +21,6 @@ import { PhoneSettings } from '../../types/types';
 import Notifications from './routers/components/Notifications';
 import CallComponent from './routers/components/CallComponent';
 import Message from './routers/apps/Messages/Message';
-import FilteredPage from './routers/apps/Messages/FilteredPage';
 import MessageDetails from './routers/apps/Messages/MessageDetails';
 import CreateGroup from './routers/apps/Messages/CreateGroup';
 import Settings from './routers/apps/Settings/Settings';
@@ -40,7 +39,7 @@ import BluePage from './routers/apps/BluePage/BluePage';
 import GarageApp from './routers/apps/Garage/GarageData';
 import Wallet from './routers/apps/Wallet/Wallet';
 import Groups from './routers/apps/Groups/Groups';
-import { Modal } from '@mantine/core';
+import HeartSync from './routers/apps/HeartSync/HeartSync';
 
 debugData([
   {
@@ -159,6 +158,8 @@ export default function App() {
   const [garagesEnter, setGaragesEnter] = useState(false);
   const [walletEnter, setWalletEnter] = useState(false);
   const [groupsEnter, setGroupsEnter] = useState(false);
+  const [loveLinkEnter, setLoveLinkEnter] = useState(false);
+  const [heartSyncEnter, setHeartSyncEnter] = useState(false);
 
   return (
     <div style={{
@@ -194,7 +195,6 @@ export default function App() {
           <Phone />
           <CallComponent />
           <Message />
-          <FilteredPage />
           <MessageDetails />
           <CreateGroup />
         </div>
@@ -324,6 +324,15 @@ export default function App() {
             setWalletEnter(false);
           }} />
         </div>
+        <div className='fuckerMessager' id='fuckerMessager' style={{
+          visibility: heartSyncEnter ? 'visible' : 'hidden',
+        }}>
+          <HeartSync onEnter={() => {
+            setHeartSyncEnter(true);
+          }} onExit={() => {
+            setHeartSyncEnter(false);
+          }} />
+        </div>
         <div className="backButton" onClick={() => {
           if (location.app !== '') {
             setLocation({
@@ -347,6 +356,7 @@ export default function App() {
                 bluepages: location.page.bluepages,
                 pixie: location.page.pixie,
                 groups: location.page.groups,
+                heartsync: location.page.heartsync,
               }
             });
           } else {

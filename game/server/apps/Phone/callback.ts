@@ -1,10 +1,10 @@
 import { onClientCallback } from "@overextended/ox_lib/server";
 import { Utils } from "@server/classes/Utils";
 import { callManager } from "./CallManager";
-import { generateUUid } from "@shared/utils";
+import { Delay, generateUUid } from "@shared/utils";
 import { MongoDB, Logger } from "@server/sv_main";
 import { PhoneContacts } from "../../../../types/types";
-import { callHistoryManager } from "./callHistoryManager";
+import { callHistoryManager, PlayerCallHistory } from "./callHistoryManager";
 import { Settings } from "../Settings/class";
 
 onClientCallback("summit_phone:server:call", async (source: number, data: string) => {
@@ -25,6 +25,30 @@ onClientCallback("summit_phone:server:call", async (source: number, data: string
       app: "settings",
       timeout: 2000,
     }));
+    const timestamp = new Date().toISOString();
+    const callerRecord: PlayerCallHistory = {
+      callId: Math.floor(Math.random() * 1000000),
+      role: "caller",
+      myPhoneNumber: await Utils.GetPhoneNumberBySource(source),
+      otherPartyPhoneNumber: number,
+      status: "unanswered",
+      callTime: 0,
+      callTimestamp: timestamp,
+    };
+
+    const calleeRecord: PlayerCallHistory = {
+      callId: Math.floor(Math.random() * 1000000),
+      role: "callee",
+      myPhoneNumber: number,
+      otherPartyPhoneNumber: await Utils.GetPhoneNumberBySource(source),
+      status: "missed",
+      callTime: 0,
+      callTimestamp: timestamp,
+    };
+    await Delay(1000);
+    await MongoDB.insertOne("call_history", callerRecord);
+    await Delay(1000);
+    await MongoDB.insertOne("call_history", calleeRecord);
     return false;
   }
 
@@ -108,6 +132,31 @@ onClientCallback("summit_phone:server:call", async (source: number, data: string
       app: "settings",
       timeout: 2000,
     }));
+
+    const timestamp = new Date().toISOString();
+    const callerRecord: PlayerCallHistory = {
+      callId: Math.floor(Math.random() * 1000000),
+      role: "caller",
+      myPhoneNumber: sourcePhone,
+      otherPartyPhoneNumber: targetPhone,
+      status: "unanswered",
+      callTime: 0,
+      callTimestamp: timestamp,
+    };
+
+    const calleeRecord: PlayerCallHistory = {
+      callId: Math.floor(Math.random() * 1000000),
+      role: "callee",
+      myPhoneNumber: targetPhone,
+      otherPartyPhoneNumber: sourcePhone,
+      status: "missed",
+      callTime: 0,
+      callTimestamp: timestamp,
+    };
+    await Delay(1000);
+    await MongoDB.insertOne("call_history", callerRecord);
+    await Delay(1000);
+    await MongoDB.insertOne("call_history", calleeRecord);
     return false;
   }
   const hostParticipant = {

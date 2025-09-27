@@ -1,47 +1,116 @@
-import { useRef, useState } from "react"
-import { usePhone } from "../../../store/store";
+import { useRef, useState } from "react";
 import { CSSTransition } from "react-transition-group";
-import Title from "../../components/Title";
+import { usePhone } from "../../../store/store";
+import AlphabetSearch from "../../components/AlphabetSearch";
+import { PhoneContacts } from "../../../../../types/types";
+import Searchbar from "../../components/SearchBar";
 import { fetchNui } from "../../../hooks/fetchNui";
+import { Avatar, TextInput, Transition } from "@mantine/core";
+import dayjs from "dayjs";
 
 export default function Message() {
     const nodeRef = useRef(null);
     const { location, setLocation } = usePhone();
-    const [messageStats, setMessageStats] = useState<{
-        success: boolean,
-        stats: {
-            allMessages: number,
-            knownMessages: number,
-            unknownMessages: number,
-            unreadMessages: number,
-            recentlyDeleted: number
+    const [searchValue, setSearchValue] = useState('');
+    const [showContactsPortal, setShowContactsPortal] = useState(false);
+    const [channelsData, setChannelsData] = useState<{
+        type: "private" | "group",
+        name: string,
+        phoneNumber?: string,
+        groupId?: string,
+        members?: string[],
+        avatar?: string,
+        memberPhoneNumbers?: string[],
+        lastMessage: {
+            message: string,
+            read: boolean,
+            page: number,
+            timestamp: Date,
+            senderId: string,
+            attachments: {
+                type: string,
+                url: string
+            }[]
         }
-    }>({
-        success: false,
-        stats: {
-            allMessages: 0,
-            knownMessages: 0,
-            unknownMessages: 0,
-            unreadMessages: 0,
-            recentlyDeleted: 0
-        }
+    }[]>([]);
+    const [phoneContacts, setPhoneContacts] = useState<{ [key: string]: PhoneContacts[] }>({});
+    const [showSavedContacts, setShowSavedContacts] = useState(false);
+    const [alphabetArrange, setAlphabetArrange] = useState('');
+    const [selectedContact, setSelectedContact] = useState<PhoneContacts>({
+        _id: '',
+        firstName: '',
+        lastName: '',
+        personalNumber: '',
+        contactNumber: '',
+        email: '',
+        notes: '',
+        image: '',
+        isFav: false,
+        ownerId: '',
     });
+    const [showAttachmentModal, setShowAttachmentModal] = useState(false);
+    const [attachments, setAttachments] = useState<{ type: string; url: string }[]>([]);
+    const [textValue, setTextValue] = useState("");
+    const sendMessage = async () => {
+        if (!textValue.trim()) return;
+
+        try {
+            await fetchNui(
+                "sendMessage",
+                JSON.stringify({
+                    type: 'private',
+                    phoneNumber: selectedContact.contactNumber,
+                    messageData: {
+                        message: textValue,
+                        attachments: attachments,
+                    },
+                })
+            ).then(async (res) => {
+                const parsedData = JSON.parse(res as string);
+                if (parsedData.success) {
+                    const data = {
+                        ...location.page,
+                        messages: `details/${selectedContact.contactNumber}/undefined`,
+                    };
+                    setLocation({
+                        app: "message",
+                        page: data,
+                    });
+                }
+            });
+        } catch (error) {
+            console.error("Error sending message:", error);
+        }
+    };
+    const isAllorIsKnownorIsUnknownorIsunRead = 'all'
 
     return (
         <CSSTransition nodeRef={nodeRef} in={location.app === 'message' && location.page.messages === ''} timeout={450} classNames="enterandexitfromtop" unmountOnExit mountOnEnter onEntering={async () => {
-            const res: any = await fetchNui('getMessagesStats', "Ok");
-            if (!res) return;
+            const res = await fetchNui('getMessagesChannels', JSON.stringify({}));
             const parsedData: {
-                success: boolean,
-                stats: {
-                    allMessages: number,
-                    knownMessages: number,
-                    unknownMessages: number,
-                    unreadMessages: number,
-                    recentlyDeleted: number
-                }
-            } = JSON.parse(res);
-            setMessageStats(parsedData);
+                success: boolean;
+                channels: {
+                    type: "private" | "group",
+                    name: string,
+                    phoneNumber?: string,
+                    groupId?: string,
+                    members?: string[],
+                    avatar?: string,
+                    memberPhoneNumbers?: string[],
+                    lastMessage: {
+                        message: string,
+                        read: boolean,
+                        page: number,
+                        timestamp: Date,
+                        senderId: string,
+                        attachments: {
+                            type: string,
+                            url: string
+                        }[]
+                    }
+                }[]
+            } = JSON.parse(res as string);
+            setChannelsData(parsedData.channels);
         }}>
             <div ref={nodeRef} style={{
                 backgroundColor: '#0E0E0E',
@@ -53,199 +122,404 @@ export default function Message() {
                 flexDirection: 'column',
                 alignItems: 'center',
             }} className="message">
-                <div style={{
-                    marginTop: '6.04vh',
-                    marginLeft: '0.00vh',
-                }}>
-                    <Title title="Messages" />
+                <div className="topBar">
+                    <div className="BackButton" onClick={() => {
+                        const data = {
+                            ...location.page,
+                            messages: ''
+                        }
+                        setLocation({
+                            app: '',
+                            page: data
+                        })
+                    }} style={{ cursor: 'pointer' }}>
+                        <svg width="0.74vh" height="1.67vh" viewBox="0 0 8 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 16.5L1.34983 9.43729C1.14531 9.18163 1.14531 8.81837 1.34983 8.56271L7 1.5" stroke="#0A84FF" strokeWidth="2" strokeLinecap="round" />
+                        </svg>
+                        <div className="text">Back</div>
+                    </div>
+                    <div className="title">
+                        Messages
+                    </div>
+                    <svg onClick={() => {
+                        setShowContactsPortal(true);
+                    }} style={{ marginLeft: '8.00vh', cursor: 'pointer' }} width="1.76vh" height="1.57vh" viewBox="0 0 19 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15.0468 1.53577L6.88299 9.69963C6.82237 9.76025 6.79004 9.84108 6.79004 9.92595V10.997C6.79004 11.1748 6.93553 11.3162 7.10932 11.3162H8.17224C8.25711 11.3162 8.34198 11.2839 8.4026 11.2233L16.5705 3.05942C16.6958 2.93414 16.6958 2.73206 16.5705 2.60678L15.4995 1.53577C15.3742 1.41049 15.1721 1.41049 15.0468 1.53577ZM17.9284 0.767887L17.3465 0.185909L17.3384 0.177827C17.2131 0.0687058 17.0474 0 16.8736 0C16.6958 0 16.5301 0.0687057 16.4048 0.181868L15.9481 0.6426C15.8875 0.707265 15.8875 0.808302 15.9481 0.868925L16.3684 1.28924L17.2454 2.16625C17.3101 2.23091 17.4111 2.23091 17.4758 2.16625L17.9325 1.70956C18.0456 1.58427 18.1103 1.42261 18.1103 1.24074C18.1063 1.06292 18.0416 0.893174 17.9284 0.767887Z" fill="#0A84FF" />
+                        <path d="M8.8105 11.8821C8.68925 12.0033 8.52355 12.072 8.35381 12.072H6.68062C6.32497 12.072 6.03398 11.781 6.03398 11.4254V9.74816C6.03398 9.57842 6.10268 9.41271 6.22393 9.29147L6.25626 9.25914L12.2215 3.29387C12.3226 3.19283 12.2498 3.01904 12.1084 3.01904H2.37237C1.06292 3.01904 0 4.08196 0 5.39141V14.4444C0 15.7538 1.06292 16.8168 2.37237 16.8168H12.7186C14.0281 16.8168 15.091 15.7538 15.091 14.4444V5.99764C15.091 5.85214 14.9172 5.78344 14.8162 5.88448L8.84283 11.8497L8.8105 11.8821Z" fill="#0A84FF" />
+                    </svg>
                 </div>
-                <div style={{
-                    display: 'flex',
-                    width: '26.48vh',
-                    height: '9.5vh',
-                    padding: '0.65vh 0px',
-                    flexDirection: 'column',
-                    alignItems: 'flex-start',
-                    gap: '0.83vh',
-                    flexShrink: 0,
-                    marginTop: '1.67vh',
-                    borderRadius: '0.56vh',
-                    background: '#1C1C1E'
-                }}>
-                    <div className="Xsadsasa">
-                        <svg width="2.41vh" height="2.04vh" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path fillRule="evenodd" clipRule="evenodd" d="M2.49066 14.3517C2.49066 14.3517 3.28285 14.5532 4.24493 14.4434C4.85175 14.3742 5.52615 14.1811 6.11199 13.7354C6.54589 13.8274 8.19521 14.0594 9.36564 14.191C9.86982 14.2476 10.2851 14.2856 10.4762 14.2857C10.4704 14.2718 10.4646 14.2579 10.4589 14.244C11.3638 15.1132 12.6583 15.6574 14.0952 15.6574C14.4879 15.6572 14.8796 15.6152 15.2639 15.5321C15.4334 15.6637 15.6149 15.7604 15.7984 15.8305C16.6304 16.1485 17.5057 15.9214 17.5057 15.9214C17.4254 15.8942 17.3476 15.8614 17.2726 15.8234C16.9573 15.6635 16.6931 15.411 16.5152 15.0955C16.5776 15.0643 16.6391 15.0319 16.6998 14.9985C16.787 14.9503 16.8725 14.8998 16.956 14.8471C18.2199 14.0494 19.0476 12.7395 19.0476 11.2573C19.0476 9.42693 17.789 7.85771 15.9998 7.19453C15.9976 6.87191 15.9701 6.55258 15.9191 6.23829C15.365 2.82169 12.0287 0 7.99999 0C3.58399 0 0 3.119 0 6.96684C0 9.25274 1.26832 11.2796 3.22086 12.5506C3.4976 12.7308 3.78809 12.8957 4.09066 13.0441C4.00256 13.1973 3.90133 13.3411 3.78861 13.4742C3.67925 13.6033 3.55909 13.7224 3.42962 13.83C3.15396 14.0593 2.83613 14.2371 2.49066 14.3517ZM9.90094 8.40441C8.84668 9.65949 8.59938 11.2987 9.04719 13.1469C8.84654 13.1227 8.63466 13.0962 8.41752 13.0681C7.47389 12.9458 6.58319 12.813 6.31931 12.7571L5.87115 12.6622L5.50655 12.9395C5.40526 13.0166 5.29861 13.0836 5.18806 13.1417L5.49004 12.6165L4.53091 12.1462C2.37024 11.0868 1 9.12684 1 6.96684C1 3.79685 4.00174 1 7.99999 1C11.5503 1 14.378 3.44563 14.9099 6.2783C12.7904 6.43991 10.999 7.09721 9.90094 8.40441ZM15.5086 14.4561L15.528 14.4712L16.0679 14.2012C17.2955 13.587 18.0476 12.4666 18.0476 11.2573C18.0476 9.48739 16.3913 7.85715 14.0952 7.85715C11.7991 7.85715 10.1428 9.48739 10.1428 11.2573C10.1428 13.0271 11.7991 14.6574 14.0952 14.6574C14.4168 14.6572 14.7377 14.6228 15.0526 14.5547L15.5086 14.4561Z" fill="#0A84FF" />
-                        </svg>
-                        <div className="XSADAAA" onClick={() => {
-                            const data = {
-                                ...location.page,
-                                messages: 'm/all'
-                            }
-                            setLocation({
-                                app: 'message',
-                                page: data
-                            })
-                        }}>
-                            <div className="text">All messages</div>
-                            <div className="readsada">
-                                <div className="textX">{messageStats.stats.allMessages}</div>
-                                <svg width="0.83vh" height="1.20vh" viewBox="0 0 6 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M1 0.5L4.58662 4.53495C4.82237 4.80017 4.82237 5.19983 4.58662 5.46505L1 9.5" stroke="white" strokeOpacity="0.4" strokeWidth="0.7" strokeLinecap="round" />
-                                </svg>
+                <Searchbar mt="1.42vh" value={searchValue} onChange={setSearchValue} />
+                <div className="messageContent">
+                    {channelsData && channelsData.sort((a: any, b: any) => {
+                        return new Date(b?.lastMessage?.timestamp).getTime() - new Date(a?.lastMessage?.timestamp).getTime();
+                    }).map((channel, index) => {
+                        return (
+                            <div className="innerChannel" style={{
+                                marginTop: index === 0 ? '0.00vh' : '0.36vh',
+                            }} key={index}>
+                                <div className="channelContent" onClick={() => {
+                                    const data = {
+                                        ...location.page,
+                                        messages: `details/${channel.phoneNumber}/${channel.groupId}`,
+                                    }
+                                    setLocation({
+                                        app: 'message',
+                                        page: data
+                                    })
+                                }}>
+                                    <Avatar size="3.52vh" src={channel.avatar ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} alt="" />
+                                    <div className="messageCont">
+                                        <div className="title">
+                                            <div className="name">{channel.name}</div>
+                                            <div className="timeStamp">
+                                                <div className="text">{channel.lastMessage?.timestamp ? dayjs(new Date(channel.lastMessage?.timestamp)).format("hh:mm A") : ''}</div>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="8" height="12" viewBox="0 0 8 12" fill="none">
+                                                    <path d="M1 11L6.35469 6.53775C6.69052 6.2579 6.69052 5.7421 6.35469 5.46225L1 1" stroke="white" strokeOpacity="0.5" strokeWidth="2" strokeLinecap="round" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <div className="description">
+                                            {channel.lastMessage?.message}
+                                        </div>
+                                    </div>
+                                </div>
+                                {channelsData.length - 1 !== index && <div className="divider" style={{ width: '28.44vh' }} />}
                             </div>
-                        </div>
-                    </div>
-                    <div className="divider" style={{ marginTop: '0', width: '90%', marginLeft: '1.42vh' }}></div>
-                    <div className="Xsadsasa">
-                        <svg width="2.04vh" height="2.04vh" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M8 9.14286C9.57799 9.14286 10.8571 7.86367 10.8571 6.28571C10.8571 4.70776 9.57799 3.42857 8 3.42857C6.42201 3.42857 5.14286 4.70776 5.14286 6.28571C5.14286 7.86367 6.42201 9.14286 8 9.14286Z" fill="#0A84FF" />
-                            <path fillRule="evenodd" clipRule="evenodd" d="M0 8C0 9.69877 0.529576 11.2738 1.43248 12.5692L1.42857 12.5714C1.4555 12.6074 1.4827 12.643 1.50991 12.6784C2.25056 13.7041 3.22838 14.5473 4.363 15.1274C5.45285 15.6846 6.68722 15.9992 7.99512 16H8.00167C11.1437 15.9994 13.4289 14.2854 14.5714 12.5713L14.5677 12.5692C15.4706 11.2738 16 9.69873 16 8C16 3.58172 12.4182 0 8 0C3.58175 0 0 3.58172 0 8ZM8 10.2857C6.63337 10.2857 5.52818 10.2857 1.93262 12.2871C1.07533 11.0759 0.571429 9.59678 0.571429 8C0.571429 3.89732 3.89732 0.571429 8 0.571429C12.1027 0.571429 15.4286 3.89732 15.4286 8C15.4286 9.59675 14.9248 11.0759 14.0675 12.287C10.472 10.2857 9.36663 10.2857 8 10.2857Z" fill="#0A84FF" />
-                        </svg>
-                        <div className="XSADAAA" onClick={() => {
-                            const data = {
-                                ...location.page,
-                                messages: 'm/known'
-                            }
-                            setLocation({
-                                app: 'message',
-                                page: data
-                            })
-                        }}>
-                            <div className="text" style={{ width: '11.02vh' }}>Known messages</div>
-                            <div className="readsada">
-                                <div className="textX">{messageStats.stats.knownMessages}</div>
-                                <svg width="0.83vh" height="1.20vh" viewBox="0 0 6 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M1 0.5L4.58662 4.53495C4.82237 4.80017 4.82237 5.19983 4.58662 5.46505L1 9.5" stroke="white" strokeOpacity="0.4" strokeWidth="0.7" strokeLinecap="round" />
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="divider" style={{ marginTop: '0', width: '90%', marginLeft: '1.42vh' }}></div>
-                    <div className="Xsadsasa">
-                        <svg width="2.04vh" height="2.04vh" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M9 9.14286C10.578 9.14286 11.8571 7.86367 11.8571 6.28571C11.8571 4.70776 10.578 3.42857 9 3.42857C7.42201 3.42857 6.14286 4.70776 6.14286 6.28571C6.14286 7.86367 7.42201 9.14286 9 9.14286Z" fill="#0A84FF" />
-                            <path fillRule="evenodd" clipRule="evenodd" d="M1 8C1 9.69877 1.52958 11.2738 2.43248 12.5692L2.42857 12.5714C2.4555 12.6074 2.4827 12.643 2.50991 12.6784C3.25056 13.7041 4.22838 14.5473 5.363 15.1274C6.45285 15.6846 7.68722 15.9992 8.99512 16H9.00167C12.1437 15.9994 14.4289 14.2854 15.5714 12.5713L15.5677 12.5692C16.4706 11.2738 17 9.69873 17 8C17 3.58172 13.4182 0 9 0C4.58175 0 1 3.58172 1 8ZM9 10.2857C7.63337 10.2857 6.52818 10.2857 2.93262 12.2871C2.07533 11.0759 1.57143 9.59678 1.57143 8C1.57143 3.89732 4.89732 0.571429 9 0.571429C13.1027 0.571429 16.4286 3.89732 16.4286 8C16.4286 9.59675 15.9248 11.0759 15.0675 12.287C11.472 10.2857 10.3666 10.2857 9 10.2857Z" fill="#0A84FF" />
-                            <circle cx="3" cy="13" r="2.75" fill="#0A84FF" stroke="#1C1C1E" strokeWidth="0.5" />
-                            <path d="M1.86963 12.4219C1.8916 11.8677 2.27002 11.4478 2.97803 11.4478C3.62256 11.4478 4.05713 11.8311 4.05713 12.3535C4.05713 12.7319 3.8667 12.998 3.54443 13.1909C3.22949 13.3765 3.13916 13.5059 3.13916 13.7573V13.9062H2.63379L2.63135 13.7109C2.61914 13.3667 2.76807 13.147 3.10254 12.9468C3.39795 12.7686 3.50293 12.627 3.50293 12.3755C3.50293 12.0996 3.28564 11.897 2.95117 11.897C2.61426 11.897 2.39697 12.0996 2.375 12.4219H1.86963ZM2.89014 15.0366C2.71191 15.0366 2.57031 14.8999 2.57031 14.7217C2.57031 14.5435 2.71191 14.4067 2.89014 14.4067C3.07324 14.4067 3.2124 14.5435 3.2124 14.7217C3.2124 14.8999 3.07324 15.0366 2.89014 15.0366Z" fill="#1C1C1E" />
-                        </svg>
-                        <div className="XSADAAA" onClick={() => {
-                            const data = {
-                                ...location.page,
-                                messages: 'm/unknown'
-                            }
-                            setLocation({
-                                app: 'message',
-                                page: data
-                            })
-                        }}>
-                            <div className="text" style={{ width: '12.44vh' }}>Unknown messages</div>
-                            <div className="readsada">
-                                <div className="textX">{messageStats.stats.unknownMessages}</div>
-                                <svg width="0.83vh" height="1.20vh" viewBox="0 0 6 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M1 0.5L4.58662 4.53495C4.82237 4.80017 4.82237 5.19983 4.58662 5.46505L1 9.5" stroke="white" strokeOpacity="0.4" strokeWidth="0.7" strokeLinecap="round" />
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                    {/* <div className="divider" style={{ marginTop: '0', width: '90%', marginLeft: '1.42vh' }}></div>
-                    <div className="Xsadsasa">
-                        <svg width="2.04vh" height="2.04vh" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path fillRule="evenodd" clipRule="evenodd" d="M9.94661 1.35057e-07H10.002C10.6701 1.35057e-07 11.2912 1.01363e-07 11.8664 0.00487452C12.2517 0.00813964 12.5614 0.323144 12.5581 0.708437C12.5549 1.09374 12.2398 1.40344 11.8545 1.40018C11.2859 1.39536 10.6704 1.39535 10 1.39535C7.7877 1.39535 6.19866 1.39683 4.98938 1.55941C3.80016 1.7193 3.08321 2.02339 2.5533 2.5533C2.02339 3.08321 1.7193 3.80016 1.55941 4.98938C1.39683 6.19866 1.39535 7.7877 1.39535 10C1.39535 10.0783 1.39535 10.1558 1.39536 10.2326H3.63745C3.67959 10.2326 3.72122 10.2326 3.76236 10.2325C4.48098 10.2317 5.0501 10.2312 5.56208 10.4666C6.07406 10.702 6.44399 11.1346 6.91108 11.6807C6.93782 11.7119 6.96488 11.7435 6.99231 11.7755L7.5555 12.4327C8.14502 13.1204 8.31051 13.2905 8.5093 13.382C8.70819 13.4735 8.94502 13.4884 9.85088 13.4884H10.1491C11.055 13.4884 11.2918 13.4735 11.4907 13.382C11.6895 13.2905 11.855 13.1204 12.4445 12.4327L13.0077 11.7755C13.0352 11.7435 13.0621 11.7119 13.0889 11.6807C13.556 11.1346 13.926 10.702 14.438 10.4666C14.9499 10.2312 15.5191 10.2317 16.2377 10.2325C16.2788 10.2326 16.3204 10.2326 16.3625 10.2326H18.6047C18.6047 10.1558 18.6047 10.0783 18.6047 10C18.6047 9.32958 18.6047 8.71414 18.5998 8.14549C18.5966 7.76015 18.9062 7.44515 19.2915 7.44189C19.6768 7.43862 19.9918 7.74832 19.9952 8.13362C20 8.70874 20 9.32967 20 9.99786V10.0534C20 10.3459 20 10.6297 19.9995 10.9052C19.9998 10.9135 20 10.9219 20 10.9302C20 10.9394 19.9998 10.9486 19.9994 10.9578C19.9963 12.6806 19.9744 14.0738 19.8235 15.1966C19.6428 16.5405 19.2658 17.601 18.4334 18.4334C17.601 19.2658 16.5405 19.6428 15.1966 19.8235C13.8835 20 12.2007 20 10.0534 20H9.94661C7.79928 20 6.11646 20 4.80345 19.8235C3.45951 19.6428 2.39902 19.2658 1.56664 18.4334C0.734261 17.601 0.3572 16.5405 0.176512 15.1966C0.0255536 14.0738 0.00369321 12.6806 0.000530422 10.9577C0.000176934 10.9486 1.35057e-07 10.9394 1.35057e-07 10.9302C1.35057e-07 10.9219 0.000149012 10.9135 0.000437384 10.9052C1.74352e-07 10.6297 1.35057e-07 10.3459 1.35057e-07 10.0534V9.94661C-9.16727e-06 7.79928 -1.85052e-05 6.11646 0.176512 4.80345C0.3572 3.45951 0.734261 2.39902 1.56664 1.56664C2.39902 0.734261 3.45951 0.3572 4.80345 0.176512C6.11646 -1.85052e-05 7.79928 -9.16727e-06 9.94661 1.35057e-07ZM1.3986 11.6279C1.40739 13.0257 1.4398 14.1209 1.55941 15.0106C1.7193 16.1998 2.02339 16.9167 2.5533 17.4467C3.08321 17.9767 3.80016 18.2807 4.98938 18.4406C6.19866 18.6032 7.7877 18.6047 10 18.6047C12.2123 18.6047 13.8013 18.6032 15.0106 18.4406C16.1998 18.2807 16.9167 17.9767 17.4467 17.4467C17.9767 16.9167 18.2807 16.1998 18.4406 15.0106C18.5602 14.1209 18.5927 13.0257 18.6014 11.6279H16.3625C15.4567 11.6279 15.2198 11.6428 15.0209 11.7343C14.8221 11.8258 14.6567 11.9959 14.0672 12.6836L13.5039 13.3407C13.4765 13.3727 13.4495 13.4044 13.4227 13.4356C12.9556 13.9817 12.5857 14.4142 12.0737 14.6497C11.5618 14.8851 10.9926 14.8846 10.274 14.8838C10.2328 14.8837 10.1913 14.8837 10.1491 14.8837H9.85088C9.80874 14.8837 9.76716 14.8837 9.72605 14.8838C9.00744 14.8846 8.43823 14.8851 7.92629 14.6497C7.41432 14.4142 7.04438 13.9817 6.57729 13.4356C6.55055 13.4044 6.52349 13.3727 6.49607 13.3407L5.93287 12.6836C5.34335 11.9959 5.17788 11.8258 4.97902 11.7343C4.78018 11.6428 4.54332 11.6279 3.63745 11.6279H1.3986ZM16.5116 1.39535C15.3557 1.39535 14.4186 2.33243 14.4186 3.48837C14.4186 4.64432 15.3557 5.5814 16.5116 5.5814C17.6675 5.5814 18.6047 4.64432 18.6047 3.48837C18.6047 2.33243 17.6675 1.39535 16.5116 1.39535ZM13.0233 3.48837C13.0233 1.5618 14.585 1.35057e-07 16.5116 1.35057e-07C18.4382 1.35057e-07 20 1.5618 20 3.48837C20 5.41495 18.4382 6.97674 16.5116 6.97674C14.585 6.97674 13.0233 5.41495 13.0233 3.48837Z" fill="#0A84FF" />
-                        </svg>
-                        <div className="XSADAAA" onClick={() => {
-                            const data = {
-                                ...location.page,
-                                messages: 'm/unread'
-                            }
-                            setLocation({
-                                app: 'message',
-                                page: data
-                            })
-                        }}>
-                            <div className="text" style={{ width: '11.29vh' }}>Unread messages</div>
-                            <div className="readsada">
-                                <div className="textX">{messageStats.stats.unreadMessages}</div>
-                                <svg width="0.83vh" height="1.20vh" viewBox="0 0 6 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M1 0.5L4.58662 4.53495C4.82237 4.80017 4.82237 5.19983 4.58662 5.46505L1 9.5" stroke="white" strokeOpacity="0.4" strokeWidth="0.7" strokeLinecap="round" />
-                                </svg>
-                            </div>
-                        </div>
-                    </div> */}
+                        )
+                    })}
                 </div>
-                <div style={{
-                    display: 'flex',
-                    width: '26.48vh',
-                    height: '3.02vh',
-                    padding: '0.65vh 0px',
-                    flexDirection: 'column',
-                    alignItems: 'flex-start',
-                    gap: '0.83vh',
-                    flexShrink: 0,
-                    marginTop: '1.67vh',
-                    borderRadius: '0.56vh',
-                    background: '#1C1C1E'
+
+                <CSSTransition nodeRef={nodeRef} in={showContactsPortal} timeout={450} classNames="enterandexitfromtop" unmountOnExit mountOnEnter onEntering={async () => {
+                    const data: string = await fetchNui('getContacts', JSON.stringify({}));
+                    const parsedData: PhoneContacts[] = JSON.parse(data);
+                    if (parsedData.length === 0) return;
+                    const uniqueAlphabets = Array.from(
+                        new Set(parsedData.map(contact => contact.firstName.charAt(0).toUpperCase()))
+                    ).sort();
+
+                    const contactsByAlphabet: { [key: string]: PhoneContacts[] } = {};
+                    uniqueAlphabets.forEach(letter => {
+                        contactsByAlphabet[letter] = parsedData.filter(contact => contact.firstName.charAt(0).toUpperCase() === letter);
+                    });
+                    setPhoneContacts(contactsByAlphabet);
                 }}>
-                    <div className="Xsadsasa">
-                        <svg width="1.85vh" height="1.85vh" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M19.8048 0.252418C19.7345 0.175226 19.6493 0.113079 19.5544 0.069733C19.4594 0.0263867 19.3567 0.00274094 19.2524 0.000224464C19.148 -0.00229201 19.0442 0.016373 18.9473 0.0550919C18.8504 0.0938107 18.7623 0.151779 18.6884 0.225495L18.0937 0.817321C18.0216 0.889443 17.9812 0.987234 17.9812 1.0892C17.9812 1.19116 18.0216 1.28895 18.0937 1.36107L18.6389 1.9053C18.6746 1.94121 18.7171 1.9697 18.7639 1.98914C18.8107 2.00858 18.8608 2.01859 18.9115 2.01859C18.9622 2.01859 19.0123 2.00858 19.0591 1.98914C19.1059 1.9697 19.1484 1.94121 19.1841 1.9053L19.7639 1.32838C20.0572 1.03559 20.0846 0.558668 19.8048 0.252418Z" fill="#0A84FF" />
-                            <path d="M16.8913 2.01924L8.21248 10.6827C8.15986 10.7351 8.12162 10.8002 8.10143 10.8716L7.69999 12.0673C7.69037 12.0998 7.68969 12.1342 7.69801 12.167C7.70634 12.1998 7.72336 12.2297 7.74729 12.2537C7.77122 12.2776 7.80116 12.2946 7.83396 12.3029C7.86676 12.3113 7.9012 12.3106 7.93364 12.301L9.12835 11.8995C9.19981 11.8793 9.26488 11.8411 9.31729 11.7885L17.9807 3.10867C18.0609 3.02766 18.1058 2.9183 18.1058 2.80434C18.1058 2.69038 18.0609 2.58102 17.9807 2.50001L17.5024 2.01924C17.4213 1.93836 17.3114 1.89294 17.1968 1.89294C17.0823 1.89294 16.9724 1.93836 16.8913 2.01924Z" fill="#0A84FF" />
-                            <path d="M16.2663 7.00289L10.4062 12.8745C10.1797 13.1016 9.90137 13.27 9.59517 13.3654L8.34998 13.7822C8.05447 13.8657 7.74205 13.8688 7.44491 13.7913C7.14778 13.7139 6.87668 13.5585 6.65954 13.3414C6.44241 13.1243 6.2871 12.8532 6.20962 12.556C6.13214 12.2589 6.13529 11.9465 6.21874 11.651L6.63556 10.4058C6.73063 10.0997 6.89877 9.82131 7.12547 9.59472L12.9971 3.73367C13.0509 3.6799 13.0876 3.61139 13.1025 3.53679C13.1173 3.46218 13.1098 3.38484 13.0807 3.31455C13.0516 3.24425 13.0023 3.18415 12.9391 3.14186C12.8759 3.09956 12.8015 3.07697 12.7255 3.07693H2.6923C1.97826 3.07693 1.29346 3.36059 0.788557 3.86549C0.283653 4.3704 0 5.0552 0 5.76924V17.3077C0 18.0217 0.283653 18.7065 0.788557 19.2114C1.29346 19.7163 1.97826 20 2.6923 20H14.2307C14.9448 20 15.6296 19.7163 16.1345 19.2114C16.6394 18.7065 16.923 18.0217 16.923 17.3077V7.27453C16.923 7.19846 16.9004 7.1241 16.8581 7.06087C16.8158 6.99764 16.7557 6.94837 16.6854 6.91929C16.6151 6.89022 16.5378 6.88264 16.4632 6.89752C16.3886 6.9124 16.3201 6.94907 16.2663 7.00289Z" fill="#0A84FF" />
-                        </svg>
-                        <div className="XSADAAA">
-                            <div className="text" style={{ width: '8.89vh' }}>Create Group</div>
-                            <div style={{
-                                width: '1.78vh',
-                                display: 'flex',
-                                justifyContent: 'flex-end',
-                                alignItems: 'center',
-                                cursor: 'pointer'
+                    <div ref={nodeRef} style={{
+                        width: '100%',
+                        height: '82%',
+                        position: 'absolute',
+                        bottom: '0',
+                        backgroundColor: 'rgb(34, 33, 33)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        borderTopLeftRadius: '1.85vh',
+                        borderTopRightRadius: '1.85vh',
+                    }}>
+                        <div className="Header" style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            alignItems: 'flex-end',
+                            width: '100%',
+                            height: '10%',
+                            backgroundColor: 'rgb(56, 54, 54)',
+                            borderTopLeftRadius: '1.85vh',
+                            borderTopRightRadius: '1.85vh',
+                        }}>
+                            <div className="cancelButton" style={{
+                                fontSize: '1.24vh',
+                                marginRight: '1.85vh',
+                                color: '#0A84FF',
+                                lineHeight: '0.00vh',
                             }} onClick={() => {
-                                const data = {
-                                    ...location.page,
-                                    messages: 'createG'
-                                }
-                                setLocation({
-                                    app: 'message',
-                                    page: data
-                                })
+                                setShowContactsPortal(false);
                             }}>
-                                <svg style={{
-                                }} width="0.83vh" height="1.20vh" viewBox="0 0 6 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M1 0.5L4.58662 4.53495C4.82237 4.80017 4.82237 5.19983 4.58662 5.46505L1 9.5" stroke="white" strokeOpacity="0.4" strokeWidth="0.7" strokeLinecap="round" />
-                                </svg>
+                                Cancel
+                            </div>
+                            <div className="title" style={{
+                                fontSize: '1.60vh',
+                                color: 'white',
+                                marginRight: '32%',
+                                lineHeight: '0.00vh',
+                            }}>
+                                New Message
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div style={{
-                    display: 'flex',
-                    width: '26.48vh',
-                    height: '3.02vh',
-                    padding: '0.65vh 0px',
-                    flexDirection: 'column',
-                    alignItems: 'flex-start',
-                    gap: '0.83vh',
-                    flexShrink: 0,
-                    marginTop: '1.67vh',
-                    borderRadius: '0.56vh',
-                    background: '#1C1C1E'
-                }}>
-                    <div className="Xsadsasa">
-                        <svg width="1.85vh" height="1.85vh" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M0.354016 2.82076H1.45327L1.96498 11.8356C1.97526 12.023 2.13083 12.1697 2.31864 12.1697H9.02793C9.21574 12.1697 9.37131 12.0227 9.38159 11.8352L9.88515 2.82076H10.9851C11.1811 2.82076 11.3395 2.662 11.3395 2.46639C11.3395 2.27077 11.1811 2.11202 10.9851 2.11202H9.65942C9.63993 2.11202 9.62292 2.12017 9.60413 2.123C9.58571 2.12017 9.5687 2.11202 9.54992 2.11202H7.69089V1.18463C7.69089 0.989019 7.53249 0.830261 7.33652 0.830261H4.00225C3.80629 0.830261 3.64788 0.989019 3.64788 1.18463V2.11202H1.78815C1.77185 2.11202 1.75732 2.11946 1.74137 2.12159C1.72507 2.1191 1.71054 2.11202 1.69353 2.11202H0.35437C0.158403 2.11202 0 2.27077 0 2.46639C0 2.662 0.158049 2.82076 0.354016 2.82076ZM4.35662 1.539H6.98215V2.11202H4.35662V1.539ZM9.17535 2.82076L8.69269 11.4614H2.65352L2.16307 2.82076H9.17535Z" fill="#0A84FF" />
-                            <path d="M3.9147 10.7969C3.92179 10.7969 3.92816 10.7969 3.93525 10.7966C4.13086 10.7856 4.28005 10.618 4.26871 10.4227L3.89592 3.85446C3.88493 3.65885 3.71271 3.51178 3.52206 3.52064C3.32644 3.53163 3.17725 3.69925 3.18859 3.8945L3.56139 10.4628C3.57202 10.6513 3.7283 10.7969 3.9147 10.7969Z" fill="#0A84FF" />
-                            <path d="M7.39116 10.7966C7.39825 10.7969 7.40463 10.7969 7.41171 10.7969C7.59811 10.7969 7.75439 10.6513 7.76502 10.4628L8.13782 3.89451C8.1488 3.69925 7.99961 3.53163 7.80436 3.52065C7.61193 3.5125 7.44184 3.65885 7.4305 3.85447L7.0577 10.4227C7.04671 10.618 7.1959 10.7856 7.39116 10.7966Z" fill="#0A84FF" />
-                            <path d="M5.66956 10.7969C5.86552 10.7969 6.02393 10.6382 6.02393 10.4426V3.87433C6.02393 3.67872 5.86552 3.51996 5.66956 3.51996C5.47359 3.51996 5.31519 3.67872 5.31519 3.87433V10.4426C5.31519 10.6382 5.47359 10.7969 5.66956 10.7969Z" fill="#0A84FF" />
-                        </svg>
-                        <div className="XSADAAA">
-                            <div className="text" style={{ width: '9.96vh' }}>Recently Deleted</div>
-                            <svg width="0.83vh" height="1.20vh" viewBox="0 0 6 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M1 0.5L4.58662 4.53495C4.82237 4.80017 4.82237 5.19983 4.58662 5.46505L1 9.5" stroke="white" strokeOpacity="0.4" strokeWidth="0.7" strokeLinecap="round" />
+                        <TextInput placeholder="" value={selectedContact.contactNumber} onChange={(e) => {
+                            setSelectedContact({
+                                ...selectedContact,
+                                contactNumber: e.currentTarget.value
+                            })
+                        }} leftSection={<div style={{ fontSize: '1.24vh' }}>To:</div>} styles={{
+                            root: {
+                                backgroundColor: 'rgb(34, 33, 33)',
+                                width: '100%',
+                            },
+                            input: {
+                                color: 'white',
+                                backgroundColor: 'rgb(34, 33, 33)',
+                                border: 'none',
+                                borderBottom: '1px solid rgba(255, 255, 255, 0.15)',
+                                borderRadius: '0',
+                            }
+                        }} rightSection={
+                            <svg onClick={() => {
+                                setShowSavedContacts(!showSavedContacts);
+                            }} style={{ cursor: 'pointer' }} width="1.85vh" height="1.85vh" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path fillRule="evenodd" clipRule="evenodd" d="M10 18.75C5.1675 18.75 1.25 14.8313 1.25 10C1.25 5.16875 5.1675 1.25 10 1.25C14.8325 1.25 18.75 5.16875 18.75 10C18.75 14.8313 14.8325 18.75 10 18.75ZM10 0C4.47687 0 0 4.475 0 10C0 15.525 4.47687 20 10 20C15.5231 20 20 15.525 20 10C20 4.475 15.5231 0 10 0ZM13.75 9.375H10.625V6.25C10.625 5.90625 10.3456 5.625 10 5.625C9.65438 5.625 9.375 5.90625 9.375 6.25V9.375H6.25C5.90438 9.375 5.625 9.65625 5.625 10C5.625 10.3438 5.90438 10.625 6.25 10.625H9.375V13.75C9.375 14.0938 9.65438 14.375 10 14.375C10.3456 14.375 10.625 14.0938 10.625 13.75V10.625H13.75C14.0956 10.625 14.375 10.3438 14.375 10C14.375 9.65625 14.0956 9.375 13.75 9.375Z" fill="#0A84FF" />
                             </svg>
+                        }
+                            onFocus={() => fetchNui("disableControls", true)}
+                            onBlur={() => fetchNui("disableControls", false)}
+                        />
+                        <div style={{
+                            position: 'absolute',
+                            bottom: '0',
+                            zIndex: 1,
+                        }}>
+                            <Transition
+                                mounted={showAttachmentModal}
+                                transition="fade"
+                                duration={400}
+                                timingFunction="ease"
+                            >
+                                {(styles) => <div style={{
+                                    ...styles,
+                                    width: '29.87vh',
+                                    height: '8.89vh',
+                                    marginTop: '-1.78vh',
+                                    backgroundColor: 'rgba(55,55,55,1)',
+                                    borderTopLeftRadius: '1.78vh',
+                                    borderTopRightRadius: '1.78vh',
+                                }}>
+                                    <div style={{
+                                        fontSize: '1.24vh',
+                                        fontWeight: '500',
+                                        marginLeft: '0.89vh',
+                                        marginTop: '0.89vh',
+                                    }} onClick={() => {
+                                        setShowAttachmentModal(false);
+                                    }}>Close</div>
+                                    <div>
+                                        <TextInput
+                                            value={attachments[0]?.url || ""}
+                                            onChange={(e) => {
+                                                setAttachments([{ type: "image", url: e.currentTarget.value }]);
+                                            }}
+                                            placeholder="Enter Image link..."
+                                            styles={{
+                                                root: { backgroundColor: "", marginTop: '0.89vh', width: '90%', marginLeft: '1.42vh' },
+                                                input: {
+                                                    color: "white",
+                                                    backgroundColor: "rgba(0,0,0,0)",
+                                                    borderRadius: "13.89vh",
+                                                    border: "0.09vh solid rgba(87, 87, 87, 0.86)",
+                                                },
+                                            }}
+                                            onFocus={() => fetchNui("disableControls", true)}
+                                            onBlur={() => fetchNui("disableControls", false)}
+                                            onKeyDown={(e) => {
+                                                if (e.key === "Enter") {
+                                                    sendMessage();
+                                                }
+                                            }}
+                                        />
+                                    </div>
+                                </div>}
+                            </Transition>
                         </div>
+                        <div className="inputSFsada" style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            position: 'absolute',
+                            bottom: '2.13vh',
+                            width: '100%',
+                        }}>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="2.41vh"
+                                height="2.41vh"
+                                viewBox="0 0 26 26"
+                                fill="none"
+                                style={{ cursor: "pointer" }}
+                                onClick={() => {
+                                    setShowAttachmentModal(true);
+                                }}
+                            >
+                                <circle cx="13" cy="13" r="13" fill="#D9D9D9" fillOpacity="0.3" />
+                                <path
+                                    d="M13.6857 12.3143V5H12.3143V12.3143H5V13.6857H12.3143V21H13.6857V13.6857H21V12.3143H13.6857Z"
+                                    fill="black"
+                                />
+                            </svg>
+                            <TextInput
+                                value={textValue}
+                                onChange={(e) => setTextValue(e.currentTarget.value)}
+                                placeholder="Type a message..."
+                                styles={{
+                                    root: { backgroundColor: "", width: '90%', },
+                                    input: {
+                                        color: "white",
+                                        backgroundColor: "rgba(0,0,0,0)",
+                                        borderRadius: "13.89vh",
+                                        border: "0.09vh solid rgba(87, 87, 87, 0.86)",
+                                    },
+                                }}
+                                onFocus={() => fetchNui("disableControls", true)}
+                                onBlur={() => fetchNui("disableControls", false)}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                        sendMessage();
+                                    }
+                                }}
+                            />
+                        </div>
+                        <Transition
+                            mounted={showSavedContacts}
+                            transition="fade"
+                            duration={400}
+                            timingFunction="ease"
+                        >
+                            {(styles) => <div style={{
+                                ...styles,
+                                width: '100%',
+                                height: '100%',
+                                position: 'absolute',
+                                top: '0.89vh',
+                                zIndex: 1,
+                                backgroundColor: 'rgba(0, 0, 0, 1)',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                borderTopLeftRadius: '1.85vh',
+                                borderTopRightRadius: '1.85vh',
+                            }}>
+                                <div style={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    marginTop: '0.44vh',
+                                }} >
+                                    <div style={{
+                                        width: '34%',
+                                        fontWeight: 500,
+                                        fontSize: '1.24vh',
+                                        color: '#0A84FF',
+                                        cursor: 'pointer',
+                                    }} onClick={() => {
+                                        setShowSavedContacts(false);
+                                    }}>
+                                        Cancel
+                                    </div>
+                                    <div style={{
+                                        width: '34%',
+                                        fontWeight: 500,
+                                        fontSize: '1.24vh',
+                                        color: 'white',
+                                    }}>
+                                        Select Contact
+                                    </div>
+                                    <div style={{
+                                        width: '21%',
+                                        textAlign: 'end',
+                                        fontSize: '1.24vh',
+                                        color: '#0A84FF',
+                                        fontWeight: 500
+                                    }}>
+                                        Done
+                                    </div>
+                                </div>
+                                <Searchbar mt="1.42vh" value={searchValue} onChange={(e: string) => {
+                                    setSearchValue(e);
+                                }} />
+                                <div className="phoneContacts">
+                                    {Object.keys(phoneContacts).filter(
+                                        letter => letter.includes(alphabetArrange) && phoneContacts[letter].filter((letter) =>
+                                            letter.firstName.toLowerCase().includes(searchValue.toLowerCase()) || letter.lastName.toLowerCase().includes(searchValue.toLowerCase())
+                                        ).length > 0
+                                    ).map((letter, index) => {
+                                        return (
+                                            <div key={index}>
+                                                <div className="letter">
+                                                    <div style={{
+                                                        color: 'rgba(255, 255, 255, 0.40)',
+                                                        fontFamily: 'SFPro',
+                                                        fontSize: '1.39vh',
+                                                        fontStyle: 'normal',
+                                                        fontWeight: 700,
+                                                        lineHeight: '118.596%',
+                                                        marginTop: index === 0 ? '' : '0.38vh',
+                                                        letterSpacing: '0.03vh',
+                                                    }}>
+                                                        {letter}
+                                                        <div style={{
+                                                            width: '25.65vh',
+                                                            height: '0.05vh',
+                                                            background: 'rgba(255, 255, 255, 0.15)',
+                                                        }} />
+                                                    </div>
+                                                    {phoneContacts[letter].filter((letter) =>
+                                                        letter.firstName.toLowerCase().includes(searchValue.toLowerCase()) || letter.lastName.toLowerCase().includes(searchValue.toLowerCase())
+                                                    ).map((contact, index) => {
+                                                        return (
+                                                            <div style={{
+                                                                display: 'flex',
+                                                                height: '2.48vh',
+                                                                flexDirection: 'column',
+                                                                justifyContent: 'flex-end',
+                                                                alignItems: 'flex-start',
+                                                                gap: '0.28vh',
+                                                                flexShrink: 0,
+                                                                alignSelf: 'stretch',
+                                                                cursor: 'pointer',
+                                                            }} key={index} onClick={() => {
+                                                                setSelectedContact(contact);
+                                                                setShowSavedContacts(false);
+                                                            }}>
+                                                                <div style={{
+                                                                    color: '#FFF',
+                                                                    fontFamily: 'SFPro',
+                                                                    fontSize: '15px',
+                                                                    fontStyle: 'normal',
+                                                                    fontWeight: 700,
+                                                                    lineHeight: '120.596%',
+                                                                    letterSpacing: '0.36px',
+                                                                }}>
+                                                                    {contact.firstName} {contact.lastName}
+                                                                </div>
+                                                                <div style={{
+                                                                    width: '25.65vh',
+                                                                    height: '0.05vh',
+                                                                    background: 'rgba(255, 255, 255, 0.15)',
+                                                                }} />
+                                                            </div>
+                                                        )
+                                                    })}
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                                <div style={{
+                                    position: 'absolute',
+                                    right: '-0.36vh',
+                                    top: '7.11vh',
+                                }}>
+                                    <AlphabetSearch onClick={(letter: string) => {
+                                        if (alphabetArrange === letter) {
+                                            setAlphabetArrange('');
+                                        } else {
+                                            setAlphabetArrange(letter);
+                                        }
+                                    }} />
+                                </div>
+                            </div>}
+                        </Transition>
                     </div>
-                </div>
+                </CSSTransition>
             </div>
         </CSSTransition>
-    )
+    );
 }

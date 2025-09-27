@@ -15,3 +15,4 @@ import "./BluePage/callback";
 import "./Garage/callback";
 import "./Wallet/callbacks";
 import "./Groups/callback";
+import "./HeartSync/callbacks";

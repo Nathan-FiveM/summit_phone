@@ -61,7 +61,9 @@ export default function Home(props: {
 
     useNuiEvent('pigeonRefreshTweet', (data: string) => {
         const tweetData: TweetData = JSON.parse(data);
-        setTweets(prev => [tweetData, ...prev]);
+        if (location.page.pigeon === 'home') {
+            setTweets(prev => [tweetData, ...prev]);
+        }
     });
 
     useNuiEvent('pigeonRefreshRepost', (data: string) => {
@@ -438,10 +440,35 @@ export default function Home(props: {
                                             marginTop: '1.78vh',
                                         }}>
                                             {tweet.attachments.map((attachment, index) => {
-                                                return <img key={index} onClick={() => {
+                                                return attachment?.type === 'image' ? (
+                                                    <img key={index} onClick={() => {
+                                                        setOpenImgContainer(true);
+                                                        setSelectedImg(attachment.url);
+                                                    }} src={attachment.url} style={{
+                                                        width: '100%',
+                                                        height: 'auto',
+                                                        borderRadius: '0.89vh',
+                                                        objectFit: 'cover',
+                                                        maxHeight: '35.56vh',
+                                                        maxWidth: '35.56vh',
+                                                        marginBottom: '0.89vh',
+                                                        boxShadow: '0px 0px 0.89vh rgba(0, 0, 0, 0.5)'
+                                                    }} />
+                                                ) : attachment?.type === 'video' ? (
+                                                    <video key={index} src={attachment.url} style={{
+                                                        width: '100%',
+                                                        height: 'auto',
+                                                        borderRadius: '0.89vh',
+                                                        objectFit: 'cover',
+                                                        maxHeight: '35.56vh',
+                                                        maxWidth: '35.56vh',
+                                                        marginBottom: '0.89vh',
+                                                        boxShadow: '0px 0px 0.89vh rgba(0, 0, 0, 0.5)'
+                                                    }} controls />
+                                                ) : <img key={index} onClick={() => {
                                                     setOpenImgContainer(true);
-                                                    setSelectedImg(attachment);
-                                                }} src={attachment} style={{
+                                                    setSelectedImg(attachment.url);
+                                                }} src={attachment.url} style={{
                                                     width: '100%',
                                                     height: 'auto',
                                                     borderRadius: '0.89vh',
@@ -633,9 +660,34 @@ export default function Home(props: {
                                 marginTop: '1.78vh',
                             }}>
                                 {selectedPost.attachments.map((attachment, index) => {
-                                    return <img key={index} src={attachment} onClick={() => {
+                                    return attachment?.type === 'image' ? (
+                                        <img key={index} src={attachment.url} onClick={() => {
+                                            setOpenImgContainer(true);
+                                            setSelectedImg(attachment.url);
+                                        }} style={{
+                                            width: '100%',
+                                            height: 'auto',
+                                            borderRadius: '0.89vh',
+                                            objectFit: 'cover',
+                                            maxHeight: '35.56vh',
+                                            maxWidth: '35.56vh',
+                                            marginBottom: '0.89vh',
+                                            boxShadow: '0px 0px 0.89vh rgba(0, 0, 0, 0.5)'
+                                        }} />
+                                    ) : attachment?.type === 'video' ? (
+                                        <video key={index} src={attachment.url} style={{
+                                            width: '100%',
+                                            height: 'auto',
+                                            borderRadius: '0.89vh',
+                                            objectFit: 'cover',
+                                            maxHeight: '35.56vh',
+                                            maxWidth: '35.56vh',
+                                            marginBottom: '0.89vh',
+                                            boxShadow: '0px 0px 0.89vh rgba(0, 0, 0, 0.5)'
+                                        }} controls />
+                                    ) : <img key={index} src={attachment.url} onClick={() => {
                                         setOpenImgContainer(true);
-                                        setSelectedImg(attachment);
+                                        setSelectedImg(attachment.url);
                                     }} style={{
                                         width: '100%',
                                         height: 'auto',
@@ -849,9 +901,34 @@ export default function Home(props: {
                                             marginTop: '1.78vh',
                                         }}>
                                             {data.attachments.map((attachment, index) => {
-                                                return <img key={index} src={attachment} onClick={() => {
+                                                return attachment?.type === 'image' ? (
+                                                    <img key={index} src={attachment.url} onClick={() => {
+                                                        setOpenImgContainer(true);
+                                                        setSelectedImg(attachment.url);
+                                                    }} style={{
+                                                        width: '100%',
+                                                        height: 'auto',
+                                                        borderRadius: '0.89vh',
+                                                        objectFit: 'cover',
+                                                        maxHeight: '35.56vh',
+                                                        maxWidth: '35.56vh',
+                                                        marginBottom: '0.89vh',
+                                                        boxShadow: '0px 0px 0.89vh rgba(0, 0, 0, 0.5)'
+                                                    }} />
+                                                ) : attachment?.type === 'video' ? (
+                                                    <video key={index} src={attachment.url} style={{
+                                                        width: '100%',
+                                                        height: 'auto',
+                                                        borderRadius: '0.89vh',
+                                                        objectFit: 'cover',
+                                                        maxHeight: '35.56vh',
+                                                        maxWidth: '35.56vh',
+                                                        marginBottom: '0.89vh',
+                                                        boxShadow: '0px 0px 0.89vh rgba(0, 0, 0, 0.5)'
+                                                    }} controls />
+                                                ) : <img key={index} src={attachment.url} onClick={() => {
                                                     setOpenImgContainer(true);
-                                                    setSelectedImg(attachment);
+                                                    setSelectedImg(attachment.url);
                                                 }} style={{
                                                     width: '100%',
                                                     height: 'auto',
@@ -861,7 +938,7 @@ export default function Home(props: {
                                                     maxWidth: '35.56vh',
                                                     marginBottom: '0.89vh',
                                                     boxShadow: '0px 0px 0.89vh rgba(0, 0, 0, 0.5)'
-                                                }} />
+                                                }} />;
                                             })}
                                         </div>}
 

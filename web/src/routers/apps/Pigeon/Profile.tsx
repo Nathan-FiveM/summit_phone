@@ -9,13 +9,13 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import 'react-responsive-modal/styles.css';
 import { Modal } from 'react-responsive-modal';
 
-export default function Profile(props: { 
-    show: boolean, 
-    email: string, 
-    onClose: () => void, 
-    onError: () => void, 
-    onReplyClick: (tweet: TweetData) => void, 
-    onRetweetClick: (tweet: TweetData) => void, 
+export default function Profile(props: {
+    show: boolean,
+    email: string,
+    onClose: () => void,
+    onError: () => void,
+    onReplyClick: (tweet: TweetData) => void,
+    onRetweetClick: (tweet: TweetData) => void,
     onLikeClick: (tweet: TweetData) => void,
     onFollowersClick?: (userEmail: string) => void,
     onFollowingClick?: (userEmail: string) => void,
@@ -100,7 +100,33 @@ export default function Profile(props: {
     const [inputPlaceholder, setInputPlaceholder] = useState('');
     const [inputShow, setInputShow] = useState(false);
     const [duplicateProfiledata, setDuplicateProfileData] = useState<TweetProfileData>({ ...profileData });
+    const handleDeleteTweet = async (tweet: TweetData) => {
+        if (tweet.email === phoneSettings.pigeonIdAttached) {
+            if (tweet.isRetweet && tweet.originalTweetId) {
+                setTweets(prevTweets => {
+                    return prevTweets.map(t => {
+                        if (t._id === tweet.originalTweetId) {
+                            return {
+                                ...t,
+                                retweetCount: t.retweetCount.filter(id => id !== phoneSettings._id)
+                            };
+                        }
+                        return t;
+                    }).filter(t => t._id !== tweet._id);
+                });
 
+                await fetchNui('retweetTweet', JSON.stringify({
+                    ogTweetId: tweet.originalTweetId,
+                    tweetId: tweet._id,
+                    retweet: false,
+                    pigeonId: phoneSettings.pigeonIdAttached
+                }));
+            }
+
+            await fetchNui('deleteTweet', tweet._id);
+            setTweets(prev => prev.filter(t => t._id !== tweet._id));
+        }
+    };
     return (
         <Transition
             mounted={props.show}
@@ -156,7 +182,7 @@ export default function Profile(props: {
                         <div style={{
                             width: '100%',
                             height: '13.16vh',
-                            background: profileData.banner !== '' ? `url(${profileData.banner})` : "url('https://cdn.summitrp.gg/uploads/server/phone/pigeonBanner.gif')",
+                            backgroundImage: profileData.banner !== '' ? `url(${profileData.banner})` : "url('https://cdn.summitrp.gg/uploads/server/phone/pigeonBanner.gif')",
                             backgroundSize: 'cover',
                             backgroundRepeat: 'no-repeat',
                             position: 'absolute',
@@ -205,8 +231,8 @@ export default function Profile(props: {
                             fontSize: '1.24vh',
                             fontWeight: 500,
                         }}>
-                            <span 
-                                style={{ 
+                            <span
+                                style={{
                                     cursor: 'pointer',
                                     color: '#0A84FF',
                                     textDecoration: 'underline'
@@ -215,8 +241,8 @@ export default function Profile(props: {
                             >
                                 {profileData.followers.length} Followers
                             </span>
-                            <span 
-                                style={{ 
+                            <span
+                                style={{
                                     cursor: 'pointer',
                                     color: '#0A84FF',
                                     textDecoration: 'underline'
@@ -391,10 +417,35 @@ export default function Profile(props: {
                                             marginTop: '1.78vh',
                                         }}>
                                             {tweet.attachments.map((attachment, index) => {
-                                                return <img key={index} onClick={()=>{
-                                                    setSelectedImg(attachment);
+                                                return attachment?.type === 'image' ? (
+                                                    <img key={index} onClick={() => {
+                                                        setSelectedImg(attachment.url);
+                                                        setOpenImgContainer(true);
+                                                    }} src={attachment.url} style={{
+                                                        width: '100%',
+                                                        height: 'auto',
+                                                        borderRadius: '0.89vh',
+                                                        objectFit: 'cover',
+                                                        maxHeight: '35.56vh',
+                                                        maxWidth: '35.56vh',
+                                                        marginBottom: '0.89vh',
+                                                        boxShadow: '0px 0px 0.89vh rgba(0, 0, 0, 0.5)'
+                                                    }} />
+                                                ) : attachment?.type === 'video' ? (
+                                                    <video key={index} src={attachment.url} style={{
+                                                        width: '100%',
+                                                        height: 'auto',
+                                                        borderRadius: '0.89vh',
+                                                        objectFit: 'cover',
+                                                        maxHeight: '35.56vh',
+                                                        maxWidth: '35.56vh',
+                                                        marginBottom: '0.89vh',
+                                                        boxShadow: '0px 0px 0.89vh rgba(0, 0, 0, 0.5)'
+                                                    }} controls />
+                                                ) : <img key={index} onClick={() => {
+                                                    setSelectedImg(attachment.url);
                                                     setOpenImgContainer(true);
-                                                }} src={attachment} style={{
+                                                }} src={attachment.url} style={{
                                                     width: '100%',
                                                     height: 'auto',
                                                     borderRadius: '0.89vh',
@@ -451,6 +502,20 @@ export default function Profile(props: {
                                                 </svg>
                                                 <div style={{ fontSize: '1.24vh', fontWeight: 500 }}>{tweet.likeCount.length}</div>
                                             </div>
+                                            {tweet.email === phoneSettings.pigeonIdAttached && (
+                                                <div style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '0.53vh',
+                                                }} onClick={() => {
+                                                    handleDeleteTweet(tweet);
+                                                    props.onClose();
+                                                }}>
+                                                    <svg style={{ cursor: 'pointer' }} width="1.39vh" height="1.39vh" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M2.81625 13.7123L1.5 4.5H13.5L12.1838 13.7123C12.1327 14.0697 11.9544 14.3967 11.6816 14.6332C11.4088 14.8698 11.0598 15 10.6987 15H4.30125C3.94018 15 3.59122 14.8698 3.31843 14.6332C3.04565 14.3967 2.86734 14.0697 2.81625 13.7123ZM14.25 1.5H10.5V0.75C10.5 0.551088 10.421 0.360322 10.2803 0.21967C10.1397 0.0790176 9.94891 0 9.75 0H5.25C5.05109 0 4.86032 0.0790176 4.71967 0.21967C4.57902 0.360322 4.5 0.551088 4.5 0.75V1.5H0.75C0.551088 1.5 0.360322 1.57902 0.21967 1.71967C0.0790176 1.86032 0 2.05109 0 2.25C0 2.44891 0.0790176 2.63968 0.21967 2.78033C0.360322 2.92098 0.551088 3 0.75 3H14.25C14.4489 3 14.6397 2.92098 14.7803 2.78033C14.921 2.63968 15 2.44891 15 2.25C15 2.05109 14.921 1.86032 14.7803 1.71967C14.6397 1.57902 14.4489 1.5 14.25 1.5Z" fill="#828282" />
+                                                    </svg>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </div>

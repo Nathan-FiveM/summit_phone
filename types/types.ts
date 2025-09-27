@@ -85,6 +85,7 @@ type PhoneLocation = {
         bluepages?: string;
         pixie?: string;
         groups?: string;
+        heartsync?: string;
     };
 }
 
@@ -221,6 +222,11 @@ type TweetProfileData = {
     following: string[],
 }
 
+type TweetAttachment = {
+    type: 'image' | 'video';
+    url: string;
+}
+
 type TweetData = {
     _id: string,
     username: string,
@@ -228,7 +234,7 @@ type TweetData = {
     avatar: string,
     verified: boolean,
     content: string,
-    attachments: string[],
+    attachments: TweetAttachment[],
     createdAt: string,
     likeCount: string[],
     retweetCount: string[],
@@ -325,6 +331,7 @@ export type {
     ApartMentData,
     HouseData,
     TweetData,
+    TweetAttachment,
     TweetProfileData,
     GarageData,
     WalletAccount,

@@ -93,10 +93,6 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
         receiver: 0,
     });
     const [invoiceData, setInvoiceData] = useState<InvoiceData[]>([]);
-    function isStringNumber(value: string) {
-        return /^\d+$/.test(value);
-    }
-    /* const [businessBilling, setBusinessBilling] = useState("No") */
 
     return (
         <CSSTransition

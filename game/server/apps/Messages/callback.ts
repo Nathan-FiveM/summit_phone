@@ -764,84 +764,61 @@ onClientCallback('phone_message:getMessageStats', async (client, data: string) =
 });
 
 onClientCallback('phone_message:deleteMessage', async (client, data: string) => {
-    const { conversationType, phoneNumber, groupId, messageIndex } = JSON.parse(data);
+    const { conversationType, phoneNumber, groupId, messageIndex } = JSON.parse(data || '{}');
     const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
     const senderPhoneNumber = await Utils.GetPhoneNumberByCitizenId(senderId);
-    const target = await Utils.GetCitizenIdByPhoneNumber(phoneNumber);
-    const targetSource = await Utils.GetSourceFromCitizenId(target);
 
     if (!senderId) {
         return JSON.stringify({ success: false, message: 'Sender not found' });
     }
 
-    let userMessages = await MongoDB.findOne('phone_messages', { citizenId: senderId });
-    let targetMessages = await MongoDB.findOne('phone_messages', { citizenId: target });
+    const userMessages = await MongoDB.findOne('phone_messages', { citizenId: senderId });
     if (!userMessages) {
         return JSON.stringify({ success: false, message: 'Messages not found' });
     }
 
-    let conversation;
-    if (conversationType === 'private') {
-        conversation = userMessages.messages.find((msg: {
-            type: string,
-            name: string,
-            avatar: string | null,
-            phoneNumber: string,
-            messages: Array<{
-                message: string,
-                read: boolean,
-                page: number,
-                timestamp: string,
-                senderId: string,
-                attachments: Array<any>
-            }>
-        }) => msg.type === 'private' && Number(msg.phoneNumber) === Number(phoneNumber));
-    } else if (conversationType === 'group') {
-        conversation = userMessages.messages.find((msg: { type: string, groupId?: string }) =>
-            msg.type === 'group' && String(msg.groupId) === String(groupId));
-    }
-
-    if (!conversation) {
-        return JSON.stringify({ success: false, message: 'Message not found' });
-    }
-    const filteredMessages = conversation.messages.filter((msg: any) => Number(msg.page) !== Number(messageIndex));
-    conversation.messages = filteredMessages;
-    userMessages.messages = userMessages.messages.map((msg: any) => {
-        if (Number(msg.phoneNumber) === Number(phoneNumber)) {
-            return conversation;
-        }
-        return msg;
-    });
-
-    let targetConversation: any;
-    if (conversationType === 'private') {
-        targetConversation = targetMessages?.messages.find((msg: { type: string, phoneNumber?: string }) =>
-            msg.type === 'private' && Number(msg.phoneNumber) === Number(senderPhoneNumber)
+    let conversation: any;
+    if (conversationType === 'private' && phoneNumber) {
+        conversation = userMessages.messages.find((msg: any) =>
+            msg.type === 'private' && Number(msg.phoneNumber) === Number(phoneNumber)
         );
-    } else if (conversationType === 'group') {
-        targetConversation = targetMessages?.messages.find((msg: { type: string, groupId?: string }) =>
+    } else if (conversationType === 'group' && groupId) {
+        conversation = userMessages.messages.find((msg: any) =>
             msg.type === 'group' && String(msg.groupId) === String(groupId)
         );
     }
 
-    const filterTargetMessages = targetConversation.messages.filter((msg: any) => Number(msg.page) !== Number(messageIndex));
-    targetConversation.messages = filterTargetMessages;
-    targetMessages.messages = targetMessages.messages.map((msg: any) => {
-        if (Number(msg.phoneNumber) === Number(senderPhoneNumber)) {
-            //@ts-ignore
-            return targetConversation;
-        }
-        return msg;
-    });
+    if (!conversation) {
+        return JSON.stringify({ success: false, message: 'Conversation not found' });
+    }
 
+    conversation.messages = conversation.messages.filter((msg: any) => Number(msg.page) !== Number(messageIndex));
+
+    // Persist local change
     await MongoDB.updateOne('phone_messages', { _id: userMessages._id }, userMessages);
-    await Delay(1000);
-    await MongoDB.updateOne('phone_messages', { _id: targetMessages._id }, targetMessages);
+
+    // Attempt remote delete only for private conversations and when target exists
+    if (conversationType === 'private' && phoneNumber) {
+        const targetCitizenId = await Utils.GetCitizenIdByPhoneNumber(phoneNumber);
+        if (targetCitizenId) {
+            const targetSource = await Utils.GetSourceFromCitizenId(targetCitizenId);
+            const targetMessages = await MongoDB.findOne('phone_messages', { citizenId: targetCitizenId });
+            if (targetMessages) {
+                const targetConversation = targetMessages.messages.find((msg: any) =>
+                    msg.type === 'private' && Number(msg.phoneNumber) === Number(senderPhoneNumber)
+                );
+                if (targetConversation) {
+                    targetConversation.messages = targetConversation.messages.filter((msg: any) => Number(msg.page) !== Number(messageIndex));
+                    await MongoDB.updateOne('phone_messages', { _id: targetMessages._id }, targetMessages);
+                    if (await exports['qb-core'].DoesPlayerExist(targetSource)) {
+                        emitNet('phone_messages:client:updateMessages', Number(targetSource), JSON.stringify(targetMessages));
+                    }
+                }
+            }
+        }
+    }
 
     emitNet('phone_messages:client:updateMessages', Number(client), JSON.stringify(userMessages));
-    if (await exports['qb-core'].DoesPlayerExist(targetSource)) {
-        emitNet('phone_messages:client:updateMessages', Number(targetSource), JSON.stringify(targetMessages));
-    }
     Logger.AddLog({
         type: 'phone_messages',
         title: 'Message Deleted',

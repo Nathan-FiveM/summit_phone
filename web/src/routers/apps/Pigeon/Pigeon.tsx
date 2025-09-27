@@ -472,10 +472,10 @@ export default function Pigeon(props: { onExit: () => void; onEnter: () => void 
                                 page: { ...location.page, pigeon: 'home' }
                             })}
                             onUserClick={() => {
-                                setLocation({
+                                /* setLocation({
                                     app: 'pigeon',
                                     page: { ...location.page, pigeon: 'profile' }
-                                });
+                                }); */
                                 // You might want to pass the user data to the profile component
                             }}
                         />

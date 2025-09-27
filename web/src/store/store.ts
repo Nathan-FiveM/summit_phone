@@ -117,6 +117,7 @@ export const usePhone = create<State & Actions>()(
                 bluepages: '',
                 pixie: '',
                 groups: '',
+                heartsync: '',
             },
         },
         selectedContact: {

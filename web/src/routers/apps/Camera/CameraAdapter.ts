@@ -148,7 +148,7 @@ class GameRender {
 
     async captureImage(): Promise<string> {
         const cameraCanvas = this.canvas;
-        return cameraCanvas.toDataURL("image/webp", 0.9);
+        return cameraCanvas.toDataURL("image/webp", 0.5);
     }
 
     animate() {

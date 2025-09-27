@@ -380,13 +380,20 @@ export default function MessageDetails() {
                                         }}>
                                             <Menu.Item color="white" onClick={async () => {
                                                 setOpened(-1);
-                                                const res = await fetchNui('deleteMessage', JSON.stringify({
+                                                const payload: any = {
                                                     conversationType,
-                                                    phoneNumber: identifier,
                                                     messageIndex: message.page,
-                                                    groupId: conversationType === 'group' ? identifier : undefined
-                                                }));
+                                                    phoneNumber: conversationType === 'private' ? identifier : undefined,
+                                                    groupId: conversationType === 'group' ? identifier : undefined,
+                                                };
+                                                const res: any = await fetchNui('deleteMessage', JSON.stringify(payload));
                                                 console.log(res);
+                                                try {
+                                                    const parsed = JSON.parse(res);
+                                                    if (parsed?.success) {
+                                                        setMessages((prev) => prev.filter((m) => Number(m.page) !== Number(message.page)));
+                                                    }
+                                                } catch {}
                                             }}>
                                                 Delete
                                             </Menu.Item>

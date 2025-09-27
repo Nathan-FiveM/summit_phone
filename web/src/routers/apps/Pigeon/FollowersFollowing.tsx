@@ -3,10 +3,11 @@ import { fetchNui } from "../../../hooks/fetchNui";
 import { usePhone } from "../../../store/store";
 import { TweetProfileData } from "../../../../../types/types";
 import { Avatar } from "@mantine/core";
+import Profile from "./Profile";
 
-export default function FollowersFollowing(props: { 
-    show: boolean; 
-    type: 'followers' | 'following'; 
+export default function FollowersFollowing(props: {
+    show: boolean;
+    type: 'followers' | 'following';
     userEmail: string;
     onClose: () => void;
     onUserClick: (user: TweetProfileData) => void;
@@ -14,6 +15,8 @@ export default function FollowersFollowing(props: {
     const { phoneSettings } = usePhone();
     const [users, setUsers] = useState<TweetProfileData[]>([]);
     const [loading, setLoading] = useState(false);
+    const [showProfile, setShowProfile] = useState(false);
+    const [selectedEmail, setSelectedEmail] = useState('');
 
     useEffect(() => {
         if (props.show) {
@@ -26,7 +29,7 @@ export default function FollowersFollowing(props: {
         try {
             const callbackName = props.type === 'followers' ? 'pigeon:getFollowers' : 'pigeon:getFollowing';
             const res = await fetchNui(callbackName, props.userEmail);
-            
+
             if (res && typeof res === 'string') {
                 setUsers(JSON.parse(res));
             }
@@ -45,17 +48,17 @@ export default function FollowersFollowing(props: {
                 currentEmail: phoneSettings.pigeonIdAttached,
                 follow: !isFollowing
             }));
-            
+
             // Update local state
-            setUsers(prevUsers => 
-                prevUsers.map(user => 
-                    user.email === targetUser.email 
+            setUsers(prevUsers =>
+                prevUsers.map(user =>
+                    user.email === targetUser.email
                         ? {
                             ...user,
-                            followers: isFollowing 
+                            followers: isFollowing
                                 ? user.followers.filter(email => email !== phoneSettings.pigeonIdAttached)
                                 : [...user.followers, phoneSettings.pigeonIdAttached]
-                          }
+                        }
                         : user
                 )
             );
@@ -113,8 +116,8 @@ export default function FollowersFollowing(props: {
                 {loading ? (
                     <div style={{ color: 'white', marginTop: '2vh' }}>Loading...</div>
                 ) : users.length === 0 ? (
-                    <div style={{ 
-                        color: 'rgba(255, 255, 255, 0.6)', 
+                    <div style={{
+                        color: 'rgba(255, 255, 255, 0.6)',
                         marginTop: '4vh',
                         textAlign: 'center',
                         fontSize: '1.2vh'
@@ -136,10 +139,14 @@ export default function FollowersFollowing(props: {
                                 cursor: 'pointer',
                             }}
                             className="clickanimation"
-                            onClick={() => props.onUserClick(user)}
+                            onClick={() => {
+                                props.onUserClick(user);
+                                setShowProfile(true);
+                                setSelectedEmail(user.email);
+                            }}
                         >
-                            <Avatar 
-                                src={user.avatar || 'https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg'} 
+                            <Avatar
+                                src={user.avatar || 'https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg'}
                                 size="4vh"
                             />
                             <div style={{
@@ -186,7 +193,7 @@ export default function FollowersFollowing(props: {
                                     </div>
                                 )}
                             </div>
-                            
+
                             {user.email !== phoneSettings.pigeonIdAttached && (
                                 <button
                                     onClick={(e) => {
@@ -194,8 +201,8 @@ export default function FollowersFollowing(props: {
                                         handleFollowToggle(user);
                                     }}
                                     style={{
-                                        backgroundColor: user.followers.includes(phoneSettings.pigeonIdAttached) 
-                                            ? 'rgba(255, 255, 255, 0.2)' 
+                                        backgroundColor: user.followers.includes(phoneSettings.pigeonIdAttached)
+                                            ? 'rgba(255, 255, 255, 0.2)'
                                             : '#0A84FF',
                                         border: 'none',
                                         borderRadius: '1.5vh',
@@ -205,8 +212,7 @@ export default function FollowersFollowing(props: {
                                         fontWeight: 500,
                                         cursor: 'pointer',
                                         minWidth: '6vh',
-                                        textAlign: 'center',
-                                        
+                                        textAlign: 'center'
                                     }}
                                 >
                                     {user.followers.includes(phoneSettings.pigeonIdAttached) ? 'Following' : 'Follow'}
@@ -216,6 +222,11 @@ export default function FollowersFollowing(props: {
                     ))
                 )}
             </div>
+            <Profile show={showProfile} email={selectedEmail} onClose={() => {
+                setShowProfile(false);
+            }} onError={() => {
+                setShowProfile(false);
+            }} onRetweetClick={() => { }} onLikeClick={() => { }} onReplyClick={() => { }} />
         </div>
     );
 }
