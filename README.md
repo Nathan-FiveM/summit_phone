@@ -387,4 +387,4 @@ For support and updates, please contact the Summit RP development team or check 
 
 # NOTE: This phone was  being used at Summit Roleplay server, Now we have decided to make it open source and not maintaining it anymore. You guys are open to do Whatever you want with this phone, Just Don't Resell it With your names XD
 
-Summit RP Discord: https://discord.gg/dmMtCueB
+Summit RP Discord: https://discord.gg/summitrp
