@@ -6,6 +6,8 @@ import { Delay, generateUUid } from "@shared/utils";
 import { triggerServerCallback } from "@overextended/ox_lib/client";
 import { PhoneSettings } from "../../types/types";
 import { Utils } from "./classes/Utils";
+import { CloseAndToggleDisablePhone, ToggleDisablePhone } from "./cl_exports";
+import { Animation } from "./classes/Animation";
 
 export let FrameWork = exports['qb-core'].GetCoreObject();
 on('QBCore:Client:UpdateObject', () => {
@@ -28,12 +30,33 @@ setImmediate(() => {
     ]);
 });
 
+// Notification throttling to prevent spam
+let lastNotificationTime = 0;
+const NOTIFICATION_THROTTLE_MS = 100; // Minimum 100ms between notifications
+
+RegisterCommand('testNoti', () => {
+    NUI.sendReactMessage('addNotification', {
+        id: '1',
+        title: 'Test Notification',
+        description: 'This is a test notification',
+        app: 'phone',
+        timeout: 5000,
+    });
+}, false);
+
 onNet('phone:addnotiFication', (data: string) => {
     const phoneItem = Utils.GetPhoneItem();
     if (!phoneItem) {
         emit("QBCore:Notify", "No phone item found", "error");
         return;
     };
+
+    const currentTime = GetGameTimer();
+    if (currentTime - lastNotificationTime < NOTIFICATION_THROTTLE_MS) {
+        return; // Throttle notifications
+    }
+    lastNotificationTime = currentTime;
+
     const notiData: {
         id: string,
         title: string,
@@ -45,6 +68,12 @@ onNet('phone:addnotiFication', (data: string) => {
 });
 
 onNet('phone:addActionNotification', (data: string) => {
+    const currentTime = GetGameTimer();
+    if (currentTime - lastNotificationTime < NOTIFICATION_THROTTLE_MS) {
+        return; // Throttle action notifications too
+    }
+    lastNotificationTime = currentTime;
+
     const notiData: {
         id: string,
         title: string,
@@ -72,6 +101,10 @@ on('onResourceStop', (resource: string) => {
     if (resource === GetCurrentResourceName()) {
         const state = LocalPlayer.state;
         state.set('onPhone', false, true);
+        // Cleanup NUI loops and timeouts
+        NUI.cleanup();
+        // Cleanup animation resources
+        Animation.cleanup();
     }
 });
 
@@ -88,11 +121,9 @@ onNet('QBCore:Player:SetPlayerData', (data: any) => {
     if (data.metadata.inlaststand || data.metadata.isdead) {
         if (LocalPlayer.state.onPhone) {
             NUI.closeUI();
-            NUI.shouldNotOpen = true;
-            LocalPlayer.state.set('phoneDisabled', true, true);
+            CloseAndToggleDisablePhone(true);
         } else {
-            NUI.shouldNotOpen = true;
-            LocalPlayer.state.set('phoneDisabled', true, true);
+            ToggleDisablePhone(true);
         }
     }
 });

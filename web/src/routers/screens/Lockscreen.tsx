@@ -145,7 +145,7 @@ export default function Lockscreen() {
                             <div className="passcodeText" style={{
                                 marginTop: '3.56vh'
                             }}>Enter Passcode</div>
-                            <CircleFillers mt="0.53vh" type={phoneSettings?.lockPin?.length || 0} length={passcode.length} error={false} />
+                            <CircleFillers mt="0.53vh" type={phoneSettings?.lockPin?.length || 6} length={passcode.length} error={false} />
                             <DialpadV2 onClick={(number: string) => {
                                 setPasscode(passcode + number);
                             }} mt="2.67vh" />

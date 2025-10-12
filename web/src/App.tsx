@@ -12,7 +12,7 @@ import phoneBg from "../images/phoneBG.jpg";
 import HomeScreen from './routers/screens/Homescreen';
 import Lockscreen from './routers/screens/Lockscreen';
 import Startup from './routers/screens/Startup';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, memo, useMemo } from 'react';
 import { isEnvBrowser } from './hooks/misc';
 import { fetchNui } from './hooks/fetchNui';
 import ControlCenters from './routers/screens/ControlCenters';
@@ -50,6 +50,23 @@ debugData([
     },
   }
 ]);
+
+// Memoized app components to prevent unnecessary re-renders
+const MemoizedSettings = memo(Settings);
+const MemoizedServices = memo(Services);
+const MemoizedMailApp = memo(MailApp);
+const MemoizedAppStore = memo(AppStore);
+const MemoizedCalculator = memo(Calculator);
+const MemoizedCamera = memo(Camera);
+const MemoizedPhotos = memo(Photos);
+const MemoizedDarkChat = memo(DarkChat);
+const MemoizedHousing = memo(Housing);
+const MemoizedPigeon = memo(Pigeon);
+const MemoizedBluePage = memo(BluePage);
+const MemoizedGarageApp = memo(GarageApp);
+const MemoizedWallet = memo(Wallet);
+const MemoizedGroups = memo(Groups);
+const MemoizedHeartSync = memo(HeartSync);
 
 export default function App() {
   const { visible, primaryColor, phoneSettings, location, notificationPush, inCall, showNotiy, setVisible, setInCall, setPrimaryColor, setPhoneSettings, setDynamicNoti, setLocation } = usePhone();
@@ -144,39 +161,46 @@ export default function App() {
     key: 'brightness',
     defaultValue: 60,
   });
-  const [settingsEnter, setSettingsEnter] = useState(false);
-  const [servicesEnter, setServiceEnter] = useState(false);
-  const [mailEnter, setMailEnter] = useState(false);
-  const [appStoreEnter, setAppStoreEnter] = useState(false);
-  const [calculatorEnter, setCalculatorEnter] = useState(false);
-  const [cameraEnter, setCameraEnter] = useState(false);
-  const [photosEnter, setPhotosEnter] = useState(false);
-  const [darkChatEnter, setDarkChatEnter] = useState(false);
-  const [housingEnter, setHousingEnter] = useState(false);
-  const [pigeonEnter, setPigeonEnter] = useState(false);
-  const [bluePageEnter, setBluePageEnter] = useState(false);
-  const [garagesEnter, setGaragesEnter] = useState(false);
-  const [walletEnter, setWalletEnter] = useState(false);
-  const [groupsEnter, setGroupsEnter] = useState(false);
-  const [loveLinkEnter, setLoveLinkEnter] = useState(false);
-  const [heartSyncEnter, setHeartSyncEnter] = useState(false);
+  
+  // Consolidate app state into a single object to reduce re-renders
+  const [appStates, setAppStates] = useState({
+    settingsEnter: false,
+    servicesEnter: false,
+    mailEnter: false,
+    appStoreEnter: false,
+    calculatorEnter: false,
+    cameraEnter: false,
+    photosEnter: false,
+    darkChatEnter: false,
+    housingEnter: false,
+    pigeonEnter: false,
+    bluePageEnter: false,
+    garagesEnter: false,
+    walletEnter: false,
+    groupsEnter: false,
+    loveLinkEnter: false,
+    heartSyncEnter: false,
+  });
+
+  // Memoized frame style to prevent recalculation
+  const frameStyle = useMemo(() => ({
+    width: '32.1vh',
+    height: '66.15vh',
+    display: 'flex',
+    justifyContent: 'start',
+    alignItems: 'start',
+    marginTop: visible && location.page.camera === 'landscape' ? '45.00vh' : visible ? '0.00vh' : (notificationPush || inCall || showNotiy) && !cursor ? '80.00vh' : '100.00vh',
+    transition: 'all 0.9s ease',
+    backgroundImage: `url(${primaryColor === 'blue' ? blueFrame : primaryColor === 'gold' ? goldFrame : primaryColor === 'green' ? greenFrame : primaryColor === 'purple' ? purpleFrame : primaryColor === 'red' ? redFrame : ''})`,
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'contain',
+    filter: `brightness(${brightness + 30}%)`,
+    transform: location.page.camera === 'landscape' ? 'rotate(-90deg)' : 'rotate(0deg)',
+    marginRight: location.page.camera === 'landscape' ? '16.00vh' : '0.00vh',
+  }), [visible, location.page.camera, notificationPush, inCall, showNotiy, cursor, primaryColor, brightness]);
 
   return (
-    <div style={{
-      width: '32.1vh',
-      height: '66.15vh',
-      display: 'flex',
-      justifyContent: 'start',
-      alignItems: 'start',
-      marginTop: visible && location.page.camera === 'landscape' ? '45.00vh' : visible ? '0.00vh' : (notificationPush || inCall || showNotiy) && !cursor ? '80.00vh' : '100.00vh',
-      transition: 'all 0.9s ease',
-      backgroundImage: `url(${primaryColor === 'blue' ? blueFrame : primaryColor === 'gold' ? goldFrame : primaryColor === 'green' ? greenFrame : primaryColor === 'purple' ? purpleFrame : primaryColor === 'red' ? redFrame : ''})`,
-      backgroundRepeat: 'no-repeat',
-      backgroundSize: 'contain',
-      filter: `brightness(${brightness + 30}%)`,
-      transform: location.page.camera === 'landscape' ? 'rotate(-90deg)' : 'rotate(0deg)',
-      marginRight: location.page.camera === 'landscape' ? '16.00vh' : '0.00vh',
-    }}>
+    <div style={frameStyle}>
       <div className="innerFrame" style={{
         backgroundImage: `url(${phoneSettings?.background?.current || phoneBg})`,
         backgroundRepeat: 'no-repeat',
@@ -198,141 +222,82 @@ export default function App() {
           <MessageDetails />
           <CreateGroup />
         </div>
-        <div className='fuckerMessager' id='fuckerMessager' style={{
-          visibility: settingsEnter ? 'visible' : 'hidden',
-        }}>
-          <Settings onExit={() => {
-            setSettingsEnter(false);
-          }} onEnter={() => {
-            setSettingsEnter(true);
-          }} />
-        </div>
-        <div className='fuckerMessager' id='fuckerMessager' style={{
-          visibility: servicesEnter ? 'visible' : 'hidden',
-        }}>
-          <Services onExit={() => {
-            setServiceEnter(false);
-          }} onEnter={() => {
-            setServiceEnter(true);
-          }} />
-        </div>
-        <div className='fuckerMessager' id='fuckerMessager' style={{
-          visibility: mailEnter ? 'visible' : 'hidden',
-        }}>
-          <MailApp onExit={() => {
-            setMailEnter(false);
-          }} onEnter={() => {
-            setMailEnter(true);
-          }} />
-        </div>
-        <div className='fuckerMessager' id='fuckerMessager' style={{
-          visibility: appStoreEnter ? 'visible' : 'hidden',
-        }}>
-          <AppStore onExit={() => {
-            setAppStoreEnter(false);
-          }} onEnter={() => {
-            setAppStoreEnter(true);
-          }} />
-        </div>
-        <div className='fuckerMessager' id='fuckerMessager' style={{
-          visibility: calculatorEnter ? 'visible' : 'hidden',
-        }}>
-          <Calculator onExit={() => {
-            setCalculatorEnter(false);
-          }} onEnter={() => {
-            setCalculatorEnter(true);
-          }} />
-        </div>
-        <div className='fuckerMessager' id='fuckerMessager' style={{
-          visibility: cameraEnter ? 'visible' : 'hidden',
-        }}>
-          <Camera onExit={() => {
-            setCameraEnter(false);
-          }} onEnter={() => {
-            setCameraEnter(true);
-          }} />
-        </div>
-        <div className='fuckerMessager' id='fuckerMessager' style={{
-          visibility: photosEnter ? 'visible' : 'hidden',
-        }}>
-          <Photos onExit={() => {
-            setPhotosEnter(false);
-          }} onEnter={() => {
-            setPhotosEnter(true);
-          }} />
-        </div>
-        <div className='fuckerMessager' id='fuckerMessager' style={{
-          visibility: darkChatEnter ? 'visible' : 'hidden',
-        }}>
-          <DarkChat onExit={() => {
-            setDarkChatEnter(false);
-          }} onEnter={() => {
-            setDarkChatEnter(true);
-          }} />
-        </div>
-        <div className='fuckerMessager' id='fuckerMessager' style={{
-          visibility: housingEnter ? 'visible' : 'hidden',
-        }}>
-          <Housing onExit={() => {
-            setHousingEnter(false);
-          }} onEnter={() => {
-            setHousingEnter(true);
-          }} />
-        </div>
-        <div className='fuckerMessager' id='fuckerMessager' style={{
-          visibility: pigeonEnter ? 'visible' : 'hidden',
-        }}>
-          <Pigeon onExit={() => {
-            setPigeonEnter(false);
-          }} onEnter={() => {
-            setPigeonEnter(true);
-          }} />
-        </div>
-        <div className='fuckerMessager' id='fuckerMessager' style={{
-          visibility: bluePageEnter ? 'visible' : 'hidden',
-        }}>
-          <BluePage onExit={() => {
-            setBluePageEnter(false);
-          }} onEnter={() => {
-            setBluePageEnter(true);
-          }} />
-        </div>
-        <div className='fuckerMessager' id='fuckerMessager' style={{
-          visibility: garagesEnter ? 'visible' : 'hidden',
-        }}>
-          <GarageApp onEnter={() => {
-            setGaragesEnter(true);
-          }} onExit={() => {
-            setGaragesEnter(false);
-          }} />
-        </div>
-        <div className='fuckerMessager' id='fuckerMessager' style={{
-          visibility: groupsEnter ? 'visible' : 'hidden',
-        }}>
-          <Groups onEnter={() => {
-            setGroupsEnter(true);
-          }} onExit={() => {
-            setGroupsEnter(false);
-          }} />
-        </div>
-        <div className='fuckerMessager' id='fuckerMessager' style={{
-          visibility: walletEnter ? 'visible' : 'hidden',
-        }}>
-          <Wallet onEnter={() => {
-            setWalletEnter(true);
-          }} onExit={() => {
-            setWalletEnter(false);
-          }} />
-        </div>
-        <div className='fuckerMessager' id='fuckerMessager' style={{
-          visibility: heartSyncEnter ? 'visible' : 'hidden',
-        }}>
-          <HeartSync onEnter={() => {
-            setHeartSyncEnter(true);
-          }} onExit={() => {
-            setHeartSyncEnter(false);
-          }} />
-        </div>
+        {/* Optimized app containers with memoized components */}
+        {appStates.settingsEnter && (
+          <div className='fuckerMessager' id='fuckerMessager' style={{ visibility: 'visible' }}>
+            <MemoizedSettings onExit={() => setAppStates(prev => ({ ...prev, settingsEnter: false }))} onEnter={() => setAppStates(prev => ({ ...prev, settingsEnter: true }))} />
+          </div>
+        )}
+        {appStates.servicesEnter && (
+          <div className='fuckerMessager' id='fuckerMessager' style={{ visibility: 'visible' }}>
+            <MemoizedServices onExit={() => setAppStates(prev => ({ ...prev, servicesEnter: false }))} onEnter={() => setAppStates(prev => ({ ...prev, servicesEnter: true }))} />
+          </div>
+        )}
+        {appStates.mailEnter && (
+          <div className='fuckerMessager' id='fuckerMessager' style={{ visibility: 'visible' }}>
+            <MemoizedMailApp onExit={() => setAppStates(prev => ({ ...prev, mailEnter: false }))} onEnter={() => setAppStates(prev => ({ ...prev, mailEnter: true }))} />
+          </div>
+        )}
+        {appStates.appStoreEnter && (
+          <div className='fuckerMessager' id='fuckerMessager' style={{ visibility: 'visible' }}>
+            <MemoizedAppStore onExit={() => setAppStates(prev => ({ ...prev, appStoreEnter: false }))} onEnter={() => setAppStates(prev => ({ ...prev, appStoreEnter: true }))} />
+          </div>
+        )}
+        {appStates.calculatorEnter && (
+          <div className='fuckerMessager' id='fuckerMessager' style={{ visibility: 'visible' }}>
+            <MemoizedCalculator onExit={() => setAppStates(prev => ({ ...prev, calculatorEnter: false }))} onEnter={() => setAppStates(prev => ({ ...prev, calculatorEnter: true }))} />
+          </div>
+        )}
+        {appStates.cameraEnter && (
+          <div className='fuckerMessager' id='fuckerMessager' style={{ visibility: 'visible' }}>
+            <MemoizedCamera onExit={() => setAppStates(prev => ({ ...prev, cameraEnter: false }))} onEnter={() => setAppStates(prev => ({ ...prev, cameraEnter: true }))} />
+          </div>
+        )}
+        {appStates.photosEnter && (
+          <div className='fuckerMessager' id='fuckerMessager' style={{ visibility: 'visible' }}>
+            <MemoizedPhotos onExit={() => setAppStates(prev => ({ ...prev, photosEnter: false }))} onEnter={() => setAppStates(prev => ({ ...prev, photosEnter: true }))} />
+          </div>
+        )}
+        {appStates.darkChatEnter && (
+          <div className='fuckerMessager' id='fuckerMessager' style={{ visibility: 'visible' }}>
+            <MemoizedDarkChat onExit={() => setAppStates(prev => ({ ...prev, darkChatEnter: false }))} onEnter={() => setAppStates(prev => ({ ...prev, darkChatEnter: true }))} />
+          </div>
+        )}
+        {appStates.housingEnter && (
+          <div className='fuckerMessager' id='fuckerMessager' style={{ visibility: 'visible' }}>
+            <MemoizedHousing onExit={() => setAppStates(prev => ({ ...prev, housingEnter: false }))} onEnter={() => setAppStates(prev => ({ ...prev, housingEnter: true }))} />
+          </div>
+        )}
+        {appStates.pigeonEnter && (
+          <div className='fuckerMessager' id='fuckerMessager' style={{ visibility: 'visible' }}>
+            <MemoizedPigeon onExit={() => setAppStates(prev => ({ ...prev, pigeonEnter: false }))} onEnter={() => setAppStates(prev => ({ ...prev, pigeonEnter: true }))} />
+          </div>
+        )}
+        {appStates.bluePageEnter && (
+          <div className='fuckerMessager' id='fuckerMessager' style={{ visibility: 'visible' }}>
+            <MemoizedBluePage onExit={() => setAppStates(prev => ({ ...prev, bluePageEnter: false }))} onEnter={() => setAppStates(prev => ({ ...prev, bluePageEnter: true }))} />
+          </div>
+        )}
+        {appStates.garagesEnter && (
+          <div className='fuckerMessager' id='fuckerMessager' style={{ visibility: 'visible' }}>
+            <MemoizedGarageApp onEnter={() => setAppStates(prev => ({ ...prev, garagesEnter: true }))} onExit={() => setAppStates(prev => ({ ...prev, garagesEnter: false }))} />
+          </div>
+        )}
+        {appStates.groupsEnter && (
+          <div className='fuckerMessager' id='fuckerMessager' style={{ visibility: 'visible' }}>
+            <MemoizedGroups onEnter={() => setAppStates(prev => ({ ...prev, groupsEnter: true }))} onExit={() => setAppStates(prev => ({ ...prev, groupsEnter: false }))} />
+          </div>
+        )}
+        {appStates.walletEnter && (
+          <div className='fuckerMessager' id='fuckerMessager' style={{ visibility: 'visible' }}>
+            <MemoizedWallet onEnter={() => setAppStates(prev => ({ ...prev, walletEnter: true }))} onExit={() => setAppStates(prev => ({ ...prev, walletEnter: false }))} />
+          </div>
+        )}
+        {appStates.heartSyncEnter && (
+          <div className='fuckerMessager' id='fuckerMessager' style={{ visibility: 'visible' }}>
+            <MemoizedHeartSync onEnter={() => setAppStates(prev => ({ ...prev, heartSyncEnter: true }))} onExit={() => setAppStates(prev => ({ ...prev, heartSyncEnter: false }))} />
+          </div>
+        )}
         <div className="backButton" onClick={() => {
           if (location.app !== '') {
             setLocation({

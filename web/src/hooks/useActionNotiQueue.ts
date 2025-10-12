@@ -41,6 +41,7 @@ interface Notification2 {
 export default function useActionNotiQueue() {
     const [state, set] = useState<Notification1[]>([]);
     const [twoButtonNoti, setTwoButtonNoti] = useState<Notification2[]>([]);
+    const MAX_ACTION_NOTIFICATIONS = 20; // Limit action notification queue size
 
     return {
         add(value: {
@@ -58,7 +59,11 @@ export default function useActionNotiQueue() {
             }
             nodeRef?: any;
         }) {
-            set((queue) => [...queue, value]);
+            set((queue) => {
+                const newQueue = [...queue, value];
+                // Limit queue size to prevent memory leaks
+                return newQueue.length > MAX_ACTION_NOTIFICATIONS ? newQueue.slice(-MAX_ACTION_NOTIFICATIONS) : newQueue;
+            });
         },
         addTwo(value: {
             id: string;
@@ -81,7 +86,11 @@ export default function useActionNotiQueue() {
             }
             nodeRef?: any;
         }) {
-            setTwoButtonNoti((queue) => [...queue, value]);
+            setTwoButtonNoti((queue) => {
+                const newQueue = [...queue, value];
+                // Limit queue size to prevent memory leaks
+                return newQueue.length > MAX_ACTION_NOTIFICATIONS ? newQueue.slice(-MAX_ACTION_NOTIFICATIONS) : newQueue;
+            });
         },
 
         remove() {

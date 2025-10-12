@@ -6,7 +6,6 @@ import { Delay, generateUUid, LOGGER } from "@shared/utils";
 import { onClientCallback } from "@overextended/ox_lib/server";
 import { InvoiceRecurringPayments } from "./apps/Wallet/callbacks";
 import { pigeonService } from "./apps/Pigeon/PigeonService";
-import { title } from "process";
 export let Framework = exports['qb-core'].GetCoreObject();
 export const MongoDB = exports['mongoDB'];
 export const MySQL = exports.oxmysql;
@@ -146,6 +145,7 @@ on('QBCore:Server:OnPlayerUnload', async (src: number) => {
     const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(src);
     if (!citizenId) return;
     await Settings.SavePlayerSettings(citizenId);
+    Settings.onPlayerDisconnect(citizenId);
 });
 
 on('playerDropped', async () => {
@@ -153,4 +153,5 @@ on('playerDropped', async () => {
     const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(src);
     if (!citizenId) return;
     await Settings.SavePlayerSettings(citizenId);
+    Settings.onPlayerDisconnect(citizenId);
 })

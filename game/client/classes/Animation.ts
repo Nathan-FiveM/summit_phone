@@ -7,6 +7,8 @@ class AnimClass {
     private attachedProp: boolean;
     private isCalling: boolean;
     private phoneWasOpen: boolean; // NEW: Track if phone was open during call
+    private loadedModels: Set<string> = new Set(); // Track loaded models for cleanup
+    private loadedAnimDicts: Set<string> = new Set(); // Track loaded animation dictionaries
 
     constructor() {
         this.isAnimating = false;
@@ -17,9 +19,13 @@ class AnimClass {
     };
 
     private async AttachProp() {
-        RequestModel(this.prop);
-        while (!HasModelLoaded(this.prop)) {
-            await Delay(0);
+        // Check if model is already loaded to avoid unnecessary requests
+        if (!HasModelLoaded(this.prop)) {
+            RequestModel(this.prop);
+            while (!HasModelLoaded(this.prop)) {
+                await Delay(0);
+            }
+            this.loadedModels.add(this.prop); // Track loaded model
         }
         this.createdProp = CreateObject(this.prop, 0.0, 0.0, 0.0, true, true, false);
         AttachEntityToEntity(this.createdProp, PlayerPedId(), GetPedBoneIndex(PlayerPedId(), 28422), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, true, true, false, false, 2, true);
@@ -113,11 +119,50 @@ class AnimClass {
             animationLibrary = 'anim@cellphone@in_car@ps';
         }
         
-        RequestAnimDict(animationLibrary);
-        while (!HasAnimDictLoaded(animationLibrary)) {
-            await Delay(0);
+        // Check if animation dictionary is already loaded
+        if (!HasAnimDictLoaded(animationLibrary)) {
+            RequestAnimDict(animationLibrary);
+            while (!HasAnimDictLoaded(animationLibrary)) {
+                await Delay(0);
+            }
+            this.loadedAnimDicts.add(animationLibrary); // Track loaded animation dictionary
         }
         TaskPlayAnim(PlayerPedId(), animationLibrary, anim, 8.0, 8.0, -1, 50, 0, false, false, false);
+    };
+
+    // Add cleanup method for resource stop
+    public cleanup() {
+        // Clean up loaded models
+        for (const model of this.loadedModels) {
+            if (HasModelLoaded(model)) {
+                SetModelAsNoLongerNeeded(model);
+            }
+        }
+        this.loadedModels.clear();
+
+        // Clean up loaded animation dictionaries
+        for (const animDict of this.loadedAnimDicts) {
+            if (HasAnimDictLoaded(animDict)) {
+                RemoveAnimDict(animDict);
+            }
+        }
+        this.loadedAnimDicts.clear();
+
+        // Clean up any attached props
+        if (this.attachedProp && this.createdProp) {
+            DetachEntity(this.createdProp, true, true);
+            DeleteObject(this.createdProp);
+            this.attachedProp = false;
+            this.createdProp = null;
+        }
+
+        // Clear any active animations
+        if (this.isAnimating) {
+            ClearPedTasks(PlayerPedId());
+            this.isAnimating = false;
+            this.isCalling = false;
+            this.phoneWasOpen = false;
+        }
     };
 }
 

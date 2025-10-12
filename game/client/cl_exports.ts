@@ -9,13 +9,13 @@ function ForceFullyClosePhone() {
 }
 exports("ForceClosePhone", ForceFullyClosePhone);
 
-function ToggleDisablePhone(should: boolean) {
+export function ToggleDisablePhone(should: boolean) {
     NUI.shouldNotOpen = should;
     LocalPlayer.state.set('phoneDisabled', should, true);
 }
 exports("ToggleDisablePhone", ToggleDisablePhone);
 
-function CloseAndToggleDisablePhone(should: boolean) {
+export function CloseAndToggleDisablePhone(should: boolean) {
     ToggleDisablePhone(should);
     ForceFullyClosePhone();
 }

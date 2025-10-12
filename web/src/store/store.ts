@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
+import { subscribeWithSelector } from 'zustand/middleware';
 import { PhoneSettings, PhoneLocation, PhoneContacts, Notification } from '../../../types/types';
 
 type State = {
@@ -53,7 +54,8 @@ type Actions = {
 };
 
 export const usePhone = create<State & Actions>()(
-    immer((set) => ({
+    subscribeWithSelector(
+        immer((set) => ({
         visible: false,
         primaryColor: 'blue',
         dynamicNoti: {
@@ -185,4 +187,14 @@ export const usePhone = create<State & Actions>()(
             state.notifiCationHistory = notifiCationHistory
         }),
     }))
+    )
 );
+
+// Optimized selectors for better performance
+export const usePhoneVisible = () => usePhone((state) => state.visible);
+export const usePhonePrimaryColor = () => usePhone((state) => state.primaryColor);
+export const usePhoneSettings = () => usePhone((state) => state.phoneSettings);
+export const usePhoneLocation = () => usePhone((state) => state.location);
+export const usePhoneNotificationPush = () => usePhone((state) => state.notificationPush);
+export const usePhoneInCall = () => usePhone((state) => state.inCall);
+export const usePhoneShowNotiy = () => usePhone((state) => state.showNotiy);

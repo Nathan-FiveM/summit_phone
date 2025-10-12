@@ -19,6 +19,7 @@ class Setting {
     public phoneNumber = new Map<string, string>();
     public darkMailIdAttached = new Map<string, string>();
     public pigeonIdAttached = new Map<string, string>();
+    // No automatic cleanup - only remove on player disconnect
 
     public async load() {
         try {
@@ -98,7 +99,7 @@ class Setting {
         this.showNotifications.set(citizenId, true);
         this.isLock.set(citizenId, true);
         this.lockPin.set(citizenId, '');
-        this.usePin.set(citizenId, true);
+        this.usePin.set(citizenId, false);
         this.phoneNumber.set(citizenId, number);
         this.useFaceId.set(citizenId, false);
         this.faceIdIdentifier.set(citizenId, citizenId);
@@ -136,6 +137,39 @@ class Setting {
             LOGGER(`[Settings] Failed to save player settings for ${citizenId}: ${error.message}`);
             return false;
         }
+    }
+
+    // Remove player data only when player disconnects
+    public onPlayerDisconnect(citizenId: string) {
+        this.removePlayerData(citizenId);
+        LOGGER(`[Settings] Cleaned up data for disconnected player ${citizenId}`);
+    }
+
+    // Remove player data from all maps
+    private removePlayerData(citizenId: string) {
+        this._id.delete(citizenId);
+        this.background.delete(citizenId);
+        this.lockscreen.delete(citizenId);
+        this.ringtone.delete(citizenId);
+        this.showStartupScreen.delete(citizenId);
+        this.showNotifications.delete(citizenId);
+        this.isLock.delete(citizenId);
+        this.lockPin.delete(citizenId);
+        this.usePin.delete(citizenId);
+        this.useFaceId.delete(citizenId);
+        this.faceIdIdentifier.delete(citizenId);
+        this.smrtId.delete(citizenId);
+        this.smrtPassword.delete(citizenId);
+        this.isFlightMode.delete(citizenId);
+        this.phoneNumber.delete(citizenId);
+        this.darkMailIdAttached.delete(citizenId);
+        this.pigeonIdAttached.delete(citizenId);
+    }
+
+    // Public method to manually clean up a specific player (for admin commands)
+    public cleanupPlayer(citizenId: string) {
+        this.removePlayerData(citizenId);
+        LOGGER(`[Settings] Manually cleaned up data for player ${citizenId}`);
     }
 }
 

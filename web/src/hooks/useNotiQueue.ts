@@ -10,6 +10,8 @@ import { useLocalStorage } from "@mantine/hooks";
 export default function useNotiQueue() {
     const [state, set] = useState<Notification[]>([]);
     const [notifiCationHistory, setNotifiCationHistory] = useState<Notification[]>([]);
+    const MAX_NOTIFICATIONS = 50; // Limit notification queue size
+    const MAX_HISTORY = 100; // Limit notification history size
 
     return {
         add(value: {
@@ -19,7 +21,11 @@ export default function useNotiQueue() {
             app: string;
             nodeRef?: any;
         }) {
-            set((queue) => [...queue, value]);
+            set((queue) => {
+                const newQueue = [...queue, value];
+                // Limit queue size to prevent memory leaks
+                return newQueue.length > MAX_NOTIFICATIONS ? newQueue.slice(-MAX_NOTIFICATIONS) : newQueue;
+            });
         },
         addhistory(value: {
             id: number;
@@ -28,7 +34,11 @@ export default function useNotiQueue() {
             app: string;
             nodeRef?: any;
         }) {
-            setNotifiCationHistory((queue) => [...queue, value]);
+            setNotifiCationHistory((queue) => {
+                const newQueue = [...queue, value];
+                // Limit history size to prevent memory leaks
+                return newQueue.length > MAX_HISTORY ? newQueue.slice(-MAX_HISTORY) : newQueue;
+            });
         },
         remove() {
             let result: Notification;

@@ -764,10 +764,11 @@ export default function Startup() {
                                 }}>Click to get started</div>
 
                                 <div onClick={() => {
+                                    const finalPin = confirmedPin || confirmPin; // Use confirmedPin as backup
                                     const dataX = {
                                         ...phoneSettings,
                                         usePin: true,
-                                        lockPin: confirmPin,
+                                        lockPin: finalPin,
                                         showStartupScreen: false,
                                     }
                                     setPhoneSettings(dataX);

@@ -3,7 +3,7 @@
   user-select: none;
 }
 
-.innerFrame {
+  .innerFrame {
   width: 29.79vh;
   height: 64.22vh;
   margin-top: 0.98vh;
@@ -14,8 +14,11 @@
   align-items: center;
   color: white;
   position: relative;
-  filter: blur(0px) !important;
   overflow: hidden;
+  /* Optimized rendering */
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 
 
   .headerFrame {
@@ -470,11 +473,14 @@
     }
 
     .clickanimation {
-      transition: all 0.2s ease;
+      transition: transform 0.2s ease;
       cursor: pointer;
+      /* Optimized rendering */
+      will-change: transform;
+      transform: translateZ(0);
 
       &:active {
-        transform: scale(0.97);
+        transform: scale(0.97) translateZ(0);
       }
     }
 
@@ -1988,14 +1994,16 @@
   }
 }
 
-.clickanimationXl {
+    .clickanimationXl {
+      cursor: pointer;
+      /* Optimized rendering */
+      will-change: transform;
+      transform: translateZ(0);
 
-  cursor: pointer;
-
-  &:active {
-    transform: scale(0.9);
-  }
-}
+      &:active {
+        transform: scale(0.9) translateZ(0);
+      }
+    }
 
 .iconName {
   color: #FFF;

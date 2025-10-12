@@ -5,6 +5,7 @@ import { Utils } from "./Utils";
 export class NU {
     private timetick: any;
     private controlsLoop: any;
+    private closeTimeout: any; // Add timeout reference for cleanup
     public shouldNotOpen: boolean = false;
     public disableControls = false;
     private isLooprunnig = false;
@@ -50,28 +51,54 @@ export class NU {
     public async openUI(phoneItem: string) {
         const state = LocalPlayer.state;
         if (state.onPhone) return;
+        
+        // Batch NUI messages to reduce overhead
+        const phoneColor = Utils.GetPhoneItem().split('_')[0];
+        const uiData = {
+            setVisible: { show: true, color: phoneColor },
+            setCursor: { show: true, color: phoneColor }
+        };
+        
         state.set('onPhone', true, true);
         SetCursorLocation(0.89, 0.6);
-        this.startTimeLoop();
-        this.startDisableControlsLoop();
-        this.sendReactMessage('setVisible', { show: true, color: Utils.GetPhoneItem().split('_')[0] });
-        this.sendReactMessage("setCursor", { show: true, color: Utils.GetPhoneItem().split('_')[0] });
+        
+        // Send batched messages
+        this.sendReactMessage('setVisible', uiData.setVisible);
+        this.sendReactMessage("setCursor", uiData.setCursor);
+        
         SetNuiFocus(true, true);
         SetNuiFocusKeepInput(true);
+        
+        // Start loops after UI is set up
+        this.startTimeLoop();
+        this.startDisableControlsLoop();
+        
+        // Start animation last to avoid conflicts
         Animation.StatAnimation(phoneItem);
     };
 
     public closeUI() {
-        SetNuiFocus(false, false);
-        Animation.EndAnimation();
-        this.sendReactMessage('setVisible', { show: false, color: Utils.GetPhoneItem().split('_')[0] });
-        this.sendReactMessage("setCursor", { show: false, color: Utils.GetPhoneItem().split('_')[0] });
+        // Stop loops first to reduce overhead
         this.stopTimeLoop();
         this.stopDisableControlsLoop();
+        
+        SetNuiFocus(false, false);
+        Animation.EndAnimation();
+        
+        // Batch close messages
+        const phoneColor = Utils.GetPhoneItem().split('_')[0];
+        this.sendReactMessage('setVisible', { show: false, color: phoneColor });
+        this.sendReactMessage("setCursor", { show: false, color: phoneColor });
+        
         Utils.phonesArray = "";
-        setTimeout(() => {
+        // Clear any existing timeout
+        if (this.closeTimeout) {
+            clearTimeout(this.closeTimeout);
+        }
+        this.closeTimeout = setTimeout(() => {
             const state = LocalPlayer.state;
             state.set('onPhone', false, true);
+            this.closeTimeout = null;
         }, 500)
     };
 
@@ -85,10 +112,16 @@ export class NU {
     }
 
     public startTimeLoop() {
+        let lastTimeUpdate = 0;
         this.timetick = setTick(() => {
-            const hours = GetClockHours();
-            const minutes = GetClockMinutes();
-            this.sendReactMessage('sendTime', `${hours}:${minutes}`);
+            const currentTime = GetGameTimer();
+            // Only update time every 30 seconds to reduce NUI calls
+            if (currentTime - lastTimeUpdate > 30000) {
+                const hours = GetClockHours();
+                const minutes = GetClockMinutes();
+                this.sendReactMessage('sendTime', `${hours}:${minutes}`);
+                lastTimeUpdate = currentTime;
+            }
         });
     };
 
@@ -97,38 +130,26 @@ export class NU {
     };
 
     public startDisableControlsLoop() {
-
         SetPauseMenuActive(false);
 
+        // Cache control actions to reduce function calls
+        const controlsToDisable = [
+            [0, 24], [0, 257], [0, 25], [0, 263], [0, 140], [0, 141], [0, 142], [0, 143],
+            [2, 199], [2, 200], [0, 44], [0, 45], [0, 75], [0, 81], [0, 82], [0, 83], 
+            [0, 84], [0, 85], [0, 332], [0, 333]
+        ];
+
         this.controlsLoop = setTick(() => {
+            // Only disable controls when NUI is focused to reduce overhead
             if (IsNuiFocused()) {
                 DisableControlAction(0, 1, true);
                 DisableControlAction(0, 2, true);
             }
-            DisableControlAction(0, 24, true);
-            DisableControlAction(0, 257, true);
-            DisableControlAction(0, 25, true);
-            DisableControlAction(0, 263, true);
-            DisableControlAction(0, 140, true);
-            DisableControlAction(0, 141, true);
-            DisableControlAction(0, 142, true);
-            DisableControlAction(0, 143, true);
 
-            DisableControlAction(2, 199, true);
-            DisableControlAction(2, 200, true);
-
-            DisableControlAction(0, 44, true);
-            DisableControlAction(0, 45, true);
-
-            DisableControlAction(0, 75, true);
-
-            DisableControlAction(0, 81, true);
-            DisableControlAction(0, 82, true);
-            DisableControlAction(0, 83, true);
-            DisableControlAction(0, 84, true);
-            DisableControlAction(0, 85, true);
-            DisableControlAction(0, 332, true);
-            DisableControlAction(0, 333, true);
+            // Batch disable controls
+            for (const [group, control] of controlsToDisable) {
+                DisableControlAction(group, control, true);
+            }
 
             DisablePlayerFiring(PlayerId(), true);
 
@@ -147,6 +168,16 @@ export class NU {
         setTimeout(() => {
             clearTick(this.controlsLoop);
         }, 250)
+    };
+
+    // Add cleanup method for resource stop
+    public cleanup() {
+        this.stopTimeLoop();
+        this.stopDisableControlsLoop();
+        if (this.closeTimeout) {
+            clearTimeout(this.closeTimeout);
+            this.closeTimeout = null;
+        }
     };
 }
 
