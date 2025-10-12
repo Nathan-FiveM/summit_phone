@@ -385,4 +385,4 @@ For support and updates, please contact the Summit RP development team or check 
 **Framework**: QB-Core  
 **Language**: TypeScript/React
 
-# NOTE: You guys are open to do Whatever you want with this phone, Just Don't Resell it With your names XD
+# NOTE: This phone was  being used at Summit Roleplay server, Now we have decided to make it open source and not maintaining it anymore. You guys are open to do Whatever you want with this phone, Just Don't Resell it With your names XD
