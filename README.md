@@ -2,6 +2,8 @@
 
 A comprehensive smartphone system for FiveM servers featuring multiple applications, modern UI, and extensive functionality.
 
+### Preview [YouTube](https://www.youtube.com/watch?v=otF7uU8PSnw)
+
 ## 📱 Features
 
 - **Modern React-based UI** with smooth animations and responsive design
