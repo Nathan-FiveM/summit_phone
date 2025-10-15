@@ -422,9 +422,9 @@ function QBCore.Player.GetPlayerName(source)
 end
 exports('GetPlayerName', QBCore.Player.GetPlayerName)
 ```
-Just under the function
-``QBCore.Player.CreatePlayer(PlayerDate, Offline)``
-Add the line
+Find the function
+``QBCore.Functions.CreatePhoneNumber()``
+Remove all code and add this line
 ```lua
 exports['summit_phone']:GeneratePlayerPhoneNumber(PlayerData.citizenid)
 ```
