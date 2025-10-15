@@ -21,7 +21,7 @@ export class NU {
                 return;
             };
             if (this.shouldNotOpen) return;
-            const phoneItem = Utils.GetPhoneItem();
+            const phoneItem = await Utils.GetPhoneItem();
             console.log('Detected phone item:', phoneItem);
             if (Utils.phoneList.includes(phoneItem)) {
                 this.openUI(`prop_aphone_${phoneItem.split('_')[0]}`);
@@ -37,7 +37,7 @@ export class NU {
                 return;
             };
             if (this.shouldNotOpen) return;
-            const phoneItem = Utils.GetPhoneItem();
+            const phoneItem = await Utils.GetPhoneItem();
             console.log('Detected phone item:', phoneItem);
             if (Utils.phoneList.includes(phoneItem)) {
                 this.openUI(`prop_aphone_${phoneItem.split('_')[0]}`);
@@ -71,7 +71,7 @@ export class NU {
         if (state.onPhone) return;
         
         // Batch NUI messages to reduce overhead
-        const phoneColor = Utils.GetPhoneItem().split('_')[0];
+        const phoneColor = (await Utils.GetPhoneItem()).split('_')[0];
         const uiData = {
             setVisible: { show: true, color: phoneColor },
             setCursor: { show: true, color: phoneColor }
@@ -95,7 +95,7 @@ export class NU {
         Animation.StatAnimation(phoneItem);
     };
 
-    public closeUI() {
+    public async closeUI() {
         // Stop loops first to reduce overhead
         this.stopTimeLoop();
         this.stopDisableControlsLoop();
@@ -104,7 +104,7 @@ export class NU {
         Animation.EndAnimation();
         
         // Batch close messages
-        const phoneColor = Utils.GetPhoneItem().split('_')[0];
+        const phoneColor = (await Utils.GetPhoneItem()).split('_')[0];
         this.sendReactMessage('setVisible', { show: false, color: phoneColor });
         this.sendReactMessage("setCursor", { show: false, color: phoneColor });
         
