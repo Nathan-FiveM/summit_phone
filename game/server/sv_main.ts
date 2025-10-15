@@ -9,7 +9,7 @@ import { pigeonService } from "./apps/Pigeon/PigeonService";
 export let Framework = exports['qb-core'].GetCoreObject();
 export const MongoDB = exports['mongoDB'];
 export const MySQL = exports.oxmysql;
-export const Logger = exports['summit_logs'];
+export const Logger = exports['qb-smallresources'];
 
 on('QBCore:Server:UpdateObject', () => {
     Framework = exports['qb-core'].GetCoreObject();

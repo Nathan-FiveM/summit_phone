@@ -118,7 +118,7 @@ onNet('phone:client:setupPhone', async (citizenId: string) => {
 });
 
 onNet('QBCore:Player:SetPlayerData', (data: any) => {
-    if (data.metadata.inlaststand || data.metadata.isdead) {
+    if (data.metadata.isko || data.metadata.isdead) {
         if (LocalPlayer.state.onPhone) {
             NUI.closeUI();
             CloseAndToggleDisablePhone(true);

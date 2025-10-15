@@ -9,20 +9,24 @@ class Util {
         'purple_phone',
     ];
     public phonesArray : string = "";
-    public GetPhoneItem() {
-        const hasItem : {
-            'blue_phone': number,
-            'green_phone': number,
-            'red_phone': number,
-            'gold_phone': number,
-            'purple_phone': number,
-        } = exports.ox_inventory.Search('count', this.phoneList);
-        for (let i = 0; i < this.phoneList.length; i++) {
-            // @ts-ignore
-            if (hasItem[this.phoneList[i]] > 0) {
-                this.phonesArray = this.phoneList[i];
+    public async GetPhoneItem(): Promise<string> {
+        this.phonesArray = "";
+
+        try {
+            for (let i = 0; i < this.phoneList.length; i++) {
+                const phoneItem = this.phoneList[i];
+                // lj-inventory client exposes HasItem(items, amount?)
+                // @ts-ignore
+                const has = await exports['lj-inventory'].HasItem(phoneItem);
+                if (has) {
+                    this.phonesArray = phoneItem;
+                    return this.phonesArray;
+                }
             }
+        } catch (err) {
+            console.error('GetPhoneItem lj-inventory check failed:', err);
         }
+
         return this.phonesArray;
     }
 }

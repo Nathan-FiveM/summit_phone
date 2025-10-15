@@ -199,19 +199,16 @@ class Util {
             'gold_phone',
             'purple_phone',
         ];
-        const hasItem: {
-            'blue_phone': number,
-            'green_phone': number,
-            'red_phone': number,
-            'gold_phone': number,
-            'purple_phone': number,
-        } = exports['ox_inventory'].Search(playerSource, 'count', phoneList);
-        for (let i = 0; i < phoneList.length; i++) {
-            // @ts-ignore
-            if (hasItem[phoneList[i]] > 0) {
-                return true;
+
+        try {
+            for (const phoneItem of phoneList) {
+                const has = await exports['lj-inventory'].HasItem(playerSource, phoneItem);
+                if (has) return true;
             }
+        } catch (e) {
+            console.error('HasPhone check failed:', e);
         }
+
         return false;
     };
 
