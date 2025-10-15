@@ -21,13 +21,13 @@ on('__cfx_nui:garage:locateVehicle', async (data: string, cb: Function) => {
         const plate = JSON.parse(data).plate;
         
         // Check if the export exists
-        if (!exports['summit_garages'] || typeof exports['summit_garages'].findVehFromPlateAndLocate !== 'function') {
+        if (!exports['qb-garages'] || typeof exports['qb-garages'].TrackVehicleByPlate !== 'function') {
             cb({ success: false, message: "Garage system not available" });
             return;
         }
         
         // Call garage function directly - await the promise
-        const result = await exports['summit_garages'].findVehFromPlateAndLocate(plate, true);
+        const result = await exports['qb-garages'].TrackVehicleByPlate(plate, true);
         
         // Ensure result is a boolean
         const success = Boolean(result);
