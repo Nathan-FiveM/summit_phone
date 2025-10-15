@@ -388,3 +388,58 @@ For support and updates, please contact the Summit RP development team or check 
 # NOTE: This phone was  being used at Summit Roleplay server, Now we have decided to make it open source and not maintaining it anymore. You guys are open to do Whatever you want with this phone, Just Don't Resell it With your names XD
 
 Summit RP Discord: https://discord.gg/summitrp
+
+---
+
+**Addition for QBCore**
+
+Add this function to;
+``qb-core/server/functions.lua``
+```lua
+---Get players citizen id
+---@param citizenid string
+---@return table?
+function QBCore.Functions.getPlayerCitizenIdBySource(thePlayersSource)
+    if not thePlayersSource then
+        thePlayersSource = source
+    end
+    if QBCore.Players[thePlayersSource].PlayerData.citizenid then
+        return QBCore.Players[thePlayersSource].PlayerData.citizenid
+    end
+    return nil
+end
+exports('GetPlayerCitizenIdBySource', QBCore.Functions.getPlayerCitizenIdBySource)
+```
+
+Add this function to 
+``qb-core/server/player.lua``
+```lua
+function QBCore.Player.GetPlayerName(source)
+    if QBCore.Players[source] then
+        return QBCore.Players[source].PlayerData.name
+    end
+    return nil
+end
+exports('GetPlayerName', QBCore.Player.GetPlayerName)
+```
+Just under the function
+``QBCore.Player.CreatePlayer(PlayerDate, Offline)``
+Add the line
+```lua
+exports['summit_phone']:GeneratePlayerPhoneNumber(PlayerData.citizenid)
+```
+
+In qb-smallresources add the following function;
+```lua
+function AddLog(type, title, message, showIdentifiers, tagEveryone)
+    TriggerEvent('qb-log:server:CreateLog', type, title, nil, message, false)
+end
+exports('AddLog', AddLog)
+```
+
+On a playerloaded event in client put the following code;
+```lua
+TriggerEvent('phone:client:setupPhone', PlayerData.citizenid)
+Wait(500)
+exports['summit_phone']:ToggleDisablePhone(false)
+```
