@@ -350,7 +350,7 @@ export default function Housing(props: { onExit: () => void; onEnter: () => void
                                     setInputDescription(`Remove Access From ${citizenid}`);
                                     setInputPlaceholder('Type Yes To Confirm');
                                 }}>
-                                    <Avatar src="https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg" alt="" />
+                                    <Avatar src="https://ignis-rp.com/uploads/server/phone/emptyPfp.svg" alt="" />
                                     <div style={{
                                         display: 'flex',
                                         flexDirection: 'column',

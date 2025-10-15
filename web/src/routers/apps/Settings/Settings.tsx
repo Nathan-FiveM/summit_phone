@@ -77,7 +77,7 @@ export default function Settings(props: { onExit: () => void, onEnter: () => voi
                     }} mt="0.36vh" />
                 </div>
                 <div className="card">
-                    <Avatar size={'5.08vh'} src={newParsedData.avatar ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} />
+                    <Avatar size={'5.08vh'} src={newParsedData.avatar ?? "https://ignis-rp.com/uploads/server/phone/emptyPfp.svg"} />
                     <div className="NameAndBottoer">
                         <div className="name">{newParsedData.firstName}'s Phone</div>
                         <div className="small">Cloud backup</div>

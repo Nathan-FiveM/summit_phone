@@ -147,13 +147,13 @@ class CallManager {
     public async createRingTone(source: any, ringtoneLink: string, volume: number) {
         const ped = GetPlayerPed(source);
         const pedId = NetworkGetNetworkIdFromEntity(ped);
-        const soundId = await exports['summit_soundhandler'].StartAttachSound(ringtoneLink, pedId, 5, GetGameTimer(), true, 0.15);
+        const soundId = await exports['ignis_soundhandler'].StartAttachSound(ringtoneLink, pedId, 5, GetGameTimer(), true, 0.15);
         this.ringToneManger.set(source, soundId);
     }
     public async stopRingTone(source: number) {
         const soundId = this.ringToneManger.get(source);
         if (!soundId) return;
-        exports['summit_soundhandler'].StopSound(soundId);
+        exports['ignis_soundhandler'].StopSound(soundId);
         this.ringToneManger.delete(source);
     }
 }

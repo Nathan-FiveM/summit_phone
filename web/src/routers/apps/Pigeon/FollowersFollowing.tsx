@@ -146,7 +146,7 @@ export default function FollowersFollowing(props: {
                             }}
                         >
                             <Avatar
-                                src={user.avatar || 'https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg'}
+                                src={user.avatar || 'https://ignis-rp.com/uploads/server/phone/emptyPfp.svg'}
                                 size="4vh"
                             />
                             <div style={{

@@ -45,7 +45,7 @@ export default function SearchUser(props: { show: boolean, profileData: TweetPro
                     justifyContent: 'flex-end',
                     position: 'relative',
                 }}>
-                    <Avatar size={"2.84vh"} src={props.profileData.avatar.length > 0 ? props.profileData.avatar : 'https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg'} style={{
+                    <Avatar size={"2.84vh"} src={props.profileData.avatar.length > 0 ? props.profileData.avatar : 'https://ignis-rp.com/uploads/server/phone/emptyPfp.svg'} style={{
                         position: 'absolute',
                         left: '3%',
                         bottom: '25%',
@@ -93,7 +93,7 @@ export default function SearchUser(props: { show: boolean, profileData: TweetPro
                                     setSelectedEmail(profile.email);
                                     setShowProfile(true);
                                 }}>
-                                    <Avatar size={'3.20vh'} src={profile.avatar.length > 0 ? profile.avatar : 'https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg'} style={{
+                                    <Avatar size={'3.20vh'} src={profile.avatar.length > 0 ? profile.avatar : 'https://ignis-rp.com/uploads/server/phone/emptyPfp.svg'} style={{
                                         marginLeft: '0.89vh',
                                     }} />
                                     <div style={{

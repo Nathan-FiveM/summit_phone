@@ -64,7 +64,7 @@ export default function CreateGroup() {
                         flexGrow: 0,
                     }}>Back</div>
                 </div>
-                <Avatar size={'7.11vh'} src={avatar ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} mt={'3.56vh'} />
+                <Avatar size={'7.11vh'} src={avatar ?? "https://ignis-rp.com/uploads/server/phone/emptyPfp.svg"} mt={'3.56vh'} />
                 <TextInput value={avatar} placeholder={'Enter Avatar Link'} mt={'0.00vh'} styles={{
                     root: {
                         width: '90%',

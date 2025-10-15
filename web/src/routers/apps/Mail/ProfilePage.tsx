@@ -69,7 +69,7 @@ export default function ProfilePage(props: { show: boolean }) {
                 <div style={{ marginTop: '0.00vh', letterSpacing: '0.18vh' }}>
                     <Title title="Edit Profile" />
                 </div>
-                <Avatar size={'8.52vh'} src={profileSettings.avatar ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} mt={'1.78vh'} />
+                <Avatar size={'8.52vh'} src={profileSettings.avatar ?? "https://ignis-rp.com/uploads/server/phone/emptyPfp.svg"} mt={'1.78vh'} />
                 <TextInput value={profileSettings.avatar} label="" placeholder="Avatar" onChange={(e) => setProfileSettings({ ...profileSettings, avatar: e.currentTarget.value })} styles={{
                     root: {
                         width: '90%',

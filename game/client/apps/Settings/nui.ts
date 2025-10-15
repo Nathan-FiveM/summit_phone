@@ -60,6 +60,6 @@ on('__cfx_nui:getStreamerMode', async (data: any, cb: Function) => {
 RegisterNuiCallbackType('setStreamerMode');
 on('__cfx_nui:setStreamerMode', async (data: boolean, cb: Function) => {
     SetResourceKvp('streamerMode', data.toString());
-    exports['summit_soundhandler'].StreamerMode(data);
+    exports['ignis_soundhandler'].StreamerMode(data);
     cb(true);
 });

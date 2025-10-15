@@ -94,7 +94,7 @@ class Setting {
         this._id.set(citizenId, citizenId);
         this.background.set(citizenId, { current: '', wallpapers: [] });
         this.lockscreen.set(citizenId, { current: '', wallpapers: [] });
-        this.ringtone.set(citizenId, { current: 'https://cdn.summitrp.gg/uploads/server/phone/sounds/iPhoneXTrap.mp3', ringtones: [{ name: 'default', url: 'https://cdn.summitrp.gg/uploads/server/phone/sounds/iPhoneXTrap.mp3' }] });
+        this.ringtone.set(citizenId, { current: 'https://ignis-rp.com/uploads/server/phone/sounds/iPhoneXTrap.mp3', ringtones: [{ name: 'default', url: 'https://ignis-rp.com/uploads/server/phone/sounds/iPhoneXTrap.mp3' }] });
         this.showStartupScreen.set(citizenId, true);
         this.showNotifications.set(citizenId, true);
         this.isLock.set(citizenId, true);

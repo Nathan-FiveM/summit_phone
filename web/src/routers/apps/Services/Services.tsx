@@ -103,7 +103,7 @@ export default function Services(props: { onExit: () => void, onEnter: () => voi
                                 <div className="containerXSa" key={index}>
                                     <div className="innerContXassda">
                                         <div className="moreInnerContX">
-                                            <Avatar size="3.06vh" src={business.businessLogo ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} radius="xl" />
+                                            <Avatar size="3.06vh" src={business.businessLogo ?? "https://ignis-rp.com/uploads/server/phone/emptyPfp.svg"} radius="xl" />
                                             <div className="moreInnerContX2">
                                                 <div className="title">{business.businessName}</div>
                                                 <div style={{
@@ -168,7 +168,7 @@ export default function Services(props: { onExit: () => void, onEnter: () => voi
                                 <div className="containerXSa" key={index}>
                                     <div className="innerContXassda">
                                         <div className="moreInnerContX">
-                                            <Avatar size="3.06vh" src={business.businessLogo ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} radius="xl" />
+                                            <Avatar size="3.06vh" src={business.businessLogo ?? "https://ignis-rp.com/uploads/server/phone/emptyPfp.svg"} radius="xl" />
                                             <div className="moreInnerContX2">
                                                 <div className="title">{business.businessName}</div>
                                                 <div style={{

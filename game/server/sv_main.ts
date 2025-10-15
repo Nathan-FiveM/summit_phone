@@ -65,13 +65,13 @@ onClientCallback('phone:server:shareNumber', async (source: any, comingSource: a
         app: "settings",
         icons: {
             "0": {
-                icon: "https://cdn.summitrp.gg/uploads/server/phone/cross-circle.svg",
+                icon: "https://ignis-rp.com/uploads/server/phone/cross-circle.svg",
                 isServer: true,
                 event: "phone:server:addContact",
                 args: {}
             },
             "1": {
-                icon: "https://cdn.summitrp.gg/uploads/server/phone/tick.svg",
+                icon: "https://ignis-rp.com/uploads/server/phone/tick.svg",
                 isServer: true,
                 event: "phone:server:addContact",
                 args: {

@@ -522,7 +522,7 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
                                             fetchNui('showNoti', { app: 'settings', title: 'Error', description: 'The user you are tring to send money haven\'t signed up yet on wallet app.' })
                                         }
                                     }}>
-                                        <Avatar src={contact.image.length > 0 ? contact.image : 'https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg'} size="3.56vh" />
+                                        <Avatar src={contact.image.length > 0 ? contact.image : 'https://ignis-rp.com/uploads/server/phone/emptyPfp.svg'} size="3.56vh" />
                                         <div style={{
                                             marginLeft: '0.89vh',
                                             fontSize: '1.60vh',
@@ -584,7 +584,7 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
                             </svg>
                             <div style={{ fontSize: '1.60vh', fontWeight: 500, marginLeft: '6.22vh' }}>Transfer</div>
                         </div>
-                        <Avatar src={selectedContact.image.length > 0 ? selectedContact.image : 'https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg'} size="7.11vh" mt="2.67vh" />
+                        <Avatar src={selectedContact.image.length > 0 ? selectedContact.image : 'https://ignis-rp.com/uploads/server/phone/emptyPfp.svg'} size="7.11vh" mt="2.67vh" />
                         <div style={{ fontSize: '2.13vh', marginTop: '0.36vh', fontWeight: 500, lineHeight: '3.02vh' }}>{selectedContact.firstName} {selectedContact.lastName}</div>
                         <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.7)', marginTop: '0.36vh', fontWeight: 500, lineHeight: '0.00vh' }}>A/C No - {resaccountNumber}</div>
                         <NumberInput styles={{

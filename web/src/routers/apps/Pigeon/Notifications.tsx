@@ -67,7 +67,7 @@ export default function Notifications(props: { show: boolean, profileData: Tweet
                     justifyContent: 'flex-end',
                     position: 'relative',
                 }}>
-                    <Avatar size={"2.84vh"} src={props.profileData.avatar.length > 0 ? props.profileData.avatar : 'https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg'} style={{
+                    <Avatar size={"2.84vh"} src={props.profileData.avatar.length > 0 ? props.profileData.avatar : 'https://ignis-rp.com/uploads/server/phone/emptyPfp.svg'} style={{
                         position: 'absolute',
                         left: '3%',
                         bottom: '25%',

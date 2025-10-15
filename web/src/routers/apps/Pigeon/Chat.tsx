@@ -207,7 +207,7 @@ export default function Chat(props: {
                     flex: 1
                 }}>
                     <Avatar 
-                        src={props.otherUser.avatar || 'https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg'} 
+                        src={props.otherUser.avatar || 'https://ignis-rp.com/uploads/server/phone/emptyPfp.svg'} 
                         size="3vh"
                     />
                     <div style={{ marginLeft: '1vh' }}>

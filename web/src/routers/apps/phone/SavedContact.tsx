@@ -74,7 +74,7 @@ export default function SavedContact(props: { onContactEdited: (data: PhoneConta
                                 </svg> : <></>}
                             </div>
                         </div>
-                        <Avatar src={selectedContact.image ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} w={'8.35vh'} h={'8.35vh'} radius="88.89vh" />
+                        <Avatar src={selectedContact.image ?? "https://ignis-rp.com/uploads/server/phone/emptyPfp.svg"} w={'8.35vh'} h={'8.35vh'} radius="88.89vh" />
                         <div className="savedFullName">
                             <div className="text">
                                 {selectedContact.firstName} {selectedContact.lastName}

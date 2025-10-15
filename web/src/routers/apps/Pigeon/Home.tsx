@@ -320,7 +320,7 @@ export default function Home(props: {
                     justifyContent: 'flex-end',
                     position: 'relative',
                 }}>
-                    <Avatar size={"2.84vh"} src={props.profileData.avatar.length > 0 ? props.profileData.avatar : 'https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg'} style={{
+                    <Avatar size={"2.84vh"} src={props.profileData.avatar.length > 0 ? props.profileData.avatar : 'https://ignis-rp.com/uploads/server/phone/emptyPfp.svg'} style={{
                         position: 'absolute',
                         left: '3%',
                         bottom: '25%',
@@ -379,7 +379,7 @@ export default function Home(props: {
                                     borderRadius: '0.89vh',
                                     marginTop: '1.78vh',
                                 }}>
-                                    <Avatar className='clickanimation' mt={'0.36vh'} size={"2.49vh"} src={tweet.avatar.length > 0 ? tweet.avatar : 'https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg'} onClick={() => {
+                                    <Avatar className='clickanimation' mt={'0.36vh'} size={"2.49vh"} src={tweet.avatar.length > 0 ? tweet.avatar : 'https://ignis-rp.com/uploads/server/phone/emptyPfp.svg'} onClick={() => {
                                         setSelectedEmail(tweet.email);
                                         setShowProfile(true);
                                     }} />
@@ -629,7 +629,7 @@ export default function Home(props: {
                             display: 'flex',
                             alignItems: 'center',
                         }}>
-                            <Avatar className='clickanimation' size={"2.67vh"} src={selectedPost.avatar.length > 0 ? selectedPost.avatar : 'https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg'} mt={'0.53vh'} onClick={() => {
+                            <Avatar className='clickanimation' size={"2.67vh"} src={selectedPost.avatar.length > 0 ? selectedPost.avatar : 'https://ignis-rp.com/uploads/server/phone/emptyPfp.svg'} mt={'0.53vh'} onClick={() => {
                                 setSelectedEmail(selectedPost.email);
                                 setShowProfile(true);
                             }} />
@@ -840,7 +840,7 @@ export default function Home(props: {
                                     borderRadius: '0.89vh',
                                     marginTop: index === 0 ? '0.89vh' : '0.89vh',
                                 }}>
-                                    <Avatar className='clickanimation' mt={'0.36vh'} size={"2.49vh"} src={data.avatar.length > 0 ? data.avatar : 'https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg'} onClick={() => {
+                                    <Avatar className='clickanimation' mt={'0.36vh'} size={"2.49vh"} src={data.avatar.length > 0 ? data.avatar : 'https://ignis-rp.com/uploads/server/phone/emptyPfp.svg'} onClick={() => {
                                         setSelectedEmail(data.email);
                                         setShowProfile(true);
                                     }} />

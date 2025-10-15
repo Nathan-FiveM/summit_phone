@@ -33,11 +33,11 @@ async function GeneratePlayerPhoneNumber(citizenId: string, source: number | und
             wallpapers: [],
         },
         ringtone: {
-            current: 'https://cdn.summitrp.gg/uploads/server/phone/sounds/iPhoneXTrap.mp3',
+            current: 'https://ignis-rp.com/uploads/server/phone/sounds/iPhoneXTrap.mp3',
             ringtones: [
                 {
                     name: 'default',
-                    url: 'https://cdn.summitrp.gg/uploads/server/phone/sounds/iPhoneXTrap.mp3',
+                    url: 'https://ignis-rp.com/uploads/server/phone/sounds/iPhoneXTrap.mp3',
                 }
             ],
         },

@@ -214,7 +214,7 @@ export default function MessageDetails() {
                             />
                         </svg>
                         <div className="headerMainCont" style={{ marginLeft: conversationType === 'private' ? "10%" : conversationType === "group" && isAdmin ? "15%" : "0%" }}>
-                            <Avatar src={avatar ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} size="3.70vh" radius="xl" onClick={() => {
+                            <Avatar src={avatar ?? "https://ignis-rp.com/uploads/server/phone/emptyPfp.svg"} size="3.70vh" radius="xl" onClick={() => {
                                 if (conversationType === 'group' && isAdmin) {
                                     setShowAvatarModal(true);
                                 }

@@ -196,7 +196,7 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                                         position: 'relative'
                                     }}>
                                         <Avatar
-                                            src={'https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg'}
+                                            src={'https://ignis-rp.com/uploads/server/phone/emptyPfp.svg'}
                                             size="4.27vh"
                                             radius="xl"
                                             style={{ marginLeft: '0.89vh' }}

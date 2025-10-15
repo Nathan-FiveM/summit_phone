@@ -99,7 +99,7 @@ export default function CreateNew(props: { location: string }) {
                         flexDirection: 'column',
                         gap: '1.78vh',
                     }}>
-                        <Avatar src={profileData.avatar.length > 0 ? profileData.avatar : "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} size={'2.67vh'} />
+                        <Avatar src={profileData.avatar.length > 0 ? profileData.avatar : "https://ignis-rp.com/uploads/server/phone/emptyPfp.svg"} size={'2.67vh'} />
                         <div style={{
                             display: 'flex',
                             flexDirection: 'column',

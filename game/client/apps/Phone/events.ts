@@ -30,12 +30,12 @@ onNet('summit_phone:server:addCallingNotification', (dataX: string) => {
         app: 'phone',
         icons: {
             "0": {
-                icon: "https://cdn.summitrp.gg/uploads/red.svg",
+                icon: "https://ignis-rp.com/uploads/red.svg",
                 isServer: true,
                 event: 'phone:server:declineCall'
             },
             "1": {
-                icon: "https://cdn.summitrp.gg/uploads/green.svg",
+                icon: "https://ignis-rp.com/uploads/green.svg",
                 isServer: true,
                 event: 'phone:server:acceptCall'
             }

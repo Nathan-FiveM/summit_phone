@@ -159,7 +159,7 @@ export default function Phone() {
                                             display: 'flex',
                                             alignItems: 'center',
                                         }}>
-                                            <Avatar src={contactData?.image ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} size={'3.33vh'} />
+                                            <Avatar src={contactData?.image ?? "https://ignis-rp.com/uploads/server/phone/emptyPfp.svg"} size={'3.33vh'} />
                                             <div className="" style={{
                                                 display: 'flex',
                                                 flexDirection: 'column',
@@ -309,7 +309,7 @@ export default function Phone() {
                                 }
                             })
                         }}>
-                            <Avatar src={playerPhoneCard?.avatar ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} w={'4.88vh'} h={'4.88vh  '} />
+                            <Avatar src={playerPhoneCard?.avatar ?? "https://ignis-rp.com/uploads/server/phone/emptyPfp.svg"} w={'4.88vh'} h={'4.88vh  '} />
                             <div className="details">
                                 <div className="FullName">
                                     {playerPhoneCard.firstName} {playerPhoneCard.lastName}
@@ -479,7 +479,7 @@ export default function Phone() {
                                                         flexGrow: 0,
                                                         marginTop: index === 0 ? '0.00vh' : '0.73vh',
                                                     }} key={index + '__+'}>
-                                                        <Avatar src={contact?.image ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} size={'3.98vh'} style={{ minHeight: '3.98vh' }} radius={'88.89vh'} />
+                                                        <Avatar src={contact?.image ?? "https://ignis-rp.com/uploads/server/phone/emptyPfp.svg"} size={'3.98vh'} style={{ minHeight: '3.98vh' }} radius={'88.89vh'} />
                                                         <div style={{
                                                             display: 'flex',
                                                             flexDirection: 'column',

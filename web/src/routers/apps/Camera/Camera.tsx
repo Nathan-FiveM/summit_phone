@@ -16,17 +16,17 @@ export default function Camera(props: { onExit: () => void; onEnter: () => void 
         const image = await MainRender.captureImage();
 
         const formData = new FormData();
-        formData.append('files[]', dataURItoBlob(image), `screenshot.png`);
-
-        const res = await fetch('https://cdn.summitrp.gg/upload', {
+        formData.append('file', dataURItoBlob(image), `screenshot.png`);
+        const uploadUrl = 'https://ignis-rp.com/uploads/upload.php';
+        const res = await fetch(uploadUrl, {
             method: 'POST',
             mode: 'cors',
             body: formData
         })
         const result = await res.json();
-        if (result.attachments[0].url) {
-            fetchNui('saveimageToPhotos', result.attachments[0].url);
-            return result.attachments[0].url
+        if (result.url) {
+            fetchNui('saveimageToPhotos', result.url);
+            return result.url
         }
         return result.attachments[0].url;
     };

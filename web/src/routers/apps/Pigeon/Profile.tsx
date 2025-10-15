@@ -178,11 +178,11 @@ export default function Profile(props: {
                         flexDirection: 'column',
                         width: '50%',
                     }}>
-                        <Avatar src={profileData.avatar !== '' ? profileData.avatar : "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} size={'5.33vh'} />
+                        <Avatar src={profileData.avatar !== '' ? profileData.avatar : "https://ignis-rp.com/uploads/server/phone/emptyPfp.svg"} size={'5.33vh'} />
                         <div style={{
                             width: '100%',
                             height: '13.16vh',
-                            backgroundImage: profileData.banner !== '' ? `url(${profileData.banner})` : "url('https://cdn.summitrp.gg/uploads/server/phone/pigeonBanner.gif')",
+                            backgroundImage: profileData.banner !== '' ? `url(${profileData.banner})` : "url('https://ignis-rp.com/uploads/server/phone/pigeonBanner.gif')",
                             backgroundSize: 'cover',
                             backgroundRepeat: 'no-repeat',
                             position: 'absolute',
@@ -359,7 +359,7 @@ export default function Profile(props: {
                                     borderRadius: '0.89vh',
                                     marginTop: '1.78vh',
                                 }}>
-                                    <Avatar className='clickanimation' mt={'0.36vh'} size={"2.49vh"} src={tweet.avatar.length > 0 ? tweet.avatar : 'https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg'} />
+                                    <Avatar className='clickanimation' mt={'0.36vh'} size={"2.49vh"} src={tweet.avatar.length > 0 ? tweet.avatar : 'https://ignis-rp.com/uploads/server/phone/emptyPfp.svg'} />
                                     <div style={{
                                         width: '100%',
                                         display: 'flex',
@@ -594,7 +594,7 @@ export default function Profile(props: {
                                 borderBottom: '0.09vh solid rgba(255, 255, 255, 0.2)',
                                 paddingBottom: '0.89vh',
                             }}>
-                                <Avatar size={'7.11vh'} src={duplicateProfiledata.avatar.length > 0 ? duplicateProfiledata.avatar : 'https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg'} />
+                                <Avatar size={'7.11vh'} src={duplicateProfiledata.avatar.length > 0 ? duplicateProfiledata.avatar : 'https://ignis-rp.com/uploads/server/phone/emptyPfp.svg'} />
                                 <TextInput styles={{
                                     root: {
                                         width: '19.56vh',

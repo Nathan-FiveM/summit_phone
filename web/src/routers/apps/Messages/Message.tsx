@@ -167,7 +167,7 @@ export default function Message() {
                                         page: data
                                     })
                                 }}>
-                                    <Avatar size="3.52vh" src={channel.avatar ?? "https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg"} alt="" />
+                                    <Avatar size="3.52vh" src={channel.avatar ?? "https://ignis-rp.com/uploads/server/phone/emptyPfp.svg"} alt="" />
                                     <div className="messageCont">
                                         <div className="title">
                                             <div className="name">{channel.name}</div>

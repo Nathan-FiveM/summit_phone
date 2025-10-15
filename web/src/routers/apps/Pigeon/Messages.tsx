@@ -137,7 +137,7 @@ export default function Messages(props: { show: boolean; onClose: () => void; on
                             onClick={() => props.onStartChat(conversation.otherUser)}
                         >
                             <Avatar 
-                                src={conversation.otherUser.avatar || 'https://cdn.summitrp.gg/uploads/server/phone/emptyPfp.svg'} 
+                                src={conversation.otherUser.avatar || 'https://ignis-rp.com/uploads/server/phone/emptyPfp.svg'} 
                                 size="4vh"
                             />
                             <div style={{
