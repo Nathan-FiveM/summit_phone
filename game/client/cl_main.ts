@@ -125,5 +125,12 @@ onNet('QBCore:Player:SetPlayerData', (data: any) => {
         } else {
             ToggleDisablePhone(true);
         }
+    } else if (!data.metadata.isko && !data.metadata.isdead) {
+        if (LocalPlayer.state.onPhone) {
+            NUI.closeUI();
+            CloseAndToggleDisablePhone(false);
+        } else {
+            ToggleDisablePhone(false);
+        }
     }
 });

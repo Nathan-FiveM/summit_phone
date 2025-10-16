@@ -7,13 +7,8 @@ import { useState } from "react";
 import { usePhone } from "../../../store/store";
 
 export default function SelectedData(props: { show: boolean, data: GarageData, onExit: () => void }) {
-    const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
     const [locating, setLocating] = useState(false);
     const { setDynamicNoti } = usePhone();
-
-    const handleImageError = (category: string) => {
-        setImageErrors(prev => new Set(prev).add(category));
-    };
 
     const handleLocateVehicle = async () => {
         if (props.data.state === "Out") {
@@ -97,25 +92,18 @@ export default function SelectedData(props: { show: boolean, data: GarageData, o
                     justifyContent: 'center',
                     marginTop: '0.89vh',
                 }}>
-                    {!imageErrors.has(props.data.category)
-                        ? <Image
-                            onError={() => handleImageError(props.data.category)}
-                            src={`https://cdn.summitrp.gg/uploads/server/phone/${props.data.category?.toUpperCase()}.png`}
-                            alt="vehicle"
-                            width={180}
-                            height={180}
-                            style={{ borderRadius: '0.89vh' }}
-                        />
-                        :
-                        <Image
-                            onError={() => handleImageError(props.data.category)}
-                            src={`https://cdn.summitrp.gg/uploads/server/phone/SPORTS.png`}
-                            alt="vehicle"
-                            width={180}
-                            height={180}
-                            style={{ borderRadius: '0.89vh' }}
-                        />
-                    }
+                <Image
+                    src={`https://gta-assets.nopixel.net/images/showroom-vehicles/${props.data.name.toLowerCase()}.jpg`}
+                    alt="vehicle"
+                    width={180}
+                    height={180}
+                    style={{ borderRadius: '0.89vh' }} 
+                    /* 
+                        onError={(e) => {
+                            e.currentTarget.src = 'https://gta-assets.nopixel.net/images/sultan.jpg'; // Fallback image
+                        }}
+                    */
+                />
                 </div>
                 <div style={{
                     width: '100%',

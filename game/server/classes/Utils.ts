@@ -30,21 +30,109 @@ class Util {
     };
 
     async TransferNumbers() {
-        let newData: any[] = [];
-        MySQL.query('SELECT owner_id, phone_number FROM phone_phones', [], async (result: any[]) => {
-            result.forEach(async (phone: any) => {
-                const owner = phone.owner_id;
-                const number = phone.phone_number;
+        let newNumbers: any[] = [];
+        let newSettings: any[] = [];
+        let newCards: any[] = [];
 
-                newData.push({
-                    _id: generateUUid(),
-                    owner: owner,
-                    number: number
-                });
-            });
+        MySQL.query('SELECT citizenid, charinfo FROM players', [], async (result: any[]) => {
+            try {
+                for (const row of result) {
+                    const owner = row.citizenid;
+                    let charinfo = row.charinfo;
 
-            await MongoDB.insertMany('phone_numbers', newData);
-            LOGGER('Phone numbers have been transferred to MongoDB.');
+                    // parse if stored as JSON string
+                    if (typeof charinfo === 'string') {
+                        try {
+                            charinfo = JSON.parse(charinfo);
+                        } catch (e) {
+                            charinfo = {};
+                        }
+                    }
+
+                    // prefer charinfo.phone, fall back to phone_number
+                    const number = (charinfo && (charinfo.phone ?? charinfo.phone_number)) || null;
+                    if (!number) continue;
+
+                    // skip if phone number already exists for this owner
+                    const existing = await MongoDB.findOne('phone_numbers', { owner });
+                    if (existing) continue;
+
+                    newNumbers.push({
+                        _id: generateUUid(),
+                        owner,
+                        number
+                    });
+
+                    // prepare phone_settings if not present
+                    const existingSettings = await MongoDB.findOne('phone_settings', { _id: owner });
+                    if (!existingSettings) {
+                        newSettings.push({
+                            _id: owner,
+                            background: { current: '', wallpapers: [] },
+                            lockscreen: { current: '', wallpapers: [] },
+                            ringtone: {
+                                current: 'https://ignis-rp.com/uploads/server/phone/sounds/iPhoneXTrap.mp3',
+                                ringtones: [
+                                    {
+                                        name: 'default',
+                                        url: 'https://ignis-rp.com/uploads/server/phone/sounds/iPhoneXTrap.mp3',
+                                    }
+                                ],
+                            },
+                            showStartupScreen: true,
+                            showNotifications: true,
+                            isLock: true,
+                            lockPin: '',
+                            usePin: true,
+                            phoneNumber: number,
+                            useFaceId: false,
+                            faceIdIdentifier: owner,
+                            darkMailIdAttached: '',
+                            pigeonIdAttached: '',
+                            smrtId: '',
+                            smrtPassword: '',
+                            isFlightMode: false,
+                        });
+                    }
+
+                    // prepare phone_player_card if not present
+                    const existingCard = await MongoDB.findOne('phone_player_card', { _id: owner });
+                    if (!existingCard) {
+                        newCards.push({
+                            _id: owner,
+                            firstName: 'Setup',
+                            lastName: 'Card',
+                            phoneNumber: number,
+                            email: '',
+                            notes: '',
+                            avatar: '',
+                        });
+                    }
+                }
+
+                if (newNumbers.length > 0) {
+                    await MongoDB.insertMany('phone_numbers', newNumbers);
+                    LOGGER(`Inserted ${newNumbers.length} phone_numbers.`);
+                } else {
+                    LOGGER('No new phone_numbers to insert.');
+                }
+
+                if (newSettings.length > 0) {
+                    await MongoDB.insertMany('phone_settings', newSettings);
+                    LOGGER(`Inserted ${newSettings.length} phone_settings.`);
+                } else {
+                    LOGGER('No new phone_settings to insert.');
+                }
+
+                if (newCards.length > 0) {
+                    await MongoDB.insertMany('phone_player_card', newCards);
+                    LOGGER(`Inserted ${newCards.length} phone_player_card entries.`);
+                } else {
+                    LOGGER('No new phone_player_card entries to insert.');
+                }
+            } catch (err) {
+                LOGGER(`TransferNumbers error: ${err}`);
+            }
         });
     };
 
@@ -78,28 +166,65 @@ class Util {
     };
 
     async MigrateMultiJobData() {
-        const result: any = await this.query('SELECT * FROM summit_multijobs', []);
-        if (!result || result.length === 0) {
-            LOGGER('No multijobs found to transfer.');
-            return;
+        try {
+            const result: any = await this.query('SELECT id, jobname, employees FROM player_jobs', []);
+            if (!result || result.length === 0) {
+                LOGGER('No multijobs found to transfer.');
+                return;
+            }
+
+            const newData: any[] = [];
+
+            for (const row of result) {
+                try {
+                    const jobId = row.id;
+                    const jobName = row.jobname;
+                    if (!jobName) continue;
+
+                    let employees = row.employees;
+                    if (!employees) continue;
+
+                    if (typeof employees === 'string') {
+                        try {
+                            employees = JSON.parse(employees);
+                        } catch (err) {
+                            LOGGER(`Failed to parse employees JSON for job ${jobName} (id: ${jobId}): ${err}`);
+                            continue;
+                        }
+                    }
+
+                    if (!employees || typeof employees !== 'object' || Array.isArray(employees)) continue;
+
+                    for (const [key, emp] of Object.entries(employees)) {
+                        const cid = (emp && (emp.cid || emp.CID || emp.citizenId)) || key;
+                        const gradeLevel = (emp && (emp.grade ?? emp.gradeLevel ?? emp.rank)) ?? 0;
+
+                        const jobLabel = Framework?.Shared?.Jobs?.[jobName]?.label ?? jobName;
+                        const gradeLabel = Framework?.Shared?.Jobs?.[jobName]?.grades?.[gradeLevel]?.name ?? '';
+
+                        newData.push({
+                            _id: generateUUid(),
+                            citizenId: cid,
+                            jobName,
+                            gradeLevel,
+                            jobLabel,
+                            gradeLabel
+                        });
+                    }
+                } catch (innerErr) {
+                    LOGGER(`Error processing player_jobs row id ${row.id}: ${innerErr}`);
+                }
+            }
+
+            if (newData.length > 0) {
+                await MongoDB.insertMany('phone_multijobs', newData);
+                LOGGER(`Inserted ${newData.length} multijob entries to phone_multijobs.`);
+            } else {
+                LOGGER('No multijob entries found to insert after parsing.');
+            }
+        } catch (err) {
+            LOGGER(`MigrateMultiJobData error: ${err}`);
         }
-        let newData: any[] = [];
-        result.forEach(async (job: any) => {
-            console.log(`Processing multijob ${job.cid} of ${result.length}`);
-            const citizenId = job.cid;
-            const jobName = job.job;
-            const gradeLevel = job.grade;
-            newData.push({
-                _id: generateUUid(),
-                citizenId: citizenId,
-                jobName: jobName,
-                gradeLevel: gradeLevel,
-                jobLabel: Framework.Shared.Jobs[jobName].label,
-                gradeLabel: Framework.Shared.Jobs[jobName].grades[gradeLevel].name,
-            });
-        });
-        await MongoDB.insertMany('phone_multijobs', newData);
-        LOGGER('Multijobs have been transferred to MongoDB.');
     };
 
     async MigrateSocietyData() {
@@ -298,6 +423,43 @@ class Util {
             return false;
         }
     };
+    
+    async getJobs(citizenId: string) {
+        const jobs: Record<string, any> = {};
+        const employees: Record<string, Record<string, any>> = {};
+
+        // find all multijob entries for this citizen
+        const myEntries: any[] = await MongoDB.findMany('phone_multijobs', { citizenId });
+        if (!myEntries || myEntries.length === 0) return { jobs, employees };
+
+        // collect unique job names so we can fetch all employees for those jobs in one query
+        const jobNames = Array.from(new Set(myEntries.map(e => e.jobName)));
+
+        // build jobs map (one entry per job this cid has)
+        for (const e of myEntries) {
+            jobs[e.jobName] = {
+                citizenId: e.citizenId,
+                jobName: e.jobName,
+                gradeLevel: e.gradeLevel ?? 0,
+                jobLabel: e.jobLabel ?? Framework?.Shared?.Jobs?.[e.jobName]?.label ?? e.jobName,
+                gradeLabel: e.gradeLabel ?? Framework?.Shared?.Jobs?.[e.jobName]?.grades?.[e.gradeLevel]?.name ?? ''
+            };
+        }
+
+        // fetch all employees for the collected jobs and build employees map: { jobName: { cid: {...}, ... }, ... }
+        const allEmployees = await MongoDB.findMany('phone_multijobs', { jobName: { $in: jobNames } });
+        for (const entry of allEmployees) {
+            employees[entry.jobName] = employees[entry.jobName] || {};
+            employees[entry.jobName][entry.citizenId] = {
+                cid: entry.citizenId,
+                grade: entry.gradeLevel ?? 0,
+                gradeLabel: entry.gradeLabel ?? '',
+                jobLabel: entry.jobLabel ?? ''
+            };
+        }
+
+        return { jobs, employees };
+    }
 }
 
 export const Utils = new Util();

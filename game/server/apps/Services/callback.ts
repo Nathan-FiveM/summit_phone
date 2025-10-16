@@ -231,7 +231,7 @@ onClientCallback('summit_phone:server:businessCall', async (client: number, data
 });
 
 onClientCallback('summit_phone:server:getBankbalance', async (client, account) => {
-    const balance = await exports.summit_bank.GetBusinessAccountBalance(account);
+    const balance = await exports['Renewed-Banking'].getAccountMoney(account);
     return balance;
 });
 
@@ -242,7 +242,9 @@ onClientCallback('summit_phone:server:depositMoney', async (client, amount: numb
         return false;
     }
     await exports['qb-core'].RemoveMoney(client, 'bank', amount, "Phone Business App Deposit.");
-    await exports.summit_bank.AddMoneyToBusinessAccount(account, amount);
+    await exports['Renewed-Banking'].addAccountMoney(account, amount);
+    await exports['Renewed-Banking'].handleTransaction(account, "Phone Business App Deposit", amount, "Deposit", client, account, generateUUid())
+
     Logger.AddLog({
         type: 'phone_business',
         title: 'Money Deposited',
@@ -254,11 +256,13 @@ onClientCallback('summit_phone:server:depositMoney', async (client, amount: numb
 
 onClientCallback('summit_phone:server:withdrawMoney', async (client, amount: number) => {
     const account = await exports['qb-core'].GetPlayerJob(client);
-    const balance = await exports.summit_bank.GetBusinessAccountBalance(account);
+    const balance = await exports['Renewed-Banking'].getAccountMoney(account);
     if (balance < amount) {
         return false;
     }
-    await exports.summit_bank.RemoveMoneyFromBusinessAccount(account, amount);
+    await exports['Renewed-Banking'].removeAccountMoney(account, amount);
+    await exports['Renewed-Banking'].handleTransaction(account, "Phone Business App Withdraw", amount, "Withdraw", client, account, generateUUid())
+
     await exports['qb-core'].AddMoney(client, 'bank', amount, "Phone Business App Withdraw.");
     Logger.AddLog({
         type: 'phone_business',
@@ -274,7 +278,7 @@ onClientCallback('summit_phone:server:getEmployees', async (client, data: string
     const jobname = data;
     const Player = await exports['qb-core'].GetPlayer(src);
     if (!Player.PlayerData.job.isboss) {
-        return exports.summit_lib.BanPlayer(src, 'GetEmployees Exploiting', 'summit_lib');
+        return exports['ps-adminmenu'].BanPlayer(src, 'GetEmployees Exploiting', 'summit_phone');
     }
 
     const players: any = await Utils.query('SELECT citizenid, charinfo, job FROM players WHERE job LIKE ?', [`%${jobname}%`]);
@@ -392,7 +396,7 @@ onClientCallback('summit_phone:server:hireEmployee', async (client, targetSource
             timeout: 5000,
         }));
     }
-    if (await exports['qb-core'].DoesPlayerExist(targetSource)) {
+    if (await DoesPlayerExist(targetSource)) {
         const player = await exports['qb-core'].GetPlayer(client);
         if (!player.PlayerData.job.isboss) {
             Logger.AddLog({

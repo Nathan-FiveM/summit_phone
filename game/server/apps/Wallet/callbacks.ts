@@ -72,7 +72,7 @@ onClientCallback('transXAdqasddasdferMoney', async (client, data: string) => {
     if (!res) return false;
     const targetPlayer = await exports['qb-core'].GetPlayerByCitizenId(res.citizenId);
     const sourcePlayer = await exports['qb-core'].GetPlayer(client);
-    if (!await exports['qb-core'].DoesPlayerExist(targetPlayer.PlayerData.source)) return false;
+    if (!await DoesPlayerExist(targetPlayer.PlayerData.source)) return false;
     if (sourcePlayer.PlayerData.money.bank < amount) return false;
     if (await sourcePlayer.Functions.RemoveMoney('bank', amount)) {
         targetPlayer.Functions.AddMoney('bank', amount);
@@ -262,7 +262,9 @@ const depositToManagementSafe = async (receiverCitizenId: string, amount: number
         // TODO: Update this to your actual management resource API:
         // Common QBCore ecosystem uses qb-management: AddMoney(jobName, amount)
         if (jobName) {
-            exports['summit_bank'].AddMoneyToBusinessAccount(jobName, amount);
+            exports['Renewed-Banking'].addAccountMoney(jobName, amount);
+            exports['Renewed-Banking'].handleTransaction(jobName, "Phone Business Safe Deposit", amount, "Deposit", receiver, jobName, "deposit")
+
             return true;
         }
 

@@ -64,3 +64,17 @@ async function SendMailToAll(data: {
     return res;
 }
 exports('SendMailToAll', SendMailToAll);
+
+const GetJobs = async (citizenId: string) => {
+    if (!citizenId) return {};
+    const res = await Utils.getJobs(citizenId);
+    return res.jobs || {};
+};
+exports('getJobs', GetJobs);
+
+// Optional: return full result { jobs, employees }
+const GetJobsFull = async (citizenId: string) => {
+    if (!citizenId) return { jobs: {}, employees: {} };
+    return await Utils.getJobs(citizenId);
+};
+exports('getJobsFull', GetJobsFull);

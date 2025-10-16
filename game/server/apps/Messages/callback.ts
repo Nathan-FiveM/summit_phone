@@ -810,7 +810,7 @@ onClientCallback('phone_message:deleteMessage', async (client, data: string) => 
                 if (targetConversation) {
                     targetConversation.messages = targetConversation.messages.filter((msg: any) => Number(msg.page) !== Number(messageIndex));
                     await MongoDB.updateOne('phone_messages', { _id: targetMessages._id }, targetMessages);
-                    if (await exports['qb-core'].DoesPlayerExist(targetSource)) {
+                    if (await DoesPlayerExist(targetSource)) {
                         emitNet('phone_messages:client:updateMessages', Number(targetSource), JSON.stringify(targetMessages));
                     }
                 }

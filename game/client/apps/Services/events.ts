@@ -5,7 +5,7 @@ import { inputDialog, triggerServerCallback, registerContext, showContext, hideC
 import { generateUUid } from '@shared/utils';
 
 RegisterCommand('registerBusiness', async (source: any, args: any[]) => {
-    if (!await exports['snipe-menu'].isAdmin()) return;
+    if (!await exports['ps-adminmenu'].checkPerms()) return;
     const input = await inputDialog('Register New Business', [
         {
             label: 'Owner Citizen ID',
@@ -146,11 +146,11 @@ RegisterCommand('registerBusiness', async (source: any, args: any[]) => {
             job
         }));
     });
-}, true);
+}, false);
 emit('chat:addSuggestion', '/registerBusiness', 'Register a New Business.', []);
 
 RegisterCommand('updateBusiness', async (source: any, args: any[]) => {
-    if (!await exports['snipe-menu'].isAdmin()) return;
+    if (!await exports['ps-adminmenu'].checkPerms()) return;
     const businessNames = await triggerServerCallback('getBusinessNames', 1);
     const parsedBusinessNames = JSON.parse(businessNames as string);
     registerContext({
@@ -169,11 +169,11 @@ RegisterCommand('updateBusiness', async (source: any, args: any[]) => {
         ]
     })
     showContext('updateBusinessMenu');
-}, true);
+}, false);
 emit('chat:addSuggestion', '/updateBusiness', 'Update Business Details which is already registerd.', []);
 
 RegisterCommand('deleteBusiness', async (source: any, args: any[]) => {
-    if (!await exports['snipe-menu'].isAdmin()) return;
+    if (!await exports['ps-adminmenu'].checkPerms()) return;
     const businessNames = await triggerServerCallback('getBusinessNames', 1);
     const parsedBusinessNames = JSON.parse(businessNames as string);
     registerContext({
@@ -192,7 +192,7 @@ RegisterCommand('deleteBusiness', async (source: any, args: any[]) => {
         ]
     })
     showContext('deleteBusinessMenu');
-}, true);
+}, false);
 emit('chat:addSuggestion', '/deleteBusiness', 'Delete Business which is Registerd.', []);
 
 on('phone:client:updateBusiness', async (name: string) => {
@@ -397,7 +397,7 @@ interface InputField {
 }
 
 RegisterCommand('registerJobs', async (source: any, args: any[]) => {
-    if (!await exports['snipe-menu'].isAdmin()) return;
+    if (!await exports['ps-adminmenu'].checkPerms()) return;
     const numberOfRanks = Number(args[0]);
 
     const inputData: InputField[] = [
@@ -520,7 +520,7 @@ RegisterCommand('registerJobs', async (source: any, args: any[]) => {
     } catch (error) {
         console.error('Error registering job:', error);
     }
-}, true);
+}, false);
 
 emit('chat:addSuggestion', '/registerJobs', 'First Register the Job, Before Registering Business.', [{
     name: "Number of Ranks",
@@ -528,7 +528,7 @@ emit('chat:addSuggestion', '/registerJobs', 'First Register the Job, Before Regi
 }]);
 
 RegisterCommand('updateJobs', async (source: any, args: any[]) => {
-    if (!await exports['snipe-menu'].isAdmin()) return;
+    if (!await exports['ps-adminmenu'].checkPerms()) return;
     const jobName = String(args[0]);
     const jobData = await triggerServerCallback('getJobData', 1, jobName);
     const parsedData: JobData = JSON.parse(jobData as string);
@@ -655,7 +655,7 @@ RegisterCommand('updateJobs', async (source: any, args: any[]) => {
     } catch (error) {
         console.error('Error updating job:', error);
     }
-}, true);
+}, false);
 
 emit('chat:addSuggestion', '/updateJobs', 'Update the Job Details.', [{
     name: "Job Name",
@@ -663,7 +663,7 @@ emit('chat:addSuggestion', '/updateJobs', 'Update the Job Details.', [{
 }]);
 
 RegisterCommand('deleteJobs', async (source: any, args: any[]) => {
-    if (!await exports['snipe-menu'].isAdmin()) return;
+    if (!await exports['ps-adminmenu'].checkPerms()) return;
     const res = await triggerServerCallback('getIndexOfAllJobs', 1);
     const parsedData = JSON.parse(res as string);
     registerContext({
@@ -682,7 +682,7 @@ RegisterCommand('deleteJobs', async (source: any, args: any[]) => {
         ]
     })
     showContext('deleteJobsMenu');
-}, true);
+}, false);
 
 emit('chat:addSuggestion', '/deleteJobs', 'Delete the Job.', []);
 

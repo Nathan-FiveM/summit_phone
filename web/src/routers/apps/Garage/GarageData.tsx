@@ -33,11 +33,6 @@ export default function GarageApp(props: { onEnter: () => void, onExit: () => vo
         modBrakes: 0,
     });
 
-    // Handle image load error
-    const handleImageError = (category: string) => {
-        setImageErrors(prev => new Set(prev).add(category));
-    };
-
     const getStateColor = (state: string) => {
         switch (state) {
             case "Parked":
@@ -103,7 +98,7 @@ export default function GarageApp(props: { onEnter: () => void, onExit: () => vo
                     {garageData && garageData.filter(
                         (data) => data.brand.toLowerCase().includes(searchValue.toLowerCase()) || data.name.toLowerCase().includes(searchValue.toLowerCase()) || data.plate.toLowerCase().includes(searchValue.toLowerCase()) || data.state.toLowerCase().includes(searchValue.toLowerCase()) || data.category.toLowerCase().includes(searchValue.toLowerCase())
                     ).map((data, i) => {
-                        const hasImageError = imageErrors.has(data.category);
+                        const hasImageError = imageErrors.has(data.name);
                         return (
                             <div key={i} style={{
                                 width: '100%',
@@ -135,11 +130,21 @@ export default function GarageApp(props: { onEnter: () => void, onExit: () => vo
                                         }}>{data.state} - {data.garage}</div>
                                         <div style={{ fontSize: '1.07vh', width: '100%' }}>{data.category?.toUpperCase()}</div>
                                     </div>
-                                    {!hasImageError ? (
-                                        <Image onError={() => handleImageError(data.category)} src={`https://cdn.summitrp.gg/uploads/server/phone/${data.category?.toUpperCase()}.png`} alt="vehicle" width={80} height={80} style={{ borderRadius: '0.89vh', marginRight: '0.89vh' }} />
-                                    ) : (
-                                        <Image src={`https://cdn.summitrp.gg/uploads/server/phone/SPORTS.png`} alt="vehicle" width={80} height={80} style={{ borderRadius: '0.89vh', marginRight: '0.89vh' }} />
-                                    )}
+                                    
+                                    (
+                                        <Image 
+                                            src={`https://gta-assets.nopixel.net/images/showroom-vehicles/${data.name.toLowerCase()}.jpg`} 
+                                            alt="vehicle" 
+                                            width={80} 
+                                            height={80} 
+                                            style={{ borderRadius: '0.89vh', marginRight: '0.89vh' }}
+                                            /* 
+                                            onError={(e) => {
+                                                e.currentTarget.src = 'https://gta-assets.nopixel.net/images/sultan.jpg'; // Fallback image
+                                            }}
+                                            */
+                                        />
+                                    )
                                 </div>
                             </div>
                         )

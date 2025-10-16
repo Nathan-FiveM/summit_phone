@@ -27,7 +27,7 @@ onClientCallback('groups:changeJobOfPlayer', async (source: number, data: string
     if (!jobName) return false;
     const sourcePlayer = await exports['qb-core'].GetPlayer(source);
     if (!sourcePlayer) return false;
-    if (await exports.summit_lib.CheckJobGrade(jobName, String(grade))) {
+    if (await exports['qb-core'].CheckJobGrade(jobName, String(grade))) {
         sourcePlayer.Functions.SetJob(jobName, String(grade));
         emitNet('QBCore:Notify', source, `Job Changed to ${jobName} Successfully`, 'success');
         emitNet('groups:toggleDuty', Number(sourcePlayer.PlayerData.source));

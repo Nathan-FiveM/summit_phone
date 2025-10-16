@@ -1,3 +1,4 @@
+import { Utils } from "@client/classes/Utils";
 import { triggerServerCallback } from "@overextended/ox_lib/client";
 
 RegisterNuiCallbackType('getEmailMessages');
@@ -16,6 +17,13 @@ on('__cfx_nui:setSelectedMessage', async (data: string) => {
 
 RegisterNuiCallbackType('sendEmail');
 on('__cfx_nui:sendEmail', async (data: string) => {
+    const parsedData: { email: string, to: string, subject: string, message: string, images: string[] } = JSON.parse(data);
+    const { email, to, subject, message, images } = parsedData;
+    const res = await triggerServerCallback('summit_phone:sendEmail', 1, email, to, subject, message, images);
+    return res;
+});
+
+onNet('summit_phone:sendEmail', async (data: string) => {
     const parsedData: { email: string, to: string, subject: string, message: string, images: string[] } = JSON.parse(data);
     const { email, to, subject, message, images } = parsedData;
     const res = await triggerServerCallback('summit_phone:sendEmail', 1, email, to, subject, message, images);
