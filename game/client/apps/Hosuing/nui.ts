@@ -4,7 +4,7 @@ import { triggerServerCallback } from "@overextended/ox_lib/client";
 RegisterNuiCallbackType('getOwnedHouses');
 on('__cfx_nui:getOwnedHouses', async (data: string, cb: Function) => {
     const res = await triggerServerCallback('getOwnedHouses', 1);
-    cb(JSON.stringify(res));
+    cb(res);
 });
 
 RegisterNuiCallbackType('getKeyHolderNames');
@@ -17,7 +17,7 @@ RegisterNuiCallbackType('removeAccess');
 on('__cfx_nui:removeAccess', async (data: string, cb: Function) => {
     const { id, cid } = JSON.parse(data);
     emitNet('ps-housing:server:removeAccess', id, cid);
-    cb('Ok');
+    cb("Ok");
 });
 
 RegisterNuiCallbackType('setLocationOfHouse');
@@ -34,7 +34,7 @@ on('__cfx_nui:lockUnLockDoor', async (data: string, cb: Function) => {
 
 RegisterNuiCallbackType('giveAccess');
 on('__cfx_nui:giveAccess', async (data: string, cb: Function) => {
-    const { id, psrc } = JSON.parse(data);
-    emitNet('ps-housing:server:addAccess', id, psrc);
-    cb('Ok');
+    const { id, cid } = JSON.parse(data);
+    emitNet('ps-housing:server:addAccess', id, cid);
+    cb("Ok");
 });

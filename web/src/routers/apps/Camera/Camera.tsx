@@ -18,17 +18,22 @@ export default function Camera(props: { onExit: () => void; onEnter: () => void 
         const formData = new FormData();
         formData.append('file', dataURItoBlob(image), `screenshot.png`);
         const uploadUrl = 'https://ignis-rp.com/uploads/upload.php';
+        console.log('Uploading to:', uploadUrl);
+        console.log('FormData:', formData.get('file'));
+        // Upload the image
         const res = await fetch(uploadUrl, {
             method: 'POST',
             mode: 'cors',
             body: formData
         })
+        console.log('Upload response status:', res.status);
         const result = await res.json();
+        console.log('Upload result:', result);
         if (result.url) {
             fetchNui('saveimageToPhotos', result.url);
             return result.url
         }
-        return result.attachments[0].url;
+        return result.url;
     };
 
     return (

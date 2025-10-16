@@ -1,7 +1,6 @@
 import { onClientCallback } from "@overextended/ox_lib/server";
 import { Utils } from "@server/classes/Utils";
-import { Framework, Logger } from "@server/sv_main";
-import { generateUUid } from "@shared/utils";
+import { Logger } from "@server/sv_main";
 
 onClientCallback('getOwnedHouses', async (client) => {
     const player = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
