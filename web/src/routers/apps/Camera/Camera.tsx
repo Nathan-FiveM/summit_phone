@@ -11,29 +11,63 @@ export default function Camera(props: { onExit: () => void; onEnter: () => void 
     const localVideoRef = useRef<HTMLVideoElement>(null);
     const [selfiMode, setSelfiMode] = useState(false);
     const [loading, setLoading] = useState(false);
+    
     const handleCapture = async () => {
         setLoading(true);
-        const image = await MainRender.captureImage();
+        try {
+            const image = await MainRender.captureImage();
+            console.log('Image Data URI:', image.substring(0, 50));
 
-        const formData = new FormData();
-        formData.append('file', dataURItoBlob(image), `screenshot.png`);
-        const uploadUrl = 'https://ignis-rp.com/uploads/upload.php';
-        console.log('Uploading to:', uploadUrl);
-        console.log('FormData:', formData.get('file'));
-        // Upload the image
-        const res = await fetch(uploadUrl, {
-            method: 'POST',
-            mode: 'cors',
-            body: formData
-        })
-        console.log('Upload response status:', res.status);
-        const result = await res.json();
-        console.log('Upload result:', result);
-        if (result.url) {
-            fetchNui('saveimageToPhotos', result.url);
-            return result.url
+            // Convert WebP to PNG
+            const img = new Image();
+            img.src = image;
+            await new Promise((resolve) => { img.onload = resolve; });
+
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx?.drawImage(img, 0, 0);
+            const pngDataUrl = canvas.toDataURL('image/png');
+
+            const blob = dataURItoBlob(pngDataUrl);
+            console.log('Blob type:', blob.type, 'Size:', blob.size); // Should be image/png
+
+            const formData = new FormData();
+            formData.append('file', blob, 'screenshot.png');
+            console.log('FormData file:', formData.get('file'));
+
+            const uploadUrl = 'https://ignis-rp.com/uploads/upload.php';
+            console.log('Uploading to:', uploadUrl);
+
+            const res = await fetch(uploadUrl, {
+                method: 'POST',
+                mode: 'cors',
+                body: formData
+            });
+            console.log('Upload response status:', res.status);
+
+            if (!res.ok) {
+                const errorText = await res.text();
+                console.error('Upload error details:', errorText);
+                throw new Error(`Upload failed: ${res.status} ${errorText}`);
+            }
+
+            const result = await res.json();
+            console.log('Upload result:', result);
+
+            if (result.url) {
+                await fetchNui('saveimageToPhotos', result.url);
+                return result.url;
+            } else {
+                throw new Error('No URL returned from server');
+            }
+        } catch (error) {
+            console.error('Capture/upload error:', error);
+            throw error;
+        } finally {
+            setLoading(false);
         }
-        return result.url;
     };
 
     return (
