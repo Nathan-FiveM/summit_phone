@@ -74,7 +74,6 @@ onClientCallback('getBusinessData', async (client, data: string) => {
 });
 onClientCallback('getAllBusinessData', async (client, data: string) => {
     const businesses = await MongoDB.findMany('phone_business', {});
-    /* console.log(GlobalState[('%s:count'):format(job)]) */
     let onlineBuss = []
     let offlineBuss = []
     for (const business of businesses) {
@@ -236,7 +235,12 @@ onClientCallback('summit_phone:server:getBankbalance', async (client, account) =
 });
 
 onClientCallback('summit_phone:server:depositMoney', async (client, amount: number) => {
-    const account = await exports['qb-core'].GetPlayerJob(client);
+    
+    const src = client;
+    const Player = await exports['qb-core'].GetPlayer(src);
+    const PlayerJob = Player.PlayerData.job;
+    
+    const account = PlayerJob.name;
     const bankbalance = await exports['qb-core'].GetMoney(client, 'bank');
     if (bankbalance < amount) {
         return false;
@@ -255,7 +259,11 @@ onClientCallback('summit_phone:server:depositMoney', async (client, amount: numb
 });
 
 onClientCallback('summit_phone:server:withdrawMoney', async (client, amount: number) => {
-    const account = await exports['qb-core'].GetPlayerJob(client);
+    const src = client;
+    const Player = await exports['qb-core'].GetPlayer(src);
+    const PlayerJob = Player.PlayerData.job;
+    
+    const account = PlayerJob.name;
     const balance = await exports['Renewed-Banking'].getAccountMoney(account);
     if (balance < amount) {
         return false;
@@ -277,10 +285,12 @@ onClientCallback('summit_phone:server:getEmployees', async (client, data: string
     const src = client;
     const jobname = data;
     const Player = await exports['qb-core'].GetPlayer(src);
-    if (!Player.PlayerData.job.isboss) {
-        return exports['ps-adminmenu'].BanPlayer(src, 'GetEmployees Exploiting', 'summit_phone');
-    }
-
+    const isBoss = Player.PlayerData.job.isboss;
+    /*     
+        if (!isBoss) {
+            return exports['ps-adminmenu'].BanPlayer(src, 'GetEmployees Exploiting ', 'summit_phone');
+        }
+    */
     const players: any = await Utils.query('SELECT citizenid, charinfo, job FROM players WHERE job LIKE ?', [`%${jobname}%`]);
     const employees: any = [];
 
@@ -435,6 +445,7 @@ onClientCallback('summit_phone:server:hireEmployee', async (client, targetSource
             app: "services",
             timeout: 5000,
         }));
+        emit('summit_phone:server:hireinMultiJob', targetSource, jobname, 0, Framework.Shared.Jobs[jobname].label, Framework.Shared.Jobs[jobname].grades['0'].label);
         emitNet('summit_phone:client:refreshEmpData', client, jobname);
     } else {
         Logger.AddLog({

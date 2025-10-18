@@ -131,20 +131,20 @@ export default function GarageApp(props: { onEnter: () => void, onExit: () => vo
                                         <div style={{ fontSize: '1.07vh', width: '100%' }}>{data.category?.toUpperCase()}</div>
                                     </div>
                                     
-                                    (
-                                        <Image 
-                                            src={`https://gta-assets.nopixel.net/images/showroom-vehicles/${data.name.toLowerCase()}.jpg`} 
-                                            alt="vehicle" 
-                                            width={80} 
-                                            height={80} 
-                                            style={{ borderRadius: '0.89vh', marginRight: '0.89vh' }}
-                                            /* 
-                                            onError={(e) => {
-                                                e.currentTarget.src = 'https://gta-assets.nopixel.net/images/sultan.jpg'; // Fallback image
-                                            }}
-                                            */
-                                        />
-                                    )
+                                    
+                                    <Image 
+                                        src={`https://gta-assets.nopixel.net/images/showroom-vehicles/${data.name.toLowerCase()}.jpg`} 
+                                        alt="vehicle" 
+                                        width={80} 
+                                        height={80} 
+                                        style={{ borderRadius: '0.89vh', marginRight: '0.89vh' }}
+                                        /* 
+                                        onError={(e) => {
+                                            e.currentTarget.src = 'https://gta-assets.nopixel.net/images/sultan.jpg'; // Fallback image
+                                        }}
+                                        */
+                                    />
+                                    
                                 </div>
                             </div>
                         )

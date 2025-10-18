@@ -99,7 +99,7 @@ on('__cfx_nui:depositMoney', async (amount: number, cb: Function) => {
 
 RegisterNuiCallbackType('getEmployeesData');
 on('__cfx_nui:getEmployeesData', async (data: any, cb: Function) => {
-    const employees = await triggerServerCallback('summit_phone:server:getEmployees', 1, data);
+    const employees = await triggerServerCallback('summit_phone:server:getEmployees', 1, data, false);
     cb(employees);
 });
 

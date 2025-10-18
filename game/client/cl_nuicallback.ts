@@ -1,3 +1,4 @@
+import { FrameWork } from '@client/cl_main';
 import { generateUUid } from "@shared/utils";
 import { NUI } from "./classes/NUI";
 import { triggerServerCallback } from "@overextended/ox_lib/client";
@@ -107,43 +108,53 @@ RegisterNuiCallbackType('getMemberList');
 RegisterNuiCallbackType('removeGroupMember');
 RegisterNuiCallbackType('getSetupAppData');
 on('__cfx_nui:getPlayerData', async (data: any, cb: Function) => {
-  const res = await exports['summit_groups'].getPlayerData()
+  const res = await FrameWork.Functions.GetPlayerData()
+  /* const res = await exports['summit_groups'].getPlayerData() */
   cb(res)
 });
 on('__cfx_nui:groups:createGroup', async (data: any, cb: Function) => {
-  const res = await exports['summit_groups'].createGroup(data)
+  const res = false
+  /* const res = await exports['summit_groups'].createGroup(data) */
   cb(res)
 });
 on('__cfx_nui:getGroupData', async (data: any, cb: Function) => {
-  const res = await exports['summit_groups'].getGroupData()
+  const res = false
+  /* const res = await exports['summit_groups'].getGroupData() */
   cb(res)
 });
 on('__cfx_nui:getGroupJobSteps', async (data: any, cb: Function) => {
-  const res = await exports['summit_groups'].getGroupJobSteps()
+  const res = false
+  /* const res = await exports['summit_groups'].getGroupJobSteps() */
   cb(res)
 });
 on('__cfx_nui:getSetupAppData', async (data: any, cb: Function) => {
-  const res = await exports['summit_groups'].getSetupAppData()
+  const res = false
+  /* const res = await exports['summit_groups'].getSetupAppData() */
   cb(res)
 });
 on('__cfx_nui:joinGroup', async (data: any, cb: Function) => {
-  const res = await exports['summit_groups'].joinGroup(data)
+  const res = false
+  /* const res = await exports['summit_groups'].joinGroup(data) */
   cb(res)
 });
 on('__cfx_nui:leaveGroupx', async (data: any, cb: Function) => {
-  const res = await exports['summit_groups'].leaveGroup(data)
+  const res = false
+  /* const res = await exports['summit_groups'].leaveGroup(data) */
   cb(res)
 });
 on('__cfx_nui:deleteGroup', async (data: any, cb: Function) => {
-  const res = await exports['summit_groups'].deleteGroup()
+  const res = false
+  /* const res = await exports['summit_groups'].deleteGroup() */
   cb(res)
 });
 on('__cfx_nui:getMemberList', async (data: any, cb: Function) => {
-  const res = await exports['summit_groups'].getMemberList()
+  const res = false
+  /* const res = await exports['summit_groups'].getMemberList() */
   cb(res)
 });
 on('__cfx_nui:removeGroupMember', async (data: any, cb: Function) => {
-  const res = await exports['summit_groups'].removeGroupMember(data)
+  const res = false
+  /* const res = await exports['summit_groups'].removeGroupMember(data) */
   cb(res)
 });
 

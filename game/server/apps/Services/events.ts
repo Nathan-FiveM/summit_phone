@@ -76,6 +76,23 @@ onNet('summit_phone:server:changeRankOfPlayer', async (data: any) => {
             app: "services",
             timeout: 5000,
         }));
+        if (multiJob) {
+            await MongoDB.updateOne('phone_multijobs', { citizenId: data.targetCitizenid, jobName: data.jobName }, { gradeLevel: data.key, gradeLabel: data.gradeName });
+            Logger.AddLog({
+                type: 'phone_multi_job',
+                title: 'Multi-Job Updated',
+                message: `${data.targetCitizenid} has been updated to ${data.jobName} | New Rank: ${data.gradeName} by ${await exports['qb-core'].GetPlayerName(source)} | citizenId: ${exports['qb-core'].GetPlayerCitizenIdBySource(source)}`,
+                showIdentifiers: false
+            });
+        } else {
+            await MongoDB.insertOne('phone_multijobs', { _id: generateUUid(), citizenId: data.targetCitizenid, jobName: data.jobName, gradeLevel: data.key, gradeLabel: data.gradeName });
+            Logger.AddLog({
+                type: 'phone_multi_job',
+                title: 'Multi-Job Added',
+                message: `${data.targetCitizenid} has been added to ${data.jobName} | New Rank: ${data.gradeName} by ${await exports['qb-core'].GetPlayerName(source)} | citizenId: ${exports['qb-core'].GetPlayerCitizenIdBySource(source)}`,
+                showIdentifiers: false
+            });
+        }
         emitNet('summit_phone:client:refreshEmpData', source, jobname);
         Logger.AddLog({
             type: 'phone_employee_action',
@@ -130,11 +147,20 @@ onNet('summit_phone:server:fireInactiveEmployee', async (data: { jobName: string
 });
 
 on('summit_phone:server:hireinMultiJob', async (client: string, jobname: string, gradeLevel: number, jobLabel: string, gradeLabel: string) => {
+    console.log('Hiring in multi job:', jobname, gradeLevel, jobLabel, gradeLabel);
     const targetCid = await exports['qb-core'].GetPlayerCitizenIdBySource(client);
     const multiJobCheck = await MongoDB.findOne('phone_multijobs', { citizenId: targetCid, jobName: jobname });
     if (multiJobCheck) {
         if (multiJobCheck.gradeLevel !== gradeLevel) {
             await MongoDB.updateOne('phone_multijobs', { citizenId: targetCid, jobName: jobname }, { gradeLevel, gradeLabel });
+            emitNet('phone:addnotiFication', client, JSON.stringify({
+                id: generateUUid(),
+                title: "System",
+                description: `You have been hired in a new rank: ${gradeLabel}`,
+                app: "services",
+                timeout: 5000,
+            }));
+            emitNet('summit_phone:client:refreshEmpData', client, jobname);
             Logger.AddLog({
                 type: 'phone_multi_job',
                 title: 'Multi-Job Updated',
@@ -145,7 +171,15 @@ on('summit_phone:server:hireinMultiJob', async (client: string, jobname: string,
             return emitNet('QBCore:Notify', client, 'You are already in this job with this grade level', 'error');
         }
     } else {
-        await MongoDB.insertOne('phone_multijobs', { _id: generateUUid(), citizenId: targetCid, jobName: jobname, gradeLevel, jobLabel, gradeLabel });
+        await MongoDB.insertOne('phone_multijobs', { _id: generateUUid(), citizenId: targetCid, jobName: jobname,  gradeLevel: gradeLevel, jobLabel: jobLabel, gradeLabel: gradeLabel });
+        emitNet('phone:addnotiFication', client, JSON.stringify({
+            id: generateUUid(),
+            title: "System",
+            description: `You have been hired in a new job: ${jobLabel} as ${gradeLabel}`,
+            app: "services",
+            timeout: 5000,
+        }));
+        emitNet('summit_phone:client:refreshEmpData', client, jobname);
         Logger.AddLog({
             type: 'phone_multi_job',
             title: 'Multi-Job Added',
@@ -172,5 +206,5 @@ setImmediate(async () => {
         LOGGER(`[SUMMIT_PHONE] Created job ${_id} Successfully`);
         jobArray[_id] = rest;
     });
-    const [updated, message] = exports['qb-core'].AddJobs(jobArray);
+    /* const [updated, message] = exports['qb-core'].AddJobs(jobArray); */
 }); 

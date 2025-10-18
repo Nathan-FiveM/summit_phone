@@ -31,6 +31,7 @@ dependencies {
 
 server_scripts {
     'build/server.js',
+    'build/server.lua',
 }
 
 client_scripts {

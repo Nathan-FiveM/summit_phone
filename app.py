@@ -56,6 +56,6 @@ def scan_and_convert(directory):
                     print(f"Updated: {filepath}")
 
 if __name__ == "__main__":
-    project_dir = "F:/Summit/server-data/resources/[summit]/summit_phone/resources/web"  # change this to your project path
+    project_dir = "C:/Users/Nathan/Desktop/IgnisRP/QB/data/resources/[phone]/summit_phone/resources/web"  # change this to your project path
     scan_and_convert(project_dir)
     print("✅ Conversion complete!")

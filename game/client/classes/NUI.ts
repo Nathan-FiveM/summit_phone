@@ -13,7 +13,6 @@ export class NU {
 
     public async init() {
         RegisterCommand('openphone', async () => {
-            console.log('Opening Phone');
             const state = LocalPlayer.state;
             if (state.onPhone) {
                 this.closeUI();
@@ -22,14 +21,12 @@ export class NU {
             };
             if (this.shouldNotOpen) return;
             const phoneItem = await Utils.GetPhoneItem();
-            console.log('Detected phone item:', phoneItem);
             if (Utils.phoneList.includes(phoneItem)) {
                 this.openUI(`prop_aphone_${phoneItem.split('_')[0]}`);
             }
         }, false);
 
         RegisterCommand('phoneopen', async () => {
-            console.log('Opening Phone');
             const state = LocalPlayer.state;
             if (state.onPhone) {
                 this.closeUI();
@@ -38,7 +35,6 @@ export class NU {
             };
             if (this.shouldNotOpen) return;
             const phoneItem = await Utils.GetPhoneItem();
-            console.log('Detected phone item:', phoneItem);
             if (Utils.phoneList.includes(phoneItem)) {
                 this.openUI(`prop_aphone_${phoneItem.split('_')[0]}`);
             }

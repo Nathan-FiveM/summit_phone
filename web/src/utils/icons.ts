@@ -279,9 +279,9 @@ export const fullIconsDetails = [
     }, */
     {
         icon: groupsIcon,
-        name: 'Groups',
+        name: 'Job Center',
         link: 'groups',
-        description: 'A place where you can create or join groups.',
+        description: 'A place where you can create or join groups & jobs.',
         id: 12,
     },
     {

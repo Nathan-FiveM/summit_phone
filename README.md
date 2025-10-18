@@ -100,6 +100,40 @@ exports['summit_phone']:sendNotification({
 })
 
 -- Send action notification with buttons
+jsonString = ({
+    id: _id,
+    title: "Incoming Call",
+    description: `${sourceName} is calling you`,
+    app: "phone",
+    icons: {
+      "0": {
+        icon: "https://ignis-rp.com/uploads/red.svg",
+        isServer: true,
+        event: "phone:server:declineCall",
+        args: JSON.stringify({
+          callId,
+          targetSource,
+          sourceName,
+          targetName,
+          callerSource: source,
+          databaseTableId: _id,
+        }),
+      },
+      "1": {
+        icon: "https://ignis-rp.com/uploads/green.svg",
+        isServer: true,
+        event: "phone:server:acceptCall",
+        args: JSON.stringify({
+          callId,
+          targetSource,
+          sourceName: targetName,
+          targetName: sourceName,
+          callerSource: source,
+          databaseTableId: _id,
+        }),
+      },
+    },
+  })
 exports['summit_phone']:sendActionNotification(jsonString)
 ```
 
@@ -411,16 +445,34 @@ end
 exports('GetPlayerCitizenIdBySource', QBCore.Functions.getPlayerCitizenIdBySource)
 ```
 
-Add this function to 
+Add these functions to 
 ``qb-core/server/player.lua``
 ```lua
-function QBCore.Player.GetPlayerName(source)
-    if QBCore.Players[source] then
-        return QBCore.Players[source].PlayerData.name
+function QBCore.Player.GetPlayerCharName(source)
+    local player = QBCore.Players[source]
+    if not player or not player.PlayerData then return nil end
+
+    local charinfo = player.PlayerData.charinfo or {}
+    if charinfo.firstname or charinfo.lastname then
+        return (charinfo.firstname or '') .. ' ' .. (charinfo.lastname or '')
+    else
+        return player.PlayerData.name
     end
-    return nil
+
 end
-exports('GetPlayerName', QBCore.Player.GetPlayerName)
+exports('GetPlayerName', QBCore.Player.GetPlayerCharName)
+
+function QBCore.Functions.CheckJobGrade(job, grade)
+    local jobInfo = QBCore.Shared.Jobs[job]
+    if jobInfo then
+        local sgrade = tostring(grade)
+        if jobInfo["grades"][sgrade] then
+            return true
+        end
+    end
+    return false
+end
+exports('CheckJobGrade', QBCore.Functions.CheckJobGrade)
 ```
 Find the function
 ``QBCore.Functions.CreatePhoneNumber()``
@@ -428,7 +480,18 @@ Remove all code and add this line
 ```lua
 exports['summit_phone']:GeneratePlayerPhoneNumber(PlayerData.citizenid)
 ```
-
+Find the Functio QBCore.Functions.GetPlayer()
+Replace with the following;
+```lua
+function QBCore.Functions.GetPlayer(source)
+    if type(source) == 'number' then
+        return QBCore.Players[source]
+    else
+        return QBCore.Players[QBCore.Functions.GetSource(source)]
+    end
+end
+exports('GetPlayer', QBCore.Functions.GetPlayer)
+```
 In qb-smallresources add the following function;
 ```lua
 function AddLog(type, title, message, showIdentifiers, tagEveryone)
