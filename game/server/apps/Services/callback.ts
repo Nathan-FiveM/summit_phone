@@ -238,21 +238,23 @@ onClientCallback('summit_phone:server:depositMoney', async (client, amount: numb
     
     const src = client;
     const Player = await exports['qb-core'].GetPlayer(src);
+    const fullname = await exports['qb-core'].GetPlayerName(src);
+    const cid = Player.PlayerData.citizenid;
     const PlayerJob = Player.PlayerData.job;
-    
     const account = PlayerJob.name;
-    const bankbalance = await exports['qb-core'].GetMoney(client, 'bank');
+    const bankbalance = await Player.PlayerData.money.bank;
     if (bankbalance < amount) {
         return false;
     }
-    await exports['qb-core'].RemoveMoney(client, 'bank', amount, "Phone Business App Deposit.");
+    await Player.Functions.RemoveMoney('bank', amount, "Phone Business App Deposit.");
     await exports['Renewed-Banking'].addAccountMoney(account, amount);
-    await exports['Renewed-Banking'].handleTransaction(account, "Phone Business App Deposit", amount, "Deposit", client, account, generateUUid())
+    await exports['Renewed-Banking'].handleTransaction(cid, "Phone Business App Withdraw", amount, `Sent funds to ${PlayerJob.label}`, account, fullname, "withdraw", generateUUid())
+    await exports['Renewed-Banking'].handleTransaction(account, "Phone Business App Deposit", amount, "Deposit", fullname, account, "deposit", generateUUid())
 
     Logger.AddLog({
         type: 'phone_business',
         title: 'Money Deposited',
-        message: `Player ${exports['qb-core'].GetPlayerName(client)} deposited $${amount} to account ${account}.`,
+        message: `Player ${fullname} deposited $${amount} to account ${account}.`,
         showIdentifiers: false
     });
     return true;
@@ -261,21 +263,23 @@ onClientCallback('summit_phone:server:depositMoney', async (client, amount: numb
 onClientCallback('summit_phone:server:withdrawMoney', async (client, amount: number) => {
     const src = client;
     const Player = await exports['qb-core'].GetPlayer(src);
+    const fullname = await exports['qb-core'].GetPlayerName(src);
+    const cid = Player.PlayerData.citizenid;
     const PlayerJob = Player.PlayerData.job;
-    
     const account = PlayerJob.name;
     const balance = await exports['Renewed-Banking'].getAccountMoney(account);
     if (balance < amount) {
         return false;
     }
+    await Player.Functions.AddMoney(client, 'bank', amount, "Phone Business App Withdraw.");
     await exports['Renewed-Banking'].removeAccountMoney(account, amount);
-    await exports['Renewed-Banking'].handleTransaction(account, "Phone Business App Withdraw", amount, "Withdraw", client, account, generateUUid())
+    await exports['Renewed-Banking'].handleTransaction(cid, "Phone Business App Withdraw", amount, `Recieved funds from ${PlayerJob.label}`, account, fullname, "deposit", generateUUid())
+    await exports['Renewed-Banking'].handleTransaction(account, "Phone Business App Withdraw", amount, "Withdraw", account, fullname, "withdraw", generateUUid())
 
-    await exports['qb-core'].AddMoney(client, 'bank', amount, "Phone Business App Withdraw.");
     Logger.AddLog({
         type: 'phone_business',
         title: 'Money Withdrawn',
-        message: `Player ${exports['qb-core'].GetPlayerName(client)} withdrew $${amount} from account ${account}.`,
+        message: `Player ${fullname} withdrew $${amount} from account ${account}.`,
         showIdentifiers: false
     });
     return true;

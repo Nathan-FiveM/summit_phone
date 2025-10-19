@@ -258,12 +258,14 @@ const depositToManagementSafe = async (receiverCitizenId: string, amount: number
     try {
         const receiver = await getPlayerByCitizenId(receiverCitizenId);
         const jobName: string | undefined = receiver?.PlayerData?.job?.name;
-
+        const PlayerName = receiver ? `${receiver.PlayerData.charinfo.firstname} ${receiver.PlayerData.charinfo.lastname}` : 'Unknown';
         // TODO: Update this to your actual management resource API:
         // Common QBCore ecosystem uses qb-management: AddMoney(jobName, amount)
         if (jobName) {
             exports['Renewed-Banking'].addAccountMoney(jobName, amount);
-            exports['Renewed-Banking'].handleTransaction(jobName, "Phone Business Safe Deposit", amount, "Deposit", receiver, jobName, "deposit")
+            /* exports['Renewed-Banking'].handleTransaction(account, title, amount, message, issuer, receiver, transType, transID) */
+            exports['Renewed-Banking'].handleTransaction(jobName, "Phone Business App Deposit", amount, "Deposit from employee to management safe.", jobName, PlayerName, 'deposit', generateUUid())
+            exports['Renewed-Banking'].handleTransaction(jobName, "Phone Business App Deposit", amount, "Deposited to management safe.", PlayerName, jobName, 'withdraw', generateUUid())
 
             return true;
         }

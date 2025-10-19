@@ -97,7 +97,7 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                     app: 'groups',
                     page: {
                         ...location.page,
-                        groups: 'groups'
+                        groups: 'jobs'
                     }
                 });
             }}
@@ -328,7 +328,7 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                         position: 'absolute',
                         zIndex: 1,
                     }}>
-                        <div style={{ width: '90%', marginTop: '3.56vh', letterSpacing: '0.12vh' }}><Title title="Jobs" /></div>
+                        <div style={{ width: '90%', marginTop: '3.56vh', letterSpacing: '0.12vh' }}><Title title="Job Center" /></div>
                         <Searchbar value={searchValue} onChange={(e) => {
                             setSearchValue(e);
                         }} mt="0.53vh" />

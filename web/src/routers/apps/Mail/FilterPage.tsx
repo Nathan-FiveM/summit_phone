@@ -221,7 +221,7 @@ export default function FilterPage(props: { show: boolean, inboxCount: number, d
                                 lineHeight: 'normal',
                                 letterSpacing: '0.09vh'
                             }}>
-                                Edit You Profile
+                                Edit Your Profile
                             </div>
                             <div style={{
                                 display: 'flex',
