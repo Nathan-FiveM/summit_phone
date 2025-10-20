@@ -3193,7 +3193,7 @@ onClientCallback("summit_phone:server:withdrawMoney", async (client, amount) => 
   if (balance < amount) {
     return false;
   }
-  await Player.Functions.AddMoney(client, "bank", amount, "Phone Business App Withdraw.");
+  await Player.Functions.AddMoney("bank", amount, "Phone Business App Withdraw.");
   await exports["Renewed-Banking"].removeAccountMoney(account, amount);
   await exports["Renewed-Banking"].handleTransaction(cid, "Phone Business App Withdraw", amount, `Recieved funds from ${PlayerJob.label}`, account, fullname, "deposit", generateUUid());
   await exports["Renewed-Banking"].handleTransaction(account, "Phone Business App Withdraw", amount, "Withdraw", account, fullname, "withdraw", generateUUid());
@@ -5841,6 +5841,7 @@ on("QBCore:Server:OnPlayerUnload", async (src) => {
 });
 on("playerDropped", async () => {
   const src = global.source;
+  if (!src) return;
   const citizenId = await exports["qb-core"].GetPlayerCitizenIdBySource(src);
   if (!citizenId) return;
   await Settings.SavePlayerSettings(citizenId);

@@ -118,18 +118,15 @@ onNet('phone:client:setupPhone', async (citizenId: string) => {
 });
 
 onNet('QBCore:Player:SetPlayerData', (data: any) => {
-    if (data.metadata.isko || data.metadata.isdead) {
+    if (data.metadata.isko || data.metadata.isdead || data.metadata.ishandcuffed) {
         if (LocalPlayer.state.onPhone) {
             NUI.closeUI();
             CloseAndToggleDisablePhone(true);
         } else {
             ToggleDisablePhone(true);
         }
-    } else if (!data.metadata.isko && !data.metadata.isdead) {
-        if (LocalPlayer.state.onPhone) {
-            NUI.closeUI();
-            CloseAndToggleDisablePhone(false);
-        } else {
+    } else if (!data.metadata.isko || !data.metadata.isdead || !data.metadata.ishandcuffed) {
+        if (!LocalPlayer.state.onPhone) {
             ToggleDisablePhone(false);
         }
     }
