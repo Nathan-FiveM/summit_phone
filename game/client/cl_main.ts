@@ -117,16 +117,37 @@ onNet('phone:client:setupPhone', async (citizenId: string) => {
     NUI.sendReactMessage('setSettings', response);
 });
 
+let lastUpdate = 0;
+const debounceDelay = 1000; // 1 second
+
 onNet('QBCore:Player:SetPlayerData', (data: any) => {
-    if (data.metadata.isko || data.metadata.isdead || data.metadata.ishandcuffed) {
+    const currentTime = Date.now();
+    if (currentTime - lastUpdate < debounceDelay) {
+        console.log('Debouncing QBCore:Player:SetPlayerData');
+        return;
+    }
+    lastUpdate = currentTime;
+
+    const metadata = data.metadata || {};
+    const isRestricted = (metadata.isko === true || metadata.isdead === true || metadata.ishandcuffed === true);
+    const notRestricted = (metadata.isko === false || metadata.isdead === false || metadata.ishandcuffed === false);
+    
+    if (isRestricted) {
         if (LocalPlayer.state.onPhone) {
-            NUI.closeUI();
-            CloseAndToggleDisablePhone(true);
+            console.log('Closing phone UI due to restricted state');
+            setTimeout(() => {
+                if (LocalPlayer.state.onPhone) {
+                    NUI.closeUI();
+                    CloseAndToggleDisablePhone(true);
+                }
+            }, 1000);
         } else {
+            console.log('Disabling phone due to restricted state');
             ToggleDisablePhone(true);
         }
-    } else if (!data.metadata.isko || !data.metadata.isdead || !data.metadata.ishandcuffed) {
+    } if (notRestricted)  {
         if (!LocalPlayer.state.onPhone) {
+            console.log('Enabling phone as player is not restricted');
             ToggleDisablePhone(false);
         }
     }

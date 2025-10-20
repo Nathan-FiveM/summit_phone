@@ -12,20 +12,6 @@ export class NU {
     public disableSelectedControls = false;
 
     public async init() {
-        RegisterCommand('openphone', async () => {
-            const state = LocalPlayer.state;
-            if (state.onPhone) {
-                this.closeUI();
-                this.sendReactMessage('toggleCloseClear', "ok")
-                return;
-            };
-            if (this.shouldNotOpen) return;
-            const phoneItem = await Utils.GetPhoneItem();
-            if (Utils.phoneList.includes(phoneItem)) {
-                this.openUI(`prop_aphone_${phoneItem.split('_')[0]}`);
-            }
-        }, false);
-
         RegisterCommand('phoneopen', async () => {
             const state = LocalPlayer.state;
             if (state.onPhone) {
