@@ -37,6 +37,9 @@ import notiSettings from "../../images/notiIcons/Settings.svg?url";
 import notiWallet from "../../images/notiIcons/Wallet.svg?url";
 import notiLoveLink from "../../images/notiIcons/LoveLink.svg?url";
 
+import cryptoIcon from "../../images/icons/Crypto.svg?url";
+import notiCrypto from "../../images/notiIcons/Crypto.svg?url";  // Or use a placeholder like notiWallet
+
 export const icons = [
     {
         icon: mailIcon,
@@ -171,7 +174,8 @@ export const iconList = [
     /* 'pixie', */
     'groups',
     'heartsync',
-    'services'
+    'services',
+    'crypto'
 ]
 
 export const deleleteIgnoreiconList = [
@@ -183,6 +187,7 @@ export const deleleteIgnoreiconList = [
     'Phone',
     'Message',
     'Settings',
+    'Crypto',
 ]
 
 export const fullIconsDetails = [
@@ -316,6 +321,13 @@ export const fullIconsDetails = [
         link: 'services',
         description: 'Usually Business owners loves this app.',
         id: 17,
+    },
+    {
+        icon: cryptoIcon,
+        name: 'Crypto',
+        link: 'crypto',
+        description: 'Manage your crypto: buy, sell, transfer, and view balances.',
+        id: 18, 
     }
 ]
 
@@ -405,6 +417,8 @@ export const notiIcons = (icon: string) => {
             return notiWallet;
         case 'heartsync':
             return notiLoveLink; // Using LoveLink icon as placeholder
+        case 'crypto':
+            return notiCrypto
         default:
             return "";
     }

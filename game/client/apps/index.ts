@@ -23,3 +23,5 @@ import "./Wallet/callbacks";
 import "./Groups/nui";
 import "./Groups/callback";
 import "./HeartSync/nui";
+import "./Crypto/nui";
+import "./Crypto/callbacks";

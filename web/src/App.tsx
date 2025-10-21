@@ -40,6 +40,7 @@ import GarageApp from './routers/apps/Garage/GarageData';
 import Wallet from './routers/apps/Wallet/Wallet';
 import Groups from './routers/apps/Groups/Groups';
 import HeartSync from './routers/apps/HeartSync/HeartSync';
+import Crypto from './routers/apps/Crypto/Crypto';
 
 debugData([
   {
@@ -160,6 +161,7 @@ export default function App() {
   const [groupsEnter, setGroupsEnter] = useState(false);
   const [loveLinkEnter, setLoveLinkEnter] = useState(false);
   const [heartSyncEnter, setHeartSyncEnter] = useState(false);
+  const [cryptoEnter, setCryptoEnter] = useState(false);
 
   return (
     <div style={{
@@ -333,6 +335,9 @@ export default function App() {
             setHeartSyncEnter(false);
           }} />
         </div>
+        <div className='fuckerMessager' style={{ visibility: cryptoEnter ? 'visible' : 'hidden' }}>
+          <Crypto onEnter={() => setCryptoEnter(true)} onExit={() => setCryptoEnter(false)} />
+        </div>
         <div className="backButton" onClick={() => {
           if (location.app !== '') {
             setLocation({
@@ -357,6 +362,7 @@ export default function App() {
                 pixie: location.page.pixie,
                 groups: location.page.groups,
                 heartsync: location.page.heartsync,
+                crypto: location.page.crypto,
               }
             });
           } else {
