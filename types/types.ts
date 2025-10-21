@@ -271,6 +271,7 @@ type WalletAccount = {
     cardPin: number;
     bankAccount: string;
     balance: number;
+    casino: number;
 }
 
 type InvoiceData = {

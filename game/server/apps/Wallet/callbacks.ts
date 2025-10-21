@@ -28,7 +28,8 @@ onClientCallback('wallet:login', async (source: number) => {
     if (res) {
         return JSON.stringify({
             ...res,
-            balance: await citizenId.PlayerData.money.bank
+            balance: await citizenId.PlayerData.money.bank,
+            casino: await citizenId.PlayerData.money.casino
         });
     } else {
         const name = await exports['qb-core'].GetPlayerName(source);
@@ -47,7 +48,8 @@ onClientCallback('wallet:login', async (source: number) => {
         await MongoDB.insertOne('phone_bank_user', data);
         return JSON.stringify({
             ...data,
-            balance: citizenId.PlayerData.money.bank
+            balance: citizenId.PlayerData.money.bank,
+            casino: citizenId.PlayerData.money.casino
         });
     }
 });

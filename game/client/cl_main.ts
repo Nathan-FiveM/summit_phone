@@ -138,6 +138,7 @@ onNet('QBCore:Player:SetPlayerData', (data: any) => {
             setTimeout(() => {
                 if (LocalPlayer.state.onPhone) {
                     NUI.closeUI();
+                    NUI.sendReactMessage('toggleCloseClear', "ok");
                     CloseAndToggleDisablePhone(true);
                 }
             }, 1000);
