@@ -1,135 +1,330 @@
 import { useRef, useState, useEffect } from "react";
 import { CSSTransition } from "react-transition-group";
+import {
+  Autocomplete,
+  Button,
+  Card,
+  Group,
+  Loader,
+  NumberInput,
+  Select,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
 import { usePhone } from "../../../store/store";
-import { Autocomplete, Avatar, Button, Checkbox, NumberFormatter, NumberInput, Select, Textarea, Transition } from "@mantine/core";
 import { fetchNui } from "../../../hooks/fetchNui";
-import { PhoneContacts } from "../../../../../types/types";
 import { useNuiEvent } from "../../../hooks/useNuiEvent";
-import Navigation from "./Navigation";
-import { useLocalStorage } from "@mantine/hooks";
+import { PhoneContacts } from "../../../../../types/types";
 
-export default function Crypto(props: { onEnter: () => void, onExit: () => void }) {
-    const nodeRef = useRef(null);
-    const { location, phoneSettings, setLocation } = usePhone();
-    const [cryptoBalances, setCryptoBalances] = useState({ shung: 0, gne: 0, xcoin: 0, lme: 0 });
-    const [contacts, setContacts] = useState<PhoneContacts[]>([]);
-    const [formData, setFormData] = useState({ type: '', amount: 0, target: '', price: 1 });
-    const [loading, setLoading] = useState(false);
+interface CryptoBalances {
+  shung: number;
+  gne: number;
+  xcoin: number;
+  lme: number;
+}
 
-    useNuiEvent('updateCrypto', (data: { type: string; amount: number; action: 'add' | 'remove' }) => {
-        setCryptoBalances(prev => ({
-            ...prev,
-            [data.type]: data.action === 'add' ? prev[data.type as keyof typeof prev] + data.amount : prev[data.type as keyof typeof prev] - data.amount,
-        }));
-    });
+const themeColors = {
+  background: "#0E0E0E",
+  card: "#1A1A1A",
+  input: "#303030",
+  label: "#FFA726",
+  text: "#FFFFFF",
+  secondaryText: "#CFCFCF",
+  buttonBuy: "#FFA726",
+  buttonSell: "#E53935",
+  buttonTransfer: "#757575",
+  borderGlow: "#FFA72633",
+  hoverGlow: "#FFA72655",
+};
 
-    const fetchBalances = async () => {
-        const res = await fetchNui<string>('crypto:getBalances');
-        if (res && typeof res === 'string') {
-            try {
-                setCryptoBalances(JSON.parse(res));
-            } catch (error) {
-                console.error('Failed to parse crypto balances:', error);
-            }
-        }
-    };
+export default function Crypto(props: { onEnter: () => void; onExit: () => void }) {
+  const nodeRef = useRef<HTMLDivElement>(null);
+  const { location } = usePhone();
+
+  const [cryptoBalances, setCryptoBalances] = useState<CryptoBalances>({
+    shung: 0,
+    gne: 0,
+    xcoin: 0,
+    lme: 0,
+  });
+  const [contacts, setContacts] = useState<PhoneContacts[]>([]);
+  const [formData, setFormData] = useState({ type: "", amount: 0, price: 1, target: "" });
+  const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true);
+
+  const cryptoPrices: Record<string, number> = {
+    shung: 50,
+    gne: 100,
+    xcoin: 150,
+    lme: 200,
+  };
+
+  const [totalValue, setTotalValue] = useState(0);
+
+  const updateBalances = async () => {
+    setFetching(true);
+    const res = await fetchNui<string>("crypto:getBalances");
+    if (res) {
+      try {
+        setCryptoBalances(JSON.parse(res));
+      } catch (err) {
+        console.error("Failed to parse crypto balances:", err);
+      }
+    }
+    setFetching(false);
+  };
+
+  useNuiEvent("updateCrypto", (data: { type: string; amount: number; action: "add" | "remove" }) => {
+    setCryptoBalances((prev) => ({
+      ...prev,
+      [data.type]:
+        data.action === "add"
+          ? prev[data.type as keyof typeof prev] + data.amount
+          : prev[data.type as keyof typeof prev] - data.amount,
+    }));
+  });
+
+  useEffect(() => {
+    updateBalances();
 
     const fetchContacts = async () => {
-        const res = await fetchNui<string>('getContacts');
-        if (res && typeof res === 'string') {
-            try {
-                setContacts(JSON.parse(res));
-            } catch (error) {
-                console.error('Failed to parse contacts:', error);
-            }
+      const res = await fetchNui<string>("getContacts");
+      if (res) {
+        try {
+          setContacts(JSON.parse(res));
+        } catch (err) {
+          console.error("Failed to parse contacts:", err);
         }
+      }
     };
 
-    useEffect(() => {
-        fetchBalances();
-        fetchContacts();
-    }, []);
+    fetchContacts();
+  }, []);
 
-    const handleBuy = async () => {
-        if (!formData.type || formData.amount <= 0 || formData.price <= 0) return;
-        setLoading(true);
-        const res = await fetchNui<boolean>('crypto:buy', JSON.stringify(formData));
-        setLoading(false);
-        if (res) {
-            fetchNui('showNoti', { app: 'crypto', title: 'Crypto Success', description: 'Bought crypto!' });
-            fetchBalances();
-        } else {
-            fetchNui('showNoti', { app: 'crypto', title: 'Crypto Error', description: 'Failed to buy!' });
-        }
-    };
+  useEffect(() => {
+    if (location.app === "crypto") {
+      updateBalances();
+    }
+  }, [location.app]);
 
-    const handleSell = async () => {
-        if (!formData.type || formData.amount <= 0 || formData.price <= 0) return;
-        setLoading(true);
-        const res = await fetchNui<boolean>('crypto:sell', JSON.stringify(formData));
-        setLoading(false);
-        if (res) {
-            fetchNui('showNoti', { app: 'crypto', title: 'Crypto Success', description: 'Sold crypto!' });
-            fetchBalances();
-        } else {
-            fetchNui('showNoti', { app: 'crypto', title: 'Crypto Error', description: 'Failed to sell!' });
-        }
-    };
+  useEffect(() => {
+    if (formData.type && cryptoPrices[formData.type]) {
+      setTotalValue(formData.amount * cryptoPrices[formData.type]);
+    } else {
+      setTotalValue(0);
+    }
+  }, [formData.type, formData.amount]);
 
-    const handleTransfer = async () => {
-        if (!formData.type || formData.amount <= 0 || !formData.target) return;
-        setLoading(true);
-        const res = await fetchNui<boolean>('crypto:transfer', JSON.stringify(formData));
-        setLoading(false);
-        if (res) {
-            fetchNui('showNoti', { app: 'crypto', title: 'Crypto Success', description: 'Transferred crypto!' });
-            fetchBalances();
-        } else {
-            fetchNui('showNoti', { app: 'crypto', title: 'Crypto Error', description: 'Failed to transfer!' });
-        }
-    };
+  const handleTypeChange = (value: string | null) => {
+    const price = value && cryptoPrices[value] ? cryptoPrices[value] : 1;
+    setFormData({ ...formData, type: value || "", price });
+  };
 
-    const page = location.page.crypto || 'home';
+  const doTransaction = async (eventName: string, successMsg: string, failMsg: string) => {
+    if (!formData.type || formData.amount <= 0) return;
+    setLoading(true);
+    const res = await fetchNui<boolean>(eventName, JSON.stringify(formData));
+    setLoading(false);
+    if (res) {
+      fetchNui("showNoti", { app: "crypto", title: "Crypto Success", description: successMsg });
+      setFormData({ ...formData, amount: 0, target: "" });
+      await updateBalances();
+    } else {
+      fetchNui("showNoti", { app: "crypto", title: "Crypto Error", description: failMsg });
+    }
+  };
 
-    return (
-        <CSSTransition nodeRef={nodeRef} in={true} timeout={250} classNames="swipeinleft" appear unmountOnExit onEnter={onEnter} onExit={onExit}>
-            <div ref={nodeRef} className="fuckerMessager">
-                {page === 'home' && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1vh', marginTop: '5vh' }}>
-                        <NumberFormatter prefix="SHUNG: " value={cryptoBalances.shung} thousandSeparator />
-                        <NumberFormatter prefix="GNE: " value={cryptoBalances.gne} thousandSeparator />
-                        <NumberFormatter prefix="XCOIN: " value={cryptoBalances.xcoin} thousandSeparator />
-                        <NumberFormatter prefix="LME: " value={cryptoBalances.lme} thousandSeparator />
-                    </div>
-                )}
-                {page === 'buy' && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1vh', marginTop: '5vh' }}>
-                        <Select data={["shung", "gne", "xcoin", "lme"]} value={formData.type} onChange={(v) => setFormData({ ...formData, type: v || '' })} placeholder="Select Crypto" />
-                        <NumberInput value={formData.amount} onChange={(v) => setFormData({ ...formData, amount: Number(v) })} placeholder="Amount" min={1} />
-                        <NumberInput value={formData.price} onChange={(v) => setFormData({ ...formData, price: Number(v) })} placeholder="Price per Unit" min={1} />
-                        <Button onClick={handleBuy} loading={loading}>Buy</Button>
-                    </div>
-                )}
-                {page === 'sell' && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1vh', marginTop: '5vh' }}>
-                        <Select data={["shung", "gne", "xcoin", "lme"]} value={formData.type} onChange={(v) => setFormData({ ...formData, type: v || '' })} placeholder="Select Crypto" />
-                        <NumberInput value={formData.amount} onChange={(v) => setFormData({ ...formData, amount: Number(v) })} placeholder="Amount" min={1} />
-                        <NumberInput value={formData.price} onChange={(v) => setFormData({ ...formData, price: Number(v) })} placeholder="Price per Unit" min={1} />
-                        <Button onClick={handleSell} loading={loading}>Sell</Button>
-                    </div>
-                )}
-                {page === 'transfer' && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1vh', marginTop: '5vh' }}>
-                        <Select data={["shung", "gne", "xcoin", "lme"]} value={formData.type} onChange={(v) => setFormData({ ...formData, type: v || '' })} placeholder="Select Crypto" />
-                        <NumberInput value={formData.amount} onChange={(v) => setFormData({ ...formData, amount: Number(v) })} placeholder="Amount" min={1} />
-                        <Autocomplete placeholder="Target Phone" data={contacts.map(c => c.contactNumber)} value={formData.target} onChange={(v) => setFormData({ ...formData, target: v })} />
-                        <Button onClick={handleTransfer} loading={loading}>Transfer</Button>
-                    </div>
-                )}
-                {page !== '' && (
-                    <Navigation location={page} onClick={(e) => setLocation({ app: 'crypto', page: { ...location.page, crypto: e } })} />
-                )}
-            </div>
-        </CSSTransition>
+  const handleBuy = () =>
+    doTransaction(
+      "crypto:buy",
+      `Bought ${formData.amount} ${formData.type.toUpperCase()} for $${totalValue}`,
+      "Failed to buy!"
     );
+
+  const handleSell = () =>
+    doTransaction(
+      "crypto:sell",
+      `Sold ${formData.amount} ${formData.type.toUpperCase()} for $${totalValue}`,
+      "Failed to sell!"
+    );
+
+  const handleTransfer = () =>
+    doTransaction(
+      "crypto:transfer",
+      `Transferred ${formData.amount} ${formData.type.toUpperCase()} to ${formData.target}`,
+      "Failed to transfer!"
+    );
+
+  return (
+    <CSSTransition
+      nodeRef={nodeRef}
+      in={location.app === "crypto"}
+      timeout={450}
+      classNames="enterandexitfromtop"
+      unmountOnExit
+      mountOnEnter
+      onEntering={props.onEnter}
+      onExited={props.onExit}
+    >
+      <div
+        ref={nodeRef}
+        style={{
+          backgroundColor: themeColors.background,
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          padding: "2vh 1.5vh",
+          color: themeColors.text,
+          overflowY: "auto",
+        }}
+      >
+        <Title order={3} style={{ textAlign: "center", marginBottom: "1.5vh", color: themeColors.label }}>
+          Crypto Wallet
+        </Title>
+
+        {fetching ? (
+          <div style={{ height: "70%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Loader color={themeColors.label} />
+          </div>
+        ) : (
+          <>
+            {/* Crypto Cards */}
+            <Group justify="center" gap="sm" style={{ flexWrap: "wrap" }}>
+              {Object.entries(cryptoBalances)
+                .sort(([aKey], [bKey]) => (cryptoPrices[aKey] || 0) - (cryptoPrices[bKey] || 0))
+                .map(([key, value]) => (
+                  <Card
+                    key={key}
+                    shadow="sm"
+                    radius="md"
+                    style={{
+                      backgroundColor: themeColors.card,
+                      border: `1px solid ${themeColors.borderGlow}`,
+                      minWidth: "40%",
+                      margin: "0.5vh",
+                      textAlign: "center",
+                      transition: "transform 0.2s, box-shadow 0.2s",
+                    }}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLDivElement).style.transform = "scale(1.05)";
+                      (e.currentTarget as HTMLDivElement).style.boxShadow = `0 0 10px ${themeColors.hoverGlow}`;
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLDivElement).style.transform = "scale(1)";
+                      (e.currentTarget as HTMLDivElement).style.boxShadow = "none";
+                    }}
+                  >
+                    <Text fw={600} fz="1.6vh" c={themeColors.label}>
+                      {key.toUpperCase()}
+                    </Text>
+                    <Text fz="2vh" c={themeColors.label}>
+                      {value}
+                    </Text>
+                    <Text fz="1.2vh" c={themeColors.secondaryText}>
+                      ${cryptoPrices[key]}
+                    </Text>
+                  </Card>
+                ))}
+            </Group>
+
+            {/* Actions */}
+            <Card radius="md" p="1.5vh" style={{ backgroundColor: themeColors.card }}>
+              <Stack gap="1.5vh">
+                <Select
+                  label="Crypto Type"
+                  placeholder="Select type"
+                  data={Object.keys(cryptoBalances)}
+                  value={formData.type}
+                  onChange={handleTypeChange}
+                  styles={{
+                    input: {
+                      backgroundColor: themeColors.input,
+                      color: themeColors.text,
+                      borderRadius: "0.5vh",
+                      "::placeholder": { color: themeColors.secondaryText }, // ✅ correct
+                    },
+                    label: { color: themeColors.label },
+                  }}
+                />
+
+                <NumberInput
+                  label="Amount"
+                  value={formData.amount}
+                  onChange={(value: number | "") =>
+                    setFormData({ ...formData, amount: typeof value === "number" ? value : 0 })
+                  }
+                  min={0}
+                  styles={{
+                    input: {
+                      backgroundColor: themeColors.input,
+                      color: themeColors.text,
+                      borderRadius: "0.5vh",
+                      "::placeholder": { color: themeColors.secondaryText }, // ✅ correct
+                    },
+                    label: { color: themeColors.label },
+                  }}
+                />
+
+                <Text fz="1.5vh" mt="0.5vh" c={themeColors.label}>
+                  Total Value: ${totalValue.toFixed(2)}
+                </Text>
+
+                <Autocomplete
+                  label="Transfer Target"
+                  placeholder="Phone Number"
+                  value={formData.target}
+                  onChange={(value) => setFormData({ ...formData, target: value })}
+                  data={contacts.map((c) => c.contactNumber.toString())}
+                  styles={{
+                    input: {
+                      backgroundColor: themeColors.input,
+                      color: themeColors.text,
+                      borderRadius: "0.5vh",
+                      "::placeholder": { color: themeColors.secondaryText }, // ✅ correct
+                    },
+                    label: { color: themeColors.label },
+                  }}
+                />
+
+                <Group grow>
+                  {[
+                    { label: "Buy", color: themeColors.buttonBuy, onClick: handleBuy },
+                    { label: "Sell", color: themeColors.buttonSell, onClick: handleSell },
+                    { label: "Transfer", color: themeColors.buttonTransfer, onClick: handleTransfer },
+                  ].map((btn) => (
+                    <Button
+                      key={btn.label}
+                      color={btn.color}
+                      onClick={btn.onClick}
+                      loading={loading}
+                      disabled={
+                        !formData.type ||
+                        formData.amount <= 0 ||
+                        (btn.label === "Transfer" && !formData.target)
+                      }
+                      style={{
+                        transition: "transform 0.15s, box-shadow 0.15s",
+                      }}
+                      onMouseEnter={(e) => {
+                        (e.currentTarget as HTMLButtonElement).style.transform = "scale(1.05)";
+                        (e.currentTarget as HTMLButtonElement).style.boxShadow = `0 0 10px ${themeColors.hoverGlow}`;
+                      }}
+                      onMouseLeave={(e) => {
+                        (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)";
+                        (e.currentTarget as HTMLButtonElement).style.boxShadow = "none";
+                      }}
+                    >
+                      {btn.label}
+                    </Button>
+                  ))}
+                </Group>
+              </Stack>
+            </Card>
+          </>
+        )}
+      </div>
+    </CSSTransition>
+  );
 }
