@@ -15,7 +15,6 @@ import {
 import { usePhone } from "../../../store/store";
 import { fetchNui } from "../../../hooks/fetchNui";
 import { useNuiEvent } from "../../../hooks/useNuiEvent";
-import { PhoneContacts } from "../../../../../types/types";
 
 interface CryptoBalances {
   shung: number;
@@ -48,7 +47,6 @@ export default function Crypto(props: { onEnter: () => void; onExit: () => void 
     xcoin: 0,
     lme: 0,
   });
-  const [contacts, setContacts] = useState<PhoneContacts[]>([]);
   const [formData, setFormData] = useState({ type: "", amount: 0, price: 1, target: "" });
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
@@ -84,24 +82,6 @@ export default function Crypto(props: { onEnter: () => void; onExit: () => void 
           : prev[data.type as keyof typeof prev] - data.amount,
     }));
   });
-
-  useEffect(() => {
-    updateBalances();
-
-    const fetchContacts = async () => {
-      const res = await fetchNui<string>("getContacts");
-      if (res) {
-        try {
-          setContacts(JSON.parse(res));
-        } catch (err) {
-          console.error("Failed to parse contacts:", err);
-        }
-      }
-    };
-
-    fetchContacts();
-  }, []);
-
   useEffect(() => {
     if (location.app === "crypto") {
       updateBalances();
@@ -271,22 +251,25 @@ export default function Crypto(props: { onEnter: () => void; onExit: () => void 
                   Total Value: ${totalValue.toFixed(2)}
                 </Text>
 
-                <Autocomplete
+                <NumberInput
                   label="Transfer Target"
-                  placeholder="Phone Number"
-                  value={formData.target}
-                  onChange={(value) => setFormData({ ...formData, target: value })}
-                  data={contacts.map((c) => c.contactNumber.toString())}
+                  placeholder="Server ID"
+                  value={formData.target ? Number(formData.target) : undefined}
+                  onChange={(value) =>
+                    setFormData({ ...formData, target: value ? value.toString() : "" })
+                  }
+                  min={0}
                   styles={{
                     input: {
                       backgroundColor: themeColors.input,
                       color: themeColors.text,
                       borderRadius: "0.5vh",
-                      "::placeholder": { color: themeColors.secondaryText }, // ✅ correct
+                      "::placeholder": { color: themeColors.secondaryText },
                     },
                     label: { color: themeColors.label },
                   }}
                 />
+
 
                 <Group grow>
                   {[
