@@ -504,6 +504,11 @@ function SetJobDuty(identifier, onDuty)
 end
 ```
 
+``qbx_core/client/character.lua``
+Around line 448 add a new line and add the following
+```lua
+TriggerEvent('phone:client:setupPhone', character.citizenid)
+```
 
 Find the function
 ``qbx_core/server/player.lua  -  GenerateUniqueIdentifier('PhoneNumber')``

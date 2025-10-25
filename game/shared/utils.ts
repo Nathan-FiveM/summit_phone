@@ -17,6 +17,6 @@ export const LOGGER = (message: string) => {
     return console.log(`\x1b[1m\x1b[47m\x1b[34m[Summit_Phone] \x1b[4m\x1b[31m${message}\x1b[0m`)
 }
 
-export const FRAMEWORK_RESOURCE = 'qb-core'; // Change this to your framework core qb-core/qbx-core
+export const FRAMEWORK_RESOURCE = 'qb-core'; // Change this to your framework core qb-core/qbx_core
 export type InventoryType = 'lj-inventory' | 'ox_inventory' | 'qb-inventory';
 export const INVENTORY_RESOURCE: InventoryType = 'lj-inventory'; // Change this to your inventory system ox_inventory/qb-inventory/lj-inventory etc...
