@@ -387,7 +387,7 @@ export default function MessageDetails() {
                                                     groupId: conversationType === 'group' ? identifier : undefined,
                                                 };
                                                 const res: any = await fetchNui('deleteMessage', JSON.stringify(payload));
-                                                console.log(res);
+                                                /* console.log(res); */
                                                 try {
                                                     const parsed = JSON.parse(res);
                                                     if (parsed?.success) {

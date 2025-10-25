@@ -236,7 +236,7 @@ onClientCallback("summit_phone:server:call", async (source: number, data: string
     },
   }));
 
-  console.log(source, "Calling", targetSource, targetName, _id);
+  /* console.log(source, "Calling", targetSource, targetName, _id); */
   emitNet("summit_phone:server:addCallinginterface", source, JSON.stringify({
     callId,
     targetSource,
@@ -256,7 +256,7 @@ onClientCallback("summit_phone:server:call", async (source: number, data: string
 onNet("summit_phone:server:declineCall", async (data: string) => {
   const source = global.source as number;
   const { callId, targetSource, callerSource, databaseTableId } = JSON.parse(data);
-  console.log(source, "Declining call", callId, targetSource, callerSource, databaseTableId);
+  /* console.log(source, "Declining call", callId, targetSource, callerSource, databaseTableId); */
   callManager.declineInvitation(callId, targetSource);
   const call = callManager.getCallByPlayer(callerSource);
   if (call) {

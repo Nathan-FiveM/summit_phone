@@ -199,7 +199,7 @@ export default function Housing(props: { onExit: () => void; onEnter: () => void
                         }} onClick={async () => {
                             setSelectedApartment(apartment);
                             const data: any = await fetchNui('getKeyHolderNames', apartment.property_id);
-                            console.log(JSON.stringify(data, null, 2));
+                            /* console.log(JSON.stringify(data, null, 2)); */
                             setAccessNames(data);
                         }}>
                             <div style={{

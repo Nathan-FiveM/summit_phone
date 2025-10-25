@@ -3,6 +3,7 @@ import { Utils } from "@server/classes/Utils";
 import { Framework, Logger, MongoDB } from "@server/sv_main";
 import { generateUUid } from "@shared/utils";
 import { DateTime } from 'luxon';
+import { FRAMEWORK_RESOURCE } from "../../../shared/utils"; // adjust path as needed
 
 onClientCallback('crypto:getBalances', async (source: number) => {
     const player = Framework.Functions.GetPlayer(source);
@@ -20,7 +21,7 @@ onClientCallback('crypto:buy', async (source: number, data: string) => {
     if (player.PlayerData.money.bank < totalCost) return false;
     
     if (player.Functions.RemoveMoney('bank', totalCost)) {
-        exports['qb-core'].AddCrypto(source, type, amount);
+        exports[FRAMEWORK_RESOURCE].AddCrypto(source, type, amount);
         Logger.AddLog({
             type: 'crypto_buy',
             title: 'Crypto Buy',
@@ -37,9 +38,9 @@ onClientCallback('crypto:sell', async (source: number, data: string) => {
     const player = Framework.Functions.GetPlayer(source);
     if (!player || !["shung", "gne", "xcoin", "lme"].includes(type)) return false;
     
-    if (!exports['qb-core'].hasEnough(source, type, amount)) return false;
+    if (!exports[FRAMEWORK_RESOURCE].hasEnough(source, type, amount)) return false;
     
-    exports['qb-core'].RemoveCrypto(source, type, amount);
+    exports[FRAMEWORK_RESOURCE].RemoveCrypto(source, type, amount);
     player.Functions.AddMoney('bank', amount * price);
     Logger.AddLog({
         type: 'crypto_sell',
@@ -55,7 +56,7 @@ onClientCallback('crypto:transfer', async (source: number, data: string) => {
     const sourcePlayer = Framework.Functions.GetPlayer(source);
     if (!sourcePlayer || !["shung", "gne", "xcoin", "lme"].includes(type)) return false;
     
-    if (!exports['qb-core'].hasEnough(source, type, amount)) return false;
+    if (!exports[FRAMEWORK_RESOURCE].hasEnough(source, type, amount)) return false;
     
     // Assume target is phone number to get citizenId
     const targetCitizenId = await Utils.GetCitizenIdByPhoneNumber(target);
@@ -64,8 +65,8 @@ onClientCallback('crypto:transfer', async (source: number, data: string) => {
     const targetPlayer = Framework.Functions.GetPlayerByCitizenId(targetCitizenId);
     if (!targetPlayer) return false;
     
-    exports['qb-core'].RemoveCrypto(source, type, amount);
-    exports['qb-core'].AddCrypto(targetPlayer.PlayerData.source, type, amount);
+    exports[FRAMEWORK_RESOURCE].RemoveCrypto(source, type, amount);
+    exports[FRAMEWORK_RESOURCE].AddCrypto(targetPlayer.PlayerData.source, type, amount);
     
     emitNet('phone:addnotiFication', source, JSON.stringify({
         id: generateUUid(),

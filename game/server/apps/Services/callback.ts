@@ -2,6 +2,7 @@ import { onClientCallback, triggerClientCallback } from "@overextended/ox_lib/se
 import { Utils } from "@server/classes/Utils";
 import { MongoDB, Logger, Framework } from "@server/sv_main";
 import { generateUUid, LOGGER } from "@shared/utils";
+import { FRAMEWORK_RESOURCE } from "../../../shared/utils"; // adjust path as needed
 
 onClientCallback('RegisterNewBusiness', async (client, data: string) => {
     const {
@@ -24,7 +25,7 @@ onClientCallback('RegisterNewBusiness', async (client, data: string) => {
         Logger.AddLog({
             type: 'phone_business',
             title: 'Business Registration Failed',
-            message: `Attempt to register business with existing name '${businessName}' by Player: ${exports['qb-core'].GetPlayerName(client)}`,
+            message: `Attempt to register business with existing name '${businessName}' by Player: ${exports[FRAMEWORK_RESOURCE].GetPlayerName(client)}`,
             showIdentifiers: false
         });
         return emitNet('phone:addnotiFication', client, JSON.stringify({
@@ -63,7 +64,7 @@ onClientCallback('RegisterNewBusiness', async (client, data: string) => {
     Logger.AddLog({
         type: 'phone_business',
         title: 'Business Registered',
-        message: `New business '${businessName}' registered by Player: ${exports['qb-core'].GetPlayerName(client)}`,
+        message: `New business '${businessName}' registered by Player: ${exports[FRAMEWORK_RESOURCE].GetPlayerName(client)}`,
         showIdentifiers: false
     });
 });
@@ -112,7 +113,7 @@ onClientCallback('UpdateBusiness', async (client, data: string) => {
         Logger.AddLog({
             type: 'phone_business',
             title: 'Business Update Failed',
-            message: `Attempt to update non-existent business '${selectedBusiness}' by Player: ${exports['qb-core'].GetPlayerName(client)}`,
+            message: `Attempt to update non-existent business '${selectedBusiness}' by Player: ${exports[FRAMEWORK_RESOURCE].GetPlayerName(client)}`,
             showIdentifiers: false
         });
         return emitNet('phone:addnotiFication', client, JSON.stringify({
@@ -140,7 +141,7 @@ onClientCallback('UpdateBusiness', async (client, data: string) => {
     Logger.AddLog({
         type: 'phone_business',
         title: 'Business Updated',
-        message: `Business '${selectedBusiness}' updated by Player: ${exports['qb-core'].GetPlayerName(client)}`,
+        message: `Business '${selectedBusiness}' updated by Player: ${exports[FRAMEWORK_RESOURCE].GetPlayerName(client)}`,
         showIdentifiers: false
     });
 });
@@ -151,7 +152,7 @@ onClientCallback('deleteBusiness', async (client, data: string) => {
         Logger.AddLog({
             type: 'phone_business',
             title: 'Business Deletion Failed',
-            message: `Attempt to delete non-existent business '${data}' by Player: ${exports['qb-core'].GetPlayerName(client)}`,
+            message: `Attempt to delete non-existent business '${data}' by Player: ${exports[FRAMEWORK_RESOURCE].GetPlayerName(client)}`,
             showIdentifiers: false
         });
         return emitNet('phone:addnotiFication', client, JSON.stringify({
@@ -167,13 +168,13 @@ onClientCallback('deleteBusiness', async (client, data: string) => {
     Logger.AddLog({
         type: 'phone_business',
         title: 'Business Deleted',
-        message: `Business '${data}' deleted by Player: ${exports['qb-core'].GetPlayerName(client)}`,
+        message: `Business '${data}' deleted by Player: ${exports[FRAMEWORK_RESOURCE].GetPlayerName(client)}`,
         showIdentifiers: false
     });
 });
 
 onClientCallback('summit_phone:server:toggleJobCalls', async (client) => {
-    const player = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);;
+    const player = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);;
     const PlayerData = await MongoDB.findOne('phone_business_users', { citizenid: player });
     if (!PlayerData) {
         await MongoDB.insertOne('phone_business_users', { citizenid: player, jobCalls: true });
@@ -184,7 +185,7 @@ onClientCallback('summit_phone:server:toggleJobCalls', async (client) => {
 });
 
 onClientCallback('summit_phone:server:getJobCalls', async (client) => {
-    const player = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
+    const player = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
     const PlayerData = await MongoDB.findOne('phone_business_users', { citizenid: player });
     if (!PlayerData) {
         await MongoDB.insertOne('phone_business_users', { citizenid: player, jobCalls: true });
@@ -237,8 +238,8 @@ onClientCallback('summit_phone:server:getBankbalance', async (client, account) =
 onClientCallback('summit_phone:server:depositMoney', async (client, amount: number) => {
     
     const src = client;
-    const Player = await exports['qb-core'].GetPlayer(src);
-    const fullname = await exports['qb-core'].GetPlayerName(src);
+    const Player = await exports[FRAMEWORK_RESOURCE].GetPlayer(src);
+    const fullname = await exports[FRAMEWORK_RESOURCE].GetPlayerName(src);
     const cid = Player.PlayerData.citizenid;
     const PlayerJob = Player.PlayerData.job;
     const account = PlayerJob.name;
@@ -262,8 +263,8 @@ onClientCallback('summit_phone:server:depositMoney', async (client, amount: numb
 
 onClientCallback('summit_phone:server:withdrawMoney', async (client, amount: number) => {
     const src = client;
-    const Player = await exports['qb-core'].GetPlayer(src);
-    const fullname = await exports['qb-core'].GetPlayerName(src);
+    const Player = await exports[FRAMEWORK_RESOURCE].GetPlayer(src);
+    const fullname = await exports[FRAMEWORK_RESOURCE].GetPlayerName(src);
     const cid = Player.PlayerData.citizenid;
     const PlayerJob = Player.PlayerData.job;
     const account = PlayerJob.name;
@@ -288,7 +289,7 @@ onClientCallback('summit_phone:server:withdrawMoney', async (client, amount: num
 onClientCallback('summit_phone:server:getEmployees', async (client, data: string) => {
     const src = client;
     const jobname = data;
-    const Player = await exports['qb-core'].GetPlayer(src);
+    const Player = await exports[FRAMEWORK_RESOURCE].GetPlayer(src);
     const isBoss = Player.PlayerData.job.isboss;
     /*     
         if (!isBoss) {
@@ -310,7 +311,7 @@ onClientCallback('summit_phone:server:getEmployees', async (client, data: string
             continue;
         }
 
-        const isOnline = await exports['qb-core'].GetPlayerByCitizenId(data.citizenid);
+        const isOnline = await exports[FRAMEWORK_RESOURCE].GetPlayerByCitizenId(data.citizenid);
         if (isOnline && isOnline.PlayerData.job.name === jobname) {
             employees.push({
                 empSource: isOnline.PlayerData.citizenid,
@@ -343,7 +344,7 @@ onClientCallback('summit_phone:server:getEmployees', async (client, data: string
                 continue;
             }
 
-            const isOnline = await exports['qb-core'].GetPlayerByCitizenId(multiJob.citizenId);
+            const isOnline = await exports[FRAMEWORK_RESOURCE].GetPlayerByCitizenId(multiJob.citizenId);
             if (!isOnline) {
                 const playerData: any = await Utils.query('SELECT charinfo, job FROM players WHERE citizenid = ?', [multiJob.citizenId]);
                 if (!playerData || playerData.length === 0) {
@@ -399,7 +400,7 @@ onClientCallback('summit_phone:server:hireEmployee', async (client, targetSource
         Logger.AddLog({
             type: 'phone_business',
             title: 'Hire Failed',
-            message: `Attempt to hire self Name: ${exports['qb-core'].GetPlayerName(client)}, in Job: ${jobname}`,
+            message: `Attempt to hire self Name: ${exports[FRAMEWORK_RESOURCE].GetPlayerName(client)}, in Job: ${jobname}`,
             showIdentifiers: false
         });
         return emitNet('phone:addnotiFication', client, JSON.stringify({
@@ -411,12 +412,12 @@ onClientCallback('summit_phone:server:hireEmployee', async (client, targetSource
         }));
     }
     if (await DoesPlayerExist(targetSource)) {
-        const player = await exports['qb-core'].GetPlayer(client);
+        const player = await exports[FRAMEWORK_RESOURCE].GetPlayer(client);
         if (!player.PlayerData.job.isboss) {
             Logger.AddLog({
                 type: 'phone_business',
                 title: 'Hire Failed',
-                message: `Attempt to hire without being a boss Name: ${exports['qb-core'].GetPlayerName(client)}, in Job: ${jobname}, CitizenId: ${player.PlayerData.citizenid}`,
+                message: `Attempt to hire without being a boss Name: ${exports[FRAMEWORK_RESOURCE].GetPlayerName(client)}, in Job: ${jobname}, CitizenId: ${player.PlayerData.citizenid}`,
                 showIdentifiers: false
             });
             return emitNet('phone:addnotiFication', client, JSON.stringify({
@@ -427,12 +428,12 @@ onClientCallback('summit_phone:server:hireEmployee', async (client, targetSource
                 timeout: 5000,
             }));
         }
-        const targetPlayer = await exports['qb-core'].GetPlayer(targetSource);
+        const targetPlayer = await exports[FRAMEWORK_RESOURCE].GetPlayer(targetSource);
         targetPlayer.Functions.SetJob(jobname, 0);
         Logger.AddLog({
             type: 'phone_business',
             title: 'Employee Hired',
-            message: `Player ${targetPlayer.PlayerData.citizenid} Name: ${targetPlayer.PlayerData.charinfo.firstname} ${targetPlayer.PlayerData.charinfo.lastname} hired by Player: ${exports['qb-core'].GetPlayerName(client)}, in Job: ${jobname}`,
+            message: `Player ${targetPlayer.PlayerData.citizenid} Name: ${targetPlayer.PlayerData.charinfo.firstname} ${targetPlayer.PlayerData.charinfo.lastname} hired by Player: ${exports[FRAMEWORK_RESOURCE].GetPlayerName(client)}, in Job: ${jobname}`,
             showIdentifiers: false
         });
         emitNet('phone:addnotiFication', client, JSON.stringify({
@@ -455,7 +456,7 @@ onClientCallback('summit_phone:server:hireEmployee', async (client, targetSource
         Logger.AddLog({
             type: 'phone_business',
             title: 'Hire Failed',
-            message: `Attempt to hire non-existent player Name: ${exports['qb-core'].GetPlayerName(client)}, in Job: ${jobname}`,
+            message: `Attempt to hire non-existent player Name: ${exports[FRAMEWORK_RESOURCE].GetPlayerName(client)}, in Job: ${jobname}`,
             showIdentifiers: false
         });
         emitNet('phone:addnotiFication', client, JSON.stringify({
@@ -477,11 +478,11 @@ onClientCallback('registerJobs', async (client, data: string) => {
     const jobs = JSON.parse(data);
     await MongoDB.insertOne('summit_jobs', jobs);
     const { _id, ...rest } = jobs;
-    exports['qb-core'].AddJob(_id, rest);
+    exports[FRAMEWORK_RESOURCE].AddJob(_id, rest);
     Logger.AddLog({
         type: 'phone_jobs',
         title: 'Job Registered',
-        message: `New job '${_id}' Name: ${jobs.jobName} registered by Player: ${exports['qb-core'].GetPlayerName(client)}`,
+        message: `New job '${_id}' Name: ${jobs.jobName} registered by Player: ${exports[FRAMEWORK_RESOURCE].GetPlayerName(client)}`,
         showIdentifiers: false
     });
 });
@@ -495,11 +496,11 @@ onClientCallback('updateJobs', async (client, data: string) => {
     const jobs = JSON.parse(data);
     await MongoDB.updateOne('summit_jobs', { _id: jobs._id }, jobs);
     const { _id, ...rest } = jobs;
-    exports['qb-core'].UpdateJob(_id, rest);
+    exports[FRAMEWORK_RESOURCE].UpdateJob(_id, rest);
     Logger.AddLog({
         type: 'phone_jobs',
         title: 'Job Updated',
-        message: `Job '${_id}' Name: ${jobs.jobName} updated by Player: ${exports['qb-core'].GetPlayerName(client)}`,
+        message: `Job '${_id}' Name: ${jobs.jobName} updated by Player: ${exports[FRAMEWORK_RESOURCE].GetPlayerName(client)}`,
         showIdentifiers: false
     });
 });
@@ -510,7 +511,7 @@ onClientCallback('deleteJobs', async (client, data: string) => {
         Logger.AddLog({
             type: 'summit_jobs',
             title: 'Job Deletion Failed',
-            message: `Attempt to delete non-existent job '${data}' by Player: ${exports['qb-core'].GetPlayerName(client)}`,
+            message: `Attempt to delete non-existent job '${data}' by Player: ${exports[FRAMEWORK_RESOURCE].GetPlayerName(client)}`,
             showIdentifiers: false
         });
         return emitNet('phone:addnotiFication', client, JSON.stringify({
@@ -522,11 +523,11 @@ onClientCallback('deleteJobs', async (client, data: string) => {
         }));
     }
     await MongoDB.deleteOne('summit_jobs', { _id: data });
-    exports['qb-core'].RemoveJob(data);
+    exports[FRAMEWORK_RESOURCE].RemoveJob(data);
     Logger.AddLog({
         type: 'phone_jobs',
         title: 'Job Deleted',
-        message: `Job '${data}' Name: ${job.jobName} deleted by Player: ${exports['qb-core'].GetPlayerName(client)}`,
+        message: `Job '${data}' Name: ${job.jobName} deleted by Player: ${exports[FRAMEWORK_RESOURCE].GetPlayerName(client)}`,
         showIdentifiers: false
     });
 });

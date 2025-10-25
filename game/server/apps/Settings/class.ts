@@ -31,7 +31,7 @@ class Setting {
                     LOGGER("[Settings] MongoDB connected.");
                     break;
                 }
-                console.log("[Settings] Waiting for MongoDB connection...");
+                /* console.log("[Settings] Waiting for MongoDB connection..."); */
             }
             const res: any = await MongoDB.findMany('phone_settings', {});
             for (const data of res) {

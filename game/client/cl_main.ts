@@ -8,10 +8,11 @@ import { PhoneSettings } from "../../types/types";
 import { Utils } from "./classes/Utils";
 import { CloseAndToggleDisablePhone, ToggleDisablePhone } from "./cl_exports";
 import { Animation } from "./classes/Animation";
+import { FRAMEWORK_RESOURCE } from "../shared/utils"; // adjust path as needed
 
-export let FrameWork = exports['qb-core'].GetCoreObject();
+export let FrameWork = exports[FRAMEWORK_RESOURCE].GetCoreObject();
 on('QBCore:Client:UpdateObject', () => {
-    FrameWork = exports['qb-core'].GetCoreObject();
+    FrameWork = exports[FRAMEWORK_RESOURCE].GetCoreObject();
 })
 
 setImmediate(() => {
@@ -113,7 +114,7 @@ onNet('phone:client:setupPhone', async (citizenId: string) => {
     const res = JSON.parse(response) as PhoneSettings;
     if (!res) return;
     await Delay(1000);
-    console.log(response);
+    /* console.log(response); */
     NUI.sendReactMessage('setSettings', response);
 });
 
@@ -123,7 +124,7 @@ const debounceDelay = 1000; // 1 second
 onNet('QBCore:Player:SetPlayerData', (data: any) => {
     const currentTime = Date.now();
     if (currentTime - lastUpdate < debounceDelay) {
-        console.log('Debouncing QBCore:Player:SetPlayerData');
+        /* console.log('Debouncing QBCore:Player:SetPlayerData'); */
         return;
     }
     lastUpdate = currentTime;
@@ -134,7 +135,7 @@ onNet('QBCore:Player:SetPlayerData', (data: any) => {
     
     if (isRestricted) {
         if (LocalPlayer.state.onPhone) {
-            console.log('Closing phone UI due to restricted state');
+            /* console.log('Closing phone UI due to restricted state'); */
             setTimeout(() => {
                 if (LocalPlayer.state.onPhone) {
                     NUI.closeUI();
@@ -143,12 +144,12 @@ onNet('QBCore:Player:SetPlayerData', (data: any) => {
                 }
             }, 1000);
         } else {
-            console.log('Disabling phone due to restricted state');
+            /* console.log('Disabling phone due to restricted state'); */
             ToggleDisablePhone(true);
         }
     } if (notRestricted)  {
         if (!LocalPlayer.state.onPhone) {
-            console.log('Enabling phone as player is not restricted');
+            /* console.log('Enabling phone as player is not restricted'); */
             ToggleDisablePhone(false);
         }
     }

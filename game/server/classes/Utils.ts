@@ -1,5 +1,6 @@
 import { Framework, MongoDB, MySQL } from "@server/sv_main";
 import { generateUUid, LOGGER } from "@shared/utils";
+import { FRAMEWORK_RESOURCE } from "../../shared/utils"; // adjust path as needed
 
 class Util {
     public contactsData: any;
@@ -146,7 +147,7 @@ class Util {
             }
             for (const [index, contact] of result.entries()) {
                 if (index > result.length) break;
-                console.log(`Processing contact ${index + 1} of ${result.length}`);
+                /* console.log(`Processing contact ${index + 1} of ${result.length}`); */
                 const ownerId = await this.GetCitizenIdByPhoneNumber(contact.phone_number);
                 this.contactsData.push({
                     _id: generateUUid(),
@@ -250,7 +251,7 @@ class Util {
     };
 
     async GetEmailIdBySource(source: number) {
-        const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(source);
+        const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source);
         if (!citizenId) return false;
         const email = await this.GetEmailIdByCitizenId(citizenId);
         return email;
@@ -264,11 +265,11 @@ class Util {
 
     async GetPlayerFromPhoneNumber(phoneNumber: string) {
         const citizenId = await this.GetCitizenIdByPhoneNumber(phoneNumber);
-        return await exports['qb-core'].GetPlayerByCitizenId(citizenId);
+        return await exports[FRAMEWORK_RESOURCE].GetPlayerByCitizenId(citizenId);
     };
 
     async GetPhoneNumberBySource(source: number) {
-        const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(source);
+        const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source);
         return await this.GetPhoneNumberByCitizenId(citizenId);
     };
 
@@ -311,7 +312,7 @@ class Util {
     };
 
     async GetSourceFromCitizenId(citizenId: string) {
-        const source = await exports['qb-core'].GetPlayerByCitizenId(citizenId);
+        const source = await exports[FRAMEWORK_RESOURCE].GetPlayerByCitizenId(citizenId);
         if (!source) return false;
         return source.PlayerData.source;
     }
@@ -379,7 +380,7 @@ class Util {
 
     async GetPlayerByEmail(email: string) {
         const citizenId = await this.GetCitizenIdByEmail(email);
-        return await exports['qb-core'].GetPlayerByCitizenId(citizenId);
+        return await exports[FRAMEWORK_RESOURCE].GetPlayerByCitizenId(citizenId);
     };
 
     async GetAvatarFromEmail(email: string) {
@@ -414,7 +415,7 @@ class Util {
 
     async IsPlayerInJail(source: number): Promise<boolean> {
         try {
-            const player = await exports['qb-core'].GetPlayer(source);
+            const player = await exports[FRAMEWORK_RESOURCE].GetPlayer(source);
             if (!player) return false;
 
             const metadata = player.PlayerData.metadata;

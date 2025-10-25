@@ -1,10 +1,11 @@
 import { Utils } from "@server/classes/Utils";
 import { Framework, MongoDB, Logger } from "@server/sv_main";
 import { Delay, generateUUid, LOGGER } from "@shared/utils";
+import { FRAMEWORK_RESOURCE } from "../../../shared/utils"; // adjust path as needed
 
 onNet('summit_phone:server:fireEmployee', async (citizenId: string) => {
     const source = global.source;
-    const targetData = await exports['qb-core'].GetPlayerByCitizenId(citizenId);
+    const targetData = await exports[FRAMEWORK_RESOURCE].GetPlayerByCitizenId(citizenId);
     if (targetData) {
         const jobname = targetData.PlayerData.job.name;
         await targetData.Functions.SetJob('unemployed', 0);
@@ -27,7 +28,7 @@ onNet('summit_phone:server:fireEmployee', async (citizenId: string) => {
         Logger.AddLog({
             type: 'phone_employee_action',
             title: 'Employee Fired',
-            message: `${targetData.PlayerData.charinfo.firstname} ${targetData.PlayerData.charinfo.lastname} has been fired by ${await exports['qb-core'].GetPlayerName(source)} | CitizenId: ${targetData.PlayerData.citizenid} | Job: ${targetData.PlayerData.job.name}`,
+            message: `${targetData.PlayerData.charinfo.firstname} ${targetData.PlayerData.charinfo.lastname} has been fired by ${await exports[FRAMEWORK_RESOURCE].GetPlayerName(source)} | CitizenId: ${targetData.PlayerData.citizenid} | Job: ${targetData.PlayerData.job.name}`,
             showIdentifiers: false
         });
     } else {
@@ -49,7 +50,7 @@ onNet('summit_phone:server:fireEmployee', async (citizenId: string) => {
         Logger.AddLog({
             type: 'phone_employee_action',
             title: 'Offline Employee Fired',
-            message: `Offline employee ${citizenId} has been fired by ${await exports['qb-core'].GetPlayerName(source)} | Job: ${jobData.name}`,
+            message: `Offline employee ${citizenId} has been fired by ${await exports[FRAMEWORK_RESOURCE].GetPlayerName(source)} | Job: ${jobData.name}`,
             showIdentifiers: false
         });
     }
@@ -57,7 +58,7 @@ onNet('summit_phone:server:fireEmployee', async (citizenId: string) => {
 
 onNet('summit_phone:server:changeRankOfPlayer', async (data: any) => {
     const source = global.source;
-    const targetData = await exports['qb-core'].GetPlayerByCitizenId(data.targetCitizenid);
+    const targetData = await exports[FRAMEWORK_RESOURCE].GetPlayerByCitizenId(data.targetCitizenid);
     const multiJob = await MongoDB.findOne('phone_multijobs', { citizenId: data.targetCitizenid, jobName: data.jobName });
     if (targetData) {
         const jobname = data.jobName;
@@ -72,7 +73,7 @@ onNet('summit_phone:server:changeRankOfPlayer', async (data: any) => {
         emitNet('phone:addnotiFication', targetData.PlayerData.source, JSON.stringify({
             id: generateUUid(),
             title: "System",
-            description: `Your rank has been changed by ${await exports['qb-core'].GetPlayerName(source)}`,
+            description: `Your rank has been changed by ${await exports[FRAMEWORK_RESOURCE].GetPlayerName(source)}`,
             app: "services",
             timeout: 5000,
         }));
@@ -81,7 +82,7 @@ onNet('summit_phone:server:changeRankOfPlayer', async (data: any) => {
             Logger.AddLog({
                 type: 'phone_multi_job',
                 title: 'Multi-Job Updated',
-                message: `${data.targetCitizenid} has been updated to ${data.jobName} | New Rank: ${data.gradeName} by ${await exports['qb-core'].GetPlayerName(source)} | citizenId: ${exports['qb-core'].GetPlayerCitizenIdBySource(source)}`,
+                message: `${data.targetCitizenid} has been updated to ${data.jobName} | New Rank: ${data.gradeName} by ${await exports[FRAMEWORK_RESOURCE].GetPlayerName(source)} | citizenId: ${exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source)}`,
                 showIdentifiers: false
             });
         } else {
@@ -89,7 +90,7 @@ onNet('summit_phone:server:changeRankOfPlayer', async (data: any) => {
             Logger.AddLog({
                 type: 'phone_multi_job',
                 title: 'Multi-Job Added',
-                message: `${data.targetCitizenid} has been added to ${data.jobName} | New Rank: ${data.gradeName} by ${await exports['qb-core'].GetPlayerName(source)} | citizenId: ${exports['qb-core'].GetPlayerCitizenIdBySource(source)}`,
+                message: `${data.targetCitizenid} has been added to ${data.jobName} | New Rank: ${data.gradeName} by ${await exports[FRAMEWORK_RESOURCE].GetPlayerName(source)} | citizenId: ${exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source)}`,
                 showIdentifiers: false
             });
         }
@@ -97,7 +98,7 @@ onNet('summit_phone:server:changeRankOfPlayer', async (data: any) => {
         Logger.AddLog({
             type: 'phone_employee_action',
             title: 'Rank Changed',
-            message: `${targetData.PlayerData.charinfo.firstname} ${targetData.PlayerData.charinfo.lastname} has been given a new rank by ${await exports['qb-core'].GetPlayerName(source)} | CitizenId: ${targetData.PlayerData.citizenid} | Job: ${jobname} |  New Rank: ${data.gradeName}`,
+            message: `${targetData.PlayerData.charinfo.firstname} ${targetData.PlayerData.charinfo.lastname} has been given a new rank by ${await exports[FRAMEWORK_RESOURCE].GetPlayerName(source)} | CitizenId: ${targetData.PlayerData.citizenid} | Job: ${jobname} |  New Rank: ${data.gradeName}`,
             showIdentifiers: false
         });
     } else {
@@ -111,7 +112,7 @@ onNet('summit_phone:server:changeRankOfPlayer', async (data: any) => {
             Logger.AddLog({
                 type: 'phone_multi_job',
                 title: 'Multi-Job Updated',
-                message: `${data.targetCitizenid} has been updated to ${data.jobName} | New Rank: ${data.gradeName} by ${await exports['qb-core'].GetPlayerName(source)} | citizenId: ${exports['qb-core'].GetPlayerCitizenIdBySource(source)}`,
+                message: `${data.targetCitizenid} has been updated to ${data.jobName} | New Rank: ${data.gradeName} by ${await exports[FRAMEWORK_RESOURCE].GetPlayerName(source)} | citizenId: ${exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source)}`,
                 showIdentifiers: false
             });
         } else {
@@ -119,7 +120,7 @@ onNet('summit_phone:server:changeRankOfPlayer', async (data: any) => {
             Logger.AddLog({
                 type: 'phone_multi_job',
                 title: 'Multi-Job Added',
-                message: `${data.targetCitizenid} has been added to ${data.jobName} | New Rank: ${data.gradeName} by ${await exports['qb-core'].GetPlayerName(source)} | citizenId: ${exports['qb-core'].GetPlayerCitizenIdBySource(source)}`,
+                message: `${data.targetCitizenid} has been added to ${data.jobName} | New Rank: ${data.gradeName} by ${await exports[FRAMEWORK_RESOURCE].GetPlayerName(source)} | citizenId: ${exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source)}`,
                 showIdentifiers: false
             });
         }
@@ -141,14 +142,14 @@ onNet('summit_phone:server:fireInactiveEmployee', async (data: { jobName: string
     Logger.AddLog({
         type: 'phone_employee_action',
         title: 'Inactive Employee Fired',
-        message: `Inactive employee ${data.citizenId} has been fired by ${await exports['qb-core'].GetPlayerName(source)} | Job: ${data.jobName}`,
+        message: `Inactive employee ${data.citizenId} has been fired by ${await exports[FRAMEWORK_RESOURCE].GetPlayerName(source)} | Job: ${data.jobName}`,
         showIdentifiers: false
     });
 });
 
 on('summit_phone:server:hireinMultiJob', async (client: string, jobname: string, gradeLevel: number, jobLabel: string, gradeLabel: string) => {
-    console.log('Hiring in multi job:', jobname, gradeLevel, jobLabel, gradeLabel);
-    const targetCid = await exports['qb-core'].GetPlayerCitizenIdBySource(client);
+    /* console.log('Hiring in multi job:', jobname, gradeLevel, jobLabel, gradeLabel); */
+    const targetCid = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
     const multiJobCheck = await MongoDB.findOne('phone_multijobs', { citizenId: targetCid, jobName: jobname });
     if (multiJobCheck) {
         if (multiJobCheck.gradeLevel !== gradeLevel) {
@@ -164,7 +165,7 @@ on('summit_phone:server:hireinMultiJob', async (client: string, jobname: string,
             Logger.AddLog({
                 type: 'phone_multi_job',
                 title: 'Multi-Job Updated',
-                message: `${targetCid} has been updated to ${jobname} | New Rank: ${gradeLabel} by ${await exports['qb-core'].GetPlayerName(client)} | citizenId: ${exports['qb-core'].GetPlayerCitizenIdBySource(client)}`,
+                message: `${targetCid} has been updated to ${jobname} | New Rank: ${gradeLabel} by ${await exports[FRAMEWORK_RESOURCE].GetPlayerName(client)} | citizenId: ${exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client)}`,
                 showIdentifiers: false
             });
         } else {
@@ -183,7 +184,7 @@ on('summit_phone:server:hireinMultiJob', async (client: string, jobname: string,
         Logger.AddLog({
             type: 'phone_multi_job',
             title: 'Multi-Job Added',
-            message: `${targetCid} has been added to ${jobname} | New Rank: ${gradeLabel} by ${await exports['qb-core'].GetPlayerName(client)} | citizenId: ${exports['qb-core'].GetPlayerCitizenIdBySource(client)}`,
+            message: `${targetCid} has been added to ${jobname} | New Rank: ${gradeLabel} by ${await exports[FRAMEWORK_RESOURCE].GetPlayerName(client)} | citizenId: ${exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client)}`,
             showIdentifiers: false
         });
     }
@@ -206,5 +207,5 @@ setImmediate(async () => {
         LOGGER(`[SUMMIT_PHONE] Created job ${_id} Successfully`);
         jobArray[_id] = rest;
     });
-    /* const [updated, message] = exports['qb-core'].AddJobs(jobArray); */
+    /* const [updated, message] = exports[FRAMEWORK_RESOURCE].AddJobs(jobArray); */
 }); 

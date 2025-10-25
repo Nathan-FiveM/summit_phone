@@ -1,16 +1,17 @@
 import { onClientCallback, triggerClientCallback } from "@overextended/ox_lib/server";
 import { Framework, MongoDB, Logger } from "@server/sv_main";
 import { Delay, generateUUid } from "@shared/utils";
+import { FRAMEWORK_RESOURCE } from "../../../shared/utils"; // adjust path as needed
 
 onClientCallback('groups:getmultiPleJobs', async (source: number) => {
-    const sourcePlayer = exports['qb-core'].GetPlayer(source);
+    const sourcePlayer = exports[FRAMEWORK_RESOURCE].GetPlayer(source);
     const jobsData = await MongoDB.findMany('phone_multijobs', { citizenId: sourcePlayer.PlayerData.citizenid });
     const currentJob = sourcePlayer.PlayerData.job.name;
     return JSON.stringify({ currentJob, jobsData });
 });
 
 onClientCallback('groups:deleteMultiJob', async (source: number, data: string) => {
-    const name = await exports['qb-core'].GetPlayerName(source);
+    const name = await exports[FRAMEWORK_RESOURCE].GetPlayerName(source);
     const job = await MongoDB.findOne('phone_multijobs', { _id: data });
     const res = await MongoDB.deleteOne('phone_multijobs', { _id: data });
     Logger.AddLog({
@@ -25,9 +26,9 @@ onClientCallback('groups:deleteMultiJob', async (source: number, data: string) =
 onClientCallback('groups:changeJobOfPlayer', async (source: number, data: string) => {
     const { jobName, grade } = JSON.parse(data);
     if (!jobName) return false;
-    const sourcePlayer = await exports['qb-core'].GetPlayer(source);
+    const sourcePlayer = await exports[FRAMEWORK_RESOURCE].GetPlayer(source);
     if (!sourcePlayer) return false;
-    if (await exports['qb-core'].CheckJobGrade(jobName, String(grade))) {
+    if (await exports[FRAMEWORK_RESOURCE].CheckJobGrade(jobName, String(grade))) {
         sourcePlayer.Functions.SetJob(jobName, String(grade));
         emitNet('QBCore:Notify', source, `Job Changed to ${jobName} Successfully`, 'success');
         emitNet('groups:toggleDuty', Number(sourcePlayer.PlayerData.source));

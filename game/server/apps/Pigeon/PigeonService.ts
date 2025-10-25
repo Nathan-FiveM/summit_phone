@@ -3,6 +3,7 @@ import { Delay, generateUUid } from "@shared/utils";
 import { TweetData, TweetProfileData } from "../../../../types/types";
 import { triggerClientCallback } from "@overextended/ox_lib/server";
 import { Utils } from "@server/classes/Utils";
+import { FRAMEWORK_RESOURCE } from "../../../shared/utils"; // adjust path as needed
 
 class PigeonService {
     public async searchUserExist(_client: number, data: string): Promise<any> {
@@ -184,7 +185,7 @@ class PigeonService {
         await MongoDB.updateOne("phone_pigeon_tweets", { _id: tweetId }, tweet);
         await MongoDB.insertOne("phone_pigeon_tweets_replies", reply);
         await triggerClientCallback("pigeon:refreshRepost", -1, JSON.stringify(reply));
-        const res = await exports['qb-core'].GetPlayerByCitizenId(await Utils.GetCidFromTweetId(tweet.email));
+        const res = await exports[FRAMEWORK_RESOURCE].GetPlayerByCitizenId(await Utils.GetCidFromTweetId(tweet.email));
         if (res) {
             emitNet('phone:addnotiFication', res.PlayerData.source, JSON.stringify({
                 id: generateUUid(),
@@ -217,7 +218,7 @@ class PigeonService {
         if (like) {
             tweet.likeCount.push(email);
             const cid = await Utils.GetCidFromTweetId(tweet.email);
-            const res = await exports['qb-core'].GetPlayerByCitizenId(cid);
+            const res = await exports[FRAMEWORK_RESOURCE].GetPlayerByCitizenId(cid);
             if (res) {
                 emitNet('phone:addnotiFication', res.PlayerData.source, JSON.stringify({
                     id: generateUUid(),
@@ -282,7 +283,7 @@ class PigeonService {
         const { tweetId, retweet, pigeonId, ogTweetId } = JSON.parse(data);
         try {
             if (retweet) {
-                const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(client);
+                const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
                 const originalTweet = await MongoDB.findOne("phone_pigeon_tweets", { _id: tweetId });
                 const retWeetuser = await MongoDB.findOne("phone_pigeon_users", { email: pigeonId });
                 if (!originalTweet) {
@@ -318,7 +319,7 @@ class PigeonService {
                 });
                 return true;
             } else if (!retweet) {
-                const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(client);
+                const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
                 const originalTweet = await MongoDB.findOne("phone_pigeon_tweets", { _id: ogTweetId });
                 const retweet = await MongoDB.findOne("phone_pigeon_tweets", { _id: tweetId });
                 if (!originalTweet || !retweet) {
@@ -355,7 +356,7 @@ class PigeonService {
         const { tweetId, retweet, pigeonId, ogTweetId } = JSON.parse(data);
         try {
             if (retweet) {
-                const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(client);
+                const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
                 const originalTweet = await MongoDB.findOne("phone_pigeon_tweets_replies", { _id: tweetId });
                 const ogTweet = await MongoDB.findOne("phone_pigeon_tweets", { _id: originalTweet.originalTweetId });
                 const retWeetuser = await MongoDB.findOne("phone_pigeon_users", { email: pigeonId });
@@ -389,7 +390,7 @@ class PigeonService {
                 if (ogTweet.repliesCount) {
                     const uniqueCids = [...new Set(ogTweet.repliesCount)];
                     for (const replyCid of uniqueCids) {
-                        const res = await exports['qb-core'].GetPlayerByCitizenId(replyCid);
+                        const res = await exports[FRAMEWORK_RESOURCE].GetPlayerByCitizenId(replyCid);
                         emitNet('phone:addnotiFication', res.PlayerData.source, JSON.stringify({
                             id: generateUUid(),
                             title: 'New Reply',
@@ -414,7 +415,7 @@ class PigeonService {
                 });
                 return true;
             } else if (!retweet) {
-                const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(client);
+                const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
                 const originalTweet = await MongoDB.findOne("phone_pigeon_tweets_replies", { _id: ogTweetId });
                 const retweet = await MongoDB.findOne("phone_pigeon_tweets_replies", { _id: tweetId });
                 if (!originalTweet || !retweet) {
@@ -430,7 +431,7 @@ class PigeonService {
                     }
                     return true;
                 });
-                console.log(originalTweet.retweetCount);
+                /* console.log(originalTweet.retweetCount); */
                 await MongoDB.updateOne("phone_pigeon_tweets_replies", { _id: ogTweetId }, originalTweet);
                 await MongoDB.deleteOne("phone_pigeon_tweets_replies", { _id: tweetId });
                 Logger.AddLog({
@@ -494,14 +495,14 @@ class PigeonService {
         const { tweetId } = JSON.parse(data);
         const tweet = await MongoDB.findOne("phone_pigeon_tweets", { _id: tweetId });
         if (!tweet) return { error: "Tweet not found" };
-        tweet.repliesCount.push(await exports['qb-core'].GetPlayerCitizenIdBySource(client));
+        tweet.repliesCount.push(await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client));
         await MongoDB.updateOne("phone_pigeon_tweets", { _id: tweetId }, tweet);
     }
 
     public async decreaseRepliesCount(client: number, data: string): Promise<any> {
         try {
             const { tweetId } = JSON.parse(data);
-            const cid = await exports['qb-core'].GetPlayerCitizenIdBySource(client);
+            const cid = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
 
             const tweet = await MongoDB.findOne("phone_pigeon_tweets", { _id: tweetId });
             if (!tweet) {
@@ -525,7 +526,7 @@ class PigeonService {
                 return { success: false, message: "No changes made to replies count" };
             }
 
-            console.log(`Successfully decreased repliesCount for tweet ${tweetId}`);
+            /* console.log(`Successfully decreased repliesCount for tweet ${tweetId}`); */
             return { success: true };
         } catch (error: any) {
             console.error("Error in decreaseRepliesCount:", error);
@@ -688,7 +689,7 @@ class PigeonService {
 
             // Send notifications and refresh events to all recipient devices
             for (const recipientCid of recipientCids) {
-                const recipientPlayer = await exports['qb-core'].GetPlayerByCitizenId(recipientCid);
+                const recipientPlayer = await exports[FRAMEWORK_RESOURCE].GetPlayerByCitizenId(recipientCid);
                 if (recipientPlayer) {
                     emitNet('phone:addnotiFication', recipientPlayer.PlayerData.source, JSON.stringify({
                         id: generateUUid(),
@@ -709,7 +710,7 @@ class PigeonService {
 
             // Send refresh event to all sender devices
             for (const senderCid of senderCids) {
-                const senderPlayer = await exports['qb-core'].GetPlayerByCitizenId(senderCid);
+                const senderPlayer = await exports[FRAMEWORK_RESOURCE].GetPlayerByCitizenId(senderCid);
                 if (senderPlayer) {
                     emitNet('phone:refreshPrivateMessage', senderPlayer.PlayerData.source, JSON.stringify({
                         message: message,

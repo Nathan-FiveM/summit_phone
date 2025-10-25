@@ -2,10 +2,11 @@ import { onClientCallback } from "@overextended/ox_lib/server";
 import { Utils } from "@server/classes/Utils";
 import { MongoDB, Logger } from "@server/sv_main";
 import { Delay, generateUUid } from "@shared/utils";
+import { FRAMEWORK_RESOURCE } from "../../../shared/utils"; // adjust path as needed
 
 onClientCallback('phone_message:sendMessage', async (client, data: string) => {
     const { type, phoneNumber, groupId, messageData } = JSON.parse(data);
-    const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
+    const senderId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
     const senderPhoneNumber = await Utils.GetPhoneNumberByCitizenId(senderId);
     let firstMessage = false;
 
@@ -94,10 +95,10 @@ onClientCallback('phone_message:sendMessage', async (client, data: string) => {
                     emitNet('phone_messages:client:updateMessages', CVXCS, JSON.stringify(newMessage));
                 }
             } else {
-                console.log(`Sender ${senderPhoneNumber} is blocked by ${phoneNumber}. Message saved only for sender.`);
+                /* console.log(`Sender ${senderPhoneNumber} is blocked by ${phoneNumber}. Message saved only for sender.`); */
             }
         } else {
-            console.log(`Recipient with phone number ${phoneNumber} does not exist. Message saved only for sender.`);
+            /* console.log(`Recipient with phone number ${phoneNumber} does not exist. Message saved only for sender.`); */
         }
     } else if (type === 'group') {
         const groupConversation = userMessages.messages.find((msg: { groupId?: string }) => msg.groupId === groupId);
@@ -112,7 +113,7 @@ onClientCallback('phone_message:sendMessage', async (client, data: string) => {
                 if (!isBlocked) {
                     await sendToRecipient(memberId, senderPhoneNumber, messageData, 'group', undefined, groupId);
                 } else {
-                    console.log(`Sender ${senderPhoneNumber} is blocked by group member ${memberPhoneNumber}.`);
+                    /* console.log(`Sender ${senderPhoneNumber} is blocked by group member ${memberPhoneNumber}.`); */
                 }
                 const CVXCS = await Utils.GetSourceFromCitizenId(memberId);
                 if (CVXCS) {
@@ -215,7 +216,7 @@ async function sendToRecipient(
 
 onClientCallback('phone_message:createGroup', async (client, data: string) => {
     const { groupName, memberPhoneNumbers, avatar } = JSON.parse(data); // Added avatar field
-    const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
+    const senderId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
     const senderPhoneNumber = await Utils.GetPhoneNumberByCitizenId(senderId);
 
     if (!senderId) {
@@ -305,7 +306,7 @@ onClientCallback('phone_message:createGroup', async (client, data: string) => {
 
 onClientCallback('phone_message:toggleBlock', async (client, data: string) => {
     const { phoneNumber } = JSON.parse(data);
-    const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
+    const senderId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
     const senderPhoneNumber = await Utils.GetPhoneNumberByCitizenId(senderId);
 
     if (!senderId) {
@@ -373,7 +374,7 @@ onClientCallback('phone_message:toggleBlock', async (client, data: string) => {
 onClientCallback('phone_message:addMember', async (client, data: string) => {
     try {
         const { groupId, phoneNumber } = JSON.parse(data);
-        const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
+        const senderId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
         const senderPhoneNumber = await Utils.GetPhoneNumberByCitizenId(senderId);
         if (!senderId) {
             return JSON.stringify({ success: false, message: 'Sender not found' });
@@ -435,11 +436,11 @@ onClientCallback('phone_message:addMember', async (client, data: string) => {
             // Save or update the member's messages
             if (memberMessages._id) {
                 await MongoDB.updateOne('phone_messages', { _id: memberMessages._id }, memberMessages)
-                    .then(() => console.log(`Updated group data for member ${memberId}`))
+                    /* .then(() => console.log(`Updated group data for member ${memberId}`)) */
                     .catch((error: any) => console.error(`Failed to update group data for member ${memberId}:`, error));
             } else {
                 await MongoDB.insertOne('phone_messages', memberMessages)
-                    .then(() => console.log(`Created messages for new member ${memberId}`))
+                    /* .then(() => console.log(`Created messages for new member ${memberId}`)) */
                     .catch((error: any) => console.error(`Failed to create messages for new member ${memberId}:`, error));
             }
         }
@@ -458,7 +459,7 @@ onClientCallback('phone_message:addMember', async (client, data: string) => {
 
 onClientCallback('phone_message:removeMember', async (client, data: string) => {
     const { groupId, phoneNumber } = JSON.parse(data);
-    const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
+    const senderId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
     const senderPhoneNumber = await Utils.GetPhoneNumberByCitizenId(senderId);
     const memberIdToRemove = await Utils.GetCitizenIdByPhoneNumber(phoneNumber);
     if (!memberIdToRemove) {
@@ -509,7 +510,7 @@ onClientCallback('phone_message:removeMember', async (client, data: string) => {
 });
 
 onClientCallback('phone_message:deleteGroup', async (client, groupId: string) => {
-    const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
+    const senderId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
     const senderPhoneNumber = await Utils.GetPhoneNumberByCitizenId(senderId);
     let userMessages = await MongoDB.findOne('phone_messages', { citizenId: senderId });
     const group = userMessages?.messages.find((msg: { groupId?: string }) => msg.groupId === groupId);
@@ -553,7 +554,7 @@ onClientCallback('phone_message:deleteGroup', async (client, groupId: string) =>
 
 onClientCallback('phone_message:getGroupMessages', async (client, data: string) => {
     const { groupId, page = 1, limit = 20 } = JSON.parse(data); // Add page and limit for pagination
-    const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
+    const senderId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
 
     if (!senderId) {
         return JSON.stringify({ success: false, messages: [], message: 'Sender not found' });
@@ -596,7 +597,7 @@ onClientCallback('phone_message:getGroupMessages', async (client, data: string) 
 
 onClientCallback('phone_message:getPrivateMessages', async (client, data: string) => {
     const { phoneNumber, page = 1, limit = 20 } = JSON.parse(data); // Add page and limit for pagination
-    const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
+    const senderId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
 
     if (!senderId) {
         return JSON.stringify({ success: false, messages: [], message: 'Sender not found' });
@@ -636,7 +637,7 @@ onClientCallback('phone_message:getPrivateMessages', async (client, data: string
 
 onClientCallback('phone_message:getMessageChannelsandLastMessages', async (client) => {
     try {
-        const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
+        const senderId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
 
         if (!senderId) {
             return JSON.stringify({ success: false, message: 'Sender not found' });
@@ -660,7 +661,7 @@ onClientCallback('phone_message:getMessageChannelsandLastMessages', async (clien
                     if (conversation) {
                         conversation.name = newContactName;
                         await MongoDB.updateOne('phone_messages', { _id: userMessages._id }, userMessages)
-                            .then(() => console.log(`Updated contact name for ${msg.phoneNumber} to ${newContactName}`))
+                            /* .then(() => console.log(`Updated contact name for ${msg.phoneNumber} to ${newContactName}`)) */
                             .catch((error: any) => console.error(`Failed to update contact name for ${msg.phoneNumber}:`, error));
                     }
                     updatedName = newContactName;
@@ -699,7 +700,7 @@ onClientCallback('phone_message:getMessageChannelsandLastMessages', async (clien
     }
 });
 onClientCallback('phone_message:getMessageStats', async (client, data: string) => {
-    const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
+    const senderId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
 
     if (!senderId) {
         return JSON.stringify({ success: false, message: 'Sender not found' });
@@ -765,7 +766,7 @@ onClientCallback('phone_message:getMessageStats', async (client, data: string) =
 
 onClientCallback('phone_message:deleteMessage', async (client, data: string) => {
     const { conversationType, phoneNumber, groupId, messageIndex } = JSON.parse(data || '{}');
-    const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
+    const senderId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
     const senderPhoneNumber = await Utils.GetPhoneNumberByCitizenId(senderId);
 
     if (!senderId) {
@@ -831,7 +832,7 @@ onClientCallback('phone_message:deleteMessage', async (client, data: string) => 
 onClientCallback('phone_message:updateGroupName', async (client, data: string) => {
     try {
         const { groupId, newName } = JSON.parse(data);
-        const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
+        const senderId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
         const senderPhoneNumber = await Utils.GetPhoneNumberByCitizenId(senderId);
         if (!senderId) {
             return JSON.stringify({ success: false, message: 'Sender not found' });
@@ -860,7 +861,7 @@ onClientCallback('phone_message:updateGroupName', async (client, data: string) =
                 if (memberGroup) {
                     memberGroup.name = newName;
                     await MongoDB.updateOne('phone_messages', { _id: memberMessages._id }, memberMessages)
-                        .then(() => console.log(`Updated group name for member ${memberId}`))
+                        /* .then(() => console.log(`Updated group name for member ${memberId}`)) */
                         .catch((error: any) => console.error(`Failed to update group name for member ${memberId}:`, error));
                 } else {
                     console.warn(`Group not found in member ${memberId}'s messages`);
@@ -871,7 +872,7 @@ onClientCallback('phone_message:updateGroupName', async (client, data: string) =
         }
 
         await MongoDB.updateOne('phone_messages', { _id: userMessages._id }, userMessages)
-            .then(() => console.log(`Updated group name for sender ${senderId}`))
+            /* .then(() => console.log(`Updated group name for sender ${senderId}`)) */
             .catch((error: any) => console.error(`Failed to update group name for sender ${senderId}:`, error));
 
         Logger.AddLog({
@@ -890,7 +891,7 @@ onClientCallback('phone_message:updateGroupName', async (client, data: string) =
 onClientCallback('phone_message:updateGroupAvatar', async (client, data: string) => {
     try {
         const { groupId, newAvatar } = JSON.parse(data);
-        const senderId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
+        const senderId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
         const senderPhoneNumber = await Utils.GetPhoneNumberByCitizenId(senderId);
         if (!senderId) {
             return JSON.stringify({ success: false, message: 'Sender not found' });
@@ -923,7 +924,7 @@ onClientCallback('phone_message:updateGroupAvatar', async (client, data: string)
                 if (memberGroup) {
                     memberGroup.avatar = newAvatar;
                     await MongoDB.updateOne('phone_messages', { _id: memberMessages._id }, memberMessages)
-                        .then(() => console.log(`Updated group avatar for member ${memberId}`))
+                        /* .then(() => console.log(`Updated group avatar for member ${memberId}`)) */
                         .catch((error: any) => console.error(`Failed to update group avatar for member ${memberId}:`, error));
                 } else {
                     console.warn(`Group not found in member ${memberId}'s messages`);
@@ -935,7 +936,7 @@ onClientCallback('phone_message:updateGroupAvatar', async (client, data: string)
 
         // Update the sender's messages
         await MongoDB.updateOne('phone_messages', { _id: userMessages._id }, userMessages)
-            .then(() => console.log(`Updated group avatar for sender ${senderId}`))
+            /* .then(() => console.log(`Updated group avatar for sender ${senderId}`)) */
             .catch((error: any) => console.error(`Failed to update group avatar for sender ${senderId}:`, error));
         Logger.AddLog({
             type: 'phone_groups',

@@ -1,6 +1,7 @@
 import { Framework, MongoDB } from '@server/sv_main';
 import { onClientCallback } from '@overextended/ox_lib/server';
 import { generateUUid } from '@shared/utils';
+import { FRAMEWORK_RESOURCE } from "../../../shared/utils"; // adjust path as needed
 
 interface HeartSyncProfile {
     _id?: string;
@@ -58,7 +59,7 @@ interface Message {
 class HeartSyncServer {
     async getProfile(source: number): Promise<HeartSyncProfile | null> {
         try {
-            const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(source);
+            const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source);
             if (!citizenId) return null;
             const profile = await MongoDB.findOne('heartsync_profiles', { citizenId });
             return profile;
@@ -70,7 +71,7 @@ class HeartSyncServer {
 
     async createProfile(source: number, profileData: Partial<HeartSyncProfile>): Promise<HeartSyncProfile | null> {
         try {
-            const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(source);
+            const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source);
             if (!citizenId) return null;
 
             // Check if profile already exists
@@ -116,7 +117,7 @@ class HeartSyncServer {
             };
 
             const result = await MongoDB.insertOne('heartsync_profiles', newProfile);
-            console.log(result);
+            /* console.log(result); */
             return { ...newProfile, _id: result };
         } catch (error) {
             console.error('Error creating HeartSync profile:', error);
@@ -126,7 +127,7 @@ class HeartSyncServer {
 
     async updateProfile(source: number, profileData: Partial<HeartSyncProfile>): Promise<HeartSyncProfile | null> {
         try {
-            const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(source);
+            const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source);
             if (!citizenId) return null;
 
             const updateData = {
@@ -145,7 +146,7 @@ class HeartSyncServer {
 
     async getPotentialMatches(source: number): Promise<HeartSyncProfile[]> {
         try {
-            const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(source);
+            const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source);
             if (!citizenId) return [];
 
             const userProfile = await MongoDB.findOne('heartsync_profiles', { citizenId });
@@ -203,7 +204,7 @@ class HeartSyncServer {
 
     async swipeProfile(source: number, swipeData: { targetUserId: string; isLike: boolean; isSuperLike?: boolean }) {
         try {
-            const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(source);
+            const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source);
             if (!citizenId) return { success: false, isMatch: false };
 
             const { targetUserId, isLike, isSuperLike = false } = swipeData;
@@ -251,12 +252,12 @@ class HeartSyncServer {
                     // Send notifications to both users about the match
                     try {
                         // Get player data for both users
-                        const swiperData = await global.exports['qb-core'].GetPlayerByCitizenId(citizenId);
-                        const targetData = await global.exports['qb-core'].GetPlayerByCitizenId(targetUserId);
+                        const swiperData = await global.exports[FRAMEWORK_RESOURCE].GetPlayerByCitizenId(citizenId);
+                        const targetData = await global.exports[FRAMEWORK_RESOURCE].GetPlayerByCitizenId(targetUserId);
                         
                         // Get offline data if players are not online
-                        const swiperPlayerData = swiperData || await global.exports['qb-core'].GetOfflinePlayerByCitizenId(citizenId);
-                        const targetPlayerData = targetData || await global.exports['qb-core'].GetOfflinePlayerByCitizenId(targetUserId);
+                        const swiperPlayerData = swiperData || await global.exports[FRAMEWORK_RESOURCE].GetOfflinePlayerByCitizenId(citizenId);
+                        const targetPlayerData = targetData || await global.exports[FRAMEWORK_RESOURCE].GetOfflinePlayerByCitizenId(targetUserId);
 
                         // Send notification to the swiper (current user)
                         if (swiperData && swiperData.PlayerData.source) {
@@ -307,7 +308,7 @@ class HeartSyncServer {
 
     async getMatches(source: number): Promise<any[]> {
         try {
-            const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(source);
+            const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source);
             if (!citizenId) return [];
 
             const matches = await MongoDB.findMany('heartsync_matches', {
@@ -357,7 +358,7 @@ class HeartSyncServer {
 
     // Mock implementations for other methods - replace with actual logic
     async getSwipeStats(source: number) {
-        const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(source);
+        const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source);
         if (!citizenId) return null;
 
         const profile = await MongoDB.findOne('heartsync_profiles', { citizenId });
@@ -375,7 +376,7 @@ class HeartSyncServer {
 
     async getOnlineUsers(source: number): Promise<HeartSyncProfile[]> {
         try {
-            const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(source);
+            const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source);
             if (!citizenId) return [];
 
             const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
@@ -394,7 +395,7 @@ class HeartSyncServer {
 
     async getRecentlyActiveUsers(source: number): Promise<HeartSyncProfile[]> {
         try {
-            const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(source);
+            const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source);
             if (!citizenId) return [];
 
             const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
@@ -419,7 +420,7 @@ class HeartSyncServer {
 
     async getNotifications(source: number) {
         try {
-            const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(source);
+            const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source);
             if (!citizenId) return { newMatches: 0, newMessages: 0, superLikes: 0 };
 
             // Get new matches (matches without messages)
@@ -454,14 +455,14 @@ class HeartSyncServer {
     }
 
     async sendMessage(source: number, data: any) {
-        console.log(data);
+        /* console.log(data); */
         const res = await MongoDB.findOne('heartsync_matches', { _id: String(data.matchId) }, undefined, false);
-        const sourceCitizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(source);
-        let sourceData = await global.exports['qb-core'].GetPlayerByCitizenId(sourceCitizenId);
-        let targetData = await global.exports['qb-core'].GetPlayerByCitizenId(res.user1Id === sourceCitizenId ? res.user2Id : res.user1Id);
+        const sourceCitizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source);
+        let sourceData = await global.exports[FRAMEWORK_RESOURCE].GetPlayerByCitizenId(sourceCitizenId);
+        let targetData = await global.exports[FRAMEWORK_RESOURCE].GetPlayerByCitizenId(res.user1Id === sourceCitizenId ? res.user2Id : res.user1Id);
 
         if (!sourceData) {
-            sourceData = await global.exports['qb-core'].GetOfflinePlayerByCitizenId(sourceCitizenId);
+            sourceData = await global.exports[FRAMEWORK_RESOURCE].GetOfflinePlayerByCitizenId(sourceCitizenId);
         }
 
         if (!targetData) {
@@ -495,7 +496,7 @@ class HeartSyncServer {
 
     async unmatch(source: number, data: { matchId: string }) {
         try {
-            const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(source);
+            const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source);
             if (!citizenId) return { success: false };
 
             const match = await MongoDB.findOne('heartsync_matches', { _id: data.matchId });

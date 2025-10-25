@@ -68,7 +68,7 @@ export default function SwipeExplore({ onNewMatch, userProfile }: SwipeExplorePr
             setCurrentIndex(0);
             setCurrentPhotoIndex(0);
         } catch (error) {
-            console.error('Error loading profiles:', error);
+            /* console.error('Error loading profiles:', error); */
         } finally {
             setLoading(false);
         }
@@ -185,7 +185,7 @@ export default function SwipeExplore({ onNewMatch, userProfile }: SwipeExplorePr
         <div className="swipe-explore">
             <div className="card-stack">
                 {profiles.slice(currentIndex, currentIndex + 3).map((profile, index) => {
-                    console.log(profile.photos.length);
+                    /* console.log(profile.photos.length); */
                     return (
                         <div
                             key={profile._id}

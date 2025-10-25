@@ -2,6 +2,7 @@ import { onClientCallback, triggerClientCallback } from "@overextended/ox_lib/se
 import { Utils } from "@server/classes/Utils";
 import { Framework } from "@server/sv_main";
 import { GarageData } from "../../../../types/types";
+import { FRAMEWORK_RESOURCE } from "../../../shared/utils"; // adjust path as needed
 
 interface VehicleData {
     vehicle: string;
@@ -14,7 +15,7 @@ interface VehicleData {
 
 onClientCallback('garage:getGarageData', async (source: number) => {
     let resData: GarageData[] = [];
-    const citizenId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(source);
+    const citizenId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source);
     const res = await Utils.query(`SELECT vehicle,plate,garage,mods,state,depotprice FROM player_vehicles WHERE citizenid = ?`, [citizenId]) as VehicleData[];
     const vehicleData = Framework.Shared.Vehicles;
     

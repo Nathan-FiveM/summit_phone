@@ -1,9 +1,10 @@
 import { generateUUid } from "@shared/utils";
 import { Utils } from "./classes/Utils";
 import { MailClass } from "./apps/Mail/class";
+import { FRAMEWORK_RESOURCE } from "../shared/utils"; // adjust path as needed
 
 async function GetCurrentPhoneNumber(source: number | string) {
-    const citizenId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(source);
+    const citizenId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source);
     if (!citizenId) return false;
     const number = await Utils.GetPhoneNumberByCitizenId(citizenId);
     return number;
@@ -23,7 +24,7 @@ async function GetEmailIdByCitizenId(citizenId: string) {
 exports('GetEmailIdByCitizenId', GetEmailIdByCitizenId);
 
 async function GetEmailIdBySource(source: number | string) {
-    const citizenId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(source);
+    const citizenId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source);
     if (!citizenId) return false;
     const email = await Utils.GetEmailIdByCitizenId(citizenId);
     return email;

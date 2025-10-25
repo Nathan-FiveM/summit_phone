@@ -88,9 +88,9 @@ export default function HeartSync({ onEnter, onExit }: HeartSyncProps) {
     const loadUserProfile = async () => {
         try {
             setLoading(true);
-            console.log('Loading profile...');
+            /* console.log('Loading profile...'); */
             const profile = await fetchNui('heartsync_getProfile') as UserProfile | null;
-            console.log('Profile loaded:', profile);
+            /* console.log('Profile loaded:', profile); */
             if (profile) {
                 setUserProfile(profile);
                 setHasProfile(true);
@@ -100,7 +100,7 @@ export default function HeartSync({ onEnter, onExit }: HeartSyncProps) {
                 setCurrentView('profile');
             }
         } catch (error) {
-            console.error('Error loading profile:', error);
+            /* console.error('Error loading profile:', error); */
             setHasProfile(false);
         } finally {
             setLoading(false);

@@ -6,13 +6,14 @@ import { Delay, generateUUid, LOGGER } from "@shared/utils";
 import { onClientCallback } from "@overextended/ox_lib/server";
 import { InvoiceRecurringPayments } from "./apps/Wallet/callbacks";
 import { pigeonService } from "./apps/Pigeon/PigeonService";
-export let Framework = exports['qb-core'].GetCoreObject();
+import { FRAMEWORK_RESOURCE } from "../shared/utils"; // adjust path as needed
+export let Framework = exports[FRAMEWORK_RESOURCE].GetCoreObject();
 export const MongoDB = exports['mongoDB'];
 export const MySQL = exports.oxmysql;
 export const Logger = exports['qb-smallresources'];
 
 on('QBCore:Server:UpdateObject', () => {
-    Framework = exports['qb-core'].GetCoreObject();
+    Framework = exports[FRAMEWORK_RESOURCE].GetCoreObject();
 });
 
 setImmediate(() => {
@@ -24,7 +25,7 @@ onClientCallback('phone:server:shareNumber', async (source: any, comingSource: a
     const sourceX = source;
     const sourceNumber = await Utils.GetPhoneNumberBySource(sourceX);
     const acNumber = await Utils.GetPhoneNumberBySource(comingSource);
-    const fullname = await exports['qb-core'].GetPlayerName(sourceX);
+    const fullname = await exports[FRAMEWORK_RESOURCE].GetPlayerName(sourceX);
     const breakedName = fullname.split(' ');
 
     if (!sourceNumber || !acNumber) return;
@@ -92,7 +93,7 @@ onNet('phone:server:addContact', async (id: string, data: {
     id: string
 }) => {
     const src = global.source;
-    console.log('Adding contact', id, data);
+    /* console.log('Adding contact', id, data); */
     emitNet("phone:client:removeActionNotification", src, id);
     if (!data.contactData || !data.comingSource || !data.fullname) {
         return;
@@ -115,12 +116,12 @@ onNet('phone:server:addContact', async (id: string, data: {
 });
 
 on('summit_phone:server:CronTrigger', async () => {
-    console.log('Cron Triggered');
+    /* console.log('Cron Triggered'); */
     InvoiceRecurringPayments();
 });
 
 RegisterCommand('resetPhonePasscode', async (source: number, args: string[]) => {
-    const citizenId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(source);
+    const citizenId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source);
     if (!citizenId) return;
     Settings.lockPin.set(citizenId, '000000');
     await Delay(1000);
@@ -142,7 +143,8 @@ RegisterCommand('verifyPegion', async (source: number, args: string[]) => {
 }, true);
 
 on('QBCore:Server:OnPlayerUnload', async (src: number) => {
-    const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(src);
+    if(!src) return;
+    const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(src);
     if (!citizenId) return;
     await Settings.SavePlayerSettings(citizenId);
     Settings.onPlayerDisconnect(citizenId);
@@ -150,7 +152,8 @@ on('QBCore:Server:OnPlayerUnload', async (src: number) => {
 
 on('playerDropped', async () => {
     const src = global.source;
-    const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(src);
+    if(!src) return;
+    const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(src);
     if (!citizenId) return;
     await Settings.SavePlayerSettings(citizenId);
     Settings.onPlayerDisconnect(citizenId);

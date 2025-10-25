@@ -2,9 +2,10 @@ import { onClientCallback } from "@overextended/ox_lib/server";
 import { MongoDB, Logger } from "@server/sv_main";
 import { PhoneMail, PhonePlayerCard } from "../../../../types/types";
 import { Settings } from "./class";
+import { FRAMEWORK_RESOURCE } from "../../../shared/utils"; // adjust path as needed
 
 onClientCallback('GetClientSettings', async (client) => {
-    const citizenId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
+    const citizenId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
     return JSON.stringify({
         _id: Settings._id.get(citizenId),
         background: Settings.background.get(citizenId),
@@ -27,7 +28,7 @@ onClientCallback('GetClientSettings', async (client) => {
 });
 
 onClientCallback('SetClientSettings', async (client, data: string) => {
-    const citizenId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
+    const citizenId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
     const parsedData: {
         background: { current: string; wallpapers: string[] };
         lockscreen: { current: string; wallpapers: string[] };
@@ -66,7 +67,7 @@ onClientCallback('SetClientSettings', async (client, data: string) => {
     Logger.AddLog({
         type: 'phone_settings',
         title: 'Settings Updated',
-        message: `${citizenId} | Name: ${global.exports['qb-core'].GetPlayerName(client)} new settings, ${JSON.stringify(parsedData)}`,
+        message: `${citizenId} | Name: ${global.exports[FRAMEWORK_RESOURCE].GetPlayerName(client)} new settings, ${JSON.stringify(parsedData)}`,
         showIdentifiers: false
     });
     return true;
@@ -88,7 +89,7 @@ onClientCallback('RegisterNewMailAccount', async (client, data: string) => {
     Logger.AddLog({
         type: 'phone_email',
         title: 'Email Account Registered',
-        message: `New email account registered with email ${parsedData.email}, password "${parsedData.password}", CitizenId: ${await global.exports['qb-core'].GetPlayerCitizenIdBySource(client)}, Name: ${global.exports['qb-core'].GetPlayerName(client)}`,
+        message: `New email account registered with email ${parsedData.email}, password "${parsedData.password}", CitizenId: ${await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client)}, Name: ${global.exports[FRAMEWORK_RESOURCE].GetPlayerName(client)}`,
         showIdentifiers: true
     });
     return true;
@@ -109,7 +110,7 @@ onClientCallback('LoginMailAccount', async (client, data: string) => {
         Logger.AddLog({
             type: 'phone_email',
             title: 'Email Login',
-            message: `${global.exports['qb-core'].GetPlayerCitizenIdBySource(client)} Name: ${global.exports['qb-core'].GetPlayerName(client)} logged in to email account ${parsedData.email}, password "${parsedData.password}"`,
+            message: `${global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client)} Name: ${global.exports[FRAMEWORK_RESOURCE].GetPlayerName(client)} logged in to email account ${parsedData.email}, password "${parsedData.password}"`,
             showIdentifiers: false
         });
         return true;
@@ -119,13 +120,13 @@ onClientCallback('LoginMailAccount', async (client, data: string) => {
 });
 
 onClientCallback('unLockorLockPhone', async (client, data: boolean) => {
-    const citizenId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
+    const citizenId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
     Settings.isLock.set(citizenId, data);
     return true;
 });
 
 onClientCallback('getPhonePlayerCard', async (client) => {
-    const citizenId = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
+    const citizenId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
     const res = await MongoDB.findOne('phone_player_card', { _id: citizenId });
     return JSON.stringify(res);
 });
@@ -136,7 +137,7 @@ onClientCallback('phone:updatePersonalCard', async (client, data: string) => {
     Logger.AddLog({
         type: 'phone_personal_card',
         title: 'Personal Card Updated',
-        message: `${parsedData._id} | Name: ${global.exports['qb-core'].GetPlayerName(client)} updated personal card, ${JSON.stringify(parsedData)}`,
+        message: `${parsedData._id} | Name: ${global.exports[FRAMEWORK_RESOURCE].GetPlayerName(client)} updated personal card, ${JSON.stringify(parsedData)}`,
         showIdentifiers: false
     });
     return true;

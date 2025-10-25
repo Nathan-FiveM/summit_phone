@@ -3,10 +3,11 @@ game "gta5"
 
 lua54 'yes'
 author "Jarvis"
-version "2.0.0"
+editor "Nathan-FiveM"
+version "2.1.0"
 use_experimental_fxv2_oal 'yes'
 
-description 'Summit Phone'
+description 'Summit Phone with Crypto App'
 
 -- UI
 ui_page 'web/index.html'
@@ -24,7 +25,7 @@ shared_scripts {
 }
 
 dependencies {
-    'qb-core',
+    'qb-core', -- // qb-core for QBCore or qbx-core for QBox
     'ox_lib',
     'pma-voice'
 }

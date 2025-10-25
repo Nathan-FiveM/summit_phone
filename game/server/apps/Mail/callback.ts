@@ -1,6 +1,7 @@
 import { onClientCallback } from "@overextended/ox_lib/server";
 import { MailClass } from "./class";
 import { Logger } from "@server/sv_main";
+import { FRAMEWORK_RESOURCE } from "../../../shared/utils"; // adjust path as needed
 
 onClientCallback('summit_phone:getEmailMessages', async (source: number, email: string, password: string) => {
     const data = await MailClass.getMailMessages(email, password)
@@ -9,7 +10,7 @@ onClientCallback('summit_phone:getEmailMessages', async (source: number, email: 
 
 onClientCallback('summit_phone:sendEmail', async (source: number, email: string, to: string, subject: string, message: string, images: string[]) => {
     const res = await MailClass.sendMail(email, to, subject, message, images, source);
-    const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(source);
+    const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source);
     Logger.AddLog({
         type: 'phone_mail',
         title: 'Email Sent',
@@ -35,7 +36,7 @@ onClientCallback('summit_phone:updateProfileSettings', async (source: number, da
     const parsedData = JSON.parse(data);
     const { email, password, username, avatar } = parsedData;
     const res = await MailClass.updateProfileSettings(email, password, username, avatar);
-    const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(source);
+    const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source);
     Logger.AddLog({
         type: 'phone_mail',
         title: 'Profile Updated',

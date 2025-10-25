@@ -4,6 +4,7 @@ import { Logger, MongoDB } from "@server/sv_main";
 import { generateUUid } from "@shared/utils";
 import { WalletAccount } from "../../../../types/types";
 import { DateTime } from 'luxon';
+import { FRAMEWORK_RESOURCE } from "../../../shared/utils"; // adjust path as needed
 
 function GenerateCardNumber() {
     let cardNumber = '';
@@ -23,7 +24,7 @@ function GenerateBankAccountNumber() {
 }
 
 onClientCallback('wallet:login', async (source: number) => {
-    const citizenId = await exports['qb-core'].GetPlayer(source);
+    const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayer(source);
     const res = await MongoDB.findOne('phone_bank_user', { citizenId: citizenId.PlayerData.citizenid });
     if (res) {
         return JSON.stringify({
@@ -32,7 +33,7 @@ onClientCallback('wallet:login', async (source: number) => {
             casino: await citizenId.PlayerData.money.casino
         });
     } else {
-        const name = await exports['qb-core'].GetPlayerName(source);
+        const name = await exports[FRAMEWORK_RESOURCE].GetPlayerName(source);
         const cardNumber = GenerateCardNumber();
         const cardPin = Math.floor(Math.random() * 10000);
         const bankAccount = GenerateBankAccountNumber();
@@ -72,8 +73,8 @@ onClientCallback('transXAdqasddasdferMoney', async (client, data: string) => {
     const { amount, to } = JSON.parse(data);
     const res: WalletAccount = await MongoDB.findOne('phone_bank_user', { bankAccount: to });
     if (!res) return false;
-    const targetPlayer = await exports['qb-core'].GetPlayerByCitizenId(res.citizenId);
-    const sourcePlayer = await exports['qb-core'].GetPlayer(client);
+    const targetPlayer = await exports[FRAMEWORK_RESOURCE].GetPlayerByCitizenId(res.citizenId);
+    const sourcePlayer = await exports[FRAMEWORK_RESOURCE].GetPlayer(client);
     if (!await DoesPlayerExist(targetPlayer.PlayerData.source)) return false;
     if (sourcePlayer.PlayerData.money.bank < amount) return false;
     if (await sourcePlayer.Functions.RemoveMoney('bank', amount)) {
@@ -122,7 +123,7 @@ onClientCallback('transXAdqasddasdferMoney', async (client, data: string) => {
 });
 
 onClientCallback('getTransactions', async (client) => {
-    const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(client);
+    const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
     const transactions = await MongoDB.findMany('phone_bank_transactions', { from: citizenId }, null, false, {
         sort: { date: -1 }
     });
@@ -139,8 +140,8 @@ onClientCallback('wallet:createInvoice', async (client, data: string) => {
         receiver: string;
     }; // paymentTime = 0 for daily, 1 for weekly, 2 for monthly and 3 for quarterly and 4 for yearly
 
-    const sourcePlayer = await exports['qb-core'].GetPlayer(client);
-    const targetPlayer = await exports['qb-core'].GetPlayer(receiver);
+    const sourcePlayer = await exports[FRAMEWORK_RESOURCE].GetPlayer(client);
+    const targetPlayer = await exports[FRAMEWORK_RESOURCE].GetPlayer(receiver);
     if (!targetPlayer) return false;
     if (amount < 0) return false;
     const res = await MongoDB.insertOne('phone_bank_invoices', {
@@ -177,7 +178,7 @@ onClientCallback('wallet:createInvoice', async (client, data: string) => {
 });
 
 onClientCallback('wallet:getInvoices', async (client, type) => {
-    const citizenId = await exports['qb-core'].GetPlayerCitizenIdBySource(client);
+    const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
     if (type === 'sent') {
         const invoices = await MongoDB.findMany('phone_bank_invoices', { from: citizenId }, null, false, {
             sort: { date: -1 }
@@ -217,8 +218,8 @@ const COLLECTION = 'phone_bank_invoices';
 // ───────────────────────────────────────────────────────────────────────────────
 // QB helpers (adjust if your exports differ)
 // ───────────────────────────────────────────────────────────────────────────────
-const getPlayerBySource = async (src: number) => exports['qb-core'].GetPlayer(src);
-const getPlayerByCitizenId = async (cid: string) => exports['qb-core'].GetPlayerByCitizenId?.(cid);
+const getPlayerBySource = async (src: number) => exports[FRAMEWORK_RESOURCE].GetPlayer(src);
+const getPlayerByCitizenId = async (cid: string) => exports[FRAMEWORK_RESOURCE].GetPlayerByCitizenId?.(cid);
 
 // Money ops: return boolean success
 const debitBank = (player: any, amount: number) => player?.Functions?.RemoveMoney?.('bank', amount, 'invoice_payment') ?? false;

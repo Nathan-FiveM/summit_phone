@@ -1,9 +1,10 @@
 import { onClientCallback } from "@overextended/ox_lib/server";
 import { Utils } from "@server/classes/Utils";
 import { Logger } from "@server/sv_main";
+import { FRAMEWORK_RESOURCE } from "../../../shared/utils"; // adjust path as needed
 
 onClientCallback('getOwnedHouses', async (client) => {
-    const player = await global.exports['qb-core'].GetPlayerCitizenIdBySource(client);
+    const player = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
     const apartments = await Utils.query('SELECT property_id, owner_citizenid, street, description, has_access, door_data, apartment  FROM properties WHERE owner_citizenid = ? AND apartment IS NOT NULL AND apartment <> ""', [player]);
     const houses = await Utils.query('SELECT property_id, owner_citizenid, street, description, has_access, shell, door_data FROM properties WHERE owner_citizenid = ? AND apartment IS NULL', [player]);
     const res = {
@@ -26,7 +27,7 @@ onClientCallback('getKeyHolderNames', async (client, data) => {
         const allApartments = await Promise.all(apartmentPromises);
 
         allApartments.forEach(apartments => {
-            console.log(apartments);
+            /* console.log(apartments); */
             if (apartments && apartments.length > 0) {
                 apartments.forEach((apartment: any) => {
                     const charinfo = JSON.parse(apartment.charinfo);
@@ -47,7 +48,7 @@ onClientCallback('removeAccess', async (client, data) => {
         const houseData = house[0];
         const hasAccess = JSON.parse(houseData.has_access);
         const newAccess = hasAccess.filter((access: string) => access !== cid);
-        console.log(newAccess);
+        /* console.log(newAccess); */
         await Utils.query('UPDATE properties SET has_access = ? WHERE property_id = ?', [JSON.stringify(newAccess), id]);
         Logger.AddLog({
             type: 'phone_properties',
