@@ -6,6 +6,7 @@ import { MongoDB, Logger } from "@server/sv_main";
 import { PhoneContacts } from "../../../../types/types";
 import { callHistoryManager, PlayerCallHistory } from "./callHistoryManager";
 import { Settings } from "../Settings/class";
+import { FRAMEWORK_RESOURCE } from "../../../shared/utils"
 
 onClientCallback("summit_phone:server:call", async (source: number, data: string) => {
   const { number, _id, volume } = JSON.parse(data);
@@ -78,8 +79,8 @@ onClientCallback("summit_phone:server:call", async (source: number, data: string
 
   const sourcePhone = await Utils.GetPhoneNumberBySource(source);
   const targetPhone = await Utils.GetPhoneNumberBySource(targetSource);
-  const sourceCitizenId = await global.exports["qb-core"].GetPlayerCitizenIdBySource(source);
-  const targetCitizenId = await global.exports["qb-core"].GetPlayerCitizenIdBySource(targetSource);
+  const sourceCitizenId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source);
+  const targetCitizenId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(targetSource);
   const IsNumberBlocked = await Utils.IsNumberBlocked(targetPhone, sourcePhone);
   const sourceFlightMode = await Utils.InFlightMode(sourceCitizenId);
   const targetFlightMode = await Utils.InFlightMode(targetCitizenId);
@@ -356,7 +357,7 @@ onClientCallback("summit_phone:server:addPlayerToCall", async (source: number, d
   }
   const targetSource = targetPlayer.PlayerData.source;
   const IsNumberBlocked = await Utils.IsNumberBlocked(contactNumber, sourcePhone);
-  const sourceCitizenId = await global.exports["qb-core"].GetPlayerCitizenIdBySource(source);
+  const sourceCitizenId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source);
   const targetCitizenId = await Utils.GetCitizenIdByPhoneNumber(contactNumber);
   const sourceFlightMode = await Utils.InFlightMode(sourceCitizenId);
   const targetFlightMode = await Utils.InFlightMode(targetCitizenId);
@@ -582,8 +583,8 @@ onClientCallback("summit_phone:server:jailCall", async (source: number, data: st
 
   const sourcePhone = "JAIL_PHONE"; // Special identifier for jail phone calls
   const targetPhone = await Utils.GetPhoneNumberBySource(targetSource);
-  const sourceCitizenId = await global.exports["qb-core"].GetPlayerCitizenIdBySource(source);
-  const targetCitizenId = await global.exports["qb-core"].GetPlayerCitizenIdBySource(targetSource);
+  const sourceCitizenId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source);
+  const targetCitizenId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(targetSource);
 
   // For jail calls, we don't check blocked numbers or flight mode
   // This allows incarcerated players to make calls even if they're blocked

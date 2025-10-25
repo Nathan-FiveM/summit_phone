@@ -42,7 +42,7 @@ onNet("phone:server:acceptCall", async (notiId: string, args: any) => {
     }));
     return;
   }
-  const targetCitizenId = await global.exports["qb-core"].GetPlayerCitizenIdBySource(targetSource);
+  const targetCitizenId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(targetSource);
   const targetPhone = await Utils.GetPhoneNumberBySource(targetSource);
   const participant = {
     source: targetSource,
@@ -100,7 +100,7 @@ onNet("phone:server:acceptConferenceCall", async (notiId: string, args: any) => 
     return;
   }
   callManager.stopRingTone(targetSource);
-  const targetCitizenId = await global.exports["qb-core"].GetPlayerCitizenIdBySource(targetSource);
+  const targetCitizenId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(targetSource);
   const targetPhone = await Utils.GetPhoneNumberBySource(targetSource);
   const participant = {
     source: targetSource,

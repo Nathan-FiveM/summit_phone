@@ -160,7 +160,7 @@ class PigeonService {
 
     public async postReply(client: number, data: string): Promise<any> {
         const { tweetId, content, email, attachments } = JSON.parse(data);
-        const citizenId = await exports["qb-core"].GetPlayerCitizenIdBySource(client);
+        const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
         const user = await MongoDB.findOne("phone_pigeon_users", { email });
         const tweet: TweetData = await MongoDB.findOne("phone_pigeon_tweets", { _id: tweetId });
         if (!tweet) return { error: "Tweet not found" };
