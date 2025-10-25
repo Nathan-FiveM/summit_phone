@@ -425,6 +425,86 @@ Summit RP Discord: https://discord.gg/summitrp
 
 ---
 
+**Addition for QBox**
+``qbx_core/server/functions.lua``
+```lua
+---@param citizenid string
+---@return Player?
+function GetPlayerCitizenIdBySource(thePlayersSource)
+    if not thePlayersSource then
+        thePlayersSource = source
+    end
+    if QBX.Players[thePlayersSource].PlayerData.citizenid then
+        return QBX.Players[thePlayersSource].PlayerData.citizenid
+    end
+end
+
+exports('GetPlayerCitizenIdBySource', GetPlayerCitizenIdBySource)
+
+function GetPlayerCharName(source)
+    local player = QBX.Players[source]
+    if not player or not player.PlayerData then return nil end
+
+    local charinfo = player.PlayerData.charinfo or {}
+    if charinfo.firstname or charinfo.lastname then
+        return (charinfo.firstname or '') .. ' ' .. (charinfo.lastname or '')
+    else
+        return player.PlayerData.name
+    end
+
+end
+exports('GetPlayerName', GetPlayerCharName)
+
+function CheckJobGrade(job, grade)
+    local jobInfo = QBX.Shared.Jobs[job]
+    if jobInfo then
+        local sgrade = tostring(grade)
+        if jobInfo["grades"][sgrade] then
+            return true
+        end
+    end
+    return false
+end
+exports('CheckJobGrade', CheckJobGrade)
+```
+
+Find the function
+``qbx_core/server/player.lua  -  GenerateUniqueIdentifier('PhoneNumber')``
+Remove the line of code and add this line
+```lua
+playerData.charinfo.phone = playerData.charinfo.phone or exports['summit_phone']:GeneratePlayerPhoneNumber(PlayerData.citizenid)
+```
+
+In qbx_smallresources create a folder called qbx_logs then create a server.lua and add the following code;
+```lua
+function AddLog(data)
+    local name = 'phone'
+    local title = data.title
+    local message = data.message ~= nil and data.message or 'BLANK MESSAGE from log: '..data.type
+    local tag = tagEveryone ~= nil and tagEveryone or false
+    local webHook = 'webhooklinkhere'
+    local embedData = {
+        {
+            ["title"] = title,
+            ["color"] = 16711680,
+            ["footer"] = {
+                ["text"] = os.date("%c"),
+            },
+            ["description"] = message,
+        }
+    }
+    PerformHttpRequest(webHook, function(err, text, headers) end, 'POST', json.encode({ username = "QB Logs",embeds = embedData}), { ['Content-Type'] = 'application/json' })
+    Citizen.Wait(100)
+    if tag then
+        PerformHttpRequest(webHook, function(err, text, headers) end, 'POST', json.encode({ username = "QB Logs", content = "@everyone"}), { ['Content-Type'] = 'application/json' })
+    end
+    if Config.OxLogs then
+        lib.logger(-1, name, json.encode(title..' '..message))
+    end
+end
+exports('AddLog', AddLog)
+```
+
 **Addition for QBCore**
 
 Add this function to;
@@ -494,8 +574,30 @@ exports('GetPlayer', QBCore.Functions.GetPlayer)
 ```
 In qb-smallresources add the following function;
 ```lua
-function AddLog(type, title, message, showIdentifiers, tagEveryone)
-    TriggerEvent('qb-log:server:CreateLog', type, title, nil, message, false)
+function AddLog(data)
+    local name = 'phone'
+    local title = data.title
+    local message = data.message ~= nil and data.message or 'BLANK MESSAGE from log: '..data.type
+    local tag = tagEveryone ~= nil and tagEveryone or false
+    local webHook = 'webhooklinkhere'
+    local embedData = {
+        {
+            ["title"] = title,
+            ["color"] = 16711680,
+            ["footer"] = {
+                ["text"] = os.date("%c"),
+            },
+            ["description"] = message,
+        }
+    }
+    PerformHttpRequest(webHook, function(err, text, headers) end, 'POST', json.encode({ username = "QB Logs",embeds = embedData}), { ['Content-Type'] = 'application/json' })
+    Citizen.Wait(100)
+    if tag then
+        PerformHttpRequest(webHook, function(err, text, headers) end, 'POST', json.encode({ username = "QB Logs", content = "@everyone"}), { ['Content-Type'] = 'application/json' })
+    end
+    if Config.OxLogs then
+        lib.logger(-1, name, json.encode(title..' '..message))
+    end
 end
 exports('AddLog', AddLog)
 ```
