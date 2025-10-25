@@ -468,6 +468,43 @@ end
 exports('CheckJobGrade', CheckJobGrade)
 ```
 
+``qbx_core/server/player.lua -- Replace the SetJobDuty with the following``
+
+```lua
+---@param identifier Source | string
+---@param onDuty boolean
+function SetJobDuty(identifier, onDuty)
+    local player = type(identifier) == 'string' and (GetPlayerByCitizenId(identifier) or GetOfflinePlayer(identifier)) or GetPlayer(identifier)
+
+    if not player then return end
+
+    player.PlayerData.job.onduty = not not onDuty
+
+    if player.Offline then return end
+
+    TriggerEvent('QBCore:Server:SetDuty', player.PlayerData.source, player.PlayerData.job.onduty)
+    TriggerClientEvent('QBCore:Client:SetDuty', player.PlayerData.source, player.PlayerData.job.onduty)
+
+    UpdatePlayerData(identifier)
+
+        -- Update GlobalState job count
+    local jobName = player.PlayerData.job.name
+    local onDutyCount = 0
+
+    -- Get all online players and count those on duty for this job
+    local Players = GetQBPlayers()
+    for _, player in pairs(Players) do
+        if player.PlayerData.job.name == jobName and player.PlayerData.job.onduty then
+            onDutyCount = onDutyCount + 1
+        end
+    end
+
+    -- Set GlobalState for the job count
+    GlobalState[jobName .. ':count'] = onDutyCount
+end
+```
+
+
 Find the function
 ``qbx_core/server/player.lua  -  GenerateUniqueIdentifier('PhoneNumber')``
 Remove the line of code and add this line
@@ -560,7 +597,39 @@ Remove all code and add this line
 ```lua
 exports['summit_phone']:GeneratePlayerPhoneNumber(PlayerData.citizenid)
 ```
-Find the Functio QBCore.Functions.GetPlayer()
+
+``qb-core/server/events.lua -- Update the duty function with the following code``
+```lua
+RegisterNetEvent('QBCore:ToggleDuty', function()
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(src)
+    if not Player then return end
+    if Player.PlayerData.job.onduty then
+        Player.Functions.SetJobDuty(false)
+        TriggerClientEvent('QBCore:Notify', src, Lang:t('info.off_duty'))
+    else
+        Player.Functions.SetJobDuty(true)
+        TriggerClientEvent('QBCore:Notify', src, Lang:t('info.on_duty'))
+    end
+    TriggerClientEvent('QBCore:Client:SetDuty', src, Player.PlayerData.job.onduty)
+    -- Update GlobalState job count
+    local jobName = Player.PlayerData.job.name
+    local onDutyCount = 0
+
+    -- Get all online players and count those on duty for this job
+    local Players = QBCore.Functions.GetQBPlayers()
+    for _, player in pairs(Players) do
+        if player.PlayerData.job.name == jobName and player.PlayerData.job.onduty then
+            onDutyCount = onDutyCount + 1
+        end
+    end
+
+    -- Set GlobalState for the job count
+    GlobalState[jobName .. ':count'] = onDutyCount
+end)
+```
+
+Find the Function QBCore.Functions.GetPlayer()
 Replace with the following;
 ```lua
 function QBCore.Functions.GetPlayer(source)
