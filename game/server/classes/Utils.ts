@@ -1,6 +1,6 @@
 import { Framework, MongoDB, MySQL } from "@server/sv_main";
 import { generateUUid, LOGGER } from "@shared/utils";
-import { FRAMEWORK_RESOURCE } from "../../shared/utils"; // adjust path as needed
+import { FRAMEWORK_RESOURCE, INVENTORY_RESOURCE } from "../../shared/utils"; // adjust path as needed
 
 class Util {
     public contactsData: any;
@@ -317,7 +317,7 @@ class Util {
         return source.PlayerData.source;
     }
 
-    async HasPhone(playerSource: number) {
+    public async HasPhone(playerSource: number): Promise<boolean> {
         const phoneList: string[] = [
             'blue_phone',
             'green_phone',
@@ -326,17 +326,34 @@ class Util {
             'purple_phone',
         ];
 
-        try {
-            for (const phoneItem of phoneList) {
-                const has = await exports['lj-inventory'].HasItem(playerSource, phoneItem);
-                if (has) return true;
-            }
-        } catch (e) {
-            console.error('HasPhone check failed:', e);
-        }
+        if (INVENTORY_RESOURCE === 'ox_inventory') {
+            const hasItem: Record<string, number> = exports['ox_inventory'].Search(
+                playerSource,
+                'count',
+                phoneList
+            );
 
-        return false;
-    };
+            for (const phone of phoneList) {
+                if (hasItem[phone] > 0) {
+                    return true;
+                }
+            }
+
+            return false;
+        } else {
+            try {
+                for (const phoneItem of phoneList) {
+                    // @ts-ignore - external inventory resource
+                    const has = await exports[INVENTORY_RESOURCE].HasItem(playerSource, phoneItem);
+                    if (has) return true;
+                }
+            } catch (e) {
+                console.error('HasPhone check failed:', e);
+            }
+
+            return false;
+        }
+    }
 
     async InFlightMode(citizenId: string) {
         const settings = await MongoDB.findOne('phone_settings', { _id: citizenId });

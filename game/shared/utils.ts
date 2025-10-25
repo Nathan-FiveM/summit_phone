@@ -18,3 +18,5 @@ export const LOGGER = (message: string) => {
 }
 
 export const FRAMEWORK_RESOURCE = 'qb-core'; // Change this to your framework core qb-core/qbx-core
+export type InventoryType = 'lj-inventory' | 'ox_inventory' | 'qb-inventory';
+export const INVENTORY_RESOURCE: InventoryType = 'lj-inventory'; // Change this to your inventory system ox_inventory/qb-inventory/lj-inventory etc...
