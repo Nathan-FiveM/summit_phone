@@ -502,6 +502,48 @@ function SetJobDuty(identifier, onDuty)
     -- Set GlobalState for the job count
     GlobalState[jobName .. ':count'] = onDutyCount
 end
+
+function SetJob(identifier, jobName, grade)
+    jobName = jobName:lower()
+    grade = tonumber(grade) or 0
+
+    local job = GetJob(jobName)
+
+    if not job then
+        lib.print.error(('cannot set job. Job %s does not exist'):format(jobName))
+
+        return false
+    end
+
+    if not job.grades[grade] then
+        lib.print.error(('cannot set job. Job %s does not have grade %s'):format(jobName, grade))
+
+        return false
+    end
+
+    local player = type(identifier) == 'string' and (GetPlayerByCitizenId(identifier) or GetOfflinePlayer(identifier)) or GetPlayer(identifier)
+
+    if setJobReplaces and player.PlayerData.job.name ~= 'unemployed' then
+        local success, errorResult = RemovePlayerFromJob(player.PlayerData.citizenid, player.PlayerData.job.name)
+
+        if not success then
+            return false, errorResult
+        end
+    end
+
+    if jobName ~= 'unemployed' then
+        local success, errorResult = AddPlayerToJob(player.PlayerData.citizenid, jobName, grade)
+
+        if not success then
+            return false, errorResult
+        end
+    end
+    local gradeString = job["grades"][tostring(grade)]
+    TriggerEvent('summit_phone:server:hireinMultiJob', target, job, grade, job.label, gradeString.name)
+    return SetPlayerPrimaryJob(player.PlayerData.citizenid, jobName)
+end
+
+exports('SetJob', SetJob)
 ```
 
 ``qbx_core/client/character.lua``
@@ -514,7 +556,7 @@ Find the function
 ``qbx_core/server/player.lua  -  GenerateUniqueIdentifier('PhoneNumber')``
 Remove the line of code and add this line
 ```lua
-playerData.charinfo.phone = playerData.charinfo.phone or exports['summit_phone']:GeneratePlayerPhoneNumber(PlayerData.citizenid)
+playerData.charinfo.phone = playerData.charinfo.phone or exports['summit_phone']:GeneratePlayerPhoneNumber(playerData.citizenid)
 ```
 
 In qbx_smallresources create a folder called qbx_logs then create a server.lua and add the following code;

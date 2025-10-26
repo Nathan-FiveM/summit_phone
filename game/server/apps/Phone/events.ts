@@ -3,6 +3,7 @@ import { Utils } from "@server/classes/Utils";
 import { generateUUid } from "@shared/utils";
 import { callHistoryManager } from "./callHistoryManager";
 import { Logger } from "@server/sv_main";
+import { FRAMEWORK_RESOURCE } from "../../../shared/utils"; // adjust path as needed
 
 onNet("phone:server:declineCall", async (notiId: string, args: any) => {
   const { callId, targetSource, callerSource, databaseTableId } = JSON.parse(args);
