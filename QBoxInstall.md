@@ -2,9 +2,9 @@
 ``game/shared/utils.ts/ in the phone resource update the code to match your inventory/framework``
 ```ts
 export type FrameworkType = 'qb-core' | 'qbx_core';
-export const FRAMEWORK_RESOURCE: FrameworkType = 'qb-core'; // Change this to your framework core qb-core/qbx_core
+export const FRAMEWORK_RESOURCE: FrameworkType = 'qbx_core'; // Change this to your framework core qb-core/qbx_core
 export type InventoryType = 'lj-inventory' | 'ox_inventory' | 'qb-inventory';
-export const INVENTORY_RESOURCE: InventoryType = 'lj-inventory'; // Change this to your inventory system ox_inventory/qb-inventory/lj-inventory etc...
+export const INVENTORY_RESOURCE: InventoryType = 'ox_inventory'; // Change this to your inventory system ox_inventory/qb-inventory/lj-inventory etc...
 ```
 
 ``qbx_core/server/functions.lua``
