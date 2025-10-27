@@ -75,6 +75,7 @@ Add these functions to
         ["lme"] = 0
     }
 ```
+
 Find the function
 ``QBCore.Functions.CreatePhoneNumber()``
 Remove QBCore.Functions.CreatePhoneNumber() and add this instead
@@ -157,6 +158,4 @@ In qb-smallresources/server add the following function;
 ``On a playerloaded event in client put the following code if the player is not new, if the player is new do not setup as it is already done for you within the GeneratePlayerPhoneNumber();``
 ```lua
     TriggerEvent('phone:client:setupPhone', PlayerData.citizenid)
-    Wait(500)
-    exports['summit_phone']:ToggleDisablePhone(false)
 ```
