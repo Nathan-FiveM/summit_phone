@@ -10,9 +10,9 @@ import { CloseAndToggleDisablePhone, ToggleDisablePhone } from "./cl_exports";
 import { Animation } from "./classes/Animation";
 import { FRAMEWORK_RESOURCE } from "../shared/utils"; // adjust path as needed
 
-export let FrameWork = exports[FRAMEWORK_RESOURCE].GetCoreObject();
+export let FrameWork = exports['qb-core'].GetCoreObject();
 on('QBCore:Client:UpdateObject', () => {
-    FrameWork = exports[FRAMEWORK_RESOURCE].GetCoreObject();
+    FrameWork = exports['qb-core'].GetCoreObject();
 })
 
 setImmediate(() => {

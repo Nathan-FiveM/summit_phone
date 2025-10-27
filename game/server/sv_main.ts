@@ -7,13 +7,13 @@ import { onClientCallback } from "@overextended/ox_lib/server";
 import { InvoiceRecurringPayments } from "./apps/Wallet/callbacks";
 import { pigeonService } from "./apps/Pigeon/PigeonService";
 import { FRAMEWORK_RESOURCE } from "../shared/utils"; // adjust path as needed
-export let Framework = exports[FRAMEWORK_RESOURCE].GetCoreObject();
+export let Framework = exports['qb-core'].GetCoreObject();
 export const MongoDB = exports['mongoDB'];
 export const MySQL = exports.oxmysql;
 export const Logger = exports['qb-smallresources'];
 
 on('QBCore:Server:UpdateObject', () => {
-    Framework = exports[FRAMEWORK_RESOURCE].GetCoreObject();
+    Framework = exports['qb-core'].GetCoreObject();
 });
 
 setImmediate(() => {
