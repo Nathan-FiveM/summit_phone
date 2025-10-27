@@ -17,6 +17,7 @@ export default function MailApp(props: { onExit: () => void, onEnter: () => void
     const [signUp, setSignUp] = useState(false);
     const [messagesData, setMessagesData] = useState([]);
     const [email, setEmail] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [password, setPassword] = useState('');
     const [emailError, setEmailError] = useState(false);
 
@@ -150,26 +151,71 @@ export default function MailApp(props: { onExit: () => void, onEnter: () => void
                                     color: '#FFFFFF',
                                     width: '89%',
                                     marginTop: '1.78vh'
-                                }}>Password</div>
-                                <input
-                                    value={password}
-                                    type="password"
-                                    placeholder="Password"
-                                    style={{
-                                        width: '90%',
-                                        height: '4.8%',
-                                        fontSize: '1.42vh',
-                                        backgroundColor: 'rgba(255,255,255,0)',
-                                        color: 'white',
-                                        border: '0.09vh solid #323232',
-                                        borderRadius: '0.37vh',
-                                        padding: '3%',
-                                        outline: 'none',
-                                    }}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    onFocus={() => fetchNui("disableControls", true)}
-                                    onBlur={() => fetchNui("disableControls", false)}
-                                />
+                                }}>
+                                    Password
+                                </div>
+
+                                <div style={{
+                                    width: '90%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    position: 'relative',
+                                    marginTop: '1.78vh'
+                                }}>
+                                    <input
+                                        value={password}
+                                        type={showPassword ? 'text' : 'password'}
+                                        placeholder="Password"
+                                        style={{
+                                            width: '100%',
+                                            height: '4.8%',
+                                            fontSize: '1.42vh',
+                                            backgroundColor: 'rgba(255,255,255,0)',
+                                            color: 'white',
+                                            border: '0.09vh solid #323232',
+                                            borderRadius: '0.37vh',
+                                            padding: '3%',
+                                            paddingRight: '3.5vh', // space for icon
+                                            outline: 'none',
+                                        }}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        onFocus={() => fetchNui("disableControls", true)}
+                                        onBlur={() => fetchNui("disableControls", false)}
+                                    />
+                                    <div
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        style={{
+                                            position: 'absolute',
+                                            right: '1vh',
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            transition: 'opacity 0.2s, transform 0.2s',
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            (e.currentTarget as HTMLElement).style.opacity = '0.7';
+                                            (e.currentTarget as HTMLElement).style.transform = 'scale(1.15)';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            (e.currentTarget as HTMLElement).style.opacity = '1';
+                                            (e.currentTarget as HTMLElement).style.transform = 'scale(1)';
+                                        }}
+                                    >
+                                        {showPassword ? (
+                                            // 👁️ Open eye icon
+                                            <svg xmlns="http://www.w3.org/2000/svg" height="1.8vh" viewBox="0 -960 960 960" width="1.8vh" fill="white">
+                                                <path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0-60q-25 0-42.5-17.5T420-480q0-25 17.5-42.5T480-540q25 0 42.5 17.5T540-480q0 25-17.5 42.5T480-420Zm0 180q-141 0-255-77T0-480q69-103 183-171.5T480-720q141 0 255 68.5T960-480q-69 103-183 171.5T480-240Zm0-60q113 0 206-56t154-144q-61-88-154-144t-206-56q-113 0-206 56T120-500q61 88 154 144t206 56Z"/>
+                                            </svg>
+                                        ) : (
+                                            // 🙈 Closed eye icon
+                                            <svg xmlns="http://www.w3.org/2000/svg" height="1.8vh" viewBox="0 -960 960 960" width="1.8vh" fill="white">
+                                                <path d="M773-165 668-270q-38 13-78 21.5T504-240q-141 0-255-77T66-480q31-46 69.5-84.5T224-633L113-743l42-42 660 660-42 42Zm-87-219-51-51q6-18 8-35t2-36q0-100-70-170t-170-70q-19 0-36 2t-35 8l-51-51q28-12 58-18t64-6q134 0 231 86t143 168q-37 54-86.5 97T686-384Zm-195 84q30 0 59-7.5t56-21.5L530-422q-9 5-21 8.5t-29 3.5q-50 0-85-35t-35-85q0-17 3.5-29t8.5-21L352-645q-14 27-21.5 56t-7.5 59q0 83 58 141t141 58Zm-6-184Z"/>
+                                            </svg>
+                                        )}
+                                    </div>
+                                </div>
+
                                 <div
                                     style={{
                                         backgroundColor: '#0A84FF',
@@ -305,25 +351,71 @@ export default function MailApp(props: { onExit: () => void, onEnter: () => void
                                     color: '#FFFFFF',
                                     width: '89%',
                                     marginTop: '1.78vh'
-                                }}>Password</div>
-                                <input
-                                    value={password}
-                                    type="text"
-                                    placeholder="Password"
-                                    style={{
-                                        width: '90%',
-                                        height: '4.8%',
-                                        fontSize: '1.42vh',
-                                        backgroundColor: 'rgba(255,255,255,0)',
-                                        color: 'white',
-                                        border: '0.09vh solid #323232',
-                                        borderRadius: '0.37vh',
-                                        padding: '3%',
-                                    }}
-                                    onFocus={() => fetchNui("disableControls", true)}
-                                    onBlur={() => fetchNui("disableControls", false)}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                />
+                                }}>
+                                    Password
+                                </div>
+
+                                <div style={{
+                                    width: '90%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    position: 'relative',
+                                    marginTop: '1.78vh'
+                                }}>
+                                    <input
+                                        value={password}
+                                        type={showPassword ? 'text' : 'password'}
+                                        placeholder="Password"
+                                        style={{
+                                            width: '100%',
+                                            height: '4.8%',
+                                            fontSize: '1.42vh',
+                                            backgroundColor: 'rgba(255,255,255,0)',
+                                            color: 'white',
+                                            border: '0.09vh solid #323232',
+                                            borderRadius: '0.37vh',
+                                            padding: '3%',
+                                            paddingRight: '3.5vh', // space for icon
+                                            outline: 'none',
+                                        }}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        onFocus={() => fetchNui("disableControls", true)}
+                                        onBlur={() => fetchNui("disableControls", false)}
+                                    />
+                                    <div
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        style={{
+                                            position: 'absolute',
+                                            right: '1vh',
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            transition: 'opacity 0.2s, transform 0.2s',
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            (e.currentTarget as HTMLElement).style.opacity = '0.7';
+                                            (e.currentTarget as HTMLElement).style.transform = 'scale(1.15)';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            (e.currentTarget as HTMLElement).style.opacity = '1';
+                                            (e.currentTarget as HTMLElement).style.transform = 'scale(1)';
+                                        }}
+                                    >
+                                        {showPassword ? (
+                                            // 👁️ Open eye icon
+                                            <svg xmlns="http://www.w3.org/2000/svg" height="1.8vh" viewBox="0 -960 960 960" width="1.8vh" fill="white">
+                                                <path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0-60q-25 0-42.5-17.5T420-480q0-25 17.5-42.5T480-540q25 0 42.5 17.5T540-480q0 25-17.5 42.5T480-420Zm0 180q-141 0-255-77T0-480q69-103 183-171.5T480-720q141 0 255 68.5T960-480q-69 103-183 171.5T480-240Zm0-60q113 0 206-56t154-144q-61-88-154-144t-206-56q-113 0-206 56T120-500q61 88 154 144t206 56Z"/>
+                                            </svg>
+                                        ) : (
+                                            // 🙈 Closed eye icon
+                                            <svg xmlns="http://www.w3.org/2000/svg" height="1.8vh" viewBox="0 -960 960 960" width="1.8vh" fill="white">
+                                                <path d="M773-165 668-270q-38 13-78 21.5T504-240q-141 0-255-77T66-480q31-46 69.5-84.5T224-633L113-743l42-42 660 660-42 42Zm-87-219-51-51q6-18 8-35t2-36q0-100-70-170t-170-70q-19 0-36 2t-35 8l-51-51q28-12 58-18t64-6q134 0 231 86t143 168q-37 54-86.5 97T686-384Zm-195 84q30 0 59-7.5t56-21.5L530-422q-9 5-21 8.5t-29 3.5q-50 0-85-35t-35-85q0-17 3.5-29t8.5-21L352-645q-14 27-21.5 56t-7.5 59q0 83 58 141t141 58Zm-6-184Z"/>
+                                            </svg>
+                                        )}
+                                    </div>
+                                </div>
+
                                 <div
                                     style={{
                                         backgroundColor: '#0A84FF',
