@@ -66,6 +66,15 @@ Add these functions to
     end
     exports('CheckJobGrade', QBCore.Functions.CheckJobGrade)
 ```
+``Add the following to QBCore.Player.CheckPlayerData(source, PlayerData) This is to use the crypto app``
+```lua
+    PlayerData.metadata['crypto'] = PlayerData.metadata['crypto'] or {
+        ["shung"] = 0,
+        ["gne"] = 0,
+        ["xcoin"] = 0,
+        ["lme"] = 0
+    }
+```
 Find the function
 ``QBCore.Functions.CreatePhoneNumber()``
 Remove QBCore.Functions.CreatePhoneNumber() and add this instead
