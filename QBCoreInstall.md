@@ -1,4 +1,11 @@
 **Addition for QBCore**
+``game/shared/utils.ts/ in the phone resource update the code to match your inventory/framework``
+```ts
+export type FrameworkType = 'qb-core' | 'qbx_core';
+export const FRAMEWORK_RESOURCE: FrameworkType = 'qb-core'; // Change this to your framework core qb-core/qbx_core
+export type InventoryType = 'lj-inventory' | 'ox_inventory' | 'qb-inventory';
+export const INVENTORY_RESOURCE: InventoryType = 'lj-inventory'; // Change this to your inventory system ox_inventory/qb-inventory/lj-inventory etc...
+```
 
 Add this function to;
 ``qb-core/server/functions.lua``

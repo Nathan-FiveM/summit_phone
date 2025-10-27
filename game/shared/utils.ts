@@ -18,6 +18,6 @@ export const LOGGER = (message: string) => {
 }
 
 export type FrameworkType = 'qb-core' | 'qbx_core';
-export const FRAMEWORK_RESOURCE: FrameworkType = 'qb-core'; // Change this to your framework core qb-core/qbx_core  -- Keep as qb-core for now QBox compat should do the work needed :D
+export const FRAMEWORK_RESOURCE: FrameworkType = 'qb-core'; // Change this to your framework core qb-core/qbx_core
 export type InventoryType = 'lj-inventory' | 'ox_inventory' | 'qb-inventory';
 export const INVENTORY_RESOURCE: InventoryType = 'lj-inventory'; // Change this to your inventory system ox_inventory/qb-inventory/lj-inventory etc...
