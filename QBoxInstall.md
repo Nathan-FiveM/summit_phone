@@ -12,11 +12,10 @@ export const INVENTORY_RESOURCE: InventoryType = 'ox_inventory'; // Change this 
     ---@param citizenid string
     ---@return Player?
     function GetPlayerCitizenIdBySource(thePlayersSource)
-        if not thePlayersSource then
-            thePlayersSource = source
-        end
-        if QBX.Players[thePlayersSource].PlayerData.citizenid then
-            return QBX.Players[thePlayersSource].PlayerData.citizenid
+        if tonumber(thePlayersSource) ~= nil then
+            return QBX.Players[tonumber(thePlayersSource)].PlayerData.citizenid
+        else
+            return QBX.Players[GetSource(thePlayersSource)]
         end
     end
     exports('GetPlayerCitizenIdBySource', GetPlayerCitizenIdBySource)
@@ -164,9 +163,16 @@ In qbx_smallresources create a folder called qbx_logs then create a server.lua a
         if tag then
             PerformHttpRequest(webHook, function(err, text, headers) end, 'POST', json.encode({ username = "QB Logs", content = "@everyone"}), { ['Content-Type'] = 'application/json' })
         end
-        if Config.OxLogs then
-            lib.logger(-1, name, json.encode(title..' '..message))
-        end
     end
     exports('AddLog', AddLog)
+```
+
+``Add the following item to your ox_inventory/data/items.lua``
+```lua
+    ['blue_phone'] = {
+        label = 'Phone',
+        weight = 190,
+        stack = false,
+        consume = 0,
+    },
 ```
