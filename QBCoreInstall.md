@@ -25,7 +25,7 @@ Add this function to;
     exports('GetPlayerCitizenIdBySource', QBCore.Functions.getPlayerCitizenIdBySource)
 ```
 
-Add this function to;
+Update this function to;
 ``qb-core/server/functions.lua``
 ```lua
     ---Get offline player by citizen id
@@ -77,10 +77,23 @@ Add these functions to
 ```
 
 Find the function
-``QBCore.Functions.CreatePhoneNumber()``
-Remove QBCore.Functions.CreatePhoneNumber() and add this instead
+``qb-core/server/player.lua``
+Update this function
 ```lua
-    exports['summit_phone']:GeneratePlayerPhoneNumber(PlayerData.citizenid)
+function QBCore.Functions.CreatePhoneNumber()
+    local PhoneNumber = math.random(100, 999) .. math.random(1000000, 9999999)
+    local result = MySQL.prepare.await('SELECT EXISTS(SELECT 1 FROM players WHERE JSON_UNQUOTE(JSON_EXTRACT(charinfo, "$.phone")) = ?) AS uniqueCheck', { PhoneNumber })
+    if result == 0 then return PhoneNumber end
+    return QBCore.Functions.CreatePhoneNumber()
+end
+```
+With the following;
+```lua
+function QBCore.Functions.CreatePhoneNumber()
+    local PlayerData = QBCore.Players[source].PlayerData
+    local PhoneNumber = exports['summit_phone']:GeneratePlayerPhoneNumber(PlayerData.citizenid)
+    return PhoneNumber
+end
 ```
 
 ``qb-core/server/events.lua -- Update the duty function with the following code``
@@ -116,9 +129,12 @@ Remove QBCore.Functions.CreatePhoneNumber() and add this instead
 
 ``Find the Function QBCore.Functions.GetPlayer() - Replace with the following;``
 ```lua
+    ---Get player with given server id (source)
+    ---@param source any
+    ---@return table
     function QBCore.Functions.GetPlayer(source)
-        if type(source) == 'number' then
-            return QBCore.Players[source]
+        if tonumber(source) ~= nil then -- If a number is a string ("1"), this will still correctly identify the index to use.
+            return QBCore.Players[tonumber(source)]
         else
             return QBCore.Players[QBCore.Functions.GetSource(source)]
         end
@@ -144,12 +160,9 @@ In qb-smallresources/server add the following function;
             }
         }
         PerformHttpRequest(webHook, function(err, text, headers) end, 'POST', json.encode({ username = "QB Logs",embeds = embedData}), { ['Content-Type'] = 'application/json' })
-        Citizen.Wait(100)
+        Wait(100)
         if tag then
             PerformHttpRequest(webHook, function(err, text, headers) end, 'POST', json.encode({ username = "QB Logs", content = "@everyone"}), { ['Content-Type'] = 'application/json' })
-        end
-        if Config.OxLogs then
-            lib.logger(-1, name, json.encode(title..' '..message))
         end
     end
     exports('AddLog', AddLog)
