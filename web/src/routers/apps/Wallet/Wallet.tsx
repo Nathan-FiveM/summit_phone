@@ -683,9 +683,13 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
                                 color: 'white',
                                 paddingLeft: '0.89vh',
                             }
-                        }} value={amount} onChange={(e) => {
+                        }}
+                        onFocus={() => fetchNui('disableControls', true)}
+                        onBlur={() => fetchNui('disableControls', false)}
+                        value={amount} onChange={(e) => {
                             setAmount(Number(e));
-                        }} placeholder="Amount" rightSection={<></>} />
+                        }}
+                        placeholder="Amount" rightSection={<></>} />
                         <Button mt="1.78vh" style={{
                             width: '90%',
                             height: '3.91vh',
@@ -1230,7 +1234,6 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
                                     });
                                 }}
                                 rightSection={<></>}
-                                onFocus={() => fetchNui('disableControls', true)} onBlur={() => fetchNui('disableControls', false)}
                             />
                             <Select
                                 label="Billing For Business"
