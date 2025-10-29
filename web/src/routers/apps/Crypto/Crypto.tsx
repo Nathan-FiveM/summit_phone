@@ -235,13 +235,15 @@ export default function Crypto(props: { onEnter: () => void; onExit: () => void 
                   onChange={(value: number | "") =>
                     setFormData({ ...formData, amount: typeof value === "number" ? value : 0 })
                   }
+                  onFocus={() => fetchNui('disableControls', true)}
+                  onBlur={() => fetchNui('disableControls', false)}
                   min={0}
                   styles={{
                     input: {
                       backgroundColor: themeColors.input,
                       color: themeColors.text,
                       borderRadius: "0.5vh",
-                      "::placeholder": { color: themeColors.secondaryText }, // ✅ correct
+                      "::placeholder": { color: themeColors.secondaryText },
                     },
                     label: { color: themeColors.label },
                   }}
@@ -258,6 +260,8 @@ export default function Crypto(props: { onEnter: () => void; onExit: () => void 
                   onChange={(value) =>
                     setFormData({ ...formData, target: value ? value.toString() : "" })
                   }
+                  onFocus={() => fetchNui('disableControls', true)}
+                  onBlur={() => fetchNui('disableControls', false)}
                   min={0}
                   styles={{
                     input: {

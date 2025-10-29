@@ -1161,6 +1161,8 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
                                         receiver: Number(e)
                                     })
                                 }}
+                                onFocus={() => fetchNui('disableControls', true)}
+                                onBlur={() => fetchNui('disableControls', false)}
                                 styles={{
                                     root: {
                                         width: '45%',
@@ -1196,6 +1198,8 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
                             <NumberInput
                                 label="Amount"
                                 placeholder="$ 0"
+                                onFocus={() => fetchNui('disableControls', true)}
+                                onBlur={() => fetchNui('disableControls', false)}
                                 styles={{
                                     root: {
                                         width: '48%',

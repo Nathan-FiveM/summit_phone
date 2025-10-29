@@ -72,7 +72,7 @@ onClientCallback('phone:server:shareNumber', async (source: any, comingSource: a
                 args: {}
             },
             "1": {
-                icon: "https://ignis-rp.com/uploads/server/phone/tick.svg",
+                icon: "https://ignis-rp.com/uploads/server/phone/accept.svg",
                 isServer: true,
                 event: "phone:server:addContact",
                 args: {

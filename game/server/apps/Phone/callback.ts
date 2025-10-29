@@ -209,7 +209,7 @@ onClientCallback("summit_phone:server:call", async (source: number, data: string
     app: "phone",
     icons: {
       "0": {
-        icon: "https://ignis-rp.com/uploads/red.svg",
+        icon: "https://ignis-rp.com/uploads/server/phone/cross-circle.svg",
         isServer: true,
         event: "phone:server:declineCall",
         args: JSON.stringify({
@@ -222,7 +222,7 @@ onClientCallback("summit_phone:server:call", async (source: number, data: string
         }),
       },
       "1": {
-        icon: "https://ignis-rp.com/uploads/green.svg",
+        icon: "https://ignis-rp.com/uploads/server/phone/accept.svg",
         isServer: true,
         event: "phone:server:acceptCall",
         args: JSON.stringify({
@@ -446,7 +446,7 @@ onClientCallback("summit_phone:server:addPlayerToCall", async (source: number, d
     app: "phone",
     icons: {
       "0": {
-        icon: "https://ignis-rp.com/uploads/red.svg",
+        icon: "https://ignis-rp.com/uploads/server/phone/cross-circle.svg",
         isServer: true,
         event: "phone:server:declineCall",
         args: JSON.stringify({
@@ -458,7 +458,7 @@ onClientCallback("summit_phone:server:addPlayerToCall", async (source: number, d
         }),
       },
       "1": {
-        icon: "https://ignis-rp.com/uploads/green.svg",
+        icon: "https://ignis-rp.com/uploads/server/phone/accept.svg",
         isServer: true,
         event: "phone:server:acceptConferenceCall",
         args: JSON.stringify({
@@ -652,7 +652,7 @@ onClientCallback("summit_phone:server:jailCall", async (source: number, data: st
     app: "phone",
     icons: {
       "0": {
-        icon: "https://ignis-rp.com/uploads/red.svg",
+        icon: "https://ignis-rp.com/uploads/server/phone/cross-circle.svg",
         isServer: true,
         event: "phone:server:declineCall",
         args: JSON.stringify({
@@ -665,7 +665,7 @@ onClientCallback("summit_phone:server:jailCall", async (source: number, data: st
         }),
       },
       "1": {
-        icon: "https://ignis-rp.com/uploads/green.svg",
+        icon: "https://ignis-rp.com/uploads/server/phone/accept.svg",
         isServer: true,
         event: "phone:server:acceptCall",
         args: JSON.stringify({
