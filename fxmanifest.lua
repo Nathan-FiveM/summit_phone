@@ -33,6 +33,7 @@ dependencies {
 server_scripts {
     'build/server.js',
     'build/server.lua',
+    'build/groups_sv.lua',
 }
 
 client_scripts {

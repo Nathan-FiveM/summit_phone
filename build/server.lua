@@ -1,16 +1,15 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 
 RegisterNetEvent('ignis_phone:sendNewMail', function(source, mailData)
-    if not source then source = source end
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player then return end
     local citizenId = Player.PlayerData.citizenid
-    local email = exports['summit_phone']:GetEmailIdByCitizenId(citizenId)
+    local emailAddress = exports['summit_phone']:GetEmailIdByCitizenId(citizenId)
 
-    if email then
+    if emailAddress then
         exports['summit_phone']:SendMail({
             email = mailData.email or 'government@summit.rp',
-            to = email,
+            to = emailAddress,
             subject = mailData.subject or 'Email is not setup correctly!',
             message = mailData.message or 'Email is not setup correctly!',
             images = mailData.images or {},

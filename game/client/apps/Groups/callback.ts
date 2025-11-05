@@ -6,6 +6,37 @@ onNet('groups:toggleDuty', async () => {
     emitNet('QBCore:ToggleDuty');
 });
 
+onNet('summit_groups:client:setWaypoint', (coords: any) => {
+    if (!coords) return;
+    SetNewWaypoint(coords.x, coords.y);
+});
+
+RegisterNuiCallback('groups:getAvailableJobs', async (_data: any, cb: Function) => {
+    const jobs = await triggerServerCallback('summit_groups:server:getAvailableJobs', 1);
+    cb(jobs);
+});
+
+RegisterNuiCallback('groups:requestJobInfo', async (data: { jobId: string }, cb: Function) => {
+  emitNet('summit_groups:server:sendJobInfoEmail', data.jobId);
+  cb('ok');
+});
+
+RegisterNuiCallback('groups:setJobWaypoint', async (data: { jobId: string }, cb: Function) => {
+    emitNet('summit_groups:server:setJobWaypoint', data.jobId);
+    cb('ok');
+});
+
+RegisterNuiCallback('sendPhoneNotification', (data: { app: string; title: string; description: string; timeout?: number }, cb: Function) => {
+  NUI.sendReactMessage('addNotification', {
+    id: generateUUid(),
+    title: data.title,
+    description: data.description,
+    app: data.app || 'settings',
+    timeout: data.timeout || 5000,
+  });
+  cb('ok');
+});
+
 /* // Interfaces
 interface BlipData {
     name: string;
@@ -48,7 +79,7 @@ onNet('groups:removeBlip', (name: string) => {
         const blip = GroupBlips[index].blip;
         SetBlipRoute(blip, false);
         RemoveBlip(blip);
-        GroupBlips[index] = undefined as any; // TypeScript workaround
+        GroupBlips.splice(index, 1); // TypeScript workaround
     }
     return true;
 });
