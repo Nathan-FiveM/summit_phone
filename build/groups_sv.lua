@@ -111,7 +111,6 @@ local JobCenter = {
     },
 }
 
-
 local function PlayerHasVPN(Player)
     local items = Player.Functions.GetItemsByName('vpn')
     return items and #items > 0

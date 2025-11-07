@@ -107,55 +107,87 @@ RegisterNuiCallbackType('deleteGroup');
 RegisterNuiCallbackType('getMemberList');
 RegisterNuiCallbackType('removeGroupMember');
 RegisterNuiCallbackType('getSetupAppData');
+
 on('__cfx_nui:getPlayerData', async (data: any, cb: Function) => {
   const res = await FrameWork.Functions.GetPlayerData()
-  /* const res = await exports['summit_groups'].getPlayerData() */
   cb(res)
 });
-on('__cfx_nui:groups:createGroup', async (data: any, cb: Function) => {
-  const res = false
-  /* const res = await exports['summit_groups'].createGroup(data) */
-  cb(res)
+// === GROUP CREATION ===
+on('__cfx_nui:groups:createGroup', async (data: { jobType?: string; pass?: string }, cb: Function) => {
+  console.log("[PHONE DEBUG] groups:createGroup triggered", data);
+  emitNet('summit_groups:server:createGroup', data.jobType || 'generic', data.pass || null);
+  cb(true);
 });
-on('__cfx_nui:getGroupData', async (data: any, cb: Function) => {
-  const res = false
-  /* const res = await exports['summit_groups'].getGroupData() */
-  cb(res)
+
+// === JOIN GROUP ===
+on('__cfx_nui:joinGroup', async (data: { groupId: string; pass?: string }, cb: Function) => {
+  emitNet('summit_groups:server:joinGroup', data.groupId, data.pass || null);
+  cb(true);
 });
-on('__cfx_nui:getGroupJobSteps', async (data: any, cb: Function) => {
-  const res = false
-  /* const res = await exports['summit_groups'].getGroupJobSteps() */
-  cb(res)
+
+// === LEAVE GROUP ===
+on('__cfx_nui:leaveGroupx', async (_data: any, cb: Function) => {
+  emitNet('summit_groups:server:leaveGroup');
+  cb(true);
 });
-on('__cfx_nui:getSetupAppData', async (data: any, cb: Function) => {
-  const res = false
-  /* const res = await exports['summit_groups'].getSetupAppData() */
-  cb(res)
+
+// === DELETE GROUP ===
+on('__cfx_nui:deleteGroup', async (_data: any, cb: Function) => {
+  emitNet('summit_groups:server:deleteGroup');
+  cb(true);
 });
-on('__cfx_nui:joinGroup', async (data: any, cb: Function) => {
-  const res = false
-  /* const res = await exports['summit_groups'].joinGroup(data) */
-  cb(res)
+interface GroupSetupData {
+  inGroup: boolean;
+  groups: Record<string, any>;
+  groupData: any;
+  groupStages: any[];
+}
+
+// === GET SETUP DATA (initial load) ===
+on('__cfx_nui:getSetupAppData', async (_data: any, cb: Function) => {
+  console.log("[PHONE DEBUG] getSetupAppData requested from NUI");
+  const groups = (await triggerServerCallback<GroupSetupData>(
+    "summit_groups:getSetupAppData",
+    1
+  )) as GroupSetupData;
+
+  console.log("[PHONE DEBUG] getSetupAppData returned", groups);
+
+  // ✅ Tell the React app that we are in a group
+  if (groups.inGroup) {
+    NUI.sendReactMessage("setInGroup", true);
+    NUI.sendReactMessage("setCurrentGroup", groups.groupData);
+    NUI.sendReactMessage("setGroups", groups.groups);
+    NUI.sendReactMessage("setGroupJobSteps", groups.groupStages);
+  } else {
+    NUI.sendReactMessage("setInGroup", false);
+  }
+
+  cb(groups);
 });
-on('__cfx_nui:leaveGroupx', async (data: any, cb: Function) => {
-  const res = false
-  /* const res = await exports['summit_groups'].leaveGroup(data) */
-  cb(res)
+
+// === GET CURRENT GROUP DATA (client view refresh) ===
+on('__cfx_nui:getGroupData', async (_data: any, cb: Function) => {
+  const res = await triggerServerCallback('summit_groups:getGroupData', 1);
+  cb(res || {});
 });
-on('__cfx_nui:deleteGroup', async (data: any, cb: Function) => {
-  const res = false
-  /* const res = await exports['summit_groups'].deleteGroup() */
-  cb(res)
+
+// === GET CURRENT JOB STEPS ===
+on('__cfx_nui:getGroupJobSteps', async (_data: any, cb: Function) => {
+  const res = await triggerServerCallback('summit_groups:getGroupJobSteps', 1);
+  cb(res || {});
 });
-on('__cfx_nui:getMemberList', async (data: any, cb: Function) => {
-  const res = false
-  /* const res = await exports['summit_groups'].getMemberList() */
-  cb(res)
+
+// === GET MEMBER LIST ===
+on('__cfx_nui:getMemberList', async (_data: any, cb: Function) => {
+  const res = await triggerServerCallback('summit_groups:getMemberList', 1);
+  cb(res || []);
 });
-on('__cfx_nui:removeGroupMember', async (data: any, cb: Function) => {
-  const res = false
-  /* const res = await exports['summit_groups'].removeGroupMember(data) */
-  cb(res)
+
+// === REMOVE MEMBER ===
+on('__cfx_nui:removeGroupMember', async (data: { targetId: number }, cb: Function) => {
+  emitNet('summit_groups:server:removeGroupMember', data.targetId);
+  cb(true);
 });
 
 exports('SendCustomAppMessage', (event: string, data: any) => {

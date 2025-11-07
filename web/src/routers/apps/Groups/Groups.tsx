@@ -71,7 +71,54 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
     const [currentGroupData, setCurrentGroupData] = useState<GroupMember[]>([]);
     const [inGroup, setInGroup] = useState(false);
     const [groupStage, setGroupStage] = useState<{ isDone: boolean, name: string, id: number }[]>([]);
+    
+    // === HOUSE ROBBERY STATE ===
+    const [selectedJob, setSelectedJob] = useState<string>(""); // which job type player is viewing
+    const [availableGroups, setAvailableGroups] = useState<any[]>([]);
+    const [loadingGroups, setLoadingGroups] = useState<boolean>(false);
 
+    // Auto-fetch available groups for a job type
+    useEffect(() => {
+    if (!selectedJob) return;
+    setLoadingGroups(true);
+    fetchNui("groups:getGroupsForJob", { jobType: selectedJob })
+        .then((data) => setAvailableGroups((data as any[]) || []))
+        .finally(() => setLoadingGroups(false));
+    }, [selectedJob]);
+
+    useNuiEvent("updateGroupsApp", (payload: { action: string; data: any }) => {
+    const { action, data } = payload;
+    console.log("[GROUPS UI] updateGroupsApp received:", action, data);
+
+    switch (action) {
+        case "setInGroup":
+        setInGroup(Boolean(data));
+        break;
+
+        case "setCurrentGroup":
+        if (data && Object.keys(data).length > 0) {
+            setCurrentGroupData(data.members || []);
+            setGroupsData([data]); // ensure we store the current group
+        } else {
+            setCurrentGroupData([]);
+            setGroupsData([]);
+        }
+        break;
+
+        case "setGroups":
+        setGroupsData(Array.isArray(data) ? data : []);
+        break;
+
+        case "setGroupJobSteps":
+        setGroupStage(Array.isArray(data) ? data : []);
+        break;
+
+        default:
+        console.warn("[GROUPS UI] Unknown updateGroupsApp action:", action);
+        break;
+    }
+    });
+    
     useNuiEvent('setGroups', async (data: NewGroupData[]) => {
         setGroupsData(data);
     });
@@ -205,15 +252,106 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                     </svg>
                 </div>
 
-                {/* ✅ if NOT in group show job list */}
+                {/* ✅ if NOT in group */}
                 {!inGroup ? (
-                    <>
-                    <Searchbar value={searchValue} onChange={(e) => setSearchValue(e)} mt="0.53vh" />
+                <>
+                    {/* 🏠 House Robbery - Group Listing Section */}
+                    {selectedJob === "House Robbery" ? (
                     <div
                         style={{
+                        width: "90%",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        color: "#FFF",
+                        marginTop: "1vh",
+                        }}
+                    >
+                        <Text fw={700} size="1.6vh" mb="1vh">
+                        🏠 House Robbery — Groups
+                        </Text>
+
+                        <Button
+                        fullWidth
+                        color="orange"
+                        radius="0.5vh"
+                        mb="1vh"
+                        onClick={() =>
+                            fetchNui("groups:createGroup", { jobType: "House Robbery" })
+                        }
+                        >
+                        Create New Group
+                        </Button>
+
+                        {loadingGroups ? (
+                        <Text c="gray.5">Loading groups...</Text>
+                        ) : availableGroups.length > 0 ? (
+                        <div
+                            style={{
+                            width: "100%",
+                            maxHeight: "55vh",
+                            overflowY: "auto",
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "0.8vh",
+                            }}
+                        >
+                            {availableGroups.map((g) => (
+                            <div
+                                key={g.id}
+                                style={{
+                                backgroundColor: "rgba(255,255,255,0.08)",
+                                borderRadius: "0.53vh",
+                                padding: "1vh",
+                                }}
+                            >
+                                <Text fw={600}>{g.jobType || "House Robbery"}</Text>
+                                <Text size="1.2vh" c="gray.4">
+                                Members: {g.memberCount ?? 0}
+                                </Text>
+                                <Text size="1.2vh" c="gray.4">
+                                Status: {g.status ?? "idle"}
+                                </Text>
+
+                                <Button
+                                mt="0.8vh"
+                                size="xs"
+                                color="green"
+                                radius="0.4vh"
+                                onClick={() => fetchNui("joinGroup", { groupId: g.id })}
+                                >
+                                Join Group
+                                </Button>
+                            </div>
+                            ))}
+                        </div>
+                        ) : (
+                        <Text c="gray.5">No available groups. Create one to get started!</Text>
+                        )}
+
+                        <Button
+                        mt="1vh"
+                        size="xs"
+                        color="gray"
+                        variant="light"
+                        onClick={() => setSelectedJob("")}
+                        >
+                        ← Back to Job List
+                        </Button>
+                    </div>
+                    ) : (
+                    <>
+                        {/* 🧭 DEFAULT JOB LIST SECTION */}
+                        <Searchbar
+                        value={searchValue}
+                        onChange={(e) => setSearchValue(e)}
+                        mt="0.53vh"
+                        />
+                        <div
+                        style={{
                             width: "90%",
-                            height: "78%",           // fixed scrollable height
-                            overflowY: "auto",       // activates scrolling
+                            height: "78%",
+                            overflowY: "auto",
                             marginTop: "1vh",
                             display: "flex",
                             flexDirection: "column",
@@ -230,116 +368,207 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                             <div
                                 key={i}
                                 style={{
-                                    width: "100%",
-                                    minHeight: "8vh",               // slightly taller cards
-                                    backgroundColor: "rgba(255, 255, 255, 0.15)",
-                                    borderRadius: "0.53vh",
-                                    padding: "1.0vh 1.1vh",         // ⬅️ more top/bottom padding
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                    alignItems: "center",           // keeps text & button vertically aligned
+                                width: "100%",
+                                minHeight: "8vh",
+                                backgroundColor: "rgba(255, 255, 255, 0.15)",
+                                borderRadius: "0.53vh",
+                                padding: "1.0vh 1.1vh",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
                                 }}
-                                >
-                                {/* LEFT SIDE: Job label & description */}
+                            >
+                                {/* LEFT SIDE: Job Info */}
                                 <div
-                                    style={{
+                                style={{
                                     display: "flex",
                                     flexDirection: "column",
                                     justifyContent: "center",
                                     color: "#FFF",
                                     width: "75%",
-                                    paddingRight: "1vh",          // adds gap between text & button
-                                    }}
+                                    paddingRight: "1vh",
+                                }}
                                 >
-                                    <Text fw={600} size="1.42vh" style={{ marginBottom: "0.4vh" }}>
+                                <Text fw={600} size="1.42vh" style={{ marginBottom: "0.4vh" }}>
                                     {job.label}
-                                    </Text>
-                                    <Text
+                                </Text>
+                                <Text
                                     size="1.1vh"
                                     c="gray.5"
                                     lineClamp={2}
-                                    style={{ marginBottom: "0.3vh" }}  // ⬅️ vertical space below description
-                                    >
+                                    style={{ marginBottom: "0.3vh" }}
+                                >
                                     {job.description}
-                                    </Text>
+                                </Text>
                                 </div>
 
-                                {/* RIGHT SIDE: GPS button */}
+                                {/* RIGHT SIDE: Buttons */}
                                 <div
-                                    style={{
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        alignItems: "flex-end",
-                                        justifyContent: "flex-end",
-                                        gap: "0.4vh",
+                                style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    alignItems: "flex-end",
+                                    justifyContent: "flex-end",
+                                    gap: "0.4vh",
+                                }}
+                                >
+                                <Button
+                                    size="xs"
+                                    variant="filled"
+                                    color="blue"
+                                    radius="0.53vh"
+                                    onClick={async () => {
+                                    await fetchNui("groups:requestJobInfo", { jobId: job.id });
                                     }}
-                                    >
-                                    {/* Job Info Button */}
-                                    <Button
-                                        size="xs"
-                                        variant="filled"
-                                        color="blue"
-                                        radius="0.53vh"
-                                        onClick={async () => {
-                                        await fetchNui("groups:requestJobInfo", { jobId: job.id });
-                                        }}
-                                    >
-                                        Job Info
-                                    </Button>
+                                >
+                                    Job Info
+                                </Button>
 
-                                    {/* Set GPS Button */}
-                                    <Button
-                                        size="xs"
-                                        variant="filled"
-                                        color="orange"
-                                        radius="0.53vh"
-                                        onClick={async () => {
-                                        await fetchNui("groups:setJobWaypoint", { jobId: job.id });
-                                        fetchNui("sendPhoneNotification", {
-                                            app: "groups",
-                                            title: "📍 Waypoint Set",
-                                            description: `Navigate to ${job.label} to begin work.`,
-                                            timeout: 5000,
-                                        });
-                                        }}
-                                    >
-                                        Set GPS
-                                    </Button>
-                                    </div>
+                                <Button
+                                    size="xs"
+                                    variant="filled"
+                                    color="orange"
+                                    radius="0.53vh"
+                                    onClick={async () => {
+                                    await fetchNui("groups:setJobWaypoint", { jobId: job.id });
+                                    fetchNui("sendPhoneNotification", {
+                                        app: "groups",
+                                        title: "📍 Waypoint Set",
+                                        description: `Navigate to ${job.label} to begin work.`,
+                                        timeout: 5000,
+                                    });
+
+                                    if (job.label === "House Robbery") {
+                                        setSelectedJob("House Robbery");
+                                    }
+                                    }}
+                                >
+                                    Set GPS
+                                </Button>
                                 </div>
-
+                            </div>
                             ))}
                         </div>
-
                     </>
+                    )}
+                </>
                 ) : (
-                    <>
-                    {/* ✅ if IN group show your current group info */}
+
+                <>
+                    {/* ✅ if IN group show current group info */}
                     <div style={{ width: "90%", marginTop: "1.78vh", color: "#FFF" }}>
-                        <Text fw={600} size="1.48vh">
+                    <Text fw={600} size="1.48vh">
                         Current Group
+                    </Text>
+
+                    {currentGroupData.length > 0 ? (
+                        <div
+                        style={{
+                            marginTop: "0.89vh",
+                            backgroundColor: "rgba(255,255,255,0.08)",
+                            borderRadius: "0.53vh",
+                            padding: "1.2vh",
+                        }}
+                        >
+                        <Text>
+                            Name: {groupsData.find((g) => g.id)?.name ?? "Unknown"}
                         </Text>
-                        {currentGroupData.length > 0 ? (
-                        <div style={{ marginTop: "0.89vh" }}>
-                            <Text>Name: {groupsData.find((g) => g.id)?.name ?? "Unknown"}</Text>
-                            <Text>Members: {currentGroupData.map((m) => m.name).join(", ")}</Text>
-                            {groupStage.length > 0 && (
+                        <Text>
+                            Members:{" "}
+                            {currentGroupData.map((m) => m.name).join(", ") || "None"}
+                        </Text>
+
+                        {/* ✅ Progress Display */}
+                        {groupStage.length > 0 && (
                             <>
-                                <Text mt="sm">Progress:</Text>
-                                {groupStage.map((stage, idx) => (
+                            <Text mt="sm">Progress:</Text>
+                            {groupStage.map((stage, idx) => (
                                 <Text key={idx}>
-                                    {stage.name} - {stage.isDone ? "✅ Done" : "⏳ In Progress"}
+                                {stage.name} -{" "}
+                                {stage.isDone ? "✅ Done" : "⏳ In Progress"}
                                 </Text>
-                                ))}
+                            ))}
                             </>
+                        )}
+
+                        {/* === BUTTONS SECTION === */}
+                        <div
+                            style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "0.7vh",
+                            marginTop: "1.2vh",
+                            }}
+                        >
+                            {/* READY FOR JOB */}
+                            <Button
+                            size="xs"
+                            fullWidth
+                            radius="0.53vh"
+                            color={
+                                (groupsData.find((g) => g.status) || {}).status === "queued"
+                                ? "gray"
+                                : "green"
+                            }
+                            disabled={
+                                !currentGroupData.some((m) => m.isLeader) ||
+                                (groupsData.find((g) => g.id)?.name || "")
+                                .toLowerCase()
+                                .includes("generic")
+                            }
+                            onClick={() => {
+                                const g = groupsData.find((g) => g.id);
+                                if (g?.status === "queued") return; // already queued, ignore
+                                fetchNui("readyForJob");
+                            }}
+                            >
+                            {(() => {
+                                const g = groupsData.find((g) => g.id);
+                                if (g?.status === "queued") return "Queued…";
+                                if (
+                                (g?.name || "").toLowerCase().includes("generic")
+                                )
+                                return "Not Ready (Generic)";
+                                return "Ready for Job";
+                            })()}
+                            </Button>
+
+                            {/* LEAVE GROUP */}
+                            <Button
+                            size="xs"
+                            fullWidth
+                            radius="0.53vh"
+                            color="red"
+                            onClick={() => {
+                                fetchNui("leaveGroupx");
+                            }}
+                            >
+                            Leave Group
+                            </Button>
+
+                            {/* DELETE GROUP (Leader Only) */}
+                            {currentGroupData.some((m) => m.isLeader) && (
+                            <Button
+                                size="xs"
+                                fullWidth
+                                radius="0.53vh"
+                                color="orange"
+                                onClick={() => {
+                                fetchNui("deleteGroup");
+                                }}
+                            >
+                                Delete Group
+                            </Button>
                             )}
                         </div>
-                        ) : (
+                        </div>
+                    ) : (
                         <Text>No group data available</Text>
-                        )}
+                    )}
                     </div>
-                    </>
+                </>
                 )}
+
                 </div>
             )}
             </Transition>

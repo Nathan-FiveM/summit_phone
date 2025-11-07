@@ -94,12 +94,12 @@ class AnimClass {
 
     // Existing end animation for texting/browsing
     public async EndAnimation() {
-    if (this.isAnimating && !this.isCalling) {
+        if (this.isAnimating && !this.isCalling) {
             this.isAnimating = false;
-            this.phoneWasOpen = false;
+            this.phoneWasOpen = false; // NEW: Mark that phone is closed
+            await this.DeAttachProp();
             this.DoAnimation('cellphone_text_out');
             await Delay(1000);
-            await this.DeAttachProp(); // delete after animation
             ClearPedTasks(PlayerPedId());
         }
     };

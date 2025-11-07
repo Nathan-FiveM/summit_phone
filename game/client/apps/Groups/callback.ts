@@ -11,19 +11,109 @@ onNet('summit_groups:client:setWaypoint', (coords: any) => {
     SetNewWaypoint(coords.x, coords.y);
 });
 
-RegisterNuiCallback('groups:getAvailableJobs', async (_data: any, cb: Function) => {
-    const jobs = await triggerServerCallback('summit_groups:server:getAvailableJobs', 1);
-    cb(jobs);
+// === GROUPS APP CALLBACKS ===
+
+// Get available jobs
+RegisterNuiCallback("groups:getAvailableJobs", async (_: any, cb: Function) => {
+  const jobs = await triggerServerCallback("summit_groups:server:getAvailableJobs", 1);
+  cb(jobs || []);
 });
 
-RegisterNuiCallback('groups:requestJobInfo', async (data: { jobId: string }, cb: Function) => {
-  emitNet('summit_groups:server:sendJobInfoEmail', data.jobId);
-  cb('ok');
+// Set GPS waypoint to job location
+RegisterNuiCallback("groups:setJobWaypoint", (data: any, cb: Function) => {
+  emitNet("summit_groups:server:setJobWaypoint", data);
+  cb(true);
 });
 
-RegisterNuiCallback('groups:setJobWaypoint', async (data: { jobId: string }, cb: Function) => {
-    emitNet('summit_groups:server:setJobWaypoint', data.jobId);
-    cb('ok');
+// Request job info (sends email)
+RegisterNuiCallback("groups:requestJobInfo", (data: any, cb: Function) => {
+  emitNet("summit_groups:server:sendJobInfoEmail", data.jobId);
+  cb(true);
+});
+
+// Create new group
+RegisterNuiCallback("groups:createGroup", (data: { name?: string; pass?: string }, cb: Function) => {
+  emitNet("summit_groups:server:createGroup", data.name ?? "generic", data.pass ?? null);
+  cb(true);
+});
+
+// Join existing group
+RegisterNuiCallback("joinGroup", (data: { id: string; pass?: string }, cb: Function) => {
+  emitNet("summit_groups:server:joinGroup", data.id, data.pass ?? null);
+  cb(true);
+});
+
+// Leave group
+RegisterNuiCallback("leaveGroupx", (_: any, cb: Function) => {
+  emitNet("summit_groups:server:leaveGroup");
+  cb(true);
+});
+
+// Delete group
+RegisterNuiCallback("deleteGroup", (_: any, cb: Function) => {
+  emitNet("summit_groups:server:deleteGroup");
+  cb(true);
+});
+
+// Ready up for job
+RegisterNuiCallback("readyForJob", (_: any, cb: Function) => {
+  emitNet("summit_groups:server:readyForJob");
+  cb(true);
+});
+
+// Get player data for phone
+RegisterNuiCallback("getPlayerData", async (_: any, cb: Function) => {
+  const player = await triggerServerCallback("summit_groups:server:getPlayerData", 1);
+  cb(player || {});
+});
+
+// Initial app data for Groups
+RegisterNuiCallback("getSetupAppData", async (_: any, cb: Function) => {
+  const groups = await triggerServerCallback("summit_groups:getSetupAppData", 1);
+  cb(groups || {
+    groups: {},
+    groupData: {},
+    inGroup: false,
+    groupStages: {},
+  });
+});
+
+onNet("summit_phone:client:updateGroupsApp", (action: string, data: any) => {
+  console.log("[SUMMIT_PHONE] updateGroupsApp:", action, data);
+
+  switch (action) {
+    case "setInGroup":
+      // ✅ tell React whether to show the group or job list
+      NUI.sendReactMessage("updateGroupsApp", { action, data });
+      break;
+
+    case "setCurrentGroup":
+      // ✅ update React with new current group data
+      NUI.sendReactMessage("updateGroupsApp", { action, data });
+      break;
+
+    case "setGroups":
+      // ✅ full group list update
+      NUI.sendReactMessage("updateGroupsApp", { action, data });
+      break;
+
+    case "setGroupJobSteps":
+      // ✅ progress / stage updates
+      NUI.sendReactMessage("updateGroupsApp", { action, data });
+      break;
+
+    case "updateStatus":
+      // ✅ status changes (queued, active, idle)
+      NUI.sendReactMessage("updateGroupsApp", {
+        action: "setCurrentGroup",
+        data,
+      });
+      break;
+
+    default:
+      console.warn(`[summit_phone] Unknown GroupsApp action: ${action}`);
+      break;
+  }
 });
 
 RegisterNuiCallback('sendPhoneNotification', (data: { app: string; title: string; description: string; timeout?: number }, cb: Function) => {
@@ -36,184 +126,3 @@ RegisterNuiCallback('sendPhoneNotification', (data: { app: string; title: string
   });
   cb('ok');
 });
-
-/* // Interfaces
-interface BlipData {
-    name: string;
-    blip: number;
-}
-
-interface CreateBlipData {
-    entity?: number;
-    netId?: number;
-    radius?: number;
-    coords?: { x: number; y: number; z: number };
-    color?: number;
-    alpha?: number;
-    sprite?: number;
-    scale?: number;
-    label?: string;
-    route?: boolean;
-    routeColor?: number;
-}
-// State variables
-let isGroupLeader: boolean = false;
-let inJob: boolean = false;
-let GroupID: number = 0;
-let GroupBlips: BlipData[] = [];
-const appIdentifier: string = 'summit_groups';
-
-// Utility function to simulate Lua's export handler
-function exportHandler(exportName: string, func: (...args: any[]) => any): void {
-    on(`__cfx_export_qb-phone_${exportName}`, (setCB: (cb: (...args: any[]) => any) => void) => setCB(func));
-}
-
-// Blip management
-function findBlipByName(name: string): number | undefined {
-    return GroupBlips.findIndex((blip) => blip?.name === name);
-}
-
-onNet('groups:removeBlip', (name: string) => {
-    const index = findBlipByName(name);
-    if (index !== undefined && GroupBlips[index]) {
-        const blip = GroupBlips[index].blip;
-        SetBlipRoute(blip, false);
-        RemoveBlip(blip);
-        GroupBlips.splice(index, 1); // TypeScript workaround
-    }
-    return true;
-});
-
-onServerCallback('groups:phoneNotification', (data: { title: string; text: string }) => {
-    exports['lb-phone'].SendNotification({
-        app: appIdentifier,
-        title: data.title,
-        content: data.text,
-    });
-    return true;
-});
-
-onNet('groups:createBlip', (name: string, data: CreateBlipData) => {
-    if (!data) {
-        console.log('Invalid Data was passed to the create blip event');
-        return;
-    }
-    const existingIndex = findBlipByName(name);
-    if (existingIndex !== undefined) emit('groups:removeBlip', name);
-
-    let blip: number;
-    if (data.entity) blip = AddBlipForEntity(data.entity);
-    else if (data.netId) blip = AddBlipForEntity(NetworkGetEntityFromNetworkId(data.netId));
-    else if (data.radius) blip = AddBlipForRadius(data.coords!.x, data.coords!.y, data.coords!.z, data.radius);
-    else blip = AddBlipForCoord(data.coords!.x, data.coords!.y, data.coords!.z);
-
-    const color = data.color ?? 1;
-    const alpha = data.alpha ?? 255;
-    if (!data.radius) {
-        const sprite = data.sprite ?? 1;
-        const scale = data.scale ?? 0.7;
-        const label = data.label ?? 'NO LABEL FOUND';
-        SetBlipSprite(blip, sprite);
-        SetBlipScale(blip, scale);
-        BeginTextCommandSetBlipName('STRING');
-        AddTextComponentSubstringPlayerName(label);
-        EndTextCommandSetBlipName(blip);
-    }
-    SetBlipColour(blip, color);
-    SetBlipAlpha(blip, alpha);
-    if (data.route) {
-        SetBlipRoute(blip, true);
-        SetBlipRouteColour(blip, data.routeColor!);
-    }
-    GroupBlips.push({ name, blip });
-    return true;
-});
-
-RegisterNuiCallback('GetGroupsApp', async (_data: any, cb: Function) => {
-    if (LocalPlayer.state.isLoggedIn) {
-        const getGroups = await triggerServerCallback('summit_groups:server:getAllGroups', 1);
-        cb(getGroups);
-    }
-});
-
-onNet('summit_groups:client:RefreshGroupsApp', (groups: any, finish: boolean) => {
-    if (finish) inJob = false;
-    if (inJob) return true;
-    NUI.sendReactMessage('groups:refreshApp', groups);
-});
-
-onNet('summit_groups:client:AddGroupStage', (_: any, stage: string) => {
-    inJob = true;
-    NUI.sendReactMessage('groups:addGroupStage', stage);
-});
-
-onNet('summit_groups:client:GetGroupsStatus', (stage: string) => {
-    NUI.sendReactMessage('groups:addStatusPage', stage);
-});
-
-RegisterNuiCallback('getStatusPage', async (_data: any, cb: Function) => {
-    await triggerServerCallback('summit_groups:server:getStageFromApp', null);
-    cb('ok');
-});
-
-onNet('summit_groups:client:UpdateGroupId', (id: number) => {
-    GroupID = id;
-    if (id === 0) {
-        isGroupLeader = false;
-    }
-});
-
-RegisterNuiCallback('groups:CreateJobGroup', async (data: any, cb: Function) => {
-    await triggerServerCallback('summit_groups:server:jobcenter_CreateJobGroup', 1, data);
-    isGroupLeader = true;
-    cb('ok');
-});
-
-RegisterNuiCallback('jobcenter_JoinTheGroup', async (data: any, cb: Function) => {
-    await triggerServerCallback('summit_groups:server:jobcenter_JoinTheGroup', 1, data);
-    cb('ok');
-});
-
-RegisterNuiCallback('jobcenter_leave_grouped', async (data: any, cb: Function) => {
-    if (!data) return;
-    await triggerServerCallback('summit_groups:server:jobcenter_leave_grouped', 1, data);
-    cb('ok');
-});
-
-RegisterNuiCallback('jobcenter_DeleteGroup', async (data: any, cb: Function) => {
-    await triggerServerCallback('summit_groups:server:jobcenter_DeleteGroup', 1, data);
-    cb('ok');
-});
-
-on('onResourceStart', (resource: string) => {
-    if (resource !== GetCurrentResourceName()) return;
-});
-
-RegisterNuiCallback('jobcenter_CheckPlayerNames', async (data: { id: number }, cb: Function) => {
-    const hasName = await triggerServerCallback('summit_groups:server:jobcenter_CheckPlayerNames', 1, data.id);
-    cb(hasName);
-});
-
-RegisterNuiCallback('jobcenter_GroupBusy', (_data: any, cb: Function) => {
-    NUI.sendReactMessage('addNotification', {
-        id: generateUUid(),
-        title: 'Busy Groups',
-        description: 'The Group is busy!',
-        app: 'settings',
-        timeout: 5000
-    });
-    cb('ok');
-});
-
-// Exports
-function IsGroupLeader(): boolean {
-    return isGroupLeader;
-}
-exports('IsGroupLeader', IsGroupLeader);
-exportHandler('IsGroupLeader', IsGroupLeader);
-
-function GetGroupID(): number {
-    return GroupID;
-}
-exports('GetGroupID', GetGroupID);
-exportHandler('GetGroupID', GetGroupID); */
