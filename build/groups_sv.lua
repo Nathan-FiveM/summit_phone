@@ -117,7 +117,7 @@ local function PlayerHasVPN(Player)
 end
 
 -- Return job list to phone
-lib.callback.register('summit_groups:server:getAvailableJobs', function(source)
+lib.callback.register('ignis_groups:server:getAvailableJobs', function(source)
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player then return {} end
 
@@ -139,21 +139,21 @@ lib.callback.register('summit_groups:server:getAvailableJobs', function(source)
 end)
 
 -- Handle GPS button
-RegisterNetEvent('summit_groups:server:setJobWaypoint', function(data)
+RegisterNetEvent('ignis_groups:server:setJobWaypoint', function(data)
     local src = source
     local jobId = data and data.jobId or data
     local jobData = JobCenter[jobId]
 
     if jobData then
         local c = jobData.coords
-        TriggerClientEvent('summit_groups:client:setWaypoint', src, { x = c.x, y = c.y, z = c.z }, jobData.label)
+        TriggerClientEvent('ignis_groups:client:setWaypoint', src, { x = c.x, y = c.y, z = c.z }, jobData.label)
     else
         print(('[SUMMIT_PHONE] Unknown jobId %s'):format(jobId))
     end
 end)
 
 -- Send Job Info Email to Player
-RegisterNetEvent('summit_groups:server:sendJobInfoEmail', function(jobId)
+RegisterNetEvent('ignis_groups:server:sendJobInfoEmail', function(jobId)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     if not Player then return end

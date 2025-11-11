@@ -80,6 +80,7 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
     // Auto-fetch available groups for a job type
     useEffect(() => {
     if (!selectedJob) return;
+
     setLoadingGroups(true);
     fetchNui("groups:getGroupsForJob", { jobType: selectedJob })
         .then((data) => setAvailableGroups((data as any[]) || []))
@@ -192,10 +193,13 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
 
                 const setupData = await fetchNui("getSetupAppData", "Ok") as SetupAppData;
                 if (setupData) {
-                setGroupsData(setupData.groups || []);
-                setCurrentGroupData(setupData.groupData || []);
-                setInGroup(setupData.inGroup || false);
-                setGroupStage(setupData.groupStages || []);
+                    setGroupsData(setupData.groups || []);
+                    setCurrentGroupData(setupData.groupData || []);
+                    setGroupStage(setupData.groupStages || []);
+                    // 🔹 Derive inGroup from the data instead of blindly trusting the flag
+                    const derivedInGroup =
+                    (Array.isArray(setupData.groupData) && setupData.groupData.length > 0) || (Array.isArray(setupData.groupStages) && setupData.groupStages.length > 0);
+                    setInGroup(derivedInGroup);
                 }
 
                 // ✅ fetch available jobs if not in a group
@@ -203,6 +207,7 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                 const jobs = await fetchNui("groups:getAvailableJobs");
                 if (jobs) setAvailableJobs(jobs as PhoneJob[]);
                 }
+                
             }}
             >
             {(styles) => (

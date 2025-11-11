@@ -115,25 +115,25 @@ on('__cfx_nui:getPlayerData', async (data: any, cb: Function) => {
 // === GROUP CREATION ===
 on('__cfx_nui:groups:createGroup', async (data: { jobType?: string; pass?: string }, cb: Function) => {
   console.log("[PHONE DEBUG] groups:createGroup triggered", data);
-  emitNet('summit_groups:server:createGroup', data.jobType || 'generic', data.pass || null);
+  emitNet('ignis_groups:server:createGroup', data.jobType || 'generic', data.pass || null);
   cb(true);
 });
 
 // === JOIN GROUP ===
 on('__cfx_nui:joinGroup', async (data: { groupId: string; pass?: string }, cb: Function) => {
-  emitNet('summit_groups:server:joinGroup', data.groupId, data.pass || null);
+  emitNet('ignis_groups:server:joinGroup', data.groupId, data.pass || null);
   cb(true);
 });
 
 // === LEAVE GROUP ===
 on('__cfx_nui:leaveGroupx', async (_data: any, cb: Function) => {
-  emitNet('summit_groups:server:leaveGroup');
+  emitNet('ignis_groups:server:leaveGroup');
   cb(true);
 });
 
 // === DELETE GROUP ===
 on('__cfx_nui:deleteGroup', async (_data: any, cb: Function) => {
-  emitNet('summit_groups:server:deleteGroup');
+  emitNet('ignis_groups:server:deleteGroup');
   cb(true);
 });
 interface GroupSetupData {
@@ -147,7 +147,7 @@ interface GroupSetupData {
 on('__cfx_nui:getSetupAppData', async (_data: any, cb: Function) => {
   console.log("[PHONE DEBUG] getSetupAppData requested from NUI");
   const groups = (await triggerServerCallback<GroupSetupData>(
-    "summit_groups:getSetupAppData",
+    "ignis_groups:getSetupAppData",
     1
   )) as GroupSetupData;
 
@@ -168,25 +168,25 @@ on('__cfx_nui:getSetupAppData', async (_data: any, cb: Function) => {
 
 // === GET CURRENT GROUP DATA (client view refresh) ===
 on('__cfx_nui:getGroupData', async (_data: any, cb: Function) => {
-  const res = await triggerServerCallback('summit_groups:getGroupData', 1);
+  const res = await triggerServerCallback('ignis_groups:getGroupData', 1);
   cb(res || {});
 });
 
 // === GET CURRENT JOB STEPS ===
 on('__cfx_nui:getGroupJobSteps', async (_data: any, cb: Function) => {
-  const res = await triggerServerCallback('summit_groups:getGroupJobSteps', 1);
+  const res = await triggerServerCallback('ignis_groups:getGroupJobSteps', 1);
   cb(res || {});
 });
 
 // === GET MEMBER LIST ===
 on('__cfx_nui:getMemberList', async (_data: any, cb: Function) => {
-  const res = await triggerServerCallback('summit_groups:getMemberList', 1);
+  const res = await triggerServerCallback('ignis_groups:getMemberList', 1);
   cb(res || []);
 });
 
 // === REMOVE MEMBER ===
 on('__cfx_nui:removeGroupMember', async (data: { targetId: number }, cb: Function) => {
-  emitNet('summit_groups:server:removeGroupMember', data.targetId);
+  emitNet('ignis_groups:server:removeGroupMember', data.targetId);
   cb(true);
 });
 

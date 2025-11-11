@@ -47,7 +47,7 @@ A comprehensive smartphone system for FiveM servers featuring multiple applicati
 
 ### Optional Integrations
 - `nolag_properties` - Housing system
-- `summit_groups` - Group management
+- `ignis_groups` - Group management
 - Various job scripts for services integration
 
 ## 🚀 Installation
