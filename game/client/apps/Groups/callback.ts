@@ -44,7 +44,7 @@ RegisterNuiCallback("joinGroup", (data: { id: string; pass?: string }, cb: Funct
 });
 
 // Leave group
-RegisterNuiCallback("leaveGroupx", (_: any, cb: Function) => {
+RegisterNuiCallback("leaveGroup", (_: any, cb: Function) => {
   emitNet("ignis_groups:server:leaveGroup");
   cb(true);
 });
@@ -52,6 +52,12 @@ RegisterNuiCallback("leaveGroupx", (_: any, cb: Function) => {
 // Delete group
 RegisterNuiCallback("deleteGroup", (_: any, cb: Function) => {
   emitNet("ignis_groups:server:deleteGroup");
+  cb(true);
+});
+
+// === DISBAND GROUP ===
+RegisterNuiCallback("disbandGroup", (_: any, cb: Function) => {
+  emitNet("summit_groups:server:disbandGroup");
   cb(true);
 });
 

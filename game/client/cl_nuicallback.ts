@@ -102,7 +102,7 @@ RegisterNuiCallbackType('getGroupData');
 RegisterNuiCallbackType('getGroupJobSteps');
 RegisterNuiCallbackType('groups:createGroup');
 RegisterNuiCallbackType('joinGroup');
-RegisterNuiCallbackType('leaveGroupx');
+RegisterNuiCallbackType('leaveGroup');
 RegisterNuiCallbackType('deleteGroup');
 RegisterNuiCallbackType('getMemberList');
 RegisterNuiCallbackType('removeGroupMember');
@@ -126,7 +126,7 @@ on('__cfx_nui:joinGroup', async (data: { groupId: string; pass?: string }, cb: F
 });
 
 // === LEAVE GROUP ===
-on('__cfx_nui:leaveGroupx', async (_data: any, cb: Function) => {
+on('__cfx_nui:leaveGroup', async (_data: any, cb: Function) => {
   emitNet('ignis_groups:server:leaveGroup');
   cb(true);
 });

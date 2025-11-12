@@ -70,13 +70,15 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
     const [groupsData, setGroupsData] = useState<NewGroupData[]>([]);
     const [currentGroupData, setCurrentGroupData] = useState<GroupMember[]>([]);
     const [inGroup, setInGroup] = useState(false);
-    const [groupStage, setGroupStage] = useState<{ isDone: boolean, name: string, id: number }[]>([]);
+
+    /* const [groupStage, setGroupStage] = useState<{ isDone: boolean, name: string, id: number }[]>([]); */
     
+    const [groupStage, setGroupStage] = useState<any[]>([]);
+    const [stageRenderKey, setStageRenderKey] = useState(0);
     // === HOUSE ROBBERY STATE ===
     const [selectedJob, setSelectedJob] = useState<string>(""); // which job type player is viewing
     const [availableGroups, setAvailableGroups] = useState<any[]>([]);
     const [loadingGroups, setLoadingGroups] = useState<boolean>(false);
-
     // Auto-fetch available groups for a job type
     useEffect(() => {
     if (!selectedJob) return;
@@ -112,6 +114,7 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
 
         case "setGroupJobSteps":
         setGroupStage(Array.isArray(data) ? data : []);
+        setStageRenderKey(prev => prev + 1); // ⬅️ forces React re-render
         break;
 
         default:
@@ -485,16 +488,122 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
 
                         {/* ✅ Progress Display */}
                         {groupStage.length > 0 && (
-                            <>
-                            <Text mt="sm">Progress:</Text>
-                            {groupStage.map((stage, idx) => (
-                                <Text key={idx}>
-                                {stage.name} -{" "}
-                                {stage.isDone ? "✅ Done" : "⏳ In Progress"}
-                                </Text>
-                            ))}
-                            </>
+                        <>
+                            <Text mt="sm" fw={600} size="1.3vh">
+                            Progress:
+                            </Text>
+
+                            <div
+                            key={`stage-container-${stageRenderKey}`}
+                            style={{
+                                marginTop: "0.8vh",
+                                width: "100%",
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: "0.6vh",
+                            }}
+                            >
+                            {groupStage.map((stage, idx) => {
+                                const progress =
+                                typeof stage.max === "number" && typeof stage.count === "number"
+                                    ? Math.min((stage.count / stage.max) * 100, 100)
+                                    : null;
+
+                                return (
+                                <div
+                                    key={`${stageRenderKey}-${idx}`}
+                                    style={{
+                                    background: "rgba(255, 255, 255, 0.08)",
+                                    borderRadius: "0.4vh",
+                                    padding: "0.6vh 0.9vh",
+                                    }}
+                                >
+                                    <div
+                                    style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        alignItems: "center",
+                                    }}
+                                    >
+                                    <Text fw={500} size="1.15vh" style={{ color: "#fff" }}>
+                                        {stage.name}
+                                    </Text>
+
+                                    {progress !== null ? (
+                                        <Text size="1.05vh" c="gray.3">
+                                        {stage.count}/{stage.max}
+                                        </Text>
+                                    ) : (
+                                        <Text size="1.05vh" c="gray.3">
+                                        {stage.isDone ? "✅" : "⏳"}
+                                        </Text>
+                                    )}
+                                    </div>
+
+                                    {progress !== null && (
+                                    <div
+                                        style={{
+                                        marginTop: "0.35vh",
+                                        width: "100%",
+                                        height: "0.8vh",
+                                        background: "rgba(255,255,255,0.15)",
+                                        borderRadius: "0.3vh",
+                                        overflow: "hidden",
+                                        }}
+                                    >
+                                        <div
+                                        style={{
+                                            width: `${progress}%`,
+                                            height: "100%",
+                                            background: progress >= 100 ? "#2ecc71" : "#ffb347",
+                                            transition: "width 0.3s ease",
+                                        }}
+                                        />
+                                    </div>
+                                    )}
+                                </div>
+                                );
+                            })}
+
+                            {/* === LEAVE / DISBAND BUTTONS AT BOTTOM === */}
+                            <div
+                                style={{
+                                display: "flex",
+                                flexDirection: "row",
+                                gap: "0.6vh",
+                                justifyContent: "space-between",
+                                marginTop: "1.2vh",
+                                }}
+                            >
+                                {/* Leave Group */}
+                                <Button
+                                size="xs"
+                                fullWidth
+                                radius="0.53vh"
+                                color="red"
+                                onClick={() => fetchNui("leaveGroup")}
+                                >
+                                Leave Group
+                                </Button>
+
+                                {/* Disband Group (Leader Only) */}
+                                {currentGroupData.some((m) => m.isLeader) && (
+                                <Button
+                                    size="xs"
+                                    fullWidth
+                                    radius="0.53vh"
+                                    color="orange"
+                                    onClick={() => fetchNui("disbandGroup")}
+                                >
+                                    Disband Group
+                                </Button>
+                                )}
+                            </div>
+                            </div>
+                        </>
                         )}
+
+
 
                         {/* === BUTTONS SECTION === */}
                         <div
@@ -511,7 +620,10 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                             fullWidth
                             radius="0.53vh"
                             color={
-                                (groupsData.find((g) => g.status) || {}).status === "queued"
+                                !currentGroupData.some((m) => m.isLeader)
+                                ? "gray"
+                                : groupStage?.[0]?.name?.toLowerCase()?.includes("waiting for job offer") ||
+                                    (groupsData.find((g) => g.status === "queued")?.status === "queued")
                                 ? "gray"
                                 : "green"
                             }
@@ -519,52 +631,78 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                                 !currentGroupData.some((m) => m.isLeader) ||
                                 (groupsData.find((g) => g.id)?.name || "")
                                 .toLowerCase()
-                                .includes("generic")
+                                .includes("generic") ||
+                                groupStage?.[0]?.name?.toLowerCase()?.includes("waiting for job offer") ||
+                                (groupsData.find((g) => g.status === "queued")?.status === "queued")
                             }
                             onClick={() => {
                                 const g = groupsData.find((g) => g.id);
-                                if (g?.status === "queued") return; // already queued, ignore
+                                if (
+                                groupStage?.[0]?.name?.toLowerCase()?.includes("waiting for job offer") ||
+                                g?.status === "queued"
+                                )
+                                return;
+
                                 fetchNui("readyForJob");
                             }}
                             >
                             {(() => {
                                 const g = groupsData.find((g) => g.id);
-                                if (g?.status === "queued") return "Queued…";
                                 if (
-                                (g?.name || "").toLowerCase().includes("generic")
+                                groupStage?.[0]?.name?.toLowerCase()?.includes("waiting for job offer") ||
+                                g?.status === "queued"
                                 )
+                                return "Waiting for Job…";
+
+                                if ((g?.name || "").toLowerCase().includes("generic"))
                                 return "Not Ready (Generic)";
+
+                                if (!currentGroupData.some((m) => m.isLeader))
+                                return "Only Leader Can Queue";
+
                                 return "Ready for Job";
                             })()}
                             </Button>
 
-                            {/* LEAVE GROUP */}
-                            <Button
-                            size="xs"
-                            fullWidth
-                            radius="0.53vh"
-                            color="red"
-                            onClick={() => {
-                                fetchNui("leaveGroupx");
+
+                            {/* === LEAVE / DISBAND BUTTONS === */}
+                            <div
+                            style={{
+                                display: "flex",
+                                flexDirection: "row",
+                                gap: "0.6vh",
+                                justifyContent: "space-between",
                             }}
                             >
-                            Leave Group
+                            {/* Leave Group */}
+                            <Button
+                                size="xs"
+                                fullWidth
+                                radius="0.53vh"
+                                color="red"
+                                onClick={() => {
+                                fetchNui("leaveGroup");
+                                }}
+                            >
+                                Leave Group
                             </Button>
 
-                            {/* DELETE GROUP (Leader Only) */}
+                            {/* Disband Group (Leader Only) */}
                             {currentGroupData.some((m) => m.isLeader) && (
-                            <Button
+                                <Button
                                 size="xs"
                                 fullWidth
                                 radius="0.53vh"
                                 color="orange"
                                 onClick={() => {
-                                fetchNui("deleteGroup");
+                                    fetchNui("disbandGroup");
                                 }}
-                            >
-                                Delete Group
-                            </Button>
+                                >
+                                Disband Group
+                                </Button>
                             )}
+                            </div>
+
                         </div>
                         </div>
                     ) : (
@@ -582,41 +720,132 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                     transition="scale-x"
                     duration={400}
                     timingFunction="ease"
-                    onEnter={async () => {
+                    >
+                    {(styles) => (
+                        <div
+                        style={{
+                            ...styles,
+                            width: "100%",
+                            height: "100%",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            position: "absolute",
+                            zIndex: 2,
+                            backgroundColor: "#0E0E0E",
+                        }}
+                        >
+                        <div
+                            style={{
+                            marginTop: "3.56vh",
+                            width: "95%",
+                            height: "53.33vh",
+                            overflowY: "auto",
+                            overflowX: "hidden",
+                            }}
+                        >
+                            {/* 🟢 Replace Mantine Stepper with Custom Stage Renderer */}
+                            {groupStage.map((stage, i) => {
+                            const progress =
+                                typeof stage.max === "number" && typeof stage.count === "number"
+                                ? Math.min((stage.count / stage.max) * 100, 100)
+                                : null;
 
-                    }}
-                >
-                    {(styles) => <div style={{
-                        ...styles,
-                        width: '100%',
-                        height: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        position: 'absolute',
-                        zIndex: 2,
-                        backgroundColor: '#0E0E0E',
-                    }}>
-                        <div style={{
-                            backgroundColor: 'rgba(146, 7, 7, 0)',
-                            marginTop: '3.56vh',
-                            width: '95%',
-                            height: '53.33vh',
-                            overflowY: 'auto',
-                            overflowX: 'hidden',
-                        }}>
-                            <Stepper iconSize={37} active={groupStage.findIndex(
-                                (stage) => stage.isDone === true
-                            ) + 1} orientation="vertical">
-                                {groupStage.map((stage, i) => {
-                                    return (
-                                        <Stepper.Step key={i} label={`Step ${i + 1}`} description={stage.name} />
-                                    )
-                                })}
-                            </Stepper>
+                            return (
+                                <div
+                                key={i}
+                                style={{
+                                    background: "rgba(255, 255, 255, 0.08)",
+                                    borderLeft: stage.isDone ? "3px solid #2ecc71" : "3px solid #777",
+                                    padding: "0.9vh",
+                                    borderRadius: "0.4vh",
+                                    marginBottom: "0.5vh",
+                                }}
+                                >
+                                <div
+                                    style={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                    }}
+                                >
+                                    <Text fw={500} size="1.15vh" style={{ color: "#fff" }}>
+                                    {stage.name}
+                                    </Text>
+
+                                    {progress !== null ? (
+                                    <Text size="1.05vh" c="gray.3">
+                                        {stage.count}/{stage.max}
+                                    </Text>
+                                    ) : (
+                                    <Text size="1.05vh" c="gray.3">
+                                        {stage.isDone ? "✅" : "⏳"}
+                                    </Text>
+                                    )}
+                                </div>
+
+                                {progress !== null && (
+                                    <div
+                                    style={{
+                                        marginTop: "0.35vh",
+                                        width: "100%",
+                                        height: "0.8vh",
+                                        background: "rgba(255,255,255,0.15)",
+                                        borderRadius: "0.3vh",
+                                        overflow: "hidden",
+                                    }}
+                                    >
+                                    <div
+                                        style={{
+                                        width: `${progress}%`,
+                                        height: "100%",
+                                        background: progress >= 100 ? "#2ecc71" : "#ffb347",
+                                        transition: "width 0.3s ease",
+                                        }}
+                                    />
+                                    </div>
+                                )}
+                                </div>
+                            );
+                            })}
+
+                            {/* === LEAVE / DISBAND BUTTONS AT BOTTOM === */}
+                            <div
+                            style={{
+                                display: "flex",
+                                flexDirection: "row",
+                                gap: "0.6vh",
+                                justifyContent: "space-between",
+                                marginTop: "1.2vh",
+                            }}
+                            >
+                            <Button
+                                size="xs"
+                                fullWidth
+                                radius="0.53vh"
+                                color="red"
+                                onClick={() => fetchNui("leaveGroup")}
+                            >
+                                Leave Group
+                            </Button>
+
+                            {currentGroupData.some((m) => m.isLeader) && (
+                                <Button
+                                size="xs"
+                                fullWidth
+                                radius="0.53vh"
+                                color="orange"
+                                onClick={() => fetchNui("disbandGroup")}
+                                >
+                                Disband Group
+                                </Button>
+                            )}
+                            </div>
                         </div>
-                    </div>}
-                </Transition>
+                        </div>
+                    )}
+                    </Transition>
+
                 <Transition
                     mounted={location.app === 'groups' && location.page.groups === 'jobs'}
                     transition="scale-x"
@@ -787,13 +1016,13 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                                 pass: e,
                             });
                         }
-                    } else if (inputTitle === 'Delete Group') {
+                    } else if (inputTitle === 'Disband Group') {
                         if (String(e).toLowerCase() === 'yes') {
-                            const res = await fetchNui('deleteGroup');
+                            const res = await fetchNui('disbandGroup');
                         }
                     } else if (inputTitle === 'Leave Group') {
                         if (String(e).toLowerCase() === 'yes') {
-                            const res = await fetchNui('leaveGroupx');
+                            const res = await fetchNui('leaveGroup');
                         }
                     } else if (inputTitle === 'Join Group') {
                         if (String(e)) {
