@@ -25,3 +25,7 @@ import "./Groups/callback";
 import "./HeartSync/nui";
 import "./Crypto/nui";
 import "./Crypto/callbacks";
+/* 
+import "./DailySpins/nui";
+import "./DailySpins/callbacks";
+ */

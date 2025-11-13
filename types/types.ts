@@ -87,6 +87,7 @@ type PhoneLocation = {
         groups?: string;
         heartsync?: string;
         crypto?: string;
+        dailyspins?: string;
     };
 }
 

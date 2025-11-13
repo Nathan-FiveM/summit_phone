@@ -41,6 +41,7 @@ import Wallet from './routers/apps/Wallet/Wallet';
 import Groups from './routers/apps/Groups/Groups';
 import HeartSync from './routers/apps/HeartSync/HeartSync';
 import Crypto from './routers/apps/Crypto/Crypto';
+import DailySpin from './routers/apps/DailySpin/DailySpin';
 
 debugData([
   {
@@ -162,6 +163,7 @@ export default function App() {
   const [loveLinkEnter, setLoveLinkEnter] = useState(false);
   const [heartSyncEnter, setHeartSyncEnter] = useState(false);
   const [cryptoEnter, setCryptoEnter] = useState(false);
+  const [dailySpinEnter, setDailySpinEnter] = useState(false);
 
   return (
     <div style={{
@@ -338,6 +340,16 @@ export default function App() {
         <div className='fuckerMessager' style={{ visibility: cryptoEnter ? 'visible' : 'hidden' }}>
           <Crypto onEnter={() => setCryptoEnter(true)} onExit={() => setCryptoEnter(false)} />
         </div>
+        <div
+          className='fuckerMessager'
+          style={{ visibility: dailySpinEnter ? 'visible' : 'hidden' }}
+        >
+          <DailySpin
+            onEnter={() => setDailySpinEnter(true)}
+            onExit={() => setDailySpinEnter(false)}
+          />
+        </div>
+
         <div className="backButton" onClick={() => {
           if (location.app !== '') {
             setLocation({
@@ -363,6 +375,7 @@ export default function App() {
                 groups: location.page.groups,
                 heartsync: location.page.heartsync,
                 crypto: location.page.crypto,
+                dailyspins: location.page.dailyspins,
               }
             });
           } else {

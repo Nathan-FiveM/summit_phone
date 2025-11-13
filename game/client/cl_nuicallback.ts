@@ -45,7 +45,7 @@ on('__cfx_nui:showNoti', (data: {
     emit("QBCore:Notify", "No phone item found", "error");
     return;
   };
-  NUI.sendReactMessage('addNotification', {
+  NUI.sendReactMessage('addNotiFication', {
     id: generateUUid(),
     title: data.title,
     description: data.description,

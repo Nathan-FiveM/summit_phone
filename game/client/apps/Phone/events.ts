@@ -119,7 +119,7 @@ onNet('summit_phone:client:jailPhoneCall', async (phoneNumber: string) => {
     if (!result) {
         // Call failed, show notification
         
-        NUI.sendReactMessage('addNotification', {
+        NUI.sendReactMessage('addNotiFication', {
             id: generateUUid(),
             title: 'Call Failed',
             description: 'Unable to make call from jail phone',

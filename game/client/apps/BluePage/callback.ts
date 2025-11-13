@@ -12,7 +12,7 @@ onServerCallback('bluepage:refreshPosts', async (data: string) => {
         emit("QBCore:Notify", "No phone item found", "error");
         return false;
     };
-    NUI.sendReactMessage('addNotification', {
+    NUI.sendReactMessage('addNotiFication', {
         id: _id,
         title: 'New Post',
         description: `Someone has posted a new post on the bluepage`,

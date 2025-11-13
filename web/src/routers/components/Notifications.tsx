@@ -17,7 +17,7 @@ export default function Notifications() {
         key: 'summit_slots',
         defaultValue: icons,
     });
-    useNuiEvent('addNotification', (data: {
+    useNuiEvent('addNotiFication', (data: {
         id: number;
         title: string;
         description: string;

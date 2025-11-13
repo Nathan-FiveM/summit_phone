@@ -36,7 +36,7 @@ let lastNotificationTime = 0;
 const NOTIFICATION_THROTTLE_MS = 100; // Minimum 100ms between notifications
 
 RegisterCommand('testNoti', () => {
-    NUI.sendReactMessage('addNotification', {
+    NUI.sendReactMessage('addNotiFication', {
         id: '1',
         title: 'Test Notification',
         description: 'This is a test notification',
@@ -65,7 +65,7 @@ onNet('phone:addnotiFication', (data: string) => {
         app: string,
         timeout: number
     } = JSON.parse(data);
-    NUI.sendReactMessage('addNotification', notiData);
+    NUI.sendReactMessage('addNotiFication', notiData);
 });
 
 onNet('phone:addActionNotification', (data: string) => {

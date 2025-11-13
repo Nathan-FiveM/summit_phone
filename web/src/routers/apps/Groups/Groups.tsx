@@ -101,7 +101,7 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
         case "setCurrentGroup":
         if (data && Object.keys(data).length > 0) {
             setCurrentGroupData(data.members || []);
-            setGroupsData([data]); // ensure we store the current group
+            setGroupsData(prev => [{ ...prev[0], ...data }]);
         } else {
             setCurrentGroupData([]);
             setGroupsData([]);
@@ -593,7 +593,11 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                                     fullWidth
                                     radius="0.53vh"
                                     color="orange"
-                                    onClick={() => fetchNui("disbandGroup")}
+                                    onClick={() => {
+                                        const g = groupsData.find((g) => g.id);
+                                        if (!g) return;
+                                        fetchNui("disbandGroup", { groupId: g.id });
+                                    }}
                                 >
                                     Disband Group
                                 </Button>
@@ -614,55 +618,113 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                             marginTop: "1.2vh",
                             }}
                         >
-                            {/* READY FOR JOB */}
+                            {/* READY FOR JOB / LEAVE QUEUE */}
+                            <style>
+                                {`
+                                @keyframes spin {
+                                0% { transform: rotate(0deg); }
+                                100% { transform: rotate(360deg); }
+                                }
+                                `}
+                            </style>
                             <Button
-                            size="xs"
-                            fullWidth
-                            radius="0.53vh"
-                            color={
-                                !currentGroupData.some((m) => m.isLeader)
-                                ? "gray"
-                                : groupStage?.[0]?.name?.toLowerCase()?.includes("waiting for job offer") ||
-                                    (groupsData.find((g) => g.status === "queued")?.status === "queued")
-                                ? "gray"
-                                : "green"
-                            }
-                            disabled={
-                                !currentGroupData.some((m) => m.isLeader) ||
-                                (groupsData.find((g) => g.id)?.name || "")
-                                .toLowerCase()
-                                .includes("generic") ||
-                                groupStage?.[0]?.name?.toLowerCase()?.includes("waiting for job offer") ||
-                                (groupsData.find((g) => g.status === "queued")?.status === "queued")
-                            }
-                            onClick={() => {
-                                const g = groupsData.find((g) => g.id);
-                                if (
-                                groupStage?.[0]?.name?.toLowerCase()?.includes("waiting for job offer") ||
-                                g?.status === "queued"
-                                )
-                                return;
+                                size="xs"
+                                fullWidth
+                                radius="0.53vh"
+                                color={
+                                    (() => {
+                                        const g = groupsData.find((g) => g.id);
+                                        const isLeader = currentGroupData.some((m) => m.isLeader);
 
-                                fetchNui("readyForJob");
-                            }}
+                                        if (!isLeader) return "gray";                    // non-leader
+                                        if (g?.status === "queued" && isLeader) return "orange"; // leader queued
+                                        return "green";                                  // leader idle
+                                    })()
+                                }
+                                disabled={
+                                    (() => {
+                                        const g = groupsData.find((g) => g.id);
+                                        const isLeader = currentGroupData.some((m) => m.isLeader);
+
+                                        // generic jobs always disabled
+                                        if ((g?.name || "").toLowerCase().includes("generic")) return true;
+
+                                        // non-leaders always disabled
+                                        if (!isLeader) return true;
+
+                                        return false; // leader can press
+                                    })()
+                                }
+                                title={
+                                    (() => {
+                                        const g = groupsData.find((g) => g.id);
+                                        if (g?.status === "queued") return "Waiting for job offer…";
+                                        return "";
+                                    })()
+                                }
+                                onClick={() => {
+                                    const g = groupsData.find((g) => g.id);
+                                    const isLeader = currentGroupData.some((m) => m.isLeader);
+                                    if (!g) return;
+
+                                    if (g.status === "queued" && isLeader) {
+                                        fetchNui("leaveQueue");
+                                        return;
+                                    }
+
+                                    if (g.status !== "queued") {
+                                        fetchNui("readyForJob");
+                                    }
+                                }}
                             >
-                            {(() => {
-                                const g = groupsData.find((g) => g.id);
-                                if (
-                                groupStage?.[0]?.name?.toLowerCase()?.includes("waiting for job offer") ||
-                                g?.status === "queued"
-                                )
-                                return "Waiting for Job…";
+                                {(() => {
+                                    const g = groupsData.find((g) => g.id);
+                                    const isLeader = currentGroupData.some((m) => m.isLeader);
+                                    if (!g) return "Ready for Job";
 
-                                if ((g?.name || "").toLowerCase().includes("generic"))
-                                return "Not Ready (Generic)";
+                                    if (g.status === "queued") {
+                                        if (isLeader)
+                                            return (
+                                                <>
+                                                    <span className="spinner" style={{
+                                                        marginRight: "0.6vh",
+                                                        border: "2px solid rgba(255,255,255,0.3)",
+                                                        borderTop: "2px solid #ffb347",
+                                                        borderRadius: "50%",
+                                                        width: "1.2vh",
+                                                        height: "1.2vh",
+                                                        display: "inline-block",
+                                                        animation: "spin 1s linear infinite",
+                                                    }}></span>
+                                                    Leave Queue
+                                                </>
+                                            );
+                                        return (
+                                            <>
+                                                <span className="spinner" style={{
+                                                    marginRight: "0.6vh",
+                                                    border: "2px solid rgba(255,255,255,0.3)",
+                                                    borderTop: "2px solid #aaa",
+                                                    borderRadius: "50%",
+                                                    width: "1.2vh",
+                                                    height: "1.2vh",
+                                                    display: "inline-block",
+                                                    animation: "spin 1s linear infinite",
+                                                }}></span>
+                                                Queued…
+                                            </>
+                                        );
+                                    }
 
-                                if (!currentGroupData.some((m) => m.isLeader))
-                                return "Only Leader Can Queue";
+                                    if ((g.name || "").toLowerCase().includes("generic"))
+                                        return "Not Ready (Generic)";
+                                    if (!isLeader)
+                                        return "Only Leader Can Queue";
 
-                                return "Ready for Job";
-                            })()}
+                                    return "Ready for Job";
+                                })()}
                             </Button>
+
 
 
                             {/* === LEAVE / DISBAND BUTTONS === */}
@@ -695,7 +757,9 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                                 radius="0.53vh"
                                 color="orange"
                                 onClick={() => {
-                                    fetchNui("disbandGroup");
+                                    const g = groupsData.find((g) => g.id);
+                                    if (!g) return;
+                                    fetchNui("disbandGroup", { groupId: g.id });
                                 }}
                                 >
                                 Disband Group
@@ -835,7 +899,11 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                                 fullWidth
                                 radius="0.53vh"
                                 color="orange"
-                                onClick={() => fetchNui("disbandGroup")}
+                                onClick={() => {
+                                    const g = groupsData.find((g) => g.id);
+                                    if (!g) return;
+                                    fetchNui("disbandGroup", { groupId: g.id });
+                                }}
                                 >
                                 Disband Group
                                 </Button>

@@ -17,3 +17,6 @@ import "./Wallet/callbacks";
 import "./Groups/callback";
 import "./HeartSync/callbacks";
 import "./Crypto/callbacks";
+/* 
+import "./DailySpins/callbacks";
+ */

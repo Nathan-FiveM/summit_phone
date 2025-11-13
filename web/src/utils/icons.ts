@@ -40,6 +40,9 @@ import notiLoveLink from "../../images/notiIcons/LoveLink.svg?url";
 import cryptoIcon from "../../images/icons/Crypto.svg?url";
 import notiCrypto from "../../images/notiIcons/Crypto.svg?url";  // Or use a placeholder like notiWallet
 
+import dailyspinsIcon from "../../images/icons/DailySpins.svg?url";
+import notiDailySpins from "../../images/icons/DailySpins.svg?url";
+
 export const icons = [
     {
         icon: mailIcon,
@@ -175,7 +178,8 @@ export const iconList = [
     'groups',
     'heartsync',
     'services',
-    'crypto'
+    'crypto',
+    'dailyspins',
 ]
 
 export const deleleteIgnoreiconList = [
@@ -187,7 +191,6 @@ export const deleleteIgnoreiconList = [
     'Phone',
     'Message',
     'Settings',
-    'Crypto',
 ]
 
 export const fullIconsDetails = [
@@ -328,6 +331,13 @@ export const fullIconsDetails = [
         link: 'crypto',
         description: 'Manage your crypto: buy, sell, transfer, and view balances.',
         id: 18, 
+    },
+    {
+        icon: dailyspinsIcon,
+        name: 'Daily Spin',
+        link: 'dailyspins',
+        description: 'Try your luck with the daily spin and win exciting prizes.',
+        id: 19, 
     }
 ]
 
@@ -419,6 +429,8 @@ export const notiIcons = (icon: string) => {
             return notiLoveLink; // Using LoveLink icon as placeholder
         case 'crypto':
             return notiCrypto
+        case 'dailyspins':
+            return notiDailySpins;
         default:
             return "";
     }

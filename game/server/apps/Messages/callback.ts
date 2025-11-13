@@ -332,7 +332,7 @@ onClientCallback('phone_message:toggleBlock', async (client, data: string) => {
     if (isBlocked) {
         const index = userMessages.blockedNumbers.indexOf(phoneNumber);
         userMessages.blockedNumbers.splice(index, 1);
-        emitNet("phone:addNotification", client, JSON.stringify({
+        emitNet("phone:addNotiFication", client, JSON.stringify({
             id: generateUUid(),
             title: "System",
             description: "Number unblocked",
@@ -347,7 +347,7 @@ onClientCallback('phone_message:toggleBlock', async (client, data: string) => {
         });
     } else {
         userMessages.blockedNumbers.push(phoneNumber);
-        emitNet("phone:addNotification", client, JSON.stringify({
+        emitNet("phone:addNotiFication", client, JSON.stringify({
             id: generateUUid(),
             title: "System",
             description: "Number blocked",

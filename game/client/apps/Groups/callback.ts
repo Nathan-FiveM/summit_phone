@@ -57,7 +57,7 @@ RegisterNuiCallback("deleteGroup", (_: any, cb: Function) => {
 
 // === DISBAND GROUP ===
 RegisterNuiCallback("disbandGroup", (_: any, cb: Function) => {
-  emitNet("summit_groups:server:disbandGroup");
+  emitNet("ignis_groups:server:disbandGroup");
   cb(true);
 });
 
@@ -122,6 +122,11 @@ onNet("summit_phone:client:updateGroupsApp", (action: string, data: any) => {
   }
 });
 
+RegisterNuiCallback("leaveQueue", (_: any, cb: Function) => {
+  emitNet("ignis_groups:server:leaveQueue");
+  cb(true);
+});
+
 // When the Groups app opens, fetch latest group data
 RegisterNuiCallback("getGroupsAppData", async (_: any, cb: Function) => {
   emitNet("ignis_groups:server:getSetupAppData");
@@ -129,7 +134,7 @@ RegisterNuiCallback("getGroupsAppData", async (_: any, cb: Function) => {
 });
 
 RegisterNuiCallback('sendPhoneNotification', (data: { app: string; title: string; description: string; timeout?: number }, cb: Function) => {
-  NUI.sendReactMessage('addNotification', {
+  NUI.sendReactMessage('addNotiFication', {
     id: generateUUid(),
     title: data.title,
     description: data.description,

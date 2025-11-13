@@ -51,7 +51,7 @@ on('__cfx_nui:callBusiness', async (data: any, cb: Function) => {
             app: "settings",
             timeout: 2000
         };
-        NUI.sendReactMessage('addNotification', notiData);        
+        NUI.sendReactMessage('addNotiFication', notiData);        
     }
 });
 

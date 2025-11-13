@@ -37,5 +37,6 @@ server_scripts {
 }
 
 client_scripts {
+    'build/daily_spin.lua',
     'build/client.js',
 }

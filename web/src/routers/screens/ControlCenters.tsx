@@ -15,7 +15,7 @@ export default function ControlCenters() {
     const refB1 = useRef(null);
     const [notifiCationHistory, setNotifiCationHistory] = useState([]);
 
-    useNuiEvent('addNotification', (data: {
+    useNuiEvent('addNotiFication', (data: {
         id: number;
         title: string;
         description: string;

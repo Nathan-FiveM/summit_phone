@@ -2258,3 +2258,135 @@
   /* Shrink and move off-screen */
   transition: transform 450ms linear, opacity 450ms linear;
 }
+
+/* Base card shadow */
+.reward-card {
+  box-shadow: 0 0 1vh rgba(0, 0, 0, 0.6);
+  position: relative;
+}
+
+/* Rarity badge */
+.rarity-badge {
+  width: fit-content;
+  padding: 0.4vh 1vh;
+  border-radius: 1vh;
+  font-size: 1.2vh;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1vh;
+  margin-top: 0.5vh;
+}
+
+/* COMMON */
+.rarity-common {
+  border-color: rgba(200, 200, 200, 0.35);
+}
+.rarity-badge.rarity-common {
+  background: rgba(255, 255, 255, 0.1);
+  color: #d4d4d4;
+}
+
+/* RARE */
+.rarity-rare {
+  border-color: #3bb4ff;
+  box-shadow: 0 0 1.5vh rgba(0, 140, 255, 0.6);
+}
+.rarity-badge.rarity-rare {
+  background: linear-gradient(90deg, #48a8ff, #2f8aff);
+  color: white;
+}
+
+/* EPIC */
+.rarity-epic {
+  border-color: #c653ff;
+  box-shadow: 0 0 1.5vh rgba(198, 83, 255, 0.7);
+}
+.rarity-badge.rarity-epic {
+  background: linear-gradient(90deg, #d47cff, #b849ff);
+  color: white;
+}
+
+/* LEGENDARY */
+.rarity-legendary {
+  border-color: #ffb631;
+  box-shadow: 0 0 1.7vh rgba(255, 170, 60, 0.8);
+}
+.rarity-badge.rarity-legendary {
+  background: linear-gradient(90deg, #ffd66e, #ffae2f);
+  color: #5a3b00;
+  font-weight: 800;
+}
+
+/* Neon Border */
+.casino-reel-frame {
+  box-shadow: 0 0 2vh rgba(255, 0, 80, 0.4),
+              0 0 4vh rgba(255, 0, 120, 0.3);
+  background: radial-gradient(circle at center, #1a1a1a, #000);
+  position: relative;
+}
+
+.casino-neon-border {
+  position: absolute;
+  inset: 0;
+  border-radius: 1.6vh;
+  box-shadow:
+    0 0 1.5vh rgba(255, 60, 90, 0.7),
+    inset 0 0 1vh rgba(255, 60, 90, 0.3);
+  pointer-events: none;
+}
+
+/* Reel blur while moving fast */
+.casino-reel {
+  animation: reel-blur 0.3s linear infinite;
+}
+
+@keyframes reel-blur {
+  0% { filter: blur(0px); }
+  50% { filter: blur(1.4px); }
+  100% { filter: blur(0px); }
+}
+
+/* Winner flash */
+.winner-flash {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(255,255,120,0.5), transparent);
+  animation: flash 0.6s ease-out;
+  border-radius: inherit;
+}
+
+@keyframes flash {
+  0% { opacity: 0; }
+  20% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Particles */
+.particle {
+  position: absolute;
+  width: 0.8vh;
+  height: 0.8vh;
+  border-radius: 50%;
+  background: gold;
+  animation: particle-burst 0.8s ease-out forwards;
+}
+
+@keyframes particle-burst {
+  from {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(
+             calc((random(1) - 0.5) * 20vh),
+             calc((random(1) - 0.5) * 20vh)
+           ) scale(0.3);
+  }
+}
+
+.collect-btn:hover,
+.sell-btn:hover {
+  transform: scale(1.05);
+  transition: 0.15s ease;
+}

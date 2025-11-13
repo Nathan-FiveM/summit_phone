@@ -33,7 +33,7 @@ exports('sendNotification', (data: {
         emit("QBCore:Notify", "No phone item found", "error");
         return;
     };
-    NUI.sendReactMessage('addNotification', data);
+    NUI.sendReactMessage('addNotiFication', data);
 });
 
 exports('sendActionNotification', (data: string) => {
