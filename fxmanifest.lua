@@ -34,6 +34,7 @@ server_scripts {
     'build/server.js',
     'build/server.lua',
     'build/groups_sv.lua',
+    'build/daily_spin_sv.lua',
 }
 
 client_scripts {

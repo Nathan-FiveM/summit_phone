@@ -115,15 +115,40 @@ export default function DailySpin(props: { onExit: () => void; onEnter: () => vo
         state.rouletteData[Math.floor(Math.random() * state.rouletteData.length)]
       );
     }
+
+    // add winner AND record its index in the reel
+    const winnerIndex = reelList.length;
     reelList.push(item);
+
+    // number of items added after the winner
+    const bufferCount = 5;
+
+    // add buffer items to allow smooth scroll
+    for (let i = 0; i < bufferCount; i++) {
+      reelList.push(
+        state.rouletteData[Math.floor(Math.random() * state.rouletteData.length)]
+      );
+    }
+
+
     setReelItems(reelList);
 
     setTimeout(() => {
       const reel = reelRef.current;
       if (!reel) return;
 
-      const reelHeight = reel.scrollHeight;
-      const stopPos = reelHeight - 240;
+      // height of a single reel item in px
+      const itemHeight = 10 * window.innerHeight / 100;
+
+      // the exact pixel Y-position of the winning item
+      const winnerPixelPos = winnerIndex * itemHeight;
+
+      // center of the hotbox (42vh reel)
+      const hotboxCenter = (42 * window.innerHeight / 100) / 2;
+
+      // final stopping point
+      const stopPos = winnerPixelPos - hotboxCenter + (itemHeight / 2);
+
 
       // CASINO EASING: fast → slow → bounce
       reel.style.transition =
@@ -148,8 +173,18 @@ export default function DailySpin(props: { onExit: () => void; onEnter: () => vo
         setWinner(item);
         setIsReeling(false);
         setSpinning(false);
-        reel.style.transition = "";
-        reel.style.transform = "";
+        // fade reel out so user never sees the snap reset
+        reel.style.transition = "opacity 0.2s";
+        reel.style.opacity = "0";
+
+        setTimeout(() => {
+          reel.style.transition = "";
+          reel.style.transform = "translateY(0)";
+          reel.style.opacity = "1";
+        }, 250);
+
+        // ⬅ reload cooldown state from server
+        loadState();
       }, 3500);
     }, 50);
   };
@@ -296,6 +331,15 @@ export default function DailySpin(props: { onExit: () => void; onEnter: () => vo
                   {/* Neon border glow */}
                   <div className="casino-neon-border" />
 
+                  {/* 🔶 HOTBOX highlight */}
+                  <div className={`slot-hotbox ${isReeling ? "spinning" : ""}`} />
+
+                  {/* 🔶 Top dim mask */}
+                  <div className="slot-mask slot-mask-top"></div>
+
+                  {/* 🔶 Bottom dim mask */}
+                  <div className="slot-mask slot-mask-bottom"></div>
+
                   {/* Actual reel */}
                   <div
                     ref={reelRef}
@@ -358,7 +402,6 @@ export default function DailySpin(props: { onExit: () => void; onEnter: () => vo
                   ))}
                 </div>
               )}
-
 
               {/* Prize List */}
               {!isReeling && state && (
@@ -517,15 +560,29 @@ export default function DailySpin(props: { onExit: () => void; onEnter: () => vo
                         radius="1vh"
                         style={{
                           width: "40%",
-                          backgroundColor: "#d9534f",        // red danger
+                          backgroundColor: "#d9534f",
                           color: "white",
                           fontWeight: 700,
                           boxShadow: "0 0.4vh 1vh rgba(0,0,0,0.4)",
+                          padding: "0 0.5vh",
                         }}
                         onClick={handleSell}
                       >
-                        Sell for ${winner.sell}
+                        <span
+                          style={{
+                            display: "inline-block",
+                            maxWidth: "100%",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}
+                        >
+                          Sell for ${winner.sell.toLocaleString()}
+                        </span>
                       </Button>
+
+
+
 
                       <Button
                         size="md"

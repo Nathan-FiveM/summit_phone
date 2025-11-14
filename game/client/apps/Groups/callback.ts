@@ -108,6 +108,11 @@ onNet("summit_phone:client:updateGroupsApp", (action: string, data: any) => {
       NUI.sendReactMessage("updateGroupsApp", { action, data });
       break;
 
+    case "setPlayerJobState":
+      // ✅ progress / stage updates
+      NUI.sendReactMessage("setPlayerJobState", { action, data });
+      break;
+
     case "updateStatus":
       // ✅ status changes (queued, active, idle)
       NUI.sendReactMessage("updateGroupsApp", {

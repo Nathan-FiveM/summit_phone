@@ -2390,3 +2390,57 @@
   transform: scale(1.05);
   transition: 0.15s ease;
 }
+
+/* SLOT MACHINE HOTBOX (center target area) */
+.slot-hotbox {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 10vh;
+  transform: translateY(-50%);
+  border-top: 0.25vh solid rgba(255, 215, 0, 0.9);
+  border-bottom: 0.25vh solid rgba(255, 215, 0, 0.9);
+  box-shadow:
+    0 0 1vh rgba(255, 200, 50, 0.6),
+    inset 0 0 1vh rgba(255, 200, 50, 0.5);
+  pointer-events: none;
+  z-index: 15;
+}
+
+/* TOP & BOTTOM MASKS */
+.slot-mask {
+  position: absolute;
+  width: 100%;
+  height: 16vh;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.slot-mask-bottom {
+  bottom: 0;
+  transform: rotate(180deg);
+}
+
+.slot-mask-top {
+  top: 0;
+}
+
+/* Animated glow */
+.slot-hotbox.spinning {
+  animation: hotboxGlow 1s ease-in-out infinite alternate;
+}
+
+@keyframes hotboxGlow {
+  from {
+    box-shadow:
+      0 0 0.8vh rgba(255, 200, 50, 0.4),
+      inset 0 0 0.4vh rgba(255, 200, 50, 0.4);
+  }
+  to {
+    box-shadow:
+      0 0 1.4vh rgba(255, 220, 120, 0.9),
+      inset 0 0 1vh rgba(255, 220, 120, 0.8);
+  }
+}

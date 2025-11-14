@@ -16,6 +16,8 @@ interface PhoneJob {
   label: string;
   description: string;
   coords: { x: number; y: number; z: number };
+capacity?: number;     // how many active/queued players
+maxCapacity?: number;  // limit from config
 }
 
 // New interface for the updated groups data structure
@@ -26,7 +28,8 @@ interface NewGroupData {
     status?: string;
     stage?: any[];
     leader: number;
-    members: number[];
+    members: GroupMember[];
+    jobType?: string;
 }
 
 interface GroupMember {
@@ -44,6 +47,109 @@ interface SetupAppData {
     groupData: GroupMember[];
     inGroup: boolean;
     groupStages: { isDone: boolean, name: string, id: number }[];
+}
+
+interface JobMetaEntry {
+    label: string;
+    icon: string;
+    color: string;
+    vpn?: boolean;   // <-- optional
+}
+
+function DynamicQueuePage({
+    jobType,
+    JobMeta,
+    availableGroups,
+    loadingGroups,
+    setSelectedJob,
+    fetchNui
+}) {
+    const meta = JobMeta[jobType];
+
+    if (!meta) return <Text>No job meta found.</Text>;
+
+    return (
+        <div
+            style={{
+                width: "90%",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                color: "#FFF",
+                marginTop: "1vh",
+            }}
+        >
+            <Text fw={700} size="1.6vh" mb="1vh">
+                {meta.icon} {meta.label} — Groups
+            </Text>
+
+            <Button
+                fullWidth
+                color={meta.color}
+                radius="0.5vh"
+                mb="1vh"
+                onClick={() =>
+                    fetchNui("groups:createGroup", { jobType })
+                }
+            >
+                Create New Group
+            </Button>
+
+            {loadingGroups ? (
+                <Text c="gray.5">Loading groups...</Text>
+            ) : availableGroups.length > 0 ? (
+                <div
+                    style={{
+                        width: "100%",
+                        maxHeight: "55vh",
+                        overflowY: "auto",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "0.8vh",
+                    }}
+                >
+                    {availableGroups.map((g) => (
+                        <div
+                            key={g.id}
+                            style={{
+                                backgroundColor: "rgba(255,255,255,0.08)",
+                                borderRadius: "0.53vh",
+                                padding: "1vh",
+                            }}
+                        >
+                            <Text fw={600}>
+                                {meta.icon} {meta.label}
+                            </Text>
+                            <Text size="1.2vh" c="gray.4">Members: {g.memberCount ?? 0}</Text>
+                            <Text size="1.2vh" c="gray.4">Status: {g.status ?? "idle"}</Text>
+
+                            <Button
+                                mt="0.8vh"
+                                size="xs"
+                                color="green"
+                                radius="0.4vh"
+                                onClick={() => fetchNui("joinGroup", { groupId: g.id })}
+                            >
+                                Join Group
+                            </Button>
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <Text c="gray.5">No available groups. Create one to get started!</Text>
+            )}
+
+            <Button
+                mt="1vh"
+                size="xs"
+                color="gray"
+                variant="light"
+                onClick={() => setSelectedJob("")}
+            >
+                ← Back to Job List
+            </Button>
+        </div>
+    );
 }
 
 export default function Groups(props: { onExit: () => void, onEnter: () => void }) {
@@ -79,6 +185,94 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
     const [selectedJob, setSelectedJob] = useState<string>(""); // which job type player is viewing
     const [availableGroups, setAvailableGroups] = useState<any[]>([]);
     const [loadingGroups, setLoadingGroups] = useState<boolean>(false);
+
+    const [prettyJobLabel, setPrettyJobLabel] = useState<string>("");
+
+    const JobMeta: Record<string, JobMetaEntry> = {
+        towing: {
+            label: "Towing",
+            icon: "🚚",
+            color: "#c49bff",
+        },
+        taxi: {
+            label: "Taxi Driver",
+            icon: "🚕",
+            color: "#f4d03f",
+        },
+        storedelivery: {
+            label: "Store Deliveries",
+            icon: "📦",
+            color: "#ffa31a",
+        },
+        sani: {
+            label: "Sanitation Worker",
+            icon: "🧹",
+            color: "#7bd76d",
+        },
+        mining: {
+            label: "Mining Crew",
+            icon: "⛏️",
+            color: "#b7950b",
+        },
+        chickens: {
+            label: "Chicken Farmer",
+            icon: "🐔",
+            color: "#ffcc80",
+        },
+        fishing: {
+            label: "Fishing",
+            icon: "🎣",
+            color: "#4cc3ff",
+        },
+        hunting: {
+            label: "Hunting",
+            icon: "🏹",
+            color: "#a66d4f",
+        },
+        lumber: {
+            label: "Lumberjack",
+            icon: "🌲",
+            color: "#27ae60",
+        },
+        panning: {
+            label: "Gold Panning",
+            icon: "🥇",
+            color: "#f1c40f",
+        },
+        postop: {
+            label: "PostOp Worker",
+            icon: "📬",
+            color: "#ffa31a",
+        },
+
+        // VPN Jobs
+        theftcar: {
+            label: "Chop Shop",
+            icon: "🔧",
+            color: "#e74c3c",
+            vpn: true
+        },
+        oxyrun: {
+            label: "Oxy Run",
+            icon: "💊",
+            color: "#d35400",
+            vpn: true
+        },
+        taco: {
+            label: "Taco Shop",
+            icon: "🌮",
+            color: "#ffb347",
+            vpn: true
+        },
+        houserobbery: {
+            label: "House Robbery",
+            icon: "🏠",
+            color: "#ff5555",
+            vpn: true
+        },
+    };
+
+
     // Auto-fetch available groups for a job type
     useEffect(() => {
     if (!selectedJob) return;
@@ -100,13 +294,34 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
 
         case "setCurrentGroup":
         if (data && Object.keys(data).length > 0) {
+
+            if (data.jobType && JobMeta[data.jobType]) {
+                setSelectedJob(data.jobType);
+                setPrettyJobLabel(JobMeta[data.jobType].label);
+            }
+
             setCurrentGroupData(data.members || []);
-            setGroupsData(prev => [{ ...prev[0], ...data }]);
+            /* setGroupsData(prev => [{ ...prev[0], ...data }]); */
+            setGroupsData(prev => {
+                const existing = prev.find(g => g.id === data.id);
+                if (existing) {
+                    return prev.map(g => g.id === data.id ? { ...g, ...data } : g);
+                } else {
+                    return [...prev, data];
+                }
+            });
+
+
         } else {
             setCurrentGroupData([]);
             setGroupsData([]);
+            setPrettyJobLabel("");
+            setInGroup(false);
         }
         break;
+
+
+
 
         case "setGroups":
         setGroupsData(Array.isArray(data) ? data : []);
@@ -138,6 +353,15 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
     useNuiEvent('setGroupJobSteps', async (stage: { isDone: boolean, name: string, id: number }[]) => {
         setGroupStage(stage);
     });
+
+    useNuiEvent("setPlayerJobState", (jobType: string) => {
+        console.log("[Groups UI] Player nghe job changed to:", jobType);
+
+        if (jobType && JobMeta[jobType]) {
+            setSelectedJob(jobType);
+        }
+    });
+
 
     const [playerSource, setPlayerSource] = useState(0);
     const [selectedgroupId, setSelectedGroupId] = useState(0);
@@ -264,89 +488,15 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                 {!inGroup ? (
                 <>
                     {/* 🏠 House Robbery - Group Listing Section */}
-                    {selectedJob === "House Robbery" ? (
-                    <div
-                        style={{
-                        width: "90%",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        color: "#FFF",
-                        marginTop: "1vh",
-                        }}
-                    >
-                        <Text fw={700} size="1.6vh" mb="1vh">
-                        🏠 House Robbery — Groups
-                        </Text>
-
-                        <Button
-                        fullWidth
-                        color="orange"
-                        radius="0.5vh"
-                        mb="1vh"
-                        onClick={() =>
-                            fetchNui("groups:createGroup", { jobType: "House Robbery" })
-                        }
-                        >
-                        Create New Group
-                        </Button>
-
-                        {loadingGroups ? (
-                        <Text c="gray.5">Loading groups...</Text>
-                        ) : availableGroups.length > 0 ? (
-                        <div
-                            style={{
-                            width: "100%",
-                            maxHeight: "55vh",
-                            overflowY: "auto",
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: "0.8vh",
-                            }}
-                        >
-                            {availableGroups.map((g) => (
-                            <div
-                                key={g.id}
-                                style={{
-                                backgroundColor: "rgba(255,255,255,0.08)",
-                                borderRadius: "0.53vh",
-                                padding: "1vh",
-                                }}
-                            >
-                                <Text fw={600}>{g.jobType || "House Robbery"}</Text>
-                                <Text size="1.2vh" c="gray.4">
-                                Members: {g.memberCount ?? 0}
-                                </Text>
-                                <Text size="1.2vh" c="gray.4">
-                                Status: {g.status ?? "idle"}
-                                </Text>
-
-                                <Button
-                                mt="0.8vh"
-                                size="xs"
-                                color="green"
-                                radius="0.4vh"
-                                onClick={() => fetchNui("joinGroup", { groupId: g.id })}
-                                >
-                                Join Group
-                                </Button>
-                            </div>
-                            ))}
-                        </div>
-                        ) : (
-                        <Text c="gray.5">No available groups. Create one to get started!</Text>
-                        )}
-
-                        <Button
-                        mt="1vh"
-                        size="xs"
-                        color="gray"
-                        variant="light"
-                        onClick={() => setSelectedJob("")}
-                        >
-                        ← Back to Job List
-                        </Button>
-                    </div>
+                    {selectedJob && JobMeta[selectedJob] ? (
+                        <DynamicQueuePage
+                            jobType={selectedJob}
+                            JobMeta={JobMeta}
+                            availableGroups={availableGroups}
+                            loadingGroups={loadingGroups}
+                            setSelectedJob={setSelectedJob}
+                            fetchNui={fetchNui}
+                        />
                     ) : (
                     <>
                         {/* 🧭 DEFAULT JOB LIST SECTION */}
@@ -369,93 +519,155 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                         }}
                         >
                         {availableJobs
-                            .filter((job) =>
+                        .filter((job) =>
                             job.label.toLowerCase().includes(searchValue.toLowerCase())
-                            )
-                            .map((job, i) => (
-                            <div
-                                key={i}
-                                style={{
-                                width: "100%",
-                                minHeight: "8vh",
-                                backgroundColor: "rgba(255, 255, 255, 0.15)",
-                                borderRadius: "0.53vh",
-                                padding: "1.0vh 1.1vh",
-                                display: "flex",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                }}
-                            >
-                                {/* LEFT SIDE: Job Info */}
-                                <div
-                                style={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    justifyContent: "center",
-                                    color: "#FFF",
-                                    width: "75%",
-                                    paddingRight: "1vh",
-                                }}
-                                >
-                                <Text fw={600} size="1.42vh" style={{ marginBottom: "0.4vh" }}>
-                                    {job.label}
-                                </Text>
-                                <Text
-                                    size="1.1vh"
-                                    c="gray.5"
-                                    lineClamp={2}
-                                    style={{ marginBottom: "0.3vh" }}
-                                >
-                                    {job.description}
-                                </Text>
-                                </div>
+                        )
+                        .map((job, i) => {
 
-                                {/* RIGHT SIDE: Buttons */}
+                            // 🔥 MUST BE HERE — before the return!
+                            const meta = JobMeta[job.id as keyof typeof JobMeta];
+                            const isVPN = meta?.vpn === true;
+
+                            return (
                                 <div
-                                style={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    alignItems: "flex-end",
-                                    justifyContent: "flex-end",
-                                    gap: "0.4vh",
-                                }}
-                                >
-                                <Button
-                                    size="xs"
-                                    variant="filled"
-                                    color="blue"
-                                    radius="0.53vh"
-                                    onClick={async () => {
-                                    await fetchNui("groups:requestJobInfo", { jobId: job.id });
+                                    key={i}
+                                    style={{
+                                        width: "100%",
+                                        minHeight: "11vh",          // ⬅️ more breathing room
+                                        backgroundColor: isVPN
+                                            ? "rgba(255, 80, 80, 0.20)"
+                                            : "rgba(255, 255, 255, 0.15)",
+                                        borderRadius: "0.75vh",     // ⬅️ more premium card feel
+                                        padding: "1.3vh 1.4vh",     // ⬅️ more interior spacing
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        alignItems: "flex-start",   // ⬅️ stop squeezing columns vertically
+                                        gap: "1vh",                 // ⬅️ more separation between left & right
+                                        border: isVPN
+                                            ? "1px solid rgba(255, 80, 80, 0.4)"
+                                            : "none",
+                                        boxShadow: isVPN
+                                            ? "0 0 1vh rgba(255,0,0,0.35)"
+                                            : "0 0 0.7vh rgba(0,0,0,0.25)", // ⬅️ optional subtle shadow
+                                        transition: "0.2s ease",
                                     }}
                                 >
-                                    Job Info
-                                </Button>
 
-                                <Button
-                                    size="xs"
-                                    variant="filled"
-                                    color="orange"
-                                    radius="0.53vh"
-                                    onClick={async () => {
-                                    await fetchNui("groups:setJobWaypoint", { jobId: job.id });
-                                    fetchNui("sendPhoneNotification", {
-                                        app: "groups",
-                                        title: "📍 Waypoint Set",
-                                        description: `Navigate to ${job.label} to begin work.`,
-                                        timeout: 5000,
-                                    });
+                                    {/* LEFT SIDE: Job Info */}
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            justifyContent: "flex-start",
+                                            color: "#FFF",
+                                            width: "70%",
+                                            paddingRight: "1vh",
+                                        }}
+                                    >
+                                        <Text fw={600} size="1.42vh" style={{ marginBottom: "0.4vh" }}>
+                                            {job.label}
+                                        </Text>
 
-                                    if (job.label === "House Robbery") {
-                                        setSelectedJob("House Robbery");
-                                    }
-                                    }}
-                                >
-                                    Set GPS
-                                </Button>
+                                        {isVPN && (
+                                            <div
+                                                style={{
+                                                    background: "rgba(255,80,80,0.25)",
+                                                    padding: "0.2vh 0.5vh",
+                                                    borderRadius: "0.4vh",
+                                                    marginBottom: "0.4vh",
+                                                    fontSize: "1vh",
+                                                    fontWeight: 600,
+                                                    color: "#ff7777"
+                                                }}
+                                            >
+                                                🔒 VPN Required
+                                            </div>
+                                        )}
+
+                                        <Text
+                                            size="1.1vh"
+                                            c="gray.5"
+                                            lineClamp={2}
+                                            style={{ marginBottom: "0.6vh" }}
+                                        >
+                                            {job.description}
+                                        </Text>
+
+                                        {/* Capacity Bar (moved into left column) */}
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                gap: "0.45vh",
+                                                marginTop: "0.4vh",
+                                            }}
+                                        >
+                                            {[...Array(6)].map((_, idx) => {
+                                                const fillThreshold = (job.maxCapacity / 6) * (idx + 1);
+                                                const isFilled = job.capacity >= fillThreshold;
+
+                                                return (
+                                                    <div
+                                                        key={idx}
+                                                        style={{
+                                                            width: "1vh",
+                                                            height: "1vh",
+                                                            borderRadius: "50%",
+                                                            backgroundColor: isFilled
+                                                                ? "#ff9f1a"
+                                                                : "rgba(255,255,255,0.15)",
+                                                            transition: "0.3s",
+                                                        }}
+                                                    />
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+
+
+                                    {/* RIGHT SIDE BUTTONS */}
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            alignItems: "flex-end",
+                                            justifyContent: "flex-start",
+                                            gap: "0.7vh",
+                                        }}
+                                    >
+                                        <Button
+                                            size="xs"
+                                            variant="filled"
+                                            color="blue"
+                                            radius="0.53vh"
+                                            onClick={async () => {
+                                                await fetchNui("groups:requestJobInfo", { jobId: job.id });
+                                            }}
+                                        >
+                                            Job Info
+                                        </Button>
+
+                                        <Button
+                                            size="xs"
+                                            variant="filled"
+                                            color="orange"
+                                            radius="0.53vh"
+                                            onClick={async () => {
+                                                await fetchNui("groups:setJobWaypoint", { jobId: job.id });
+                                                fetchNui("sendPhoneNotification", {
+                                                    app: "groups",
+                                                    title: "📍 Waypoint Set",
+                                                    description: `Navigate to ${job.label} to begin work.`,
+                                                    timeout: 5000,
+                                                });
+                                            }}
+                                        >
+                                            Set GPS
+                                        </Button>
+                                    </div>
                                 </div>
-                            </div>
-                            ))}
+                            );
+                        })}
+
                         </div>
                     </>
                     )}
@@ -479,7 +691,9 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                         }}
                         >
                         <Text>
-                            Name: {groupsData.find((g) => g.id)?.name ?? "Unknown"}
+                            Job: {
+                            JobMeta[groupsData.find((g) => g.id)?.jobType]?.label ?? groupsData.find((g) => g.id)?.jobType ?? "Unknown"
+                                }
                         </Text>
                         <Text>
                             Members:{" "}
