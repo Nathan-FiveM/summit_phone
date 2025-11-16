@@ -166,6 +166,12 @@ on('__cfx_nui:getSetupAppData', async (_data: any, cb: Function) => {
   cb(groups);
 });
 
+// === GET GROUPS FOR JOB TYPE === \\
+on("__cfx_nui:groups:getGroupsForJob", async (data: { jobType: string }, cb: Function) => {
+  const res = await triggerServerCallback("ignis_groups:getGroupsForJob", 1, data.jobType);
+  cb(res || []);
+});
+
 // === GET CURRENT GROUP DATA (client view refresh) ===
 on('__cfx_nui:getGroupData', async (_data: any, cb: Function) => {
   const res = await triggerServerCallback('ignis_groups:getGroupData', 1);

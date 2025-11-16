@@ -64,7 +64,7 @@ export default function MessageDetails() {
                     );
                 } else {
                     response = await fetchNui(
-                        "getGroupMessages",
+                        "getMessageGroupMessages",
                         JSON.stringify({
                             groupId: identifier,
                             page: currentPage,
@@ -238,7 +238,7 @@ export default function MessageDetails() {
                             }} onFocus={() => fetchNui("disableControls", true)}
                                 onBlur={() => {
                                     fetchNui("disableControls", false);
-                                    fetchNui("updateGroupName", JSON.stringify({
+                                    fetchNui("updateMessageGroupName", JSON.stringify({
                                         groupId: identifier,
                                         newName: name
                                     }))
@@ -259,7 +259,7 @@ export default function MessageDetails() {
                                     display: 'flex',
                                 }}>
                                     <svg onClick={async () => {
-                                        await fetchNui('deleteGroup', identifier);
+                                        await fetchNui('deleteMessageGroup', identifier);
                                         const data = { ...location.page, messages: "" };
                                         setLocation({ app: "message", page: data });
                                     }} style={{
@@ -283,7 +283,7 @@ export default function MessageDetails() {
                                         <path d="M7.55556 12H12M12 12H16.4444M12 12V16.4444M12 12V7.55556M12 22C6.47716 22 2 17.5229 2 12C2 6.47716 6.47716 2 12 2C17.5229 2 22 6.47716 22 12C22 17.5229 17.5229 22 12 22Z" stroke="#0A84FF" strokeWidth="2.5" strokeLinecap="round" stroke-linejoin="round" />
                                     </svg>
                                 </div> : <svg onClick={async () => {
-                                    await fetchNui('leaveGroup', JSON.stringify({
+                                    await fetchNui('leaveMessageGroup', JSON.stringify({
                                         groupId: identifier,
                                         phoneNumber: phoneSettings.phoneNumber
                                     }))
@@ -513,7 +513,7 @@ export default function MessageDetails() {
                                                 justifyContent: 'center',
                                                 cursor: 'pointer',
                                             }} onClick={() => {
-                                                fetchNui('leaveGroup', JSON.stringify({
+                                                fetchNui('leaveMessageGroup', JSON.stringify({
                                                     groupId: identifier,
                                                     phoneNumber: phoneNumber
                                                 }))
@@ -598,7 +598,7 @@ export default function MessageDetails() {
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter") {
                                                 if (showAvatarModal) {
-                                                    fetchNui('updateGroupAvatar', JSON.stringify({
+                                                    fetchNui('updateMessageGroupAvatar', JSON.stringify({
                                                         groupId: identifier,
                                                         newAvatar: avatar
                                                     }))

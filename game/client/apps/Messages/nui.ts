@@ -18,7 +18,7 @@ on(`__cfx_nui:getPrivateMessages`, async (data: any, cb: Function) => {
     cb(res);
 });
 
-RegisterNuiCallbackType('getGroupMessages');
+RegisterNuiCallbackType('getMessageGroupMessages');
 on(`__cfx_nui:getGroupMessages`, async (data: any, cb: Function) => {
     const res = await triggerServerCallback('phone_message:getGroupMessages', 1, data);
     cb(res);
@@ -36,38 +36,38 @@ on(`__cfx_nui:toggleMessageBlock`, async (data: any, cb: Function) => {
     cb(res);
 });
 
-RegisterNuiCallbackType('createGroup');
+RegisterNuiCallbackType('createMessageGroup');
 on(`__cfx_nui:createGroup`, async (data: any, cb: Function) => {
     const res = await triggerServerCallback('phone_message:createGroup', 1, data);
     cb(res);
 });
 
-RegisterNuiCallbackType('updateGroupName');
+RegisterNuiCallbackType('updateMessageGroupName');
 on(`__cfx_nui:updateGroupName`, async (data: any, cb: Function) => {
     const res = await triggerServerCallback('phone_message:updateGroupName', 1, data);
     cb(res);
 });
 
-RegisterNuiCallbackType('updateGroupAvatar');
+RegisterNuiCallbackType('updateMessageGroupAvatar');
 on(`__cfx_nui:updateGroupAvatar`, async (data: any, cb: Function) => {
     const res = await triggerServerCallback('phone_message:updateGroupAvatar', 1, data);
     cb(res);
 });
 
-RegisterNuiCallbackType('deleteGroup');
-on(`__cfx_nui:deleteGroup`, async (groupId: any, cb: Function) => {
+RegisterNuiCallbackType('deleteMessageGroup');
+on(`__cfx_nui:deleteMessageGroup`, async (groupId: any, cb: Function) => {
     const res = await triggerServerCallback('phone_message:deleteGroup', 1, groupId);
     cb(res);
 });
 
-RegisterNuiCallbackType('leaveGroup');
-on(`__cfx_nui:leaveGroup`, async (groupId: any, cb: Function) => {
+RegisterNuiCallbackType('leaveMessageGroup');
+on(`__cfx_nui:leaveMessageGroup`, async (groupId: any, cb: Function) => {
     const res = await triggerServerCallback('phone_message:removeMember', 1, groupId);
     cb(res);
 });
 
-RegisterNuiCallbackType('addMember');
-on(`__cfx_nui:addMember`, async (data: any, cb: Function) => {
+RegisterNuiCallbackType('addMessageMember');
+on(`__cfx_nui:addMessageMember`, async (data: any, cb: Function) => {
     const res = await triggerServerCallback('phone_message:addMember', 1, data);
     cb(res);
 });

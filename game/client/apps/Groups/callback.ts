@@ -84,6 +84,11 @@ RegisterNuiCallback("getSetupAppData", async (_: any, cb: Function) => {
   });
 });
 
+RegisterNuiCallback("groups:getGroupsForJob", async (data: { jobType: string }, cb: Function) => {
+  const res = await triggerServerCallback("ignis_groups:getGroupsForJob", 1, data.jobType);
+  cb(res || []);
+});
+
 onNet("summit_phone:client:updateGroupsApp", (action: string, data: any) => {
   console.log("[SUMMIT_PHONE] updateGroupsApp:", action, data);
 

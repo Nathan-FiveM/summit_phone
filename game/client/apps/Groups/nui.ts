@@ -17,9 +17,3 @@ on('__cfx_nui:changeJobOfPlayer', async (data: string, cb: Function) => {
     const res = await triggerServerCallback('groups:changeJobOfPlayer', 1, data);
     cb(res);
 });
-
-RegisterNuiCallbackType("groups:getGroupsForJob");
-on("__cfx_nui:groups:getGroupsForJob", async (data: { jobType: string }, cb: Function) => {
-  const res = await triggerServerCallback("ignis_groups:getGroupsForJob", 1, data.jobType);
-  cb(res || []);
-});
