@@ -120,8 +120,8 @@ on('__cfx_nui:groups:createGroup', async (data: { jobType?: string; pass?: strin
 });
 
 // === JOIN GROUP ===
-on('__cfx_nui:joinGroup', async (data: { groupId: string; pass?: string }, cb: Function) => {
-  emitNet('ignis_groups:server:joinGroup', data.groupId, data.pass || null);
+on('__cfx_nui:joinGroup', async (data: any, cb: Function) => {
+  emitNet('ignis_groups:server:joinGroup', data || null);
   cb(true);
 });
 

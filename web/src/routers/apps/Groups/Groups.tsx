@@ -128,7 +128,7 @@ function DynamicQueuePage({
                                 size="xs"
                                 color="green"
                                 radius="0.4vh"
-                                onClick={() => fetchNui("joinGroup", { groupId: g.id })}
+                                onClick={() => fetchNui("joinGroup", { id: g.id, pass: '' })}
                             >
                                 Join Group
                             </Button>
@@ -274,14 +274,19 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
 
 
     // Auto-fetch available groups for a job type
+    // Keep the "job queue" list in sync with the latest groups from the server
+    // Server always pushes the full list into `groupsData` via `setGroups`,
+    // so we just filter that by jobType here.
     useEffect(() => {
-    if (!selectedJob) return;
+        if (!selectedJob) {
+            setAvailableGroups([]);
+            return;
+        }
 
-    setLoadingGroups(true);
-    fetchNui("groups:getGroupsForJob", { jobType: selectedJob })
-        .then((data) => setAvailableGroups((data as any[]) || []))
-        .finally(() => setLoadingGroups(false));
-    }, [selectedJob]);
+        const byJob = (groupsData || []).filter((g: any) => g.jobType === selectedJob);
+        setAvailableGroups(byJob);
+    }, [selectedJob, groupsData]);
+
 
     useNuiEvent("updateGroupsApp", (payload: { action: string; data: any }) => {
     const { action, data } = payload;
@@ -295,10 +300,8 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
         case "setCurrentGroup":
         if (data && Object.keys(data).length > 0) {
 
-            if (data.jobType && JobMeta[data.jobType]) {
-                setSelectedJob(data.jobType);
-                setPrettyJobLabel(JobMeta[data.jobType].label);
-            }
+            setSelectedJob(data.jobType);
+            setPrettyJobLabel(JobMeta[data.jobType].label);
 
             setCurrentGroupData(data.members || []);
             /* setGroupsData(prev => [{ ...prev[0], ...data }]); */
