@@ -144,7 +144,10 @@ function DynamicQueuePage({
                 size="xs"
                 color="gray"
                 variant="light"
-                onClick={() => setSelectedJob("")}
+                onClick={() => {
+                    fetchNui("groups:signOutJob");
+                    setSelectedJob("");
+                }}
             >
                 ← Back to Job List
             </Button>
@@ -185,6 +188,7 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
     const [selectedJob, setSelectedJob] = useState<string>(""); // which job type player is viewing
     const [availableGroups, setAvailableGroups] = useState<any[]>([]);
     const [loadingGroups, setLoadingGroups] = useState<boolean>(false);
+    const [memberRenderKey, setMemberRenderKey] = useState(0);
 
     const [prettyJobLabel, setPrettyJobLabel] = useState<string>("");
 
@@ -302,9 +306,8 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
 
             setSelectedJob(data.jobType);
             setPrettyJobLabel(JobMeta[data.jobType].label);
-
             setCurrentGroupData(data.members || []);
-            /* setGroupsData(prev => [{ ...prev[0], ...data }]); */
+            setMemberRenderKey(k => k + 1);
             setGroupsData(prev => {
                 const existing = prev.find(g => g.id === data.id);
                 if (existing) {
@@ -714,10 +717,89 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                             JobMeta[groupsData.find((g) => g.id)?.jobType]?.label ?? groupsData.find((g) => g.id)?.jobType ?? "Unknown"
                                 }
                         </Text>
-                        <Text>
-                            Members:{" "}
-                            {currentGroupData.map((m) => m.name).join(", ") || "None"}
-                        </Text>
+                        {/* === MEMBERS PANEL === */}
+                        <div
+                            key={memberRenderKey}
+                            style={{
+                                marginTop: "1vh",
+                                padding: "1.2vh",
+                                backgroundColor: "rgba(255,255,255,0.08)",
+                                borderRadius: "0.53vh",
+                            }}
+                            >
+                            <Text fw={600} size="1.35vh" style={{ marginBottom: "0.8vh" }}>
+                                Members ({currentGroupData.length})
+                            </Text>
+
+                            {currentGroupData.length === 0 && (
+                                <Text c="gray.5" size="1.2vh">No members</Text>
+                            )}
+
+                            <div
+                                style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: "0.8vh",
+                                }}
+                            >
+                                {currentGroupData.map((member, idx) => {
+                                const isLeader = member.isLeader;
+
+                                return (
+                                    <div
+                                    key={`${memberRenderKey}-${idx}`}
+                                    style={{
+                                        backgroundColor: "rgba(255,255,255,0.06)",
+                                        padding: "0.8vh 1vh",
+                                        borderRadius: "0.45vh",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "space-between",
+                                        borderLeft: isLeader
+                                        ? "0.35vh solid #e67e22"
+                                        : "0.35vh solid transparent",
+                                    }}
+                                    >
+                                    <div style={{ display: "flex", alignItems: "center", gap: "0.9vh" }}>
+                                        <Avatar
+                                        radius="xl"
+                                        size="2.4vh"
+                                        src={null}
+                                        color={isLeader ? "orange" : "blue"}
+                                        />
+
+                                        <div style={{ display: "flex", flexDirection: "column" }}>
+                                        <Text fw={500} size="1.25vh">
+                                            {member.name}
+                                        </Text>
+
+                                        <Text size="1vh" c="gray.5">
+                                            ID: {member.playerId <= 0 ? "Offline" : member.playerId}
+                                        </Text>
+                                        </div>
+                                    </div>
+
+                                    {isLeader && (
+                                        <Text
+                                        size="1.05vh"
+                                        fw={600}
+                                        style={{
+                                            background: "rgba(255,165,0,0.25)",
+                                            padding: "0.2vh 0.6vh",
+                                            borderRadius: "0.35vh",
+                                            color: "#ffb347",
+                                        }}
+                                        >
+                                        Leader
+                                        </Text>
+                                    )}
+                                    </div>
+                                );
+                                })}
+                            </div>
+                        </div>
+
+
 
                         {/* ✅ Progress Display */}
                         {groupStage.length > 0 && (

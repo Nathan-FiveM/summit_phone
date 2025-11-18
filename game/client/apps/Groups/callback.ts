@@ -135,3 +135,9 @@ RegisterNuiCallback('sendPhoneNotification', (data: { app: string; title: string
   });
   cb('ok');
 });
+
+on('__cfx_nui:groups:signOutJob', async (data: any, cb: Function) => {
+    emitNet("ignis_groups:server:signOutJob");
+    emit("rep-tablet:client:checkout");
+    cb(true);
+});
