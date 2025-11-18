@@ -118,7 +118,7 @@ function DynamicQueuePage({
                             }}
                         >
                             <Text fw={600}>
-                                {meta.icon} {meta.label}
+                                {meta.icon} {g.name || meta.label}
                             </Text>
                             <Text size="1.2vh" c="gray.4">Members: {g.memberCount ?? 0}</Text>
                             <Text size="1.2vh" c="gray.4">Status: {g.status ?? "idle"}</Text>
@@ -128,7 +128,7 @@ function DynamicQueuePage({
                                 size="xs"
                                 color="green"
                                 radius="0.4vh"
-                                onClick={() => fetchNui("joinGroup", { id: g.id, pass: '' })}
+                                onClick={() => fetchNui("joinGroup", { groupId: g.id, pass: '' })}
                             >
                                 Join Group
                             </Button>
@@ -317,8 +317,7 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
 
         } else {
             setCurrentGroupData([]);
-            setGroupsData([]);
-            setPrettyJobLabel("");
+            setGroupsData(prev => prev);
             setInGroup(false);
         }
         break;
@@ -369,7 +368,14 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
     const [playerSource, setPlayerSource] = useState(0);
     const [selectedgroupId, setSelectedGroupId] = useState(0);
     const [selectedPassword, setSelectedPassword] = useState('');
-
+    // 🔥 HARDEN UI AGAINST AUTO-RESET WHEN LEAVING GROUP
+    useEffect(() => {
+        if (!inGroup) {
+            // Do NOT reset selectedJob automatically.
+            // Let the user manually leave the job queue page.
+            // selectedJob remains intact unless user clicks "← Back to Job List"
+        }
+    }, [inGroup]);
     return (
         <CSSTransition
             nodeRef={nodeRef}
@@ -430,6 +436,16 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                     const derivedInGroup =
                     (Array.isArray(setupData.groupData) && setupData.groupData.length > 0) || (Array.isArray(setupData.groupStages) && setupData.groupStages.length > 0);
                     setInGroup(derivedInGroup);
+
+                    // 🔥 FIX: Do NOT force the UI out of the job queue page
+                    // If groupData is empty → user just left a group → KEEP selectedJob
+                    if (!derivedInGroup) {
+                        setInGroup(false);
+                        // DO NOT reset selectedJob
+                    } else {
+                        setInGroup(true);
+                    }
+
                 }
 
                 // ✅ fetch available jobs if not in a group
@@ -1311,7 +1327,7 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                         }
                     } else if (inputTitle === 'Join Group') {
                         if (String(e)) {
-                            const res = await fetchNui('joinGroup', { id: selectedgroupId, pass: e });
+                            const res = await fetchNui('joinGroup', { groupId: selectedgroupId, pass: e });
                         }
                     }
                 }} onCancel={() => {
