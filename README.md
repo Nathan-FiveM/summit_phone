@@ -44,7 +44,7 @@ A comprehensive smartphone system for FiveM servers featuring multiple applicati
 |-----------|-------------|
 | **[QBCore Framework](https://github.com/qbcore-framework)** *or* **[QBox](https://github.com/Qbox-project/qbx_core)** | Primary framework |
 | **[ox_lib](https://github.com/overextended/ox_lib)** | Used for ox things |
-| **qb-inventory** *or* **lj-inventory** *or* **ox_inventory** | Inventory handling |
+| **[qb-inventory](https://github.com/qbcore-framework/qb-inventory)** *or* **[lj-inventory](https://github.com/loljoshie/lj-inventory)** *or* **[ox_inventory](https://github.com/overextended/ox_inventory)** | Inventory handling |
 | **[Soundhandler](https://github.com/Jarvis095/Soundhandler)** | Soundhandler - Used for ringtones and notification sounds |
 | **[summit_phone_props](https://github.com/Jarvis095/summit_phone_props)** | Phone Props - Custom props used to display the phones colour as the model |
 | **[mongoDB](https://github.com/Jarvis095/MongoDB-Wrapper)** | mongoDB - Used for database intergration |
