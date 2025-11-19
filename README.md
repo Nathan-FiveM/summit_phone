@@ -66,7 +66,8 @@ A comprehensive smartphone system for FiveM servers featuring multiple applicati
    ensure summit_phone
    ```
 5. **Configure webhooks** and external services as needed
-6. **Build the resource**:
+6. **Configure Core** Read either the QBCoreInstall.md or QBoxInstall.md depending on your framework.
+7. **Build the resource**:
    ```bash
    pnpm build
    ```
