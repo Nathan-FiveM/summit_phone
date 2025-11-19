@@ -42,12 +42,12 @@ A comprehensive smartphone system for FiveM servers featuring multiple applicati
 ### Required
 | Dependency | Description |
 |-----------|-------------|
-| **[QBCore Framework](https://github.com/qbcore-framework)** *or* **qbox** | Primary framework |
-| **[ox_lib](https://github.com/overextended/ox_lib)** |  |
+| **[QBCore Framework](https://github.com/qbcore-framework)** *or* **[QBox]((https://github.com/Qbox-project/qbx_core)** | Primary framework |
+| **[ox_lib](https://github.com/overextended/ox_lib)** | Used for ox things |
 | **qb-inventory** *or* **lj-inventory** *or* **ox_inventory** | Inventory handling |
-| **[Soundhandler](https://github.com/Jarvis095/Soundhandler) | Soundhandler - Used for ringtones and notification sounds |
-| **[summit_phone_props](https://github.com/Jarvis095/summit_phone_props) | Phone Props - Custom props used to display the phones colour as the model |
-| **[mongoDB](https://github.com/Jarvis095/MongoDB-Wrapper) | mongoDB - Used for database intergration |
+| **[Soundhandler](https://github.com/Jarvis095/Soundhandler)** | Soundhandler - Used for ringtones and notification sounds |
+| **[summit_phone_props](https://github.com/Jarvis095/summit_phone_props)** | Phone Props - Custom props used to display the phones colour as the model |
+| **[mongoDB](https://github.com/Jarvis095/MongoDB-Wrapper)** | mongoDB - Used for database intergration |
 
 ### Optional
 | Dependency | Description |
