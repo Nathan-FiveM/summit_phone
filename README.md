@@ -42,7 +42,7 @@ A comprehensive smartphone system for FiveM servers featuring multiple applicati
 ### Required
 | Dependency | Description |
 |-----------|-------------|
-| **[QBCore Framework](https://github.com/qbcore-framework)** *or* **[QBox]((https://github.com/Qbox-project/qbx_core)** | Primary framework |
+| **[QBCore Framework](https://github.com/qbcore-framework)** *or* **[QBox](https://github.com/Qbox-project/qbx_core)** | Primary framework |
 | **[ox_lib](https://github.com/overextended/ox_lib)** | Used for ox things |
 | **qb-inventory** *or* **lj-inventory** *or* **ox_inventory** | Inventory handling |
 | **[Soundhandler](https://github.com/Jarvis095/Soundhandler)** | Soundhandler - Used for ringtones and notification sounds |
