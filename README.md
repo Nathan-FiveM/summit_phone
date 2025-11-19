@@ -33,22 +33,28 @@ A comprehensive smartphone system for FiveM servers featuring multiple applicati
 - **Client-side**: TypeScript with CitizenFX natives
 - **Server-side**: TypeScript with ox_lib callbacks
 - **Database**: MongoDB with MySQL support
-- **Framework Integration**: QB-Core
+- **Framework Integration**: QB-Core | QBox
+
+---
 
 ## 📋 Dependencies
 
-### Required Resources
-- `qb-core` - Core framework
-- `ox_lib` - Callback and utility library
-- `mongoDB` - Database connector (or oxmysql)
-- `summit_logs` - Logging system
-- `ox_target` - Targeting system
-- `pma-voice` - Voice communication
+### Required
+| Dependency | Description |
+|-----------|-------------|
+| **[QBCore Framework](https://github.com/qbcore-framework)** *or* **qbox** | Primary framework |
+| **[ox_lib](https://github.com/overextended/ox_lib)** |  |
+| **qb-inventory** *or* **lj-inventory** *or* **ox_inventory** | Inventory handling |
+| **[Soundhandler](https://github.com/Jarvis095/Soundhandler) | Soundhandler - Used for ringtones and notification sounds |
+| **[summit_phone_props](https://github.com/Jarvis095/summit_phone_props) | Phone Props - Custom props used to display the phones colour as the model |
+| **[mongoDB](https://github.com/Jarvis095/MongoDB-Wrapper) | mongoDB - Used for database intergration |
 
-### Optional Integrations
-- `nolag_properties` - Housing system
-- `ignis_groups` - Group management
-- Various job scripts for services integration
+### Optional
+| Dependency | Description |
+|-----------|-------------|
+| **[ignis_groups](https://github.com/Nathan-FiveM/ignis_groups)** | Manages groups, stages, and notifications |
+
+---
 
 ## 🚀 Installation
 
