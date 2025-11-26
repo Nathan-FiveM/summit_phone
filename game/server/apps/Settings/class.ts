@@ -21,6 +21,60 @@ class Setting {
     public pigeonIdAttached = new Map<string, string>();
     // No automatic cleanup - only remove on player disconnect
 
+    private seedFromDoc(doc: any) {
+        if (!doc?._id) return;
+        const id = doc._id;
+        this._id.set(id, id);
+        this.background.set(id, doc.background ?? { current: '', wallpapers: [] });
+        this.lockscreen.set(id, doc.lockscreen ?? { current: '', wallpapers: [] });
+        this.ringtone.set(id, doc.ringtone ?? { current: 'https://ignis-rp.com/uploads/server/phone/sounds/iPhoneXTrap.mp3', ringtones: [{ name: 'default', url: 'https://ignis-rp.com/uploads/server/phone/sounds/iPhoneXTrap.mp3' }] });
+        this.showStartupScreen.set(id, doc.showStartupScreen ?? true);
+        this.showNotifications.set(id, doc.showNotifications ?? true);
+        this.isLock.set(id, doc.isLock ?? true);
+        this.lockPin.set(id, doc.lockPin ?? '');
+        this.usePin.set(id, doc.usePin ?? false);
+        this.useFaceId.set(id, doc.useFaceId ?? false);
+        this.faceIdIdentifier.set(id, doc.faceIdIdentifier ?? id);
+        this.darkMailIdAttached.set(id, doc.darkMailIdAttached ?? '');
+        this.smrtId.set(id, doc.smrtId ?? '');
+        this.smrtPassword.set(id, doc.smrtPassword ?? '');
+        this.isFlightMode.set(id, doc.isFlightMode ?? false);
+        this.phoneNumber.set(id, doc.phoneNumber ?? '');
+        this.pigeonIdAttached.set(id, doc.pigeonIdAttached ?? '');
+    }
+
+    public async ensurePlayerSettings(citizenId: string) {
+        if (!citizenId) return;
+        if (this._id.has(citizenId)) return;
+
+        const doc = await MongoDB.findOne?.('phone_settings', { _id: citizenId });
+        if (doc) {
+            this.seedFromDoc(doc);
+            return;
+        }
+
+        this.RegisterNewSettings(citizenId, "");
+        await MongoDB.insertOne?.('phone_settings', {
+            _id: citizenId,
+            background: this.background.get(citizenId),
+            lockscreen: this.lockscreen.get(citizenId),
+            ringtone: this.ringtone.get(citizenId),
+            showStartupScreen: this.showStartupScreen.get(citizenId),
+            showNotifications: this.showNotifications.get(citizenId),
+            isLock: this.isLock.get(citizenId),
+            lockPin: this.lockPin.get(citizenId),
+            usePin: this.usePin.get(citizenId),
+            useFaceId: this.useFaceId.get(citizenId),
+            faceIdIdentifier: this.faceIdIdentifier.get(citizenId),
+            darkMailIdAttached: this.darkMailIdAttached.get(citizenId),
+            smrtId: this.smrtId.get(citizenId),
+            smrtPassword: this.smrtPassword.get(citizenId),
+            isFlightMode: this.isFlightMode.get(citizenId),
+            phoneNumber: this.phoneNumber.get(citizenId),
+            pigeonIdAttached: this.pigeonIdAttached.get(citizenId),
+        });
+    }
+
     public async load() {
         try {
             let isDBConnected = exports['mongoDB'].isDBConnected();
@@ -35,23 +89,7 @@ class Setting {
             }
             const res: any = await MongoDB.findMany('phone_settings', {});
             for (const data of res) {
-                this._id.set(data._id, data._id);
-                this.background.set(data._id, data.background);
-                this.lockscreen.set(data._id, data.lockscreen);
-                this.ringtone.set(data._id, data.ringtone);
-                this.showStartupScreen.set(data._id, data.showStartupScreen);
-                this.showNotifications.set(data._id, data.showNotifications);
-                this.isLock.set(data._id, data.isLock);
-                this.lockPin.set(data._id, data.lockPin);
-                this.usePin.set(data._id, data.usePin);
-                this.useFaceId.set(data._id, data.useFaceId);
-                this.faceIdIdentifier.set(data._id, data.faceIdIdentifier);
-                this.darkMailIdAttached.set(data._id, data.darkMailIdAttached);
-                this.smrtId.set(data._id, data.smrtId);
-                this.smrtPassword.set(data._id, data.smrtPassword);
-                this.isFlightMode.set(data._id, data.isFlightMode);
-                this.phoneNumber.set(data._id, data.phoneNumber);
-                this.pigeonIdAttached.set(data._id, data.pigeonIdAttached);
+                this.seedFromDoc(data);
             }
             LOGGER(`[Settings] Loaded.`);
         } catch (error: any) {
@@ -112,6 +150,7 @@ class Setting {
 
     public async SavePlayerSettings(citizenId: string) {
         try {
+            await this.ensurePlayerSettings(citizenId);
             await MongoDB.updateOne('phone_settings', { _id: citizenId }, {
                 _id: citizenId,
                 background: this.background.get(citizenId),

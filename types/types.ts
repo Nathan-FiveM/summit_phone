@@ -86,6 +86,7 @@ type PhoneLocation = {
         pixie?: string;
         groups?: string;
         heartsync?: string;
+        taxi?: string;
         crypto?: string;
         dailyspins?: string;
     };

@@ -6,6 +6,7 @@ import { FRAMEWORK_RESOURCE } from "../../../shared/utils"; // adjust path as ne
 
 onClientCallback('GetClientSettings', async (client) => {
     const citizenId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
+    await Settings.ensurePlayerSettings(citizenId);
     return JSON.stringify({
         _id: Settings._id.get(citizenId),
         background: Settings.background.get(citizenId),
@@ -29,6 +30,7 @@ onClientCallback('GetClientSettings', async (client) => {
 
 onClientCallback('SetClientSettings', async (client, data: string) => {
     const citizenId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
+    await Settings.ensurePlayerSettings(citizenId);
     const parsedData: {
         background: { current: string; wallpapers: string[] };
         lockscreen: { current: string; wallpapers: string[] };

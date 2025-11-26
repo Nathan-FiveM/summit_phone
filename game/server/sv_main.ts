@@ -7,13 +7,36 @@ import { onClientCallback } from "@overextended/ox_lib/server";
 import { InvoiceRecurringPayments } from "./apps/Wallet/callbacks";
 import { pigeonService } from "./apps/Pigeon/PigeonService";
 import { FRAMEWORK_RESOURCE } from "../shared/utils"; // adjust path as needed
-export let Framework = exports['qb-core'].GetCoreObject();
-export const MongoDB = exports['mongoDB'];
+const resolveFramework = () =>
+    exports[FRAMEWORK_RESOURCE]?.GetCoreObject?.() ??
+    exports['qb-core']?.GetCoreObject?.() ??
+    exports['qbx-core']?.GetCoreObject?.();
+
+export let Framework = resolveFramework();
+
+const mongoExport = exports['mongoDB'] ?? exports['mongodb'];
+export const MongoDB = mongoExport ?? {
+    findMany: async () => [],
+    findOne: async () => null,
+    insertOne: async () => null,
+    insertMany: async () => null,
+    updateOne: async () => null,
+    deleteOne: async () => null,
+    isDBConnected: () => false,
+};
+
 export const MySQL = exports.oxmysql;
 export const Logger = exports['qb-smallresources'];
 
+type ExternalMailData = {
+    email?: string;
+    subject?: string;
+    message?: string;
+    images?: string[];
+};
+
 on('QBCore:Server:UpdateObject', () => {
-    Framework = exports['qb-core'].GetCoreObject();
+    Framework = resolveFramework();
 });
 
 setImmediate(() => {
@@ -158,3 +181,22 @@ on('playerDropped', async () => {
     await Settings.SavePlayerSettings(citizenId);
     Settings.onPlayerDisconnect(citizenId);
 })
+
+onNet('ignis_phone:sendNewMail', async (targetSource: number, mailData: ExternalMailData) => {
+    const src = Number(targetSource ?? global.source);
+    const player = Framework.Functions.GetPlayer(src);
+    if (!player) return;
+
+    const citizenId = player.PlayerData.citizenid;
+    const emailAddress = await Utils.GetEmailIdByCitizenId(citizenId);
+    if (!emailAddress) return;
+
+    await global.exports['summit_phone'].SendMail({
+        email: mailData?.email || 'government@summit.rp',
+        to: emailAddress,
+        subject: mailData?.subject || 'Email is not setup correctly!',
+        message: mailData?.message || 'Email is not setup correctly!',
+        images: mailData?.images || [],
+        source: src
+    });
+});

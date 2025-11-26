@@ -120,6 +120,7 @@ export const usePhone = create<State & Actions>()(
                 pixie: '',
                 groups: '',
                 heartsync: '',
+                taxi: '',
             },
         },
         selectedContact: {

@@ -36,12 +36,14 @@ import notiServices from "../../images/notiIcons/Services.svg?url";
 import notiSettings from "../../images/notiIcons/Settings.svg?url";
 import notiWallet from "../../images/notiIcons/Wallet.svg?url";
 import notiLoveLink from "../../images/notiIcons/LoveLink.svg?url";
+import notiTaxi from "../../images/notiIcons/Taxi.svg?url";
 
 import cryptoIcon from "../../images/icons/Crypto.svg?url";
 import notiCrypto from "../../images/notiIcons/Crypto.svg?url";  // Or use a placeholder like notiWallet
 
 import dailyspinsIcon from "../../images/icons/DailySpins.svg?url";
 import notiDailySpins from "../../images/icons/DailySpins.svg?url";
+import taxiIcon from "../../images/icons/Taxi.svg?url"; // placeholder icon for Taxi
 
 export const icons = [
     {
@@ -178,6 +180,7 @@ export const iconList = [
     'groups',
     'heartsync',
     'services',
+    'taxi',
     'crypto',
     'dailyspins',
 ]
@@ -338,6 +341,13 @@ export const fullIconsDetails = [
         link: 'dailyspins',
         description: 'Try your luck with the daily spin and win exciting prizes.',
         id: 19, 
+    },
+    {
+        icon: taxiIcon,
+        name: 'Taxi',
+        link: 'taxi',
+        description: 'Request rides or go on duty as a taxi driver.',
+        id: 20,
     }
 ]
 
@@ -421,6 +431,8 @@ export const notiIcons = (icon: string) => {
             return notiPixie;
         case 'services':
             return notiServices;
+        case 'taxi':
+            return notiTaxi;
         case 'settings':
             return notiSettings;
         case 'wallet':

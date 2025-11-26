@@ -37,6 +37,7 @@ import Housing from './routers/apps/Housing/Housing';
 import Pigeon from './routers/apps/Pigeon/Pigeon';
 import BluePage from './routers/apps/BluePage/BluePage';
 import GarageApp from './routers/apps/Garage/GarageData';
+import TaxiApp from './routers/apps/Taxi/Taxi';
 import Wallet from './routers/apps/Wallet/Wallet';
 import Groups from './routers/apps/Groups/Groups';
 import HeartSync from './routers/apps/HeartSync/HeartSync';
@@ -160,6 +161,7 @@ export default function App() {
   const [garagesEnter, setGaragesEnter] = useState(false);
   const [walletEnter, setWalletEnter] = useState(false);
   const [groupsEnter, setGroupsEnter] = useState(false);
+  const [taxiEnter, setTaxiEnter] = useState(false);
   const [loveLinkEnter, setLoveLinkEnter] = useState(false);
   const [heartSyncEnter, setHeartSyncEnter] = useState(false);
   const [cryptoEnter, setCryptoEnter] = useState(false);
@@ -320,6 +322,15 @@ export default function App() {
           }} />
         </div>
         <div className='fuckerMessager' id='fuckerMessager' style={{
+          visibility: taxiEnter ? 'visible' : 'hidden',
+        }}>
+          <TaxiApp onEnter={() => {
+            setTaxiEnter(true);
+          }} onExit={() => {
+            setTaxiEnter(false);
+          }} />
+        </div>
+        <div className='fuckerMessager' id='fuckerMessager' style={{
           visibility: walletEnter ? 'visible' : 'hidden',
         }}>
           <Wallet onEnter={() => {
@@ -374,6 +385,7 @@ export default function App() {
                 pixie: location.page.pixie,
                 groups: location.page.groups,
                 heartsync: location.page.heartsync,
+                taxi: location.page.taxi,
                 crypto: location.page.crypto,
                 dailyspins: location.page.dailyspins,
               }

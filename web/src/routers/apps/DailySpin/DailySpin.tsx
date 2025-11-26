@@ -170,6 +170,8 @@ export default function DailySpin(props: { onExit: () => void; onEnter: () => vo
 
       // AFTER ANIMATION
       setTimeout(() => {
+        // auto-grant reward on stop
+        fetchNui("dailySpin:reward", { id: item.id });
         setWinner(item);
         setIsReeling(false);
         setSpinning(false);
@@ -189,15 +191,7 @@ export default function DailySpin(props: { onExit: () => void; onEnter: () => vo
     }, 50);
   };
 
-  const handleCollect = async () => {
-    if (!winner) return;
-    await fetchNui("dailySpin:reward", { id: winner.id });
-    setWinner(null);
-  };
-
-  const handleSell = async () => {
-    if (!winner) return;
-    await fetchNui("dailySpin:sell", { id: winner.id });
+  const handleAcknowledge = () => {
     setWinner(null);
   };
 
@@ -536,71 +530,23 @@ export default function DailySpin(props: { onExit: () => void; onEnter: () => vo
                   <Text fw={600} size="1.6vh" mb="1vh" className="item-won-name">
                     {winner.name}
                   </Text>
-                  <Text size="1.3vh" c="gray.3" mb="1vh">
-                    Sell value: ${winner.sell.toLocaleString()}
+                  <Text size="1.3vh" c="gray.3" mb="1.5vh">
+                    You won {winner.name}! Enjoy your reward.
                   </Text>
-                  <div
+                  <Button
+                    size="md"
+                    radius="1vh"
                     style={{
-                      display: "flex",
-                      gap: "1vh",
-                      marginTop: "1vh",
+                      width: "50%",
+                      backgroundColor: "#2ecc71",
+                      color: "white",
+                      fontWeight: 700,
+                      boxShadow: "0 0.4vh 1vh rgba(0,0,0,0.4)",
                     }}
+                    onClick={handleAcknowledge}
                   >
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: "1vh",
-                        marginTop: "2vh",
-                        width: "100%",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <Button
-                        size="md"
-                        radius="1vh"
-                        style={{
-                          width: "40%",
-                          backgroundColor: "#d9534f",
-                          color: "white",
-                          fontWeight: 700,
-                          boxShadow: "0 0.4vh 1vh rgba(0,0,0,0.4)",
-                          padding: "0 0.5vh",
-                        }}
-                        onClick={handleSell}
-                      >
-                        <span
-                          style={{
-                            display: "inline-block",
-                            maxWidth: "100%",
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                          }}
-                        >
-                          Sell for ${winner.sell.toLocaleString()}
-                        </span>
-                      </Button>
-
-
-
-
-                      <Button
-                        size="md"
-                        radius="1vh"
-                        style={{
-                          width: "40%",
-                          backgroundColor: "#2ecc71",        // green collect
-                          color: "white",
-                          fontWeight: 700,
-                          boxShadow: "0 0.4vh 1vh rgba(0,0,0,0.4)",
-                        }}
-                        onClick={handleCollect}
-                      >
-                        Collect
-                      </Button>
-                    </div>
-
-                  </div>
+                    Nice!
+                  </Button>
                 </div>
               )}
             </div>
@@ -610,3 +556,4 @@ export default function DailySpin(props: { onExit: () => void; onEnter: () => vo
     </CSSTransition>
   );
 }
+

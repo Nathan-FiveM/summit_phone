@@ -8,12 +8,12 @@ await build({
   target: ['es2021'],
   format: 'iife',
   entryPoints: ['game/client/index.ts'],
-  outfile: '../build/client.js',
+  outfile: 'build/client.js',
 })
 
 // Obfuscate the output file if not in dev mode
 if (!process.argv.includes('--dev')) {
-  const outputFilePath = '../build/client.js';
+  const outputFilePath = 'build/client.js';
   const code = readFileSync(outputFilePath, 'utf-8');
 
   const obfuscationResult = JavaScriptObfuscator.obfuscate(code, {

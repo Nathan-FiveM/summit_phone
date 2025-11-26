@@ -10,14 +10,10 @@ use_experimental_fxv2_oal 'yes'
 description 'Summit Phone with Crypto App'
 
 -- UI
-ui_page 'web/index.html'
+ui_page 'web/dist/index.html'
 
 files {
-    'web/index.html',
-    'web/assets/**',
-    'web/fonts/**',
-    'web/images/**',
-    'web/images/**/**',
+    'web/dist/**',
 }
 
 shared_scripts {
@@ -32,11 +28,8 @@ dependencies {
 
 server_scripts {
     'build/server.js',
-    'build/server.lua',
-    'build/daily_spin_sv.lua',
 }
 
 client_scripts {
-    'build/daily_spin.lua',
     'build/client.js',
 }

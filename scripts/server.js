@@ -7,7 +7,7 @@ await build({
   target: ['node16'],
   format: 'cjs',
   entryPoints: ['game/server/index.ts'],
-  outfile: '../build/server.js',
+  outfile: 'build/server.js',
   external: [],
 });
 
@@ -20,7 +20,7 @@ writeFileSync(
 
 /* // Obfuscate the output file if not in dev mode
 if (!process.argv.includes('--dev')) {
-  const outputFilePath = '../build/server.js';
+  const outputFilePath = 'build/server.js';
   const code = readFileSync(outputFilePath, 'utf-8');
 
   const obfuscationResult = JavaScriptObfuscator.obfuscate(code, {

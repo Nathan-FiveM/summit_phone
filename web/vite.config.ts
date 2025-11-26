@@ -53,7 +53,8 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: '../../web/',
+    // Keep the build output inside the summit_phone resource (web/dist)
+    outDir: 'dist',
     assetsInlineLimit: 0, // Forces all assets, including SVGs, to be output as separate files
     rollupOptions: {
       output: {
