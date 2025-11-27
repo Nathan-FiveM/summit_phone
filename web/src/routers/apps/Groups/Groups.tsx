@@ -16,6 +16,7 @@ interface PhoneJob {
   label: string;
   description: string;
   coords: { x: number; y: number; z: number };
+  vpn?: boolean;
 capacity?: number;     // how many active/queued players
 maxCapacity?: number;  // limit from config
 }
@@ -54,6 +55,14 @@ interface JobMetaEntry {
     icon: string;
     color: string;
     vpn?: boolean;   // <-- optional
+}
+
+interface JobInfoData {
+    id: string;
+    label: string;
+    description: string;
+    information: string;
+    vpn?: boolean;
 }
 
 function DynamicQueuePage({
@@ -191,6 +200,13 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
     const [memberRenderKey, setMemberRenderKey] = useState(0);
 
     const [prettyJobLabel, setPrettyJobLabel] = useState<string>("");
+    const [jobInfoData, setJobInfoData] = useState<JobInfoData | null>(null);
+
+    const sortJobs = (jobs: PhoneJob[]) =>
+        [...jobs].sort((a, b) => {
+            if (!!a.vpn === !!b.vpn) return a.label.localeCompare(b.label);
+            return a.vpn ? 1 : -1; // push VPN jobs to the bottom
+        });
 
     const JobMeta: Record<string, JobMetaEntry> = {
         towing: {
@@ -243,6 +259,12 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
             icon: "🥇",
             color: "#f1c40f",
         },
+        diving: {
+            label: "Diving",
+            icon: "Dive",
+            color: "#00bcd4",
+            vpn: true,
+        },
         postop: {
             label: "PostOp Worker",
             icon: "📬",
@@ -291,6 +313,13 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
         setAvailableGroups(byJob);
     }, [selectedJob, groupsData]);
 
+    // Reset the info view when leaving the Groups app
+    useEffect(() => {
+        if (location.app !== "groups") {
+            setJobInfoData(null);
+        }
+    }, [location.app]);
+
 
     useNuiEvent("updateGroupsApp", (payload: { action: string; data: any }) => {
     const { action, data } = payload;
@@ -337,6 +366,10 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
         setStageRenderKey(prev => prev + 1); // ⬅️ forces React re-render
         break;
 
+        case "showJobInfo":
+        setJobInfoData(data || null);
+        break;
+
         default:
         console.warn("[GROUPS UI] Unknown updateGroupsApp action:", action);
         break;
@@ -379,6 +412,27 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
             // selectedJob remains intact unless user clicks "← Back to Job List"
         }
     }, [inGroup]);
+
+    const handleJobInfo = async (jobId: string) => {
+        const info = await fetchNui<JobInfoData>("groups:requestJobInfo", { jobId });
+
+        if (info) {
+            setJobInfoData(info);
+            return;
+        }
+
+        const fallback = availableJobs.find((job) => job.id === jobId);
+        if (fallback) {
+            setJobInfoData({
+                id: fallback.id,
+                label: fallback.label,
+                description: fallback.description,
+                information: fallback.description,
+                vpn: Boolean(JobMeta[fallback.id as keyof typeof JobMeta]?.vpn),
+            });
+        }
+    };
+
     return (
         <CSSTransition
             nodeRef={nodeRef}
@@ -454,7 +508,7 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                 // ✅ fetch available jobs if not in a group
                 if (!inGroup) {
                 const jobs = await fetchNui("groups:getAvailableJobs");
-                if (jobs) setAvailableJobs(jobs as PhoneJob[]);
+                if (jobs) setAvailableJobs(sortJobs(jobs as PhoneJob[]));
                 }
                 
             }}
@@ -661,9 +715,7 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                                             variant="filled"
                                             color="blue"
                                             radius="0.53vh"
-                                            onClick={async () => {
-                                                await fetchNui("groups:requestJobInfo", { jobId: job.id });
-                                            }}
+                                            onClick={() => handleJobInfo(job.id)}
                                         >
                                             Job Info
                                         </Button>
@@ -1230,6 +1282,90 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                     </Transition>
 
                 <Transition
+                    mounted={location.app === "groups" && !!jobInfoData}
+                    transition="fade"
+                    duration={250}
+                    timingFunction="ease"
+                >
+                    {(styles) => (
+                        <div
+                            style={{
+                                ...styles,
+                                width: "100%",
+                                height: "90%",
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                position: "absolute",
+                                zIndex: 3,
+                                backgroundColor: "#0E0E0E",
+                            }}
+                        >
+                            <div style={{ width: "90%", marginTop: "3.56vh", display: "flex", flexDirection: "column", gap: "1vh" }}>
+                                <Title title={jobInfoData?.label || "Job Info"} />
+
+                                {jobInfoData?.vpn && (
+                                    <div style={{ alignSelf: "flex-start", background: "rgba(255,80,80,0.2)", color: "#ff7777", padding: "0.35vh 0.7vh", borderRadius: "0.4vh", fontWeight: 600, fontSize: "1.05vh" }}>
+                                        VPN Required
+                                    </div>
+                                )}
+
+                                <Text size="1.15vh" c="gray.5" style={{ lineHeight: 1.4 }}>
+                                    {jobInfoData?.description}
+                                </Text>
+
+                                {jobInfoData?.information && (
+                                    <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: "0.7vh" }}>
+                                        {(() => {
+                                            // Prefer newline-separated steps; if none, split sentences instead
+                                            const fromNewlines = jobInfoData.information.split(/\r?\n/);
+                                            const base = fromNewlines.length > 1 ? fromNewlines : jobInfoData.information.split(/(?<=[.!?])\s+/);
+                                            return base
+                                                .map((line) => line.trim())
+                                                .filter((line) => line.length > 0)
+                                                .map((line, idx) => (
+                                                    <div
+                                                        key={idx}
+                                                        style={{
+                                                            width: "100%",
+                                                            backgroundColor: "rgba(255,255,255,0.08)",
+                                                            borderRadius: "0.65vh",
+                                                            padding: "1vh 1.2vh",
+                                                            display: "flex",
+                                                            gap: "0.8vh",
+                                                            alignItems: "flex-start",
+                                                            borderLeft: "0.25vh solid #0A84FF",
+                                                        }}
+                                                    >
+                                                        <div style={{ minWidth: "2vh", height: "2vh", borderRadius: "0.4vh", background: "#0A84FF", color: "#fff", fontSize: "1.1vh", fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                                            {idx + 1}
+                                                        </div>
+                                                        <Text size="1.2vh" c="gray.1" style={{ lineHeight: 1.4 }}>
+                                                            {line.endsWith(".") ? line : `${line}.`}
+                                                        </Text>
+                                                    </div>
+                                                ));
+                                        })()}
+                                    </div>
+                                )}
+
+                                <div style={{ display: "flex", gap: "0.8vh", marginTop: "0.4vh" }}>
+                                    <Button
+                                        size="sm"
+                                        radius="0.7vh"
+                                        variant="filled"
+                                        color="gray"
+                                        onClick={() => setJobInfoData(null)}
+                                    >
+                                        Back to Jobs
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </Transition>
+
+                <Transition
                     mounted={location.app === 'groups' && location.page.groups === 'jobs'}
                     transition="scale-x"
                     duration={400}
@@ -1345,6 +1481,7 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                     </div>}
                 </Transition>
                 <Navigation location={location.page.groups} onClick={(e) => {
+                    setJobInfoData(null);
                     setLocation({
                         app: 'groups',
                         page: {

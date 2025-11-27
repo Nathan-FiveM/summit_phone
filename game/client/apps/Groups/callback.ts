@@ -26,9 +26,14 @@ RegisterNuiCallback("groups:setJobWaypoint", (data: any, cb: Function) => {
 });
 
 // Request job info (sends email)
-RegisterNuiCallback("groups:requestJobInfo", (data: any, cb: Function) => {
-  emitNet("ignis_groups:server:sendJobInfoEmail", data.jobId);
-  cb(true);
+RegisterNuiCallback("groups:requestJobInfo", async (data: any, cb: Function) => {
+  const jobInfo = await triggerServerCallback("ignis_groups:server:getJobInfo", 1, data.jobId);
+
+  if (jobInfo) {
+    NUI.sendReactMessage("updateGroupsApp", { action: "showJobInfo", data: jobInfo });
+  }
+
+  cb(jobInfo || false);
 });
 
 // Create new group
