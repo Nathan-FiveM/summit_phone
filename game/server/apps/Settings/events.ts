@@ -8,7 +8,7 @@ RegisterCommand('saveSettings', async (source: number, args: string[]) => {
 }, true);
 
 const generatePhoneNumber = async (): Promise<string> => {
-    const number = Math.floor(1000000000 + Math.random() * 9000000000).toString();
+    const number = `559${Math.floor(Math.random() * 10_000_000).toString().padStart(7, "0")}`;
     const exists = await MongoDB.findOne('phone_numbers', { number: number });
     if (exists) return generatePhoneNumber();
     return number;

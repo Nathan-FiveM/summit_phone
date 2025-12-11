@@ -10,10 +10,35 @@ import { CloseAndToggleDisablePhone, ToggleDisablePhone } from "./cl_exports";
 import { Animation } from "./classes/Animation";
 import { FRAMEWORK_RESOURCE } from "../shared/utils"; // adjust path as needed
 
-export let FrameWork = exports['qb-core'].GetCoreObject();
+const resolveFramework = () => {
+    const configured = exports[FRAMEWORK_RESOURCE];
+    if (typeof configured?.GetCoreObject === "function") {
+        try {
+            return configured.GetCoreObject();
+        } catch {
+            // fall through to return configured directly
+        }
+    }
+    if (configured) return configured;
+
+    const qb = exports['qb-core']?.GetCoreObject?.();
+    if (qb) return qb;
+
+    const qbx = exports['qbx-core'] ?? exports['qbx_core'];
+    if (typeof qbx?.GetCoreObject === "function") {
+        try {
+            return qbx.GetCoreObject();
+        } catch {
+            // fall through to return qbx directly
+        }
+    }
+    return qbx;
+};
+
+export let FrameWork = resolveFramework();
 on('QBCore:Client:UpdateObject', () => {
-    FrameWork = exports['qb-core'].GetCoreObject();
-})
+    FrameWork = resolveFramework();
+});
 
 setImmediate(() => {
     NUI.init();

@@ -7,10 +7,31 @@ import { onClientCallback } from "@overextended/ox_lib/server";
 import { InvoiceRecurringPayments } from "./apps/Wallet/callbacks";
 import { pigeonService } from "./apps/Pigeon/PigeonService";
 import { FRAMEWORK_RESOURCE } from "../shared/utils"; // adjust path as needed
-const resolveFramework = () =>
-    exports[FRAMEWORK_RESOURCE]?.GetCoreObject?.() ??
-    exports['qb-core']?.GetCoreObject?.() ??
-    exports['qbx-core']?.GetCoreObject?.();
+const resolveFramework = () => {
+    const configured = exports[FRAMEWORK_RESOURCE];
+    if (typeof configured?.GetCoreObject === "function") {
+        try {
+            return configured.GetCoreObject();
+        } catch {
+            // fall through to return configured directly
+        }
+    }
+    if (configured) return configured;
+
+    const qb = exports['qb-core']?.GetCoreObject?.();
+    if (qb) return qb;
+    if (exports['qb-core']) return exports['qb-core'];
+
+    const qbx = exports['qbx-core'] ?? exports['qbx_core'];
+    if (typeof qbx?.GetCoreObject === "function") {
+        try {
+            return qbx.GetCoreObject();
+        } catch {
+            // fall through to return qbx directly
+        }
+    }
+    return qbx;
+};
 
 export let Framework = resolveFramework();
 

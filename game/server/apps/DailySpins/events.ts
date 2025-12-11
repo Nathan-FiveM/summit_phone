@@ -1,5 +1,5 @@
 import { Framework, MySQL } from "@server/sv_main";
-import { INVENTORY_RESOURCE } from "../../../shared/utils"; // adjust path as needed
+import { FRAMEWORK_RESOURCE, INVENTORY_RESOURCE } from "../../../shared/utils"; // adjust path as needed
 
 const invPath = `nui://${INVENTORY_RESOURCE}/html/images/`;
 
@@ -242,11 +242,37 @@ const getCooldownState = (player: any) => {
     return { canClaim: false, lastClaimedDisplay: formatRemaining(remaining) };
 };
 
-const resolveFramework = () =>
-    Framework ??
-    (exports['qb-core']?.GetCoreObject?.() ?? exports['qbx-core']?.GetCoreObject?.());
+const resolveFramework = () => {
+    if (Framework) return Framework;
 
-const getPlayer = (src: number) => resolveFramework()?.Functions?.GetPlayer?.(src);
+    const configured = exports[FRAMEWORK_RESOURCE];
+    if (typeof configured?.GetCoreObject === "function") {
+        try {
+            return configured.GetCoreObject();
+        } catch {
+            // fall through to return configured directly
+        }
+    }
+    if (configured) return configured;
+
+    const qb = exports['qb-core']?.GetCoreObject?.();
+    if (qb) return qb;
+
+    const qbx = exports['qbx-core'] ?? exports['qbx_core'];
+    if (typeof qbx?.GetCoreObject === "function") {
+        try {
+            return qbx.GetCoreObject();
+        } catch {
+            // fall through to return qbx directly
+        }
+    }
+    return qbx;
+};
+
+const getPlayer = (src: number) => {
+    const fw = resolveFramework();
+    return fw?.Functions?.GetPlayer?.(src) ?? fw?.GetPlayer?.(src);
+};
 
 onNet("dailySpin:getStateServer", () => {
     const src = Number(global.source);

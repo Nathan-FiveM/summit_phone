@@ -259,12 +259,6 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
             icon: "🥇",
             color: "#f1c40f",
         },
-        diving: {
-            label: "Diving",
-            icon: "Dive",
-            color: "#00bcd4",
-            vpn: true,
-        },
         postop: {
             label: "PostOp Worker",
             icon: "📬",
@@ -272,11 +266,17 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
         },
 
         // VPN Jobs
-        theftcar: {
+        chopshop: {
             label: "Chop Shop",
             icon: "🔧",
             color: "#e74c3c",
             vpn: true
+        },
+        diving: {
+            label: "Diving",
+            icon: "Dive",
+            color: "#00bcd4",
+            vpn: true,
         },
         oxyrun: {
             label: "Oxy Run",
