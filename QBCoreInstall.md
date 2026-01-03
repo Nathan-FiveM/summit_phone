@@ -7,6 +7,94 @@ export type InventoryType = 'lj-inventory' | 'ox_inventory' | 'qb-inventory';
 export const INVENTORY_RESOURCE: InventoryType = 'lj-inventory'; // Change this to your inventory system ox_inventory/qb-inventory/lj-inventory etc...
 ```
 
+Update the PlayerDefaults in the config to the following;
+```lua
+QBConfig.Player.PlayerDefaults = {
+    citizenid = function() return QBCore.Player.CreateCitizenId() end,
+    cid = 1,
+    money = function()
+        local moneyDefaults = {}
+        for moneytype, startamount in pairs(QBConfig.Money.MoneyTypes) do
+            moneyDefaults[moneytype] = startamount
+        end
+        return moneyDefaults
+    end,
+    optin = true,
+    charinfo = {
+        firstname = 'Firstname',
+        lastname = 'Lastname',
+        birthdate = '00-00-0000',
+        gender = 0,
+        nationality = 'USA',
+        phone = nil, -- Phone number moved
+        account = function() return QBCore.Functions.CreateAccountNumber() end
+    },
+    job = {
+        name = 'unemployed',
+        label = 'Civilian',
+        payment = 10,
+        type = 'none',
+        onduty = false,
+        isboss = false,
+        grade = {
+            name = 'Freelancer',
+            level = 0
+        }
+    },
+    gang = {
+        name = 'none',
+        label = 'No Gang Affiliation',
+        isboss = false,
+        grade = {
+            name = 'none',
+            level = 0
+        }
+    },
+    metadata = {
+        hunger = 100,
+        thirst = 100,
+        stress = 0,
+        isdead = false,
+        inlaststand = false,
+        armor = 0,
+        ishandcuffed = false,
+        tracker = false,
+        injail = 0,
+        jailitems = {},
+        status = {},
+        phone = {},
+        rep = {},
+        currentapartment = nil,
+        callsign = 'NO CALLSIGN',
+        bloodtype = function() return QBConfig.Player.Bloodtypes[math.random(1, #QBConfig.Player.Bloodtypes)] end,
+        fingerprint = function() return QBCore.Player.CreateFingerId() end,
+        walletid = function() return QBCore.Player.CreateWalletId() end,
+        criminalrecord = {
+            hasRecord = false,
+            date = nil
+        },
+        licences = {
+            driver = true,
+            business = false,
+            weapon = false
+        },
+        inside = {
+            house = nil,
+            apartment = {
+                apartmentType = nil,
+                apartmentId = nil,
+            }
+        },
+        phonedata = {
+            SerialNumber = function() return QBCore.Player.CreateSerialNumber() end,
+            InstalledApps = {}
+        }
+    },
+    position = QBConfig.DefaultSpawn,
+    items = {},
+}
+```
+
 Add this function to;
 ``qb-core/server/functions.lua``
 ```lua
@@ -66,14 +154,82 @@ Add these functions to
     end
     exports('CheckJobGrade', QBCore.Functions.CheckJobGrade)
 ```
-``Add the following to QBCore.Player.CheckPlayerData(source, PlayerData) This is to use the crypto app``
+``Update the following QBCore.Player.CheckPlayerData(source, PlayerData) to the code below``
 ```lua
-    PlayerData.metadata['crypto'] = PlayerData.metadata['crypto'] or {
-        ["shung"] = 0,
-        ["gne"] = 0,
-        ["xcoin"] = 0,
-        ["lme"] = 0
-    }
+    function QBCore.Player.CheckPlayerData(source, PlayerData)
+        PlayerData = PlayerData or {}
+        local Offline = not source
+
+        if source then
+            PlayerData.source = source
+            PlayerData.license = PlayerData.license or QBCore.Functions.GetIdentifier(source, 'license')
+            PlayerData.name = GetPlayerName(source)
+        end
+
+        local validatedJob = false
+        if PlayerData.job and PlayerData.job.name ~= nil and PlayerData.job.grade and PlayerData.job.grade.level ~= nil then
+            local jobInfo = QBCore.Shared.Jobs[PlayerData.job.name]
+
+            if jobInfo then
+                local jobGradeInfo = jobInfo.grades[tostring(PlayerData.job.grade.level)]
+                if jobGradeInfo then
+                    PlayerData.job.label = jobInfo.label
+                    PlayerData.job.grade.name = jobGradeInfo.name
+                    PlayerData.job.payment = jobGradeInfo.payment
+                    PlayerData.job.grade.isboss = jobGradeInfo.isboss or false
+                    PlayerData.job.isboss = jobGradeInfo.isboss or false
+                    validatedJob = true
+                end
+            end
+        end
+
+        if validatedJob == false then
+            -- set to nil, as the default job (unemployed) will be added by `applyDefaults`
+            PlayerData.job = nil
+        end
+
+        local validatedGang = false
+        if PlayerData.gang and PlayerData.gang.name ~= nil and PlayerData.gang.grade and PlayerData.gang.grade.level ~= nil then
+            local gangInfo = QBCore.Shared.Gangs[PlayerData.gang.name]
+
+            if gangInfo then
+                local gangGradeInfo = gangInfo.grades[tostring(PlayerData.gang.grade.level)]
+                if gangGradeInfo then
+                    PlayerData.gang.label = gangInfo.label
+                    PlayerData.gang.grade.name = gangGradeInfo.name
+                    PlayerData.gang.payment = gangGradeInfo.payment
+                    PlayerData.gang.grade.isboss = gangGradeInfo.isboss or false
+                    PlayerData.gang.isboss = gangGradeInfo.isboss or false
+                    validatedGang = true
+                end
+            end
+        end
+
+        if validatedGang == false then
+            -- set to nil, as the default gang (unemployed) will be added by `applyDefaults`
+            PlayerData.gang = nil
+        end
+
+        applyDefaults(PlayerData, QBCore.Config.Player.PlayerDefaults)
+        
+        -- Fix phone number generation with citizenid BETTER WORKY
+        if PlayerData.charinfo and not PlayerData.charinfo.phone then
+            PlayerData.charinfo.phone = QBCore.Functions.CreatePhoneNumber(PlayerData.citizenid)
+        end
+        
+        if PlayerData.job and QBCore.Shared.ForceJobDefaultDutyAtLogin then
+            local jobInfo = QBCore.Shared.Jobs[PlayerData.job.name]
+            if jobInfo then
+                PlayerData.job.onduty = jobInfo.defaultDuty
+            end
+        end
+
+        if GetResourceState('qb-inventory') ~= 'missing' then
+            PlayerData.items = exports['qb-inventory']:LoadInventory(PlayerData.source, PlayerData.citizenid)
+        end
+
+        return QBCore.Player.CreatePlayer(PlayerData, Offline)
+    end
 ```
 
 Find the function
