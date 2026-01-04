@@ -244,6 +244,19 @@ function QBCore.Functions.CreatePhoneNumber()
 end
 ```
 With the following;
+NEW QB
+```lua
+function QBCore.Functions.CreatePhoneNumber(citizenid)
+    if not citizenid then 
+        print("CreatePhoneNumber called without citizenid FUCKING HELL")
+        return nil 
+    end
+    
+    local PhoneNumber = exports['summit_phone']:GeneratePlayerPhoneNumber(citizenid)
+    return PhoneNumber
+end
+```
+OLD QB
 ```lua
 function QBCore.Functions.CreatePhoneNumber()
     local PlayerData = QBCore.Players[source].PlayerData
