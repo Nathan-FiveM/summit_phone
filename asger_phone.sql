@@ -44,6 +44,26 @@ CREATE TABLE IF NOT EXISTS `phone_mail` (
   KEY `activeMaidId` (`activeMaidId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Migration Check for phone_mail
+SET @dbname = DATABASE();
+SET @tablename = "phone_mail";
+SET @columnname = "_id";
+SET @preparedStatement = (SELECT IF(
+  (
+    SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE
+      (table_name = @tablename)
+      AND (table_schema = @dbname)
+      AND (column_name = @columnname)
+  ) > 0,
+  "SELECT 1",
+  "ALTER TABLE phone_mail ADD COLUMN _id VARCHAR(100) NOT NULL PRIMARY KEY FIRST;"
+));
+PREPARE alterIfNotExists FROM @preparedStatement;
+EXECUTE alterIfNotExists;
+DEALLOCATE PREPARE alterIfNotExists;
+
+
 CREATE TABLE IF NOT EXISTS `phone_business_users` (
   `citizenid` VARCHAR(64) NOT NULL,
   `jobCalls` TINYINT(1) DEFAULT 1,
@@ -131,6 +151,26 @@ CREATE TABLE IF NOT EXISTS `phone_settings` (
   `pigeonIdAttached` VARCHAR(100) DEFAULT NULL,
   PRIMARY KEY (`_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Migration Check for phone_settings
+SET @dbname = DATABASE();
+SET @tablename = "phone_settings";
+SET @columnname = "_id";
+SET @preparedStatement = (SELECT IF(
+  (
+    SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE
+      (table_name = @tablename)
+      AND (table_schema = @dbname)
+      AND (column_name = @columnname)
+  ) > 0,
+  "SELECT 1",
+  "ALTER TABLE phone_settings ADD COLUMN _id VARCHAR(64) NOT NULL PRIMARY KEY FIRST;"
+));
+PREPARE alterIfNotExists FROM @preparedStatement;
+EXECUTE alterIfNotExists;
+DEALLOCATE PREPARE alterIfNotExists;
+
 
 CREATE TABLE IF NOT EXISTS `phone_pigeon_users` (
   `_id` VARCHAR(64) NOT NULL,
