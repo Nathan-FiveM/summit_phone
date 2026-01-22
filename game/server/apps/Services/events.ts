@@ -191,15 +191,6 @@ on('summit_phone:server:hireinMultiJob', async (client: string, jobname: string,
 })
 
 setImmediate(async () => {
-    let isDBConnected = exports['mongoDB'].isDBConnected();
-    while (isDBConnected === false) {
-        await Delay(1000);
-        isDBConnected = exports['mongoDB'].isDBConnected();
-        if (isDBConnected) {
-            LOGGER("[Settings] MongoDB connected.");
-            break;
-        }
-    }
     const jobArray: any = {};
     const jobData = await MongoDB.findMany('summit_jobs', {});
     jobData.forEach(async (job: any) => {

@@ -47,7 +47,7 @@ A comprehensive smartphone system for FiveM servers featuring multiple applicati
 | **[qb-inventory](https://github.com/qbcore-framework/qb-inventory)** *or* **[lj-inventory](https://github.com/loljoshie/lj-inventory)** *or* **[ox_inventory](https://github.com/overextended/ox_inventory)** | Inventory handling |
 | **[Soundhandler](https://github.com/Jarvis095/Soundhandler)** | Soundhandler - Used for ringtones and notification sounds |
 | **[summit_phone_props](https://github.com/Jarvis095/summit_phone_props)** | Phone Props - Custom props used to display the phones colour as the model |
-| **[mongoDB](https://github.com/Jarvis095/MongoDB-Wrapper)** | mongoDB - Used for database intergration |
+| **[oxmysql](https://github.com/overextended/oxmysql)** | oxmysql - Used for database integration |
 
 ### Optional
 | Dependency | Description |
@@ -60,7 +60,7 @@ A comprehensive smartphone system for FiveM servers featuring multiple applicati
 
 1. **Clone or download** the resource to your `resources` folder
 2. **Install dependencies** by running `pnpm install` in both root and `web` directories
-3. **Configure database** connections in your server configuration
+3. **Import SQL** Run the `summit_phone.sql` file in your database.
 4. **Add to server.cfg**:
    ```
    ensure summit_phone
