@@ -1,0 +1,46 @@
+<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background glow -->
+  <circle cx="30" cy="30" r="28" fill="url(#bgGlow)" />
+
+  <!-- Treasure chest base -->
+  <rect x="12" y="25" width="36" height="22" rx="4" fill="#C27C2A" stroke="#8A5A17" stroke-width="2"/>
+  <rect x="12" y="25" width="36" height="10" rx="3" fill="#D89B4A" stroke="#8A5A17" stroke-width="2"/>
+
+  <!-- Chest lid -->
+  <path d="M12 25 Q30 10 48 25" fill="#D89B4A" stroke="#8A5A17" stroke-width="2"/>
+
+  <!-- Chest highlight -->
+  <path d="M14 24 Q30 11 46 24" stroke="rgba(255,255,255,0.4)" stroke-width="2" />
+
+  <!-- Gold coins inside -->
+  <circle cx="22" cy="28" r="4" fill="#FFD953" stroke="#C8A02E" stroke-width="1.5"/>
+  <circle cx="30" cy="26" r="4" fill="#FFE46A" stroke="#C8A02E" stroke-width="1.5"/>
+  <circle cx="38" cy="28" r="4" fill="#FFD953" stroke="#C8A02E" stroke-width="1.5"/>
+
+  <!-- Shiny sparkles -->
+  <path d="M18 14 L18 10" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  <path d="M16 12 L20 12" stroke="white" stroke-width="2" stroke-linecap="round"/>
+
+  <path d="M44 16 L44 12" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  <path d="M42 14 L46 14" stroke="white" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Slot machine lever pole -->
+  <rect x="45" y="20" width="4" height="18" rx="2" fill="#B5B5B5" stroke="#7A7A7A" stroke-width="1"/>
+
+  <!-- Slot machine lever ball -->
+  <circle cx="47" cy="18" r="4" fill="#FF3A3A" stroke="#B61C1C" stroke-width="2"/>
+
+  <!-- Shiny effect on the red ball -->
+  <circle cx="48" cy="17" r="1.5" fill="white" opacity="0.7"/>
+
+  <!-- Gold shine on chest lock area -->
+  <rect x="27" y="30" width="6" height="8" rx="2" fill="#FFE46A" stroke="#C8A02E" stroke-width="1.5"/>
+
+  <!-- Gradient definitions -->
+  <defs>
+    <radialGradient id="bgGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFF3B0" />
+      <stop offset="100%" stop-color="#FFB22E" />
+    </radialGradient>
+  </defs>
+</svg>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Exact gradient copied from Darkchat.svg -->
+    <linearGradient id="paint0_linear_129_122" x1="0" y1="0" x2="60" y2="60" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0D0D0D"/>
+      <stop offset="1" stop-color="#1A1A1A"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="60" height="60" rx="13.28" fill="url(#paint0_linear_129_122)"/>
+
+  <!-- Crypto Coin Circle -->
+  <circle cx="30" cy="30" r="16" stroke="#FFA74B" stroke-width="2.5" fill="none"/>
+  <circle cx="30" cy="30" r="13" fill="none" stroke="#FFA74B" stroke-width="1.5" opacity="0.5"/>
+
+  <!-- GNE Text Symbol -->
+  <text x="30" y="34" text-anchor="middle" font-family="Inter, Arial, sans-serif"
+        font-weight="700" font-size="12" fill="#FFA74B" letter-spacing="0.5">
+    GNE
+  </text>
+
+  <!-- Subtle Wallet Outline (for crypto wallet feel) -->
+  <rect x="18" y="13" width="24" height="34" rx="4" ry="4"
+        stroke="#FFA74B" stroke-width="1.6" fill="none" opacity="0.15"/>
+  <rect x="21" y="16" width="18" height="28" rx="2" ry="2"
+        stroke="#FFA74B" stroke-width="1.2" fill="none" opacity="0.12"/>
+
+  <!-- Inner Glow Ring -->
+  <circle cx="30" cy="30" r="17" stroke="#FFA74B" stroke-opacity="0.08" stroke-width="6"/>
+</svg>

@@ -47,7 +47,7 @@ A comprehensive smartphone system for FiveM servers featuring multiple applicati
 | **[qb-inventory](https://github.com/qbcore-framework/qb-inventory)** *or* **[lj-inventory](https://github.com/loljoshie/lj-inventory)** *or* **[ox_inventory](https://github.com/overextended/ox_inventory)** | Inventory handling |
 | **[Soundhandler](https://github.com/Jarvis095/Soundhandler)** | Soundhandler - Used for ringtones and notification sounds |
 | **[summit_phone_props](https://github.com/Jarvis095/summit_phone_props)** | Phone Props - Custom props used to display the phones colour as the model |
-| **[mongoDB](https://github.com/Jarvis095/MongoDB-Wrapper)** | mongoDB - Used for database intergration |
+| **[oxmysql](https://github.com/overextended/oxmysql)** | oxmysql - Used for database integration |
 
 ### Optional
 | Dependency | Description |
@@ -60,7 +60,7 @@ A comprehensive smartphone system for FiveM servers featuring multiple applicati
 
 1. **Clone or download** the resource to your `resources` folder
 2. **Install dependencies** by running `pnpm install` in both root and `web` directories
-3. **Configure database** connections in your server configuration
+3. **Import SQL** Run the `summit_phone.sql` file in your database.
 4. **Add to server.cfg**:
    ```
    ensure summit_phone
@@ -72,10 +72,42 @@ A comprehensive smartphone system for FiveM servers featuring multiple applicati
    pnpm build
    ```
 
+## 📦 Inventory Setup
+
+**IMPORTANT: Players must have a phone item in their inventory to open the phone.**
+
+The following phone items are supported:
+- `blue_phone` - Blue Phone
+- `green_phone` - Green Phone
+- `red_phone` - Red Phone
+- `gold_phone` - Gold Phone
+- `purple_phone` - Purple Phone
+
+### For ox_inventory
+Add the items from `OX_INVENTORY_ITEMS.lua` to your `ox_inventory/data/items.lua` file.
+
+### For qb-inventory
+Add the following to your `qb-inventory/html/js/app.js` in the `ItemsObject` section and to your `qb-core/shared/items.lua`:
+
+```lua
+-- In qb-core/shared/items.lua
+['blue_phone'] = {['name'] = 'blue_phone', ['label'] = 'Blue Phone', ['weight'] = 200, ['type'] = 'item', ['image'] = 'blue_phone.png', ['unique'] = true, ['useable'] = true, ['shouldClose'] = true, ['description'] = 'A stylish blue smartphone.'},
+['green_phone'] = {['name'] = 'green_phone', ['label'] = 'Green Phone', ['weight'] = 200, ['type'] = 'item', ['image'] = 'green_phone.png', ['unique'] = true, ['useable'] = true, ['shouldClose'] = true, ['description'] = 'A stylish green smartphone.'},
+['red_phone'] = {['name'] = 'red_phone', ['label'] = 'Red Phone', ['weight'] = 200, ['type'] = 'item', ['image'] = 'red_phone.png', ['unique'] = true, ['useable'] = true, ['shouldClose'] = true, ['description'] = 'A stylish red smartphone.'},
+['gold_phone'] = {['name'] = 'gold_phone', ['label'] = 'Gold Phone', ['weight'] = 200, ['type'] = 'item', ['image'] = 'gold_phone.png', ['unique'] = true, ['useable'] = true, ['shouldClose'] = true, ['description'] = 'A stylish gold smartphone.'},
+['purple_phone'] = {['name'] = 'purple_phone', ['label'] = 'Purple Phone', ['weight'] = 200, ['type'] = 'item', ['image'] = 'purple_phone.png', ['unique'] = true, ['useable'] = true, ['shouldClose'] = true, ['description'] = 'A stylish purple smartphone.'},
+```
+
+### For lj-inventory
+Add the same items to your `lj-inventory/html/js/app.js` and `qb-core/shared/items.lua` as shown above.
+
+---
+
 ## 🎯 Usage
 
 ### Basic Commands
-- **Open Phone**: `F1` key (default) or use item
+- **Open Phone**: `M` key (default) or use item
+- **Toggle NUI Focus**: `Left Alt` key (when phone is open)
 - **Emergency Call**: Special jail phone integration
 - **Share Contact**: Target another player and select "Share Number"
 

@@ -6,6 +6,7 @@ import { Delay, generateUUid, LOGGER } from "@shared/utils";
 import { onClientCallback } from "@overextended/ox_lib/server";
 import { InvoiceRecurringPayments } from "./apps/Wallet/callbacks";
 import { pigeonService } from "./apps/Pigeon/PigeonService";
+import { MySQLAdapter } from "./classes/MySQLAdapter";
 import { FRAMEWORK_RESOURCE } from "../shared/utils"; // adjust path as needed
 const resolveFramework = () => {
     const configured = exports[FRAMEWORK_RESOURCE];
@@ -35,16 +36,7 @@ const resolveFramework = () => {
 
 export let Framework = resolveFramework();
 
-const mongoExport = exports['mongoDB'] ?? exports['mongodb'];
-export const MongoDB = mongoExport ?? {
-    findMany: async () => [],
-    findOne: async () => null,
-    insertOne: async () => null,
-    insertMany: async () => null,
-    updateOne: async () => null,
-    deleteOne: async () => null,
-    isDBConnected: () => false,
-};
+export const MongoDB = new MySQLAdapter();
 
 export const MySQL = exports.oxmysql;
 export const Logger = exports['qb-smallresources'];

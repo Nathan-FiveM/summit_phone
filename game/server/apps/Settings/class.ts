@@ -77,16 +77,7 @@ class Setting {
 
     public async load() {
         try {
-            let isDBConnected = exports['mongoDB'].isDBConnected();
-            while (isDBConnected === false) {
-                await Delay(1000);
-                isDBConnected = exports['mongoDB'].isDBConnected();
-                if (isDBConnected) {
-                    LOGGER("[Settings] MongoDB connected.");
-                    break;
-                }
-                /* console.log("[Settings] Waiting for MongoDB connection..."); */
-            }
+            // MySQL Adapter logic
             const res: any = await MongoDB.findMany('phone_settings', {});
             for (const data of res) {
                 this.seedFromDoc(data);
