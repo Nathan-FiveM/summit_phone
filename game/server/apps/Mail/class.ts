@@ -76,7 +76,8 @@ class Mail {
     async sendEmailToAll(subject: string, sender: string, message: string, images: string[]) {
         const mailData = await MongoDB.findMany('phone_mail', { activeMaidId: { $ne: null } });
         if (!mailData) return false;
-        mailData.forEach(async (mail: PhoneMail) => {
+
+        const updatePromises = mailData.map((mail: PhoneMail) => {
             const newMailMessage: PhoneMailMessage = {
                 _id: generateUUid(),
                 from: sender,
@@ -91,9 +92,11 @@ class Mail {
                 username: sender
             };
             mail.messages.push(newMailMessage);
-            //@ts-ignore
-            await MongoDB.updateOne('phone_mail', { _id: mail._id }, mail);
+            return MongoDB.updateOne('phone_mail', { _id: mail._id }, mail);
         });
+
+        await Promise.all(updatePromises);
+
         emitNet('phone:addnotiFication', -1, JSON.stringify({
             id: generateUUid(),
             title: 'Mail',

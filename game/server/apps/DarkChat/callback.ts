@@ -147,8 +147,11 @@ onClientCallback('SetDarkChatMessages', async (client, dataX: string) => {
         message: `Message sent in DarkChat channel '${data.name}' (ID: ${channel}), Content: ${data.content}.`,
         showIdentifiers: false
     });
-    data.members.forEach(async (member: string) => {
-        const res = await Utils.GetSourceFromCitizenId(await Utils.GetCidFromDarkEmail(member));
+    const recipients = await Promise.all(data.members.map(async (member: string) => {
+        return await Utils.GetSourceFromCitizenId(await Utils.GetCidFromDarkEmail(member));
+    }));
+
+    recipients.forEach((res: number) => {
         if (!res) return;
         emitNet('summit_phone:client:receiveDarkChatMessage', res, JSON.stringify(data));
         if (res !== client) {

@@ -389,22 +389,35 @@ class PigeonService {
                 await triggerClientCallback("pigeon:refreshRepost", -1, JSON.stringify(retweetData));
                 if (ogTweet.repliesCount) {
                     const uniqueCids = [...new Set(ogTweet.repliesCount)];
+                    const notifications: any[] = [];
+                    const playerSources: number[] = [];
+
                     for (const replyCid of uniqueCids) {
                         const res = await exports[FRAMEWORK_RESOURCE].GetPlayerByCitizenId(replyCid);
-                        emitNet('phone:addnotiFication', res.PlayerData.source, JSON.stringify({
+                        if (res && res.PlayerData && res.PlayerData.source) {
+                            playerSources.push(res.PlayerData.source);
+                            notifications.push({
+                                _id: generateUUid(),
+                                content: `${retWeetuser.displayName} has replied to tweet.`,
+                                email: retWeetuser.email,
+                                createdAt: new Date().toISOString(),
+                                type: "post",
+                            });
+                        }
+                    }
+
+                    if (notifications.length > 0) {
+                        await MongoDB.insertMany("phone_pigeon_notifications", notifications);
+                    }
+
+                    for (const source of playerSources) {
+                        emitNet('phone:addnotiFication', source, JSON.stringify({
                             id: generateUUid(),
                             title: 'New Reply',
                             description: `${retWeetuser.displayName} has replied to tweet.`,
                             app: 'pigeon',
                             timeout: 5000
                         }));
-                        await MongoDB.insertOne("phone_pigeon_notifications", {
-                            _id: generateUUid(),
-                            content: `{retWeetuser.displayName} has replied to tweet.`,
-                            email: retWeetuser.email,
-                            createdAt: new Date().toISOString(),
-                            type: "post",
-                        });
                     }
                 }
                 Logger.AddLog({
