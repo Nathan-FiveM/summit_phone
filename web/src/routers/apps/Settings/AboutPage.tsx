@@ -170,7 +170,7 @@ export default function AboutPage() {
                             fontWeight: 500,
                             flexShrink: 0
                         }}>
-                            SMRT9FA
+                            ASGER9FA
                         </div>
                     </div>
                     <div className="divider" style={{
@@ -196,7 +196,7 @@ export default function AboutPage() {
                             fontWeight: 500,
                             flexShrink: 0
                         }}>
-                            SMRTA87955488
+                            ASGER87955488
                         </div>
                     </div>
                     <div className="divider" style={{

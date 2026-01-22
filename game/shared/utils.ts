@@ -14,7 +14,7 @@ export const generateUUid = () => {
 };
 
 export const LOGGER = (message: string) => {
-    return console.log(`\x1b[1m\x1b[47m\x1b[34m[Summit_Phone] \x1b[4m\x1b[31m${message}\x1b[0m`)
+    return console.log(`\x1b[1m\x1b[47m\x1b[34m[ASGER_Phone] \x1b[4m\x1b[31m${message}\x1b[0m`)
 }
 
 export type FrameworkType = 'qb-core' | 'qbx_core';

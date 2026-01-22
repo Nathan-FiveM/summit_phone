@@ -33,7 +33,7 @@ export default function Pigeon(props: { onExit: () => void; onEnter: () => void 
     }, 500);
 
     const handleSearchEmail = useDebouncedCallback(async (email: string) => {
-        const res: boolean = await fetchNui('searchPigeonEmail', `${email}@smrt.com`);
+        const res: boolean = await fetchNui('searchPigeonEmail', `${email}@asger.com`);
         if (res) {
             setEmailError(true);
         } else {
@@ -358,7 +358,7 @@ export default function Pigeon(props: { onExit: () => void; onEnter: () => void 
                                 borderTopRightRadius: '0.37vh',
                                 borderBottomRightRadius: '0.37vh',
                             }}>
-                                @SMRT.COM
+                                @ASGER.COM
                             </div>
                         </div>
 
@@ -452,14 +452,14 @@ export default function Pigeon(props: { onExit: () => void; onEnter: () => void 
                             onClick={async () => {
                                 if (emailError || email.includes('@') || !email || !password) return;
                                 const res = await fetchNui('signupPegionEmail', JSON.stringify({
-                                    email: `${email}@smrt.com`,
+                                    email: `${email}@asger.com`,
                                     password
                                 }));
                                 if (res) {
                                     setSignUp(false);
                                     const dataX = {
                                         ...phoneSettings,
-                                        pigeonIdAttached: `${email}@smrt.com`,
+                                        pigeonIdAttached: `${email}@asger.com`,
                                     }
                                     setPhoneSettings(dataX);
                                     await fetchNui('setSettings', JSON.stringify(dataX));

@@ -35,7 +35,7 @@ export default function FilterPage(props: { show: boolean, inboxCount: number, d
                     fontWeight: 700,
                     lineHeight: 'normal',
                     letterSpacing: '0.07vh',
-                }}>SMRT Cloud</div>
+                }}>ASGER Cloud</div>
                 <div className="innerCont" style={{ marginTop: '0.36vh', marginLeft: '0', maxHeight: '16.00vh', overflowY: 'auto', overflowX: 'hidden' }}>
                     <div className="inbox" style={{
                         width: '100%',

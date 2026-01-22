@@ -1,5 +1,5 @@
 import { Button, Image, TextInput, Transition } from "@mantine/core";
-import smrtLogo from "../../../images/smrtphone_light.png";
+import smrtLogo from "../../../images/asgerphone_light.png";
 import { useEffect, useState } from "react";
 import { useDebouncedCallback, useTimeout } from "@mantine/hooks";
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -12,7 +12,7 @@ import hello6 from '../../../images/hellos/6.svg?url';
 import hello7 from '../../../images/hellos/7.svg?url';
 import hello8 from '../../../images/hellos/8.svg?url';
 import hello9 from '../../../images/hellos/9.svg?url';
-import smrtLogoSvg from "../../../images/SMRTLogo.svg?url";
+import smrtLogoSvg from "../../../images/ASGERLogo.svg?url";
 
 //@ts-ignore
 import 'swiper/css';
@@ -125,7 +125,7 @@ export default function Startup() {
     const [emailError, setEmailError] = useState(false);
 
     const handleSearchEmail = useDebouncedCallback(async (email: string) => {
-        const res: string = await fetchNui('searchEmail', `${email}@smrt.com`);
+        const res: string = await fetchNui('searchEmail', `${email}@asger.com`);
         const parsedRes = JSON.parse(res);
         if (parsedRes.length === 0) {
             setEmailError(false);
@@ -135,7 +135,7 @@ export default function Startup() {
         return parsedRes;
     }, 500);
     const handleValidateEmail = useDebouncedCallback(async (email: string) => {
-        const res: string = await fetchNui('searchEmail', `${email}@smrt.com`);
+        const res: string = await fetchNui('searchEmail', `${email}@asger.com`);
         const parsedRes = JSON.parse(res);
         if (parsedRes.length > 0) {
             setEmailError(false);
@@ -381,7 +381,7 @@ export default function Startup() {
                                 display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
                             }}>
                                 <div className="mayTake">
-                                    It may take a few minutes to activate your SMRT Phone
+                                    It may take a few minutes to activate your ASGER Phone
                                 </div>
                                 <svg style={{
                                     position: 'absolute',
@@ -393,7 +393,7 @@ export default function Startup() {
                                     <path d="M19.8442 0.103516H20.3274L20.9486 0.207051L21.5698 0.414122L22.122 0.690216L22.5707 1.03533L22.9158 1.41496L23.2264 1.93264L23.468 2.48483L23.6405 3.03702L23.7096 3.41665V3.83079L23.5715 4.452L23.3644 5.00419L23.0883 5.52187L22.8123 5.9015L22.5016 6.24661L22.122 6.52271L21.6043 6.7988L20.9831 7.00587L20.3274 7.10941H19.9823L19.2921 7.00587L18.6363 6.76429L18.1532 6.4882L17.8426 6.24661L17.3939 5.79796L17.1178 5.34931L16.9107 4.93517L16.7382 4.34847L16.6692 4.00335L16.6346 3.65823V3.2786L16.7727 2.6919L16.9798 2.17422L17.2904 1.58752L17.67 1.10436L18.0841 0.75924L18.6363 0.448633L19.4646 0.172539L19.8442 0.103516Z" fill="#99C6FD" />
                                 </svg>
                                 <div className="unnderText">
-                                    SMRT collects hardware identifiers from your SMRT Phone in order to identify and activate it on our services
+                                    ASGER collects hardware identifiers from your ASGER Phone in order to identify and activate it on our services
                                 </div>
                             </div>}
                         </Transition>
@@ -411,18 +411,18 @@ export default function Startup() {
                                 <svg xmlns="http://www.w3.org/2000/svg" width="6.59vh" height="5.29vh" viewBox="0 0 71 57" fill="none">
                                     <path d="M11.6995 21.9723H13.6019L15.5993 22.4479L16.931 23.0186L18.0724 23.7795L19.1187 24.8258L19.8796 26.1575L20.6406 28.0598L21.4015 30.2475L22.7332 33.862L23.5892 35.7644L24.5404 37.3814L25.3965 38.4277L26.3476 39.3789L27.5842 40.2349L29.5817 41.2812L31.3889 41.947L33.2912 42.4226L33.5766 42.708L33.7668 43.9445L33.862 45.942H36.335L37.0008 46.3225L37.2862 46.9883V50.5076L36.0497 50.6979L33.4815 50.5076L30.6279 50.0321L28.6305 49.5565L26.5379 48.7955L24.6355 47.9395L23.2088 47.1785L22.5429 47.0834L22.2576 48.0346L21.9722 55.3587L21.782 56.0245L21.1162 56.2147L19.9747 56.3098L15.2189 56.4049H5.04125L2.56818 56.3098L1.23653 56.1196L0.285354 55.644L0 55.1684V50.6979L0.285354 46.5127L0.760943 41.947L1.33165 38.0472L1.99747 34.8132L2.75842 32.245L3.61448 29.772L4.47054 27.8696L5.42172 26.2526L6.27778 25.1112L7.13384 24.16L8.18014 23.3991L9.6069 22.6381L10.9386 22.1625L11.6995 21.9723Z" fill="#047DFE" />
                                     <path d="M57.1656 22.3528H59.1631L60.5899 22.7333L61.5411 23.1137L62.8727 23.9698L63.8239 24.8258L64.8702 25.8721L66.0116 27.5843L67.153 29.772L68.0091 32.1499L68.77 34.7181L69.4358 37.7619L70.0065 41.3764L70.4821 45.6567L70.7675 49.5565L70.9577 54.4075V55.2636L70.8626 56.1196L70.387 56.3099L69.2456 56.405L65.9165 56.5001H58.1168L54.217 56.405L49.6513 56.2147L49.0806 56.0245L48.8904 50.2223L48.7953 48.5102L48.5099 47.559L48.4148 47.2737L47.749 47.3688L45.2759 48.7004L43.3736 49.4614L41.5663 50.0321L38.1421 50.8881L37.3811 50.9833L37.286 50.6979L35.5739 50.793V50.6979L37.286 50.5077L37.1909 46.9883L36.9055 46.3225L36.3348 46.0371L33.8618 45.942L33.7667 45.7518L33.5764 42.708L34.8129 42.8031H37.286L39.2835 42.4226L41.0907 41.7568L42.6126 40.9959L43.754 40.3301L45.371 38.9984L46.132 38.1423L46.988 36.9058L47.8441 35.3839L48.5099 33.862L50.7927 27.0136L51.5537 25.6819L52.3146 24.7307L53.1707 23.8747L54.5023 23.1137L56.3096 22.543L57.1656 22.3528Z" fill="#99C6FD" />
-                                    <path d="M14.4581 0H16.1702L17.5019 0.190236L19.1189 0.665825L20.6408 1.42677L21.6871 2.18771L22.2578 2.6633V2.85354L22.6383 3.04377L23.6845 4.47054L24.5406 6.27778L24.9211 7.60943L25.1113 8.84596V10.463L24.7308 12.3653L24.1601 13.7921L23.3992 15.1237L22.2578 16.5505L21.4968 17.2163L20.4505 17.9773L19.0238 18.6431L16.8361 19.2138L15.6946 19.404L14.4581 19.3089L12.5558 18.8333L11.129 18.2626L9.79734 17.5017L8.94128 16.8359L7.9901 15.8847L7.13404 14.6481L6.3731 13.2214L5.89751 11.6044L5.70728 10.3678V8.94108L5.99263 7.32407L6.46822 5.80219L7.13404 4.47054L7.9901 3.32912L8.94128 2.28283L10.2729 1.33165L11.6046 0.665825L13.1265 0.190236L14.4581 0Z" fill="#047DFE" />
+                                    <path d="M14.4581 0H16.1702L17.5019 0.190236L19.1189 0.665825L20.6408 1.42677L21.6871 2.18771L22.2578 2.6633V2.85354L22.6383 3.04377L23.6845 4.47054L24.5406 6.27778L24.9211 7.60943L25.1113 8.84596V10.463L24.7308 12.3653L24.1601 13.7921L23.3992 15.1237L22.2578 16.5505L21.4968 17.2163L20.4505 17.9773L19.0238 18.6431L16.8361 19.2138L15.6946 19.404L14.4581 19.309L12.5558 18.8333L11.129 18.2626L9.79734 17.5017L8.94128 16.8359L7.9901 15.8847L7.13404 14.6481L6.3731 13.2214L5.89751 11.6044L5.70728 10.3678V8.94108L5.99263 7.32407L6.46822 5.80219L7.13404 4.47054L7.9901 3.32912L8.94128 2.28283L10.2729 1.33165L11.6046 0.665825L13.1265 0.190236L14.4581 0Z" fill="#047DFE" />
                                     <path d="M54.6929 0.285278H56.0245L57.7367 0.570632L59.4488 1.14134L60.9707 1.90228L62.2072 2.85346L63.1584 3.89976L64.0144 5.32652L64.6803 6.84841L65.1558 8.3703L65.3461 9.41659V10.558L64.9656 12.2701L64.3949 13.792L63.634 15.2188L62.873 16.2651L62.017 17.2163L60.9707 17.9772L59.5439 18.7381L57.8318 19.3088L56.0245 19.5942H55.0734L53.171 19.3088L51.3638 18.643L50.0321 17.8821L49.176 17.2163L47.9395 15.9797L47.1786 14.7432L46.6079 13.6018L46.1323 11.9848L45.942 11.0336L45.8469 10.0824V9.03612L46.2274 7.41912L46.7981 5.99235L47.6542 4.37535L48.7005 3.0437L49.8419 2.09252L51.3638 1.23646L53.6466 0.475514L54.6929 0.285278Z" fill="#99C6FD" />
                                 </svg>
                                 <div className="dataPrivytext">Data & Privacy</div>
                                 <div className="inoftext">
-                                    This icon appears when an SMRT feature asks to use your personal information.
+                                    This icon appears when an ASGER feature asks to use your personal information.
                                     <br />
                                     <br />
-                                    SMRT collects this information only when needed to enable specific features, secure SMRT services, or personalize your experience.
+                                    ASGER collects this information only when needed to enable specific features, secure ASGER services, or personalize your experience.
                                     <br />
                                     <br />
-                                    SMRT believes privacy is a fundamental human right, so every SMRT product is designed to minimize the collection and use of your data, use on-device processing whenever possible, and provide transparency and control over your information. Your data on this device is also encrypted and will be permanently removed if you reset to factory settings.
+                                    ASGER believes privacy is a fundamental human right, so every ASGER product is designed to minimize the collection and use of your data, use on-device processing whenever possible, and provide transparency and control over your information. Your data on this device is also encrypted and will be permanently removed if you reset to factory settings.
                                 </div>
                                 <Button className="startupContinue" style={{
                                     marginTop: '8.36vh',
@@ -461,7 +461,7 @@ export default function Startup() {
                                     <path d="M16.1667 2H15.6C10.8395 2 8.45932 2 6.64109 2.92644C5.0417 3.74137 3.74137 5.0417 2.92644 6.64109C2 8.45932 2 10.8395 2 15.6V16.1667M16.1667 53H15.6C10.8395 53 8.45932 53 6.64109 52.0735C5.0417 51.2586 3.74137 49.9584 2.92644 48.359C2 46.5406 2 44.1606 2 39.4V38.8333M53 16.1667V15.6C53 10.8395 53 8.45932 52.0735 6.64109C51.2586 5.0417 49.9584 3.74137 48.359 2.92644C46.5406 2 44.1606 2 39.4 2H38.8333M53 38.8333V39.4C53 44.1606 53 46.5406 52.0735 48.359C51.2586 49.9584 49.9584 51.2586 48.359 52.0735C46.5406 53 44.1606 53 39.4 53H38.8333M14.75 16.1667V20.4167M40.25 16.1667V20.4167M24.6667 29.2003C26.9333 29.2003 28.9167 27.2169 28.9167 24.9503V16.1667M36.5672 36.5667C31.4672 41.6667 23.2506 41.6667 18.1506 36.5667" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
                                 </svg>
                                 <div className="faceIdtext">Face ID</div>
-                                <div className="faceidDesc">SMRT Phone can recognize the unique, three-dimensional features of your face to unlock automatically, use Apple Pay, make purchases, or subscribe to services from Apple.</div>
+                                <div className="faceidDesc">ASGER Phone can recognize the unique, three-dimensional features of your face to unlock automatically, use Apple Pay, make purchases, or subscribe to services from Apple.</div>
 
                                 <Button className="startupContinue" style={{
                                     marginTop: '31.11vh',
@@ -534,7 +534,7 @@ export default function Startup() {
                                     <path d="M2.79126 46.8238C2.79126 37.411 2.79126 32.7046 4.81222 29.7803C6.83318 26.8561 10.0859 26.8561 16.5912 26.8561H34.9912C41.4965 26.8561 44.7492 26.8561 46.7702 29.7803C48.7912 32.7046 48.7912 37.411 48.7912 46.8238C48.7912 56.2365 48.7912 60.9429 46.7702 63.8672C44.7492 66.7915 41.4965 66.7915 34.9912 66.7915H16.5912C10.0859 66.7915 6.83318 66.7915 4.81222 63.8672C2.79126 60.9429 2.79126 56.2365 2.79126 46.8238Z" stroke="white" strokeWidth="4" />
                                     <path d="M8.86938 26.856V20.8398C8.86938 10.8719 16.4456 2.79138 25.7913 2.79138C35.137 2.79138 42.7132 10.8719 42.7132 20.8398V26.856" stroke="white" strokeWidth="4" strokeLinecap="round" />
                                 </svg>
-                                <div className="pinPageTitle1">Create an SMRT Phone Passcode</div>
+                                <div className="pinPageTitle1">Create an ASGER Phone Passcode</div>
                                 <div className="pinPageTitle2">Face ID provides convenient and secure access by recognizing your face.</div>
                                 <div className="pinPageTitle3">Occasionally your passcode will be required for validation.</div>
                                 <CircleFillers mt="4.56vh" type={6} length={pin.length} error={false} />
@@ -561,7 +561,7 @@ export default function Startup() {
                                     <path d="M2.79126 46.8238C2.79126 37.411 2.79126 32.7046 4.81222 29.7803C6.83318 26.8561 10.0859 26.8561 16.5912 26.8561H34.9912C41.4965 26.8561 44.7492 26.8561 46.7702 29.7803C48.7912 32.7046 48.7912 37.411 48.7912 46.8238C48.7912 56.2365 48.7912 60.9429 46.7702 63.8672C44.7492 66.7915 41.4965 66.7915 34.9912 66.7915H16.5912C10.0859 66.7915 6.83318 66.7915 4.81222 63.8672C2.79126 60.9429 2.79126 56.2365 2.79126 46.8238Z" stroke="white" strokeWidth="4" />
                                     <path d="M8.86938 26.856V20.8398C8.86938 10.8719 16.4456 2.79138 25.7913 2.79138C35.137 2.79138 42.7132 10.8719 42.7132 20.8398V26.856" stroke="white" strokeWidth="4" strokeLinecap="round" />
                                 </svg>
-                                <div className="pinPageTitle1">Create an SMRT Phone Passcode</div>
+                                <div className="pinPageTitle1">Create an ASGER Phone Passcode</div>
                                 <div className="pinPageTitle2">Re-enter your passcode.</div>
                                 <CircleFillers mt="8.12vh" type={6} length={confirmPin.length} error={error} />
                                 <Dialpad mt="11.02vh" onDial={(number: string) => {
@@ -583,9 +583,9 @@ export default function Startup() {
                                 ...styles, width: '100%', height: '100%',
                                 display: 'flex', flexDirection: 'column', justifyContent: 'start', alignItems: 'center', position: 'absolute', top: '6.09vh'
                             }}>
-                                <Image src={smrtLogoSvg} alt="SMRT Logo" w="7.47vh" h="7.47vh" />
-                                <div className="smrtAccount">SMRT Account</div>
-                                <div className="smrDescription">Sign in with an email or phone  or phone number  to use SMRT Cloud, the SMRT Store, and other SMRT services.</div>
+                                <Image src={smrtLogoSvg} alt="ASGER Logo" w="7.47vh" h="7.47vh" />
+                                <div className="smrtAccount">ASGER Account</div>
+                                <div className="smrDescription">Sign in with an email or phone  or phone number  to use ASGER Cloud, the ASGER Store, and other ASGER services.</div>
                                 <TextInput onFocus={() => {
                                     fetchNui('disableControls', true);
                                 }} onBlur={() => {
@@ -594,7 +594,7 @@ export default function Startup() {
                                     <div style={{
                                         fontSize: '1.33vh',
                                     }}>
-                                        @smrt.com
+                                        @asger.com
                                     </div>
                                 } value={email} error={emailError} onChange={async (e) => {
                                     if (signUp) {
@@ -688,7 +688,7 @@ export default function Startup() {
                                     if (emailError) return;
                                     if (!signUp) {
                                         const res: boolean = await fetchNui('loginMailAccount', JSON.stringify({
-                                            email: `${email}@smrt.com`,
+                                            email: `${email}@asger.com`,
                                             password: password
                                         }));
                                         setPasswordError(!res);
@@ -696,7 +696,7 @@ export default function Startup() {
                                     }
                                     const dataX = {
                                         ...phoneSettings,
-                                        smrtId: `${email}@smrt.com`,
+                                        smrtId: `${email}@asger.com`,
                                         smrtPassword: signUp ? confirmPassword : password
                                     }
                                     setPhoneSettings(dataX);
@@ -704,7 +704,7 @@ export default function Startup() {
                                     setWelcomeScreen(true);
                                     if (signUp) {
                                         fetchNui('registerNewMailAccount', JSON.stringify({
-                                            email: `${email}@smrt.com`,
+                                            email: `${email}@asger.com`,
                                             password: confirmPassword
                                         }));
                                     }
@@ -730,7 +730,7 @@ export default function Startup() {
                                     <path d="M19.8444 0.103516H20.3275L20.9487 0.207051L21.57 0.414122L22.1221 0.690216L22.5708 1.03533L22.9159 1.41496L23.2265 1.93264L23.4681 2.48483L23.6407 3.03702L23.7097 3.41665V3.83079L23.5716 4.452L23.3646 5.00419L23.0885 5.52187L22.8124 5.9015L22.5018 6.24661L22.1221 6.52271L21.6045 6.7988L20.9833 7.00587L20.3275 7.10941H19.9824L19.2922 7.00587L18.6364 6.76429L18.1533 6.4882L17.8427 6.24661L17.394 5.79796L17.1179 5.34931L16.9109 4.93517L16.7383 4.34847L16.6693 4.00335L16.6348 3.65823V3.2786L16.7728 2.6919L16.9799 2.17422L17.2905 1.58752L17.6701 1.10436L18.0843 0.75924L18.6364 0.448633L19.4647 0.172539L19.8444 0.103516Z" fill="#99C6FD" />
                                 </svg>
                                 <div className="smrtDesc">
-                                    Your SMRT Account information is used to enable SMRT services when you sign in, including SMRT Cloud Backup, which automatically backs up the data on your device in case you need to replace or restore it. Your device serial number may be used to check eligibility for service offers. See how your data is managed...
+                                    Your ASGER Account information is used to enable ASGER services when you sign in, including ASGER Cloud Backup, which automatically backs up the data on your device in case you need to replace or restore it. Your device serial number may be used to check eligibility for service offers. See how your data is managed...
                                 </div>
                             </div>}
                         </Transition>
@@ -752,7 +752,7 @@ export default function Startup() {
                                     fontStyle: "normal",
                                     fontWeight: 700,
                                     lineHeight: "119.414%",
-                                }}>Welcome to SMRT Phone</div>
+                                }}>Welcome to ASGER Phone</div>
                                 <div className="swipeUp" style={{
                                     marginTop: '27.02vh',
                                     color: "#FFF",

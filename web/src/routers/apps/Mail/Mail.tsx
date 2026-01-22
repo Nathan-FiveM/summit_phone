@@ -33,7 +33,7 @@ export default function MailApp(props: { onExit: () => void, onEnter: () => void
     }, 500);
 
     const handleSearchEmail = useDebouncedCallback(async (email: string) => {
-        const res: string = await fetchNui('searchEmail', `${email}@smrt.com`);
+        const res: string = await fetchNui('searchEmail', `${email}@asger.com`);
         const parsedRes = JSON.parse(res);
         if (parsedRes.length === 0) {
             setEmailError(false);
@@ -339,7 +339,7 @@ export default function MailApp(props: { onExit: () => void, onEnter: () => void
                                         borderTopRightRadius: '0.37vh',
                                         borderBottomRightRadius: '0.37vh',
                                     }}>
-                                        @SMRT.COM
+                                        @ASGER.COM
                                     </div>
                                 </div>
 
@@ -432,19 +432,19 @@ export default function MailApp(props: { onExit: () => void, onEnter: () => void
                                     className="clickanimation"
                                     onClick={async () => {
                                         const res = await fetchNui('registerNewMailAccount', JSON.stringify({
-                                            email: `${email}@smrt.com`,
+                                            email: `${email}@asger.com`,
                                             password: password
                                         }));
                                         if (res) {
                                             const messages: any = await fetchNui('getEmailMessages', JSON.stringify({
-                                                email: `${email}@smrt.com`,
+                                                email: `${email}@asger.com`,
                                                 password: password,
                                             }));
                                             const messagesData = JSON.parse(messages);
                                             setMessagesData(messagesData);
                                             const dataX = {
                                                 ...phoneSettings,
-                                                smrtId: `${email}@smrt.com`,
+                                                smrtId: `${email}@asger.com`,
                                                 smrtPassword: password,
                                             };
                                             setPhoneSettings(dataX);
