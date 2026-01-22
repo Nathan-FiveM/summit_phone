@@ -39,7 +39,19 @@ export let Framework = resolveFramework();
 export const MongoDB = new MySQLAdapter();
 
 export const MySQL = exports.oxmysql;
-export const Logger = exports['qb-smallresources'];
+export const Logger = {
+    AddLog: (data: any) => {
+        try {
+            if (global.exports['qb-smallresources']?.AddLog) {
+                global.exports['qb-smallresources'].AddLog(data);
+                return;
+            }
+        } catch (e) { }
+
+        const logMsg = `[${data.type}] ${data.title}: ${data.message}`;
+        LOGGER(logMsg);
+    }
+};
 
 type ExternalMailData = {
     email?: string;
