@@ -49,7 +49,9 @@ export default function Settings(props: { onExit: () => void, onEnter: () => voi
             const res = await fetchNui('getStreamerMode');
             const newRes = await fetchNui('getPhonePlayerCard', "Ok");
             const parseData = JSON.parse(newRes as string);
-            setNewParsedData(parseData);
+            if (parseData) {
+                setNewParsedData(parseData);
+            }
             if (res === null || res === 'null' || res === 'false') {
                 setStreamerMode(false);
             } else {

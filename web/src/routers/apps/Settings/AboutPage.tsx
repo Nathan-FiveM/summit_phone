@@ -53,7 +53,9 @@ export default function AboutPage() {
             onEnter={async () => {
                 const newRes = await fetchNui('getPhonePlayerCard', "Ok");
                 const parseData = JSON.parse(newRes as string);
-                setNewParsedData(parseData);
+                if (parseData) {
+                    setNewParsedData(parseData);
+                }
             }}
         >
             {(styles) => <div style={{

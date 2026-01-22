@@ -48,7 +48,9 @@ export default function Phone() {
             const parsedRecentCallData: PhoneCallHistory[] = JSON.parse(recentCallData);
             const parsedPlayerCard: PhonePlayerCard = JSON.parse(playerCard);
             setRecentCallData(parsedRecentCallData);
-            setPlayerPhoneCard(parsedPlayerCard);
+            if (parsedPlayerCard) {
+                setPlayerPhoneCard(parsedPlayerCard);
+            }
             if (parsedData.length === 0) return;
             const uniqueAlphabets = Array.from(
                 new Set(parsedData.map(contact => contact.firstName.charAt(0).toUpperCase()))
