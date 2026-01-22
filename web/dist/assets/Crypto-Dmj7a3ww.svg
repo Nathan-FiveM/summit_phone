@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" aria-labelledby="title desc" role="img">
+  <title>Crypto Wallet on Phone Icon (Greyscale)</title>
+  <desc>Phone outline with a wallet and coin (crypto) on the screen — greyscale version suitable for FiveM UI.</desc>
+  <defs>
+    <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#d1d1d1"/>
+      <stop offset="100%" stop-color="#8a8a8a"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Phone body -->
+  <rect x="76" y="40" width="360" height="432" rx="40" ry="40" fill="none" stroke="url(#g1)" stroke-width="18" stroke-linejoin="round"/>
+
+  <!-- Screen area -->
+  <rect x="108" y="84" width="296" height="328" rx="18" ry="18" fill="none" stroke="#2b2b2b" stroke-width="6"/>
+
+  <!-- Home / camera dot -->
+  <circle cx="256" cy="452" r="8" fill="#2b2b2b"/>
+
+  <!-- Wallet on screen (simple stylized) -->
+  <g transform="translate(152,140)" stroke="#2b2b2b" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <!-- Wallet body -->
+    <rect x="0" y="36" width="208" height="96" rx="12" ry="12" />
+    <!-- Wallet flap -->
+    <path d="M0 36 L40 8 L208 8 L208 36 Z" />
+    <!-- Card slot lines -->
+    <line x1="16" y1="64" x2="120" y2="64" />
+    <line x1="16" y1="84" x2="120" y2="84" />
+    <!-- Small clasp / button -->
+    <circle cx="180" cy="84" r="8" fill="#2b2b2b" stroke="none"/>
+  </g>
+
+  <!-- Coin overlapping wallet (crypto) -->
+  <g transform="translate(290,170)">
+    <circle cx="0" cy="0" r="44" fill="url(#g1)" stroke="#2b2b2b" stroke-width="5"/>
+    <!-- B-like symbol made of two vertical strokes and two bars (abstract crypto glyph) -->
+    <g transform="translate(-8,-8)" stroke="#ffffff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="-2" y1="-20" x2="-2" y2="22" />
+      <path d="M6 -12 C18 -12, 18 -4, 6 -4" fill="none"/>
+      <path d="M6 4 C18 4, 18 12, 6 12" fill="none"/>
+      <line x1="-8" y1="-6" x2="14" y2="-6" />
+      <line x1="-8" y1="8" x2="14" y2="8" />
+    </g>
+  </g>
+
+  <!-- subtle screen shadow -->
+  <rect x="108" y="84" width="296" height="328" rx="18" ry="18" fill="none" stroke="#000000" stroke-opacity="0.05" stroke-width="12"/>
+
+</svg>

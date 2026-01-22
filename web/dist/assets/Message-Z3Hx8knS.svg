@@ -1,0 +1,17 @@
+<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Message ICON">
+<rect width="60" height="60" rx="13.28" fill="url(#paint0_linear_45_163)"/>
+<g id="Group 8606">
+<path id="Vector" d="M20.8782 41.5894H27.8512L35.6086 46.7334C36.7592 47.4981 38.3106 46.6813 38.3106 45.291V41.5894C43.5404 41.5894 47.0269 38.1137 47.0269 32.9001V22.473C47.0269 17.2594 43.5404 13.7837 38.3106 13.7837H20.8782C15.6485 13.7837 12.162 17.2594 12.162 22.473V32.9001C12.162 38.1137 15.6485 41.5894 20.8782 41.5894Z" stroke="#00869B" stroke-width="3" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<circle id="Ellipse 7" cx="21.8919" cy="28.3785" r="2.43243" fill="#00869B"/>
+<circle id="Ellipse 8" cx="29.9998" cy="28.3785" r="2.43243" fill="#00869B"/>
+<circle id="Ellipse 9" cx="38.1082" cy="28.3785" r="2.43243" fill="#00869B"/>
+</g>
+</g>
+<defs>
+<linearGradient id="paint0_linear_45_163" x1="30" y1="0" x2="30" y2="60" gradientUnits="userSpaceOnUse">
+<stop stop-color="#313131"/>
+<stop offset="1" stop-color="#141514"/>
+</linearGradient>
+</defs>
+</svg>
