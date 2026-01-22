@@ -4,18 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "-----BUILD-----": "",
     "build": "concurrently \"yarn build:client\" \"yarn build:server\" \"yarn build:web\"",
     "build:client": "node --es-module-specifier-resolution=node scripts/client",
     "build:server": "node --es-module-specifier-resolution=node scripts/server",
     "build:web": "cd web && yarn install && yarn build",
     "postinstall": "yarn build",
-    "-----DEV-----": "",
     "dev": "concurrently \"yarn dev:client\" \"yarn dev:server\" \"yarn dev:web\" \"yarn tsc\" -c \"green.bold,cyan.bold\"",
     "dev:client": "node --es-module-specifier-resolution=node scripts/client --dev",
     "dev:server": "node --es-module-specifier-resolution=node scripts/server --dev",
     "dev:web": "cd web && yarn dev",
-    "-----TSC-----": "",
     "tsc": "concurrently \"yarn tsc:client\" \"yarn tsc:server\" -c \"green.bold,cyan.bold\"",
     "tsc:client": "cd game/client && npx tsc -w",
     "tsc:server": "cd game/server && npx tsc -w"
