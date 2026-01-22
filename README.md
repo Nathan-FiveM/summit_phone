@@ -1,4 +1,4 @@
-# Summit Phone - FiveM Phone Script
+# ASGER Phone - FiveM Phone Script
 
 A comprehensive smartphone system for FiveM servers featuring multiple applications, modern UI, and extensive functionality.
 
@@ -449,7 +449,7 @@ This resource is licensed for use with FiveM servers. Please check the LICENSE f
 
 ## 🤝 Support
 
-For support and updates, please contact the Summit RP development team or check the official documentation.
+For support and updates, please contact the ASGER RP development team or check the official documentation.
 
 ---
 
@@ -458,6 +458,6 @@ For support and updates, please contact the Summit RP development team or check 
 **Framework**: QB-Core  
 **Language**: TypeScript/React
 
-# NOTE: This phone was  being used at Summit Roleplay server, Now we have decided to make it open source and not maintaining it anymore. You guys are open to do Whatever you want with this phone, Just Don't Resell it With your names XD
+# NOTE: This phone was being used at ASGER Roleplay server, Now we have decided to make it open source and not maintaining it anymore. You guys are open to do Whatever you want with this phone, Just Don't Resell it With your names XD
 
-Summit RP Discord: https://discord.gg/summitrp
+ASGER RP Discord: https://discord.gg/asgerrp

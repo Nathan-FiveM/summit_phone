@@ -7,7 +7,7 @@ editor "Nathan-FiveM"
 version "2.1.0"
 use_experimental_fxv2_oal 'yes'
 
-description 'Summit Phone with Crypto App'
+description 'ASGER Phone with Crypto App'
 
 -- UI
 ui_page 'web/dist/index.html'
