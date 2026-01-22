@@ -5,17 +5,18 @@
   "main": "index.js",
   "scripts": {
     "-----BUILD-----": "",
-    "build": "concurrently \"pnpm:build:*\"",
+    "build": "concurrently \"yarn build:client\" \"yarn build:server\" \"yarn build:web\"",
     "build:client": "node --es-module-specifier-resolution=node scripts/client",
     "build:server": "node --es-module-specifier-resolution=node scripts/server",
-    "build:web": "cd web && pnpm build",
+    "build:web": "cd web && yarn install && yarn build",
+    "postinstall": "yarn build",
     "-----DEV-----": "",
-    "dev": "concurrently \"pnpm:dev:client\" \"pnpm:dev:server\" \"pnpm:dev:web\" \"pnpm:tsc\" -c \"green.bold,cyan.bold\"",
+    "dev": "concurrently \"yarn dev:client\" \"yarn dev:server\" \"yarn dev:web\" \"yarn tsc\" -c \"green.bold,cyan.bold\"",
     "dev:client": "node --es-module-specifier-resolution=node scripts/client --dev",
     "dev:server": "node --es-module-specifier-resolution=node scripts/server --dev",
-    "dev:web": "cd web && pnpm dev",
+    "dev:web": "cd web && yarn dev",
     "-----TSC-----": "",
-    "tsc": "concurrently \"pnpm:tsc:*\" -c \"green.bold,cyan.bold\"",
+    "tsc": "concurrently \"yarn tsc:client\" \"yarn tsc:server\" -c \"green.bold,cyan.bold\"",
     "tsc:client": "cd game/client && npx tsc -w",
     "tsc:server": "cd game/server && npx tsc -w"
   },
@@ -28,7 +29,7 @@
     "@citizenfx/server": "latest",
     "@types/node": "^22.2.0",
     "concurrently": "^8.2.2",
-    "esbuild": "^0.23.0",
+    "esbuild": "^0.19.0",
     "javascript-obfuscator": "^4.1.1",
     "typescript": "^5.5.4"
   },
@@ -37,6 +38,5 @@
     "@overextended/ox_lib": "3.29.0",
     "@types/luxon": "^3.4.2",
     "luxon": "^3.6.0"
-  },
-  "packageManager": "pnpm@9.15.0+sha512.76e2379760a4328ec4415815bcd6628dee727af3779aaa4c914e3944156c4299921a89f976381ee107d41f12cfa4b66681ca9c718f0668fa0831ed4c6d8ba56c"
+  }
 }
