@@ -28,7 +28,7 @@ onNet('summit_phone:server:fireEmployee', async (citizenId: string) => {
         Logger.AddLog({
             type: 'phone_employee_action',
             title: 'Employee Fired',
-            message: `${targetData.PlayerData.charinfo.firstname} ${targetData.PlayerData.charinfo.lastname} has been fired by ${await exports[FRAMEWORK_RESOURCE].GetPlayerName(source)} | CitizenId: ${targetData.PlayerData.citizenid} | Job: ${targetData.PlayerData.job.name}`,
+            message: `${targetData.PlayerData.charinfo.firstname} ${targetData.PlayerData.charinfo.lastname} has been fired by ${await Utils.GetPlayerNameBySource(source)} | CitizenId: ${targetData.PlayerData.citizenid} | Job: ${targetData.PlayerData.job.name}`,
             showIdentifiers: false
         });
     } else {
@@ -50,7 +50,7 @@ onNet('summit_phone:server:fireEmployee', async (citizenId: string) => {
         Logger.AddLog({
             type: 'phone_employee_action',
             title: 'Offline Employee Fired',
-            message: `Offline employee ${citizenId} has been fired by ${await exports[FRAMEWORK_RESOURCE].GetPlayerName(source)} | Job: ${jobData.name}`,
+            message: `Offline employee ${citizenId} has been fired by ${await Utils.GetPlayerNameBySource(source)} | Job: ${jobData.name}`,
             showIdentifiers: false
         });
     }
@@ -73,7 +73,7 @@ onNet('summit_phone:server:changeRankOfPlayer', async (data: any) => {
         emitNet('phone:addnotiFication', targetData.PlayerData.source, JSON.stringify({
             id: generateUUid(),
             title: "System",
-            description: `Your rank has been changed by ${await exports[FRAMEWORK_RESOURCE].GetPlayerName(source)}`,
+            description: `Your rank has been changed by ${await Utils.GetPlayerNameBySource(source)}`,
             app: "services",
             timeout: 5000,
         }));
@@ -82,7 +82,7 @@ onNet('summit_phone:server:changeRankOfPlayer', async (data: any) => {
             Logger.AddLog({
                 type: 'phone_multi_job',
                 title: 'Multi-Job Updated',
-                message: `${data.targetCitizenid} has been updated to ${data.jobName} | New Rank: ${data.gradeName} by ${await exports[FRAMEWORK_RESOURCE].GetPlayerName(source)} | citizenId: ${await Utils.GetPlayerCitizenIdBySource(source)}`,
+                message: `${data.targetCitizenid} has been updated to ${data.jobName} | New Rank: ${data.gradeName} by ${await Utils.GetPlayerNameBySource(source)} | citizenId: ${await Utils.GetPlayerCitizenIdBySource(source)}`,
                 showIdentifiers: false
             });
         } else {
@@ -90,7 +90,7 @@ onNet('summit_phone:server:changeRankOfPlayer', async (data: any) => {
             Logger.AddLog({
                 type: 'phone_multi_job',
                 title: 'Multi-Job Added',
-                message: `${data.targetCitizenid} has been added to ${data.jobName} | New Rank: ${data.gradeName} by ${await exports[FRAMEWORK_RESOURCE].GetPlayerName(source)} | citizenId: ${await Utils.GetPlayerCitizenIdBySource(source)}`,
+                message: `${data.targetCitizenid} has been added to ${data.jobName} | New Rank: ${data.gradeName} by ${await Utils.GetPlayerNameBySource(source)} | citizenId: ${await Utils.GetPlayerCitizenIdBySource(source)}`,
                 showIdentifiers: false
             });
         }
@@ -98,7 +98,7 @@ onNet('summit_phone:server:changeRankOfPlayer', async (data: any) => {
         Logger.AddLog({
             type: 'phone_employee_action',
             title: 'Rank Changed',
-            message: `${targetData.PlayerData.charinfo.firstname} ${targetData.PlayerData.charinfo.lastname} has been given a new rank by ${await exports[FRAMEWORK_RESOURCE].GetPlayerName(source)} | CitizenId: ${targetData.PlayerData.citizenid} | Job: ${jobname} |  New Rank: ${data.gradeName}`,
+            message: `${targetData.PlayerData.charinfo.firstname} ${targetData.PlayerData.charinfo.lastname} has been given a new rank by ${await Utils.GetPlayerNameBySource(source)} | CitizenId: ${targetData.PlayerData.citizenid} | Job: ${jobname} |  New Rank: ${data.gradeName}`,
             showIdentifiers: false
         });
     } else {
@@ -112,7 +112,7 @@ onNet('summit_phone:server:changeRankOfPlayer', async (data: any) => {
             Logger.AddLog({
                 type: 'phone_multi_job',
                 title: 'Multi-Job Updated',
-                message: `${data.targetCitizenid} has been updated to ${data.jobName} | New Rank: ${data.gradeName} by ${await exports[FRAMEWORK_RESOURCE].GetPlayerName(source)} | citizenId: ${await Utils.GetPlayerCitizenIdBySource(source)}`,
+                message: `${data.targetCitizenid} has been updated to ${data.jobName} | New Rank: ${data.gradeName} by ${await Utils.GetPlayerNameBySource(source)} | citizenId: ${await Utils.GetPlayerCitizenIdBySource(source)}`,
                 showIdentifiers: false
             });
         } else {
@@ -120,7 +120,7 @@ onNet('summit_phone:server:changeRankOfPlayer', async (data: any) => {
             Logger.AddLog({
                 type: 'phone_multi_job',
                 title: 'Multi-Job Added',
-                message: `${data.targetCitizenid} has been added to ${data.jobName} | New Rank: ${data.gradeName} by ${await exports[FRAMEWORK_RESOURCE].GetPlayerName(source)} | citizenId: ${await Utils.GetPlayerCitizenIdBySource(source)}`,
+                message: `${data.targetCitizenid} has been added to ${data.jobName} | New Rank: ${data.gradeName} by ${await Utils.GetPlayerNameBySource(source)} | citizenId: ${await Utils.GetPlayerCitizenIdBySource(source)}`,
                 showIdentifiers: false
             });
         }
@@ -142,7 +142,7 @@ onNet('summit_phone:server:fireInactiveEmployee', async (data: { jobName: string
     Logger.AddLog({
         type: 'phone_employee_action',
         title: 'Inactive Employee Fired',
-        message: `Inactive employee ${data.citizenId} has been fired by ${await exports[FRAMEWORK_RESOURCE].GetPlayerName(source)} | Job: ${data.jobName}`,
+        message: `Inactive employee ${data.citizenId} has been fired by ${await Utils.GetPlayerNameBySource(source)} | Job: ${data.jobName}`,
         showIdentifiers: false
     });
 });
@@ -165,7 +165,7 @@ on('summit_phone:server:hireinMultiJob', async (client: number, jobname: string,
             Logger.AddLog({
                 type: 'phone_multi_job',
                 title: 'Multi-Job Updated',
-                message: `${targetCid} has been updated to ${jobname} | New Rank: ${gradeLabel} by ${await exports[FRAMEWORK_RESOURCE].GetPlayerName(client)} | citizenId: ${await Utils.GetPlayerCitizenIdBySource(client)}`,
+                message: `${targetCid} has been updated to ${jobname} | New Rank: ${gradeLabel} by ${await Utils.GetPlayerNameBySource(client)} | citizenId: ${await Utils.GetPlayerCitizenIdBySource(client)}`,
                 showIdentifiers: false
             });
         } else {
@@ -184,7 +184,7 @@ on('summit_phone:server:hireinMultiJob', async (client: number, jobname: string,
         Logger.AddLog({
             type: 'phone_multi_job',
             title: 'Multi-Job Added',
-            message: `${targetCid} has been added to ${jobname} | New Rank: ${gradeLabel} by ${await exports[FRAMEWORK_RESOURCE].GetPlayerName(client)} | citizenId: ${await Utils.GetPlayerCitizenIdBySource(client)}`,
+            message: `${targetCid} has been added to ${jobname} | New Rank: ${gradeLabel} by ${await Utils.GetPlayerNameBySource(client)} | citizenId: ${await Utils.GetPlayerCitizenIdBySource(client)}`,
             showIdentifiers: false
         });
     }

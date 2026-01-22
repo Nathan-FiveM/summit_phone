@@ -9,6 +9,25 @@ class Util {
     }
 
     /**
+     * Gets the full name for a player by their source.
+     * Retrieves firstname and lastname from PlayerData.charinfo
+     * @param source - The player's source/server ID
+     * @returns The full name (firstname + lastname) or 'Unknown' if not found
+     */
+    async GetPlayerNameBySource(source: number): Promise<string> {
+        try {
+            const player = Framework?.Functions?.GetPlayer?.(source);
+            if (player?.PlayerData?.charinfo) {
+                const { firstname, lastname } = player.PlayerData.charinfo;
+                return `${firstname || ''} ${lastname || ''}`.trim() || 'Unknown';
+            }
+        } catch (e) {
+            LOGGER(`Failed to get player name for source ${source}: ${e}`);
+        }
+        return 'Unknown';
+    }
+
+    /**
      * Gets the citizen ID for a player by their source.
      * First tries the framework export, then falls back to Framework.Functions.GetPlayer()
      * @param source - The player's source/server ID
