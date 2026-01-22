@@ -33,7 +33,7 @@ onClientCallback('wallet:login', async (source: number) => {
             casino: await citizenId.PlayerData.money.casino
         });
     } else {
-        const name = await exports[FRAMEWORK_RESOURCE].GetPlayerName(source);
+        const name = await Utils.GetPlayerNameBySource(source);
         const cardNumber = GenerateCardNumber();
         const cardPin = Math.floor(Math.random() * 10000);
         const bankAccount = GenerateBankAccountNumber();

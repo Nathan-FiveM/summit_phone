@@ -73,7 +73,7 @@ onClientCallback('phone:server:shareNumber', async (source: any, comingSource: a
     const sourceX = source;
     const sourceNumber = await Utils.GetPhoneNumberBySource(sourceX);
     const acNumber = await Utils.GetPhoneNumberBySource(comingSource);
-    const fullname = await exports[FRAMEWORK_RESOURCE].GetPlayerName(sourceX);
+    const fullname = await Utils.GetPlayerNameBySource(sourceX);
     const breakedName = fullname.split(' ');
 
     if (!sourceNumber || !acNumber) return;

@@ -2,7 +2,7 @@ import { onClientCallback } from "@overextended/ox_lib/server";
 import { Logger, MongoDB } from "@server/sv_main";
 import { generateUUid } from "@shared/utils";
 import { Utils } from "@server/classes/Utils";
-import { FRAMEWORK_RESOURCE } from "../../../shared/utils";
+
 
 onClientCallback('savePhotoToPhotos', async (source: number, data: string) => {
   const citizenId = await Utils.GetPlayerCitizenIdBySource(source);
@@ -16,7 +16,7 @@ onClientCallback('savePhotoToPhotos', async (source: number, data: string) => {
   Logger.AddLog({
     type: 'phone_photos',
     title: 'Photo Saved',
-    message: `Photo saved by ${await exports[FRAMEWORK_RESOURCE].GetPlayerName(source)} | ${citizenId}, Link: ${data}`,
+    message: `Photo saved by ${await Utils.GetPlayerNameBySource(source)} | ${citizenId}, Link: ${data}`,
     showIdentifiers: false
   });
   return JSON.stringify(dataX);
@@ -35,7 +35,7 @@ onClientCallback('deletePhoto', async (source: number, data: string) => {
   Logger.AddLog({
     type: 'phone_photos',
     title: 'Photo Deleted',
-    message: `Photo deleted by ${await exports[FRAMEWORK_RESOURCE].GetPlayerName(source)} | ${citizenId}, Link: ${res.link}`,
+    message: `Photo deleted by ${await Utils.GetPlayerNameBySource(source)} | ${citizenId}, Link: ${res.link}`,
     showIdentifiers: false
   });
   return true;

@@ -25,7 +25,7 @@ onClientCallback('RegisterNewBusiness', async (client, data: string) => {
         Logger.AddLog({
             type: 'phone_business',
             title: 'Business Registration Failed',
-            message: `Attempt to register business with existing name '${businessName}' by Player: ${exports[FRAMEWORK_RESOURCE].GetPlayerName(client)}`,
+            message: `Attempt to register business with existing name '${businessName}' by Player: ${await Utils.GetPlayerNameBySource(client)}`,
             showIdentifiers: false
         });
         return emitNet('phone:addnotiFication', client, JSON.stringify({
@@ -64,7 +64,7 @@ onClientCallback('RegisterNewBusiness', async (client, data: string) => {
     Logger.AddLog({
         type: 'phone_business',
         title: 'Business Registered',
-        message: `New business '${businessName}' registered by Player: ${exports[FRAMEWORK_RESOURCE].GetPlayerName(client)}`,
+        message: `New business '${businessName}' registered by Player: ${await Utils.GetPlayerNameBySource(client)}`,
         showIdentifiers: false
     });
 });
@@ -113,7 +113,7 @@ onClientCallback('UpdateBusiness', async (client, data: string) => {
         Logger.AddLog({
             type: 'phone_business',
             title: 'Business Update Failed',
-            message: `Attempt to update non-existent business '${selectedBusiness}' by Player: ${exports[FRAMEWORK_RESOURCE].GetPlayerName(client)}`,
+            message: `Attempt to update non-existent business '${selectedBusiness}' by Player: ${await Utils.GetPlayerNameBySource(client)}`,
             showIdentifiers: false
         });
         return emitNet('phone:addnotiFication', client, JSON.stringify({
@@ -141,7 +141,7 @@ onClientCallback('UpdateBusiness', async (client, data: string) => {
     Logger.AddLog({
         type: 'phone_business',
         title: 'Business Updated',
-        message: `Business '${selectedBusiness}' updated by Player: ${exports[FRAMEWORK_RESOURCE].GetPlayerName(client)}`,
+        message: `Business '${selectedBusiness}' updated by Player: ${await Utils.GetPlayerNameBySource(client)}`,
         showIdentifiers: false
     });
 });
@@ -152,7 +152,7 @@ onClientCallback('deleteBusiness', async (client, data: string) => {
         Logger.AddLog({
             type: 'phone_business',
             title: 'Business Deletion Failed',
-            message: `Attempt to delete non-existent business '${data}' by Player: ${exports[FRAMEWORK_RESOURCE].GetPlayerName(client)}`,
+            message: `Attempt to delete non-existent business '${data}' by Player: ${await Utils.GetPlayerNameBySource(client)}`,
             showIdentifiers: false
         });
         return emitNet('phone:addnotiFication', client, JSON.stringify({
@@ -168,7 +168,7 @@ onClientCallback('deleteBusiness', async (client, data: string) => {
     Logger.AddLog({
         type: 'phone_business',
         title: 'Business Deleted',
-        message: `Business '${data}' deleted by Player: ${exports[FRAMEWORK_RESOURCE].GetPlayerName(client)}`,
+        message: `Business '${data}' deleted by Player: ${await Utils.GetPlayerNameBySource(client)}`,
         showIdentifiers: false
     });
 });
@@ -239,7 +239,7 @@ onClientCallback('summit_phone:server:depositMoney', async (client, amount: numb
     
     const src = client;
     const Player = await exports[FRAMEWORK_RESOURCE].GetPlayer(src);
-    const fullname = await exports[FRAMEWORK_RESOURCE].GetPlayerName(src);
+    const fullname = await Utils.GetPlayerNameBySource(src);
     const cid = Player.PlayerData.citizenid;
     const PlayerJob = Player.PlayerData.job;
     const account = PlayerJob.name;
@@ -264,7 +264,7 @@ onClientCallback('summit_phone:server:depositMoney', async (client, amount: numb
 onClientCallback('summit_phone:server:withdrawMoney', async (client, amount: number) => {
     const src = client;
     const Player = await exports[FRAMEWORK_RESOURCE].GetPlayer(src);
-    const fullname = await exports[FRAMEWORK_RESOURCE].GetPlayerName(src);
+    const fullname = await Utils.GetPlayerNameBySource(src);
     const cid = Player.PlayerData.citizenid;
     const PlayerJob = Player.PlayerData.job;
     const account = PlayerJob.name;
@@ -400,7 +400,7 @@ onClientCallback('summit_phone:server:hireEmployee', async (client, targetSource
         Logger.AddLog({
             type: 'phone_business',
             title: 'Hire Failed',
-            message: `Attempt to hire self Name: ${exports[FRAMEWORK_RESOURCE].GetPlayerName(client)}, in Job: ${jobname}`,
+            message: `Attempt to hire self Name: ${await Utils.GetPlayerNameBySource(client)}, in Job: ${jobname}`,
             showIdentifiers: false
         });
         return emitNet('phone:addnotiFication', client, JSON.stringify({
@@ -417,7 +417,7 @@ onClientCallback('summit_phone:server:hireEmployee', async (client, targetSource
             Logger.AddLog({
                 type: 'phone_business',
                 title: 'Hire Failed',
-                message: `Attempt to hire without being a boss Name: ${exports[FRAMEWORK_RESOURCE].GetPlayerName(client)}, in Job: ${jobname}, CitizenId: ${player.PlayerData.citizenid}`,
+                message: `Attempt to hire without being a boss Name: ${await Utils.GetPlayerNameBySource(client)}, in Job: ${jobname}, CitizenId: ${player.PlayerData.citizenid}`,
                 showIdentifiers: false
             });
             return emitNet('phone:addnotiFication', client, JSON.stringify({
@@ -433,7 +433,7 @@ onClientCallback('summit_phone:server:hireEmployee', async (client, targetSource
         Logger.AddLog({
             type: 'phone_business',
             title: 'Employee Hired',
-            message: `Player ${targetPlayer.PlayerData.citizenid} Name: ${targetPlayer.PlayerData.charinfo.firstname} ${targetPlayer.PlayerData.charinfo.lastname} hired by Player: ${exports[FRAMEWORK_RESOURCE].GetPlayerName(client)}, in Job: ${jobname}`,
+            message: `Player ${targetPlayer.PlayerData.citizenid} Name: ${targetPlayer.PlayerData.charinfo.firstname} ${targetPlayer.PlayerData.charinfo.lastname} hired by Player: ${await Utils.GetPlayerNameBySource(client)}, in Job: ${jobname}`,
             showIdentifiers: false
         });
         emitNet('phone:addnotiFication', client, JSON.stringify({
@@ -456,7 +456,7 @@ onClientCallback('summit_phone:server:hireEmployee', async (client, targetSource
         Logger.AddLog({
             type: 'phone_business',
             title: 'Hire Failed',
-            message: `Attempt to hire non-existent player Name: ${exports[FRAMEWORK_RESOURCE].GetPlayerName(client)}, in Job: ${jobname}`,
+            message: `Attempt to hire non-existent player Name: ${await Utils.GetPlayerNameBySource(client)}, in Job: ${jobname}`,
             showIdentifiers: false
         });
         emitNet('phone:addnotiFication', client, JSON.stringify({
@@ -482,7 +482,7 @@ onClientCallback('registerJobs', async (client, data: string) => {
     Logger.AddLog({
         type: 'phone_jobs',
         title: 'Job Registered',
-        message: `New job '${_id}' Name: ${jobs.jobName} registered by Player: ${exports[FRAMEWORK_RESOURCE].GetPlayerName(client)}`,
+        message: `New job '${_id}' Name: ${jobs.jobName} registered by Player: ${await Utils.GetPlayerNameBySource(client)}`,
         showIdentifiers: false
     });
 });
@@ -500,7 +500,7 @@ onClientCallback('updateJobs', async (client, data: string) => {
     Logger.AddLog({
         type: 'phone_jobs',
         title: 'Job Updated',
-        message: `Job '${_id}' Name: ${jobs.jobName} updated by Player: ${exports[FRAMEWORK_RESOURCE].GetPlayerName(client)}`,
+        message: `Job '${_id}' Name: ${jobs.jobName} updated by Player: ${await Utils.GetPlayerNameBySource(client)}`,
         showIdentifiers: false
     });
 });
@@ -511,7 +511,7 @@ onClientCallback('deleteJobs', async (client, data: string) => {
         Logger.AddLog({
             type: 'summit_jobs',
             title: 'Job Deletion Failed',
-            message: `Attempt to delete non-existent job '${data}' by Player: ${exports[FRAMEWORK_RESOURCE].GetPlayerName(client)}`,
+            message: `Attempt to delete non-existent job '${data}' by Player: ${await Utils.GetPlayerNameBySource(client)}`,
             showIdentifiers: false
         });
         return emitNet('phone:addnotiFication', client, JSON.stringify({
@@ -527,7 +527,7 @@ onClientCallback('deleteJobs', async (client, data: string) => {
     Logger.AddLog({
         type: 'phone_jobs',
         title: 'Job Deleted',
-        message: `Job '${data}' Name: ${job.jobName} deleted by Player: ${exports[FRAMEWORK_RESOURCE].GetPlayerName(client)}`,
+        message: `Job '${data}' Name: ${job.jobName} deleted by Player: ${await Utils.GetPlayerNameBySource(client)}`,
         showIdentifiers: false
     });
 });

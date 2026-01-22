@@ -1,5 +1,6 @@
 import { onClientCallback, triggerClientCallback } from "@overextended/ox_lib/server";
 import { Framework, MongoDB, Logger } from "@server/sv_main";
+import { Utils } from "@server/classes/Utils";
 import { Delay, generateUUid } from "@shared/utils";
 import { FRAMEWORK_RESOURCE } from "../../../shared/utils"; // adjust path as needed
 
@@ -11,7 +12,7 @@ onClientCallback('groups:getmultiPleJobs', async (source: number) => {
 });
 
 onClientCallback('groups:deleteMultiJob', async (source: number, data: string) => {
-    const name = await exports[FRAMEWORK_RESOURCE].GetPlayerName(source);
+    const name = await Utils.GetPlayerNameBySource(source);
     const job = await MongoDB.findOne('phone_multijobs', { _id: data });
     const res = await MongoDB.deleteOne('phone_multijobs', { _id: data });
     Logger.AddLog({
