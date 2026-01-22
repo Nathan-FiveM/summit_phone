@@ -155,7 +155,7 @@ function DynamicQueuePage({
                 variant="light"
                 onClick={() => {
                     fetchNui("groups:signOutJob");
-                    setSelectedJob("");
+                    props.setSelectedJob("");
                 }}
             >
                 ← Back to Job List
@@ -164,7 +164,7 @@ function DynamicQueuePage({
     );
 }
 
-export default function Groups(props: { onExit: () => void, onEnter: () => void }) {
+export default function Groups(props: { onExit: () => void, onEnter: () => void, selectedJob: string, setSelectedJob: (job: string) => void }) {
     const nodeRef = useRef(null);
     const { location, setLocation } = usePhone();
     const [multiJobsData, setMultiJobsData] = useState<MultiJobData[]>([]);
@@ -194,7 +194,6 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
     const [groupStage, setGroupStage] = useState<any[]>([]);
     const [stageRenderKey, setStageRenderKey] = useState(0);
     // === HOUSE ROBBERY STATE ===
-    const [selectedJob, setSelectedJob] = useState<string>(""); // which job type player is viewing
     const [availableGroups, setAvailableGroups] = useState<any[]>([]);
     const [loadingGroups, setLoadingGroups] = useState<boolean>(false);
     const [memberRenderKey, setMemberRenderKey] = useState(0);
@@ -304,14 +303,14 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
     // Server always pushes the full list into `groupsData` via `setGroups`,
     // so we just filter that by jobType here.
     useEffect(() => {
-        if (!selectedJob) {
+        if (!props.selectedJob) {
             setAvailableGroups([]);
             return;
         }
 
-        const byJob = (groupsData || []).filter((g: any) => g.jobType === selectedJob);
+        const byJob = (groupsData || []).filter((g: any) => g.jobType === props.selectedJob);
         setAvailableGroups(byJob);
-    }, [selectedJob, groupsData]);
+    }, [props.selectedJob, groupsData]);
 
     // Reset the info view when leaving the Groups app
     useEffect(() => {
@@ -333,7 +332,7 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
         case "setCurrentGroup":
         if (data && Object.keys(data).length > 0) {
 
-            setSelectedJob(data.jobType);
+            props.setSelectedJob(data.jobType);
             setPrettyJobLabel(JobMeta[data.jobType].label);
             setCurrentGroupData(data.members || []);
             setMemberRenderKey(k => k + 1);
@@ -396,7 +395,7 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
         console.log("[Groups UI] Player nghe job changed to:", jobType);
 
         if (jobType && JobMeta[jobType]) {
-            setSelectedJob(jobType);
+            props.setSelectedJob(jobType);
         }
     });
 
@@ -564,13 +563,13 @@ export default function Groups(props: { onExit: () => void, onEnter: () => void 
                 {!inGroup ? (
                 <>
                     {/* 🏠 House Robbery - Group Listing Section */}
-                    {selectedJob && JobMeta[selectedJob] ? (
+                    {props.selectedJob && JobMeta[props.selectedJob] ? (
                         <DynamicQueuePage
-                            jobType={selectedJob}
+                            jobType={props.selectedJob}
                             JobMeta={JobMeta}
                             availableGroups={availableGroups}
                             loadingGroups={loadingGroups}
-                            setSelectedJob={setSelectedJob}
+                            setSelectedJob={props.setSelectedJob}
                             fetchNui={fetchNui}
                         />
                     ) : (

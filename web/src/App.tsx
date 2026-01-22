@@ -166,6 +166,7 @@ export default function App() {
   const [heartSyncEnter, setHeartSyncEnter] = useState(false);
   const [cryptoEnter, setCryptoEnter] = useState(false);
   const [dailySpinEnter, setDailySpinEnter] = useState(false);
+  const [selectedJob, setSelectedJob] = useState<string>("");
 
   return (
     <div style={{
@@ -319,7 +320,7 @@ export default function App() {
             setGroupsEnter(true);
           }} onExit={() => {
             setGroupsEnter(false);
-          }} />
+          }} selectedJob={selectedJob} setSelectedJob={setSelectedJob} />
         </div>
         <div className='fuckerMessager' id='fuckerMessager' style={{
           visibility: taxiEnter ? 'visible' : 'hidden',
