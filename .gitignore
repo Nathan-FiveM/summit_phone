@@ -3,5 +3,3 @@
 yarn.installed
 package-lock.json
 .yarn.installed
-web/dist/
-build/
