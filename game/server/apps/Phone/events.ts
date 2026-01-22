@@ -3,7 +3,6 @@ import { Utils } from "@server/classes/Utils";
 import { generateUUid } from "@shared/utils";
 import { callHistoryManager } from "./callHistoryManager";
 import { Logger } from "@server/sv_main";
-import { FRAMEWORK_RESOURCE } from "../../../shared/utils"; // adjust path as needed
 
 onNet("phone:server:declineCall", async (notiId: string, args: any) => {
   const { callId, targetSource, callerSource, databaseTableId } = JSON.parse(args);
@@ -43,7 +42,7 @@ onNet("phone:server:acceptCall", async (notiId: string, args: any) => {
     }));
     return;
   }
-  const targetCitizenId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(targetSource);
+  const targetCitizenId = await Utils.GetPlayerCitizenIdBySource(targetSource);
   const targetPhone = await Utils.GetPhoneNumberBySource(targetSource);
   const participant = {
     source: targetSource,
@@ -101,7 +100,7 @@ onNet("phone:server:acceptConferenceCall", async (notiId: string, args: any) => 
     return;
   }
   callManager.stopRingTone(targetSource);
-  const targetCitizenId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(targetSource);
+  const targetCitizenId = await Utils.GetPlayerCitizenIdBySource(targetSource);
   const targetPhone = await Utils.GetPhoneNumberBySource(targetSource);
   const participant = {
     source: targetSource,

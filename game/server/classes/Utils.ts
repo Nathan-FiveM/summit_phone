@@ -8,6 +8,37 @@ class Util {
         this.contactsData = [];
     }
 
+    /**
+     * Gets the citizen ID for a player by their source.
+     * First tries the framework export, then falls back to Framework.Functions.GetPlayer()
+     * @param source - The player's source/server ID
+     * @returns The citizen ID or null if not found
+     */
+    async GetPlayerCitizenIdBySource(source: number): Promise<any> {
+        try {
+            // First try the export (if user has added it to their qb-core)
+            const exportFunc = exports[FRAMEWORK_RESOURCE]?.GetPlayerCitizenIdBySource;
+            if (typeof exportFunc === 'function') {
+                const result = await exportFunc(source);
+                if (result) return result;
+            }
+        } catch (e) {
+            // Export doesn't exist or failed, fall through to fallback
+        }
+
+        // Fallback: use Framework.Functions.GetPlayer()
+        try {
+            const player = Framework?.Functions?.GetPlayer?.(source);
+            if (player?.PlayerData?.citizenid) {
+                return player.PlayerData.citizenid;
+            }
+        } catch (e) {
+            LOGGER(`Failed to get citizen ID for source ${source}: ${e}`);
+        }
+
+        return null;
+    }
+
     async load() {
         RegisterCommand('transferNumbers', async (source: any, args: any) => {
             if (source === 0) return LOGGER('This command can only be executed in-game.');
@@ -251,7 +282,7 @@ class Util {
     };
 
     async GetEmailIdBySource(source: number) {
-        const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source);
+        const citizenId = await this.GetPlayerCitizenIdBySource(source);
         if (!citizenId) return false;
         const email = await this.GetEmailIdByCitizenId(citizenId);
         return email;
@@ -269,7 +300,7 @@ class Util {
     };
 
     async GetPhoneNumberBySource(source: number) {
-        const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source);
+        const citizenId = await this.GetPlayerCitizenIdBySource(source);
         return await this.GetPhoneNumberByCitizenId(citizenId);
     };
 

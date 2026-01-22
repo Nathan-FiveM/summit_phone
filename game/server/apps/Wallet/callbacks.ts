@@ -123,7 +123,7 @@ onClientCallback('transXAdqasddasdferMoney', async (client, data: string) => {
 });
 
 onClientCallback('getTransactions', async (client) => {
-    const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
+    const citizenId = await Utils.GetPlayerCitizenIdBySource(client);
     const transactions = await MongoDB.findMany('phone_bank_transactions', { from: citizenId }, null, false, {
         sort: { date: -1 }
     });
@@ -178,7 +178,7 @@ onClientCallback('wallet:createInvoice', async (client, data: string) => {
 });
 
 onClientCallback('wallet:getInvoices', async (client, type) => {
-    const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
+    const citizenId = await Utils.GetPlayerCitizenIdBySource(client);
     if (type === 'sent') {
         const invoices = await MongoDB.findMany('phone_bank_invoices', { from: citizenId }, null, false, {
             sort: { date: -1 }

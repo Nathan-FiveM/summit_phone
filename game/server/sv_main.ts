@@ -157,7 +157,7 @@ on('summit_phone:server:CronTrigger', async () => {
 });
 
 RegisterCommand('resetPhonePasscode', async (source: number, args: string[]) => {
-    const citizenId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source);
+    const citizenId = await Utils.GetPlayerCitizenIdBySource(source);
     if (!citizenId) return;
     Settings.lockPin.set(citizenId, '000000');
     await Delay(1000);
@@ -180,7 +180,7 @@ RegisterCommand('verifyPegion', async (source: number, args: string[]) => {
 
 on('QBCore:Server:OnPlayerUnload', async (src: number) => {
     if(!src) return;
-    const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(src);
+    const citizenId = await Utils.GetPlayerCitizenIdBySource(src);
     if (!citizenId) return;
     await Settings.SavePlayerSettings(citizenId);
     Settings.onPlayerDisconnect(citizenId);
@@ -189,7 +189,7 @@ on('QBCore:Server:OnPlayerUnload', async (src: number) => {
 on('playerDropped', async () => {
     const src = global.source;
     if(!src) return;
-    const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(src);
+    const citizenId = await Utils.GetPlayerCitizenIdBySource(src);
     if (!citizenId) return;
     await Settings.SavePlayerSettings(citizenId);
     Settings.onPlayerDisconnect(citizenId);

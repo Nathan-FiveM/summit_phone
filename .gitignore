@@ -2,3 +2,5 @@
 /dist/
 yarn.installed
 package-lock.json
+.yarn.installed
+web/dist/
