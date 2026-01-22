@@ -24,13 +24,25 @@ function GenerateBankAccountNumber() {
 }
 
 onClientCallback('wallet:login', async (source: number) => {
-    const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayer(source);
-    const res = await MongoDB.findOne('phone_bank_user', { citizenId: citizenId.PlayerData.citizenid });
+    const player = await exports[FRAMEWORK_RESOURCE].GetPlayer(source);
+    if (!player || !player.PlayerData) {
+        return JSON.stringify({
+            _id: '',
+            citizenId: '',
+            name: 'Unknown',
+            cardNumber: '',
+            cardPin: 0,
+            bankAccount: '',
+            balance: 0,
+            casino: 0
+        });
+    }
+    const res = await MongoDB.findOne('phone_bank_user', { citizenId: player.PlayerData.citizenid });
     if (res) {
         return JSON.stringify({
             ...res,
-            balance: await citizenId.PlayerData.money.bank,
-            casino: await citizenId.PlayerData.money.casino
+            balance: player.PlayerData.money.bank,
+            casino: player.PlayerData.money.casino
         });
     } else {
         const name = await Utils.GetPlayerNameBySource(source);
@@ -39,7 +51,7 @@ onClientCallback('wallet:login', async (source: number) => {
         const bankAccount = GenerateBankAccountNumber();
         const data = {
             _id: generateUUid(),
-            citizenId: citizenId.PlayerData.citizenid,
+            citizenId: player.PlayerData.citizenid,
             name: name,
             cardNumber: cardNumber,
             cardPin: cardPin,
@@ -49,8 +61,8 @@ onClientCallback('wallet:login', async (source: number) => {
         await MongoDB.insertOne('phone_bank_user', data);
         return JSON.stringify({
             ...data,
-            balance: citizenId.PlayerData.money.bank,
-            casino: citizenId.PlayerData.money.casino
+            balance: player.PlayerData.money.bank,
+            casino: player.PlayerData.money.casino
         });
     }
 });

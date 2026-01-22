@@ -250,7 +250,9 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
                             setLoading(true);
                             loginTimeout.start();
                             const res = await fetchNui('wallet:login');
-                            setWalletDetails(JSON.parse(res as string));
+                            if (res) {
+                                setWalletDetails(JSON.parse(res as string));
+                            }
                         }} loading={loading}>Let's Go</Button>
                     </div>}
                 </Transition>
@@ -261,7 +263,9 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
                     timingFunction="ease"
                     onEnter={async () => {
                         const res = await fetchNui('getTransactions');
-                        setTranscationData(JSON.parse(res as string));
+                        if (res) {
+                            setTranscationData(JSON.parse(res as string));
+                        }
                     }}
                 >
                     {(styles) => <div style={{
@@ -510,7 +514,9 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
                     timingFunction="ease"
                     onEnter={async () => {
                         const res = await fetchNui('getContacts');
-                        setContactsData(JSON.parse(res as string));
+                        if (res) {
+                            setContactsData(JSON.parse(res as string));
+                        }
                         setShowStartupScreen(false);
                     }}
                 >
@@ -620,7 +626,9 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
                     timingFunction="ease"
                     onEnter={async () => {
                         const res = await fetchNui('getContacts');
-                        setContactsData(JSON.parse(res as string));
+                        if (res) {
+                            setContactsData(JSON.parse(res as string));
+                        }
                         setShowStartupScreen(false);
                     }}
                 >
@@ -798,9 +806,13 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
                     timingFunction="ease"
                     onEnter={async () => {
                         const res = await fetchNui('getContacts');
-                        setContactsData(JSON.parse(res as string));
+                        if (res) {
+                            setContactsData(JSON.parse(res as string));
+                        }
                         const newRes = await fetchNui('getInvoices', historyType);
-                        setInvoiceData(JSON.parse(newRes as string));
+                        if (newRes) {
+                            setInvoiceData(JSON.parse(newRes as string));
+                        }
                         setShowStartupScreen(false);
                     }}
                 >
@@ -877,7 +889,9 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
                                 cursor: 'pointer',
                             }} onClick={async () => {
                                 const newRes = await fetchNui('getInvoices', 'sent');
-                                setInvoiceData(JSON.parse(newRes as string));
+                                if (newRes) {
+                                    setInvoiceData(JSON.parse(newRes as string));
+                                }
                                 setHistoryType('sent');
                             }}>Sent</div>
                             <div style={{
@@ -892,7 +906,9 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
                                 cursor: 'pointer',
                             }} onClick={async () => {
                                 const newRes = await fetchNui('getInvoices', 'received');
-                                setInvoiceData(JSON.parse(newRes as string));
+                                if (newRes) {
+                                    setInvoiceData(JSON.parse(newRes as string));
+                                }
                                 setHistoryType('received');
                             }}>Received</div>
                         </div>
@@ -979,7 +995,9 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
                                                             const res = await fetchNui('declineInvoicePayment', invoice._id);
                                                             if (res) {
                                                                 const newRes = await fetchNui('getInvoices', 'received');
-                                                                setInvoiceData(JSON.parse(newRes as string));
+                                                                if (newRes) {
+                                                                    setInvoiceData(JSON.parse(newRes as string));
+                                                                }
                                                             }
                                                         }} className='clickanimation' width="3.24vh" height="1.39vh" viewBox="0 0 35 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                             <rect width="35" height="15" rx="3" fill="#FFDDDD" fillOpacity="0.28" />
@@ -1078,7 +1096,9 @@ export default function Wallet(props: { onEnter: () => void, onExit: () => void 
                     timingFunction="ease"
                     onEnter={async () => {
                         const res = await fetchNui('getContacts');
-                        setContactsData(JSON.parse(res as string));
+                        if (res) {
+                            setContactsData(JSON.parse(res as string));
+                        }
                         const newRes = await fetchNui('getInvoices');
                         /* setInvoicesData(JSON.parse(newRes as string)); */
                         setShowStartupScreen(false);
