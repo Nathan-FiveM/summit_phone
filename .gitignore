@@ -3,3 +3,5 @@
 yarn.installed
 package-lock.json
 .yarn.installed
+yarn-error.log
+yarn.lock
