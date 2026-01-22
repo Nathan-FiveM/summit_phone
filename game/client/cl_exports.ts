@@ -2,6 +2,21 @@ import { generateUUid } from "@shared/utils";
 import { NUI } from "./classes/NUI";
 import { Utils } from "./classes/Utils";
 
+// Export for ox_inventory item use
+exports('usePhoneItem', async () => {
+    const state = LocalPlayer.state;
+    if (state.onPhone) {
+        NUI.closeUI();
+        NUI.sendReactMessage('toggleCloseClear', "ok");
+        return;
+    }
+    if (NUI.shouldNotOpen) return;
+    const phoneItem = await Utils.GetPhoneItem();
+    if (Utils.phoneList.includes(phoneItem)) {
+        NUI.openUI(`prop_aphone_${phoneItem.split('_')[0]}`);
+    }
+});
+
 function ForceFullyClosePhone() {
     if (LocalPlayer.state.onPhone) {
         NUI.closeUI();
