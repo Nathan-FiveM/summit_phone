@@ -33,7 +33,7 @@ type PhoneSettings = {
 type PhoneMail = {
     activeMaidId: string;
     activeMailPassword: string;
-    avator: string;
+    avatar: string;
     username: string;
     messages: {
         _id: string;

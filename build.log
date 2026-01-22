@@ -1,0 +1,141 @@
+yarn run v1.22.22
+$ concurrently "yarn build:client" "yarn build:server" "yarn build:web"
+[1] $ node --es-module-specifier-resolution=node scripts/server
+[0] $ node --es-module-specifier-resolution=node scripts/client
+[2] $ cd web && yarn install && yarn build
+[2] [1/4] Resolving packages...
+[2] warning Resolution field "javascript-obfuscator@4.1.1" is incompatible with requested version "javascript-obfuscator@^4.2.0"
+[2] success Already up-to-date.
+[1] ✅ Build complete.
+[0] ✅ Build complete.
+[1] yarn build:server exited with code 0
+[2] $ tsc -b && vite build --emptyOutDir
+[0] ✅ Obfuscation complete.
+[0] yarn build:client exited with code 0
+[2] vite v4.5.14 building for production...
+[2] transforming...
+[2] DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+[2]
+[2] More info: https://sass-lang.com/d/legacy-js-api
+[2]
+[2] DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+[2]
+[2] More info: https://sass-lang.com/d/legacy-js-api
+[2]
+[2] DEPRECATION WARNING [global-builtin]: Global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
+[2] Use math.random instead.
+[2]
+[2] More info and automated migrator: https://sass-lang.com/d/import
+[2]
+[2]      ╷
+[2] 2382 │              calc((random(1) - 0.5) * 20vh),
+[2]      │                    ^^^^^^^^^
+[2]      ╵
+[2]     src/App.scss 2382:20  root stylesheet
+[2]
+[2] DEPRECATION WARNING [global-builtin]: Global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
+[2] Use math.random instead.
+[2]
+[2] More info and automated migrator: https://sass-lang.com/d/import
+[2]
+[2]      ╷
+[2] 2383 │              calc((random(1) - 0.5) * 20vh)
+[2]      │                    ^^^^^^^^^
+[2]      ╵
+[2]     src/App.scss 2383:20  root stylesheet
+[2]
+[2] DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+[2]
+[2] More info: https://sass-lang.com/d/legacy-js-api
+[2]
+[2] DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+[2]
+[2] More info: https://sass-lang.com/d/legacy-js-api
+[2]
+[2] src/routers/apps/Calculator/Calculator.tsx (36:35) Use of eval in "src/routers/apps/Calculator/Calculator.tsx" is strongly discouraged as it poses security risks and may cause issues with minification.
+[2] ✓ 1088 modules transformed.
+[2] rendering chunks...
+[2] computing gzip size...
+[2] dist/assets/lockscreenBg-28e5b7ee.png               0.10 kB
+[2] dist/assets/wallet_circle2-dfd64cf2.svg             0.31 kB │ gzip:   0.19 kB
+[2] dist/assets/wallet_circle1-2f54470c.svg             0.31 kB │ gzip:   0.20 kB
+[2] dist/index.html                                     0.43 kB │ gzip:   0.30 kB
+[2] dist/assets/unlockIcon-0a9417a2.svg                 0.66 kB │ gzip:   0.36 kB
+[2] dist/assets/lockIcon-52da516a.svg                   0.69 kB │ gzip:   0.36 kB
+[2] dist/assets/House-bbaa1404.svg                      0.90 kB │ gzip:   0.51 kB
+[2] dist/assets/Message-5d5b2478.svg                    1.11 kB │ gzip:   0.55 kB
+[2] dist/assets/House-36842ce8.svg                      1.21 kB │ gzip:   0.68 kB
+[2] dist/assets/Phone-5c8e5973.svg                      1.22 kB │ gzip:   0.66 kB
+[2] dist/assets/LoveLink-09f9a965.svg                   1.22 kB │ gzip:   0.56 kB
+[2] dist/assets/Camera-5efaeff9.svg                     1.23 kB │ gzip:   0.55 kB
+[2] dist/assets/Mail-5b6a5c57.svg                       1.27 kB │ gzip:   0.62 kB
+[2] dist/assets/8-e054d20f.svg                          1.30 kB │ gzip:   0.64 kB
+[2] dist/assets/AppStore-3c6590d2.svg                   1.34 kB │ gzip:   0.63 kB
+[2] dist/assets/Crypto-d8edf4ee.svg                     1.39 kB │ gzip:   0.64 kB
+[2] dist/assets/Phone-c995eb2a.svg                      1.57 kB │ gzip:   0.85 kB
+[2] dist/assets/6-aa19ef24.svg                          1.62 kB │ gzip:   0.74 kB
+[2] dist/assets/BluePages-3c2747a6.svg                  1.64 kB │ gzip:   0.71 kB
+[2] dist/assets/Mail-c23c0431.svg                       1.66 kB │ gzip:   0.81 kB
+[2] dist/assets/Calculator-f8b24dab.svg                 1.67 kB │ gzip:   0.58 kB
+[2] dist/assets/AppStore-cf880d7b.svg                   1.67 kB │ gzip:   0.81 kB
+[2] dist/assets/Taxi-3db29723.svg                       1.70 kB │ gzip:   0.64 kB
+[2] dist/assets/Gallery-d7299992.svg                    1.75 kB │ gzip:   0.59 kB
+[2] dist/assets/red_frame-150ea6da.svg                  1.76 kB │ gzip:   0.56 kB
+[2] dist/assets/green_frame-99fefce7.svg                1.77 kB │ gzip:   0.56 kB
+[2] dist/assets/gold_frame-4c2e836f.svg                 1.78 kB │ gzip:   0.57 kB
+[2] dist/assets/purple_frame-3ec4ef85.svg               1.78 kB │ gzip:   0.57 kB
+[2] dist/assets/blue_frame-66d995e2.svg                 1.78 kB │ gzip:   0.57 kB
+[2] dist/assets/Message-70030d4e.svg                    1.93 kB │ gzip:   0.76 kB
+[2] dist/assets/DailySpins-81810546.svg                 2.01 kB │ gzip:   0.70 kB
+[2] dist/assets/3-b3edb2e3.svg                          2.03 kB │ gzip:   0.90 kB
+[2] dist/assets/BluePages-a5fa2512.svg                  2.05 kB │ gzip:   0.93 kB
+[2] dist/assets/Camera-8aec5c68.svg                     2.15 kB │ gzip:   0.94 kB
+[2] dist/assets/Darkchat-c88e634a.svg                   2.17 kB │ gzip:   0.99 kB
+[2] dist/assets/2-c0106c4a.svg                          2.23 kB │ gzip:   0.99 kB
+[2] dist/assets/Crypto-f52a1011.svg                     2.30 kB │ gzip:   0.95 kB
+[2] dist/assets/4-f4d91b34.svg                          2.32 kB │ gzip:   0.89 kB
+[2] dist/assets/Pigeon-1e9d3686.svg                     2.34 kB │ gzip:   1.14 kB
+[2] dist/assets/9-d9ad5cbe.svg                          2.44 kB │ gzip:   0.94 kB
+[2] dist/assets/Calender-bbd788b7.svg                   2.49 kB │ gzip:   0.82 kB
+[2] dist/assets/Gallery-5bfbf808.svg                    2.54 kB │ gzip:   0.89 kB
+[2] dist/assets/Darkchat-9e5f1250.svg                   2.54 kB │ gzip:   1.19 kB
+[2] dist/assets/5-63dc6a3c.svg                          2.74 kB │ gzip:   1.05 kB
+[2] dist/assets/Garages-61ea081d.svg                    3.03 kB │ gzip:   0.96 kB
+[2] dist/assets/7-9a94040e.svg                          3.27 kB │ gzip:   1.24 kB
+[2] dist/assets/Garages-6e774ce9.svg                    3.93 kB │ gzip:   1.21 kB
+[2] dist/assets/Groups-6d807748.svg                     4.09 kB │ gzip:   1.60 kB
+[2] dist/assets/Settings-53068abd.svg                   4.37 kB │ gzip:   1.68 kB
+[2] dist/assets/Settings-7874ec71.svg                   4.58 kB │ gzip:   1.87 kB
+[2] dist/assets/Groups-7e79cc24.svg                     4.62 kB │ gzip:   1.87 kB
+[2] dist/assets/Wallet-2253d750.svg                     5.92 kB │ gzip:   1.67 kB
+[2] dist/assets/Wallet-fbd4f779.svg                     6.44 kB │ gzip:   2.02 kB
+[2] dist/assets/Services-79c2108c.svg                   6.74 kB │ gzip:   1.62 kB
+[2] dist/assets/Pixie-8ea0d759.svg                      6.87 kB │ gzip:   1.26 kB
+[2] dist/assets/asgerphone_light-0098af21.png           7.00 kB
+[2] dist/assets/1-0dcc111e.svg                          7.78 kB │ gzip:   3.62 kB
+[2] dist/assets/ASGERLogo-c1809dc8.svg                 14.45 kB │ gzip:   5.49 kB
+[2] dist/assets/Services-57eebd2d.svg                  20.40 kB │ gzip:   6.37 kB
+[2] dist/assets/asgerDetail-ba0dd8df.svg               21.91 kB │ gzip:   9.06 kB
+[2] dist/assets/Pigeon-0bc76475.svg                    24.03 kB │ gzip:   8.38 kB
+[2] dist/assets/walletLoginLogo-723f7943.svg           27.50 kB │ gzip:   8.34 kB
+[2] dist/assets/asgerbanklogo-45aef49d.svg             39.68 kB │ gzip:  13.35 kB
+[2] dist/assets/SFPRODISPLAYREGULAR-6913e70d.woff2     89.43 kB
+[2] dist/assets/SFPRODISPLAYBOLD-344f68fd.woff2        98.14 kB
+[2] dist/assets/SFPRODISPLAYMEDIUM-032593c3.woff2      99.72 kB
+[2] dist/assets/2-6f3883ab.jpeg                       179.93 kB
+[2] dist/assets/4-5cd80772.jpeg                       403.76 kB
+[2] dist/assets/3-6bb5cf78.jpeg                       433.47 kB
+[2] dist/assets/startupBg-14aedfd7.png                541.55 kB
+[2] dist/assets/1-03a44061.jpg                        676.13 kB
+[2] dist/assets/phoneBG-8d22f590.jpg                1,021.50 kB
+[2] dist/assets/lockscreenBG-787e2db5.png           3,529.34 kB
+[2] dist/assets/index-5f02f0ba.css                    312.43 kB │ gzip:  46.66 kB
+[2] dist/assets/index-06c1a57c.js                   2,304.68 kB │ gzip: 574.74 kB
+[2]
+[2] (!) Some chunks are larger than 500 kBs after minification. Consider:
+[2] - Using dynamic import() to code-split the application
+[2] - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+[2] - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+[2] ✓ built in 11.23s
+[2] yarn build:web exited with code 0
+Done in 25.12s.
