@@ -167,12 +167,61 @@ In qbx_smallresources create a folder called qbx_logs then create a server.lua a
     exports('AddLog', AddLog)
 ```
 
-``Add the following item to your ox_inventory/data/items.lua``
+``Add the following items to your ox_inventory/data/items.lua``
+
+**IMPORTANT: Players must have a phone item in their inventory to open the phone using the `M` key.**
+
 ```lua
     ['blue_phone'] = {
-        label = 'Phone',
-        weight = 190,
+        label = 'Blue Phone',
+        weight = 200,
         stack = false,
-        consume = 0,
+        close = true,
+        description = 'A stylish blue smartphone.',
+        client = {
+            export = 'summit_phone.usePhoneItem'
+        }
     },
+    ['green_phone'] = {
+        label = 'Green Phone',
+        weight = 200,
+        stack = false,
+        close = true,
+        description = 'A stylish green smartphone.',
+        client = {
+            export = 'summit_phone.usePhoneItem'
+        }
+    },
+    ['red_phone'] = {
+        label = 'Red Phone',
+        weight = 200,
+        stack = false,
+        close = true,
+        description = 'A stylish red smartphone.',
+        client = {
+            export = 'summit_phone.usePhoneItem'
+        }
+    },
+    ['gold_phone'] = {
+        label = 'Gold Phone',
+        weight = 200,
+        stack = false,
+        close = true,
+        description = 'A stylish gold smartphone.',
+        client = {
+            export = 'summit_phone.usePhoneItem'
+        }
+    },
+    ['purple_phone'] = {
+        label = 'Purple Phone',
+        weight = 200,
+        stack = false,
+        close = true,
+        description = 'A stylish purple smartphone.',
+        client = {
+            export = 'summit_phone.usePhoneItem'
+        }
+    }
 ```
+
+You can also copy these items from the `OX_INVENTORY_ITEMS.lua` file in the summit_phone resource folder.
