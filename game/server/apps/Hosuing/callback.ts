@@ -4,7 +4,7 @@ import { Logger } from "@server/sv_main";
 import { FRAMEWORK_RESOURCE } from "../../../shared/utils"; // adjust path as needed
 
 onClientCallback('getOwnedHouses', async (client) => {
-    const player = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
+    const player = await Utils.GetPlayerCitizenIdBySource(client);
     const apartments = await Utils.query('SELECT property_id, owner_citizenid, street, description, has_access, door_data, apartment  FROM properties WHERE owner_citizenid = ? AND apartment IS NOT NULL AND apartment <> ""', [player]);
     const houses = await Utils.query('SELECT property_id, owner_citizenid, street, description, has_access, shell, door_data FROM properties WHERE owner_citizenid = ? AND apartment IS NULL', [player]);
     const res = {

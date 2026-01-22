@@ -174,7 +174,7 @@ onClientCallback('deleteBusiness', async (client, data: string) => {
 });
 
 onClientCallback('summit_phone:server:toggleJobCalls', async (client) => {
-    const player = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);;
+    const player = await Utils.GetPlayerCitizenIdBySource(client);;
     const PlayerData = await MongoDB.findOne('phone_business_users', { citizenid: player });
     if (!PlayerData) {
         await MongoDB.insertOne('phone_business_users', { citizenid: player, jobCalls: true });
@@ -185,7 +185,7 @@ onClientCallback('summit_phone:server:toggleJobCalls', async (client) => {
 });
 
 onClientCallback('summit_phone:server:getJobCalls', async (client) => {
-    const player = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
+    const player = await Utils.GetPlayerCitizenIdBySource(client);
     const PlayerData = await MongoDB.findOne('phone_business_users', { citizenid: player });
     if (!PlayerData) {
         await MongoDB.insertOne('phone_business_users', { citizenid: player, jobCalls: true });

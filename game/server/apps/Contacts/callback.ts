@@ -5,7 +5,7 @@ import { Utils } from "@server/classes/Utils";
 import { FRAMEWORK_RESOURCE } from "../../../shared/utils"; // adjust path as needed
 
 onClientCallback('contacts:getContacts', async (client) => {
-    const citizenId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
+    const citizenId = await Utils.GetPlayerCitizenIdBySource(client);
     const contacts = await MongoDB.findMany('phone_contacts', { ownerId: citizenId });
     return JSON.stringify(contacts);
 });
@@ -25,7 +25,7 @@ onClientCallback('contacts:saveContact', async (client, data: string) => {
 });
 
 onClientCallback('contacts:addContact', async (client, data: string) => {
-    const citizenId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
+    const citizenId = await Utils.GetPlayerCitizenIdBySource(client);
     const contactData: PhoneContacts = JSON.parse(data);
     const dataX = { ...contactData, ownerId: citizenId, personalNumber: await Utils.GetPhoneNumberByCitizenId(citizenId) }
     const res = await MongoDB.insertOne('phone_contacts', dataX);

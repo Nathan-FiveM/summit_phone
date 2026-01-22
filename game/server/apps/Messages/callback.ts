@@ -6,7 +6,7 @@ import { FRAMEWORK_RESOURCE } from "../../../shared/utils"; // adjust path as ne
 
 onClientCallback('phone_message:sendMessage', async (client, data: string) => {
     const { type, phoneNumber, groupId, messageData } = JSON.parse(data);
-    const senderId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
+    const senderId = await Utils.GetPlayerCitizenIdBySource(client);
     const senderPhoneNumber = await Utils.GetPhoneNumberByCitizenId(senderId);
     let firstMessage = false;
 
@@ -216,7 +216,7 @@ async function sendToRecipient(
 
 onClientCallback('phone_message:createGroup', async (client, data: string) => {
     const { groupName, memberPhoneNumbers, avatar } = JSON.parse(data); // Added avatar field
-    const senderId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
+    const senderId = await Utils.GetPlayerCitizenIdBySource(client);
     const senderPhoneNumber = await Utils.GetPhoneNumberByCitizenId(senderId);
 
     if (!senderId) {
@@ -306,7 +306,7 @@ onClientCallback('phone_message:createGroup', async (client, data: string) => {
 
 onClientCallback('phone_message:toggleBlock', async (client, data: string) => {
     const { phoneNumber } = JSON.parse(data);
-    const senderId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
+    const senderId = await Utils.GetPlayerCitizenIdBySource(client);
     const senderPhoneNumber = await Utils.GetPhoneNumberByCitizenId(senderId);
 
     if (!senderId) {
@@ -374,7 +374,7 @@ onClientCallback('phone_message:toggleBlock', async (client, data: string) => {
 onClientCallback('phone_message:addMember', async (client, data: string) => {
     try {
         const { groupId, phoneNumber } = JSON.parse(data);
-        const senderId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
+        const senderId = await Utils.GetPlayerCitizenIdBySource(client);
         const senderPhoneNumber = await Utils.GetPhoneNumberByCitizenId(senderId);
         if (!senderId) {
             return JSON.stringify({ success: false, message: 'Sender not found' });
@@ -459,7 +459,7 @@ onClientCallback('phone_message:addMember', async (client, data: string) => {
 
 onClientCallback('phone_message:removeMember', async (client, data: string) => {
     const { groupId, phoneNumber } = JSON.parse(data);
-    const senderId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
+    const senderId = await Utils.GetPlayerCitizenIdBySource(client);
     const senderPhoneNumber = await Utils.GetPhoneNumberByCitizenId(senderId);
     const memberIdToRemove = await Utils.GetCitizenIdByPhoneNumber(phoneNumber);
     if (!memberIdToRemove) {
@@ -510,7 +510,7 @@ onClientCallback('phone_message:removeMember', async (client, data: string) => {
 });
 
 onClientCallback('phone_message:deleteGroup', async (client, groupId: string) => {
-    const senderId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
+    const senderId = await Utils.GetPlayerCitizenIdBySource(client);
     const senderPhoneNumber = await Utils.GetPhoneNumberByCitizenId(senderId);
     let userMessages = await MongoDB.findOne('phone_messages', { citizenId: senderId });
     const group = userMessages?.messages.find((msg: { groupId?: string }) => msg.groupId === groupId);
@@ -554,7 +554,7 @@ onClientCallback('phone_message:deleteGroup', async (client, groupId: string) =>
 
 onClientCallback('phone_message:getGroupMessages', async (client, data: string) => {
     const { groupId, page = 1, limit = 20 } = JSON.parse(data); // Add page and limit for pagination
-    const senderId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
+    const senderId = await Utils.GetPlayerCitizenIdBySource(client);
 
     if (!senderId) {
         return JSON.stringify({ success: false, messages: [], message: 'Sender not found' });
@@ -597,7 +597,7 @@ onClientCallback('phone_message:getGroupMessages', async (client, data: string) 
 
 onClientCallback('phone_message:getPrivateMessages', async (client, data: string) => {
     const { phoneNumber, page = 1, limit = 20 } = JSON.parse(data); // Add page and limit for pagination
-    const senderId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
+    const senderId = await Utils.GetPlayerCitizenIdBySource(client);
 
     if (!senderId) {
         return JSON.stringify({ success: false, messages: [], message: 'Sender not found' });
@@ -637,7 +637,7 @@ onClientCallback('phone_message:getPrivateMessages', async (client, data: string
 
 onClientCallback('phone_message:getMessageChannelsandLastMessages', async (client) => {
     try {
-        const senderId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
+        const senderId = await Utils.GetPlayerCitizenIdBySource(client);
 
         if (!senderId) {
             return JSON.stringify({ success: false, message: 'Sender not found' });
@@ -700,7 +700,7 @@ onClientCallback('phone_message:getMessageChannelsandLastMessages', async (clien
     }
 });
 onClientCallback('phone_message:getMessageStats', async (client, data: string) => {
-    const senderId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
+    const senderId = await Utils.GetPlayerCitizenIdBySource(client);
 
     if (!senderId) {
         return JSON.stringify({ success: false, message: 'Sender not found' });
@@ -766,7 +766,7 @@ onClientCallback('phone_message:getMessageStats', async (client, data: string) =
 
 onClientCallback('phone_message:deleteMessage', async (client, data: string) => {
     const { conversationType, phoneNumber, groupId, messageIndex } = JSON.parse(data || '{}');
-    const senderId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
+    const senderId = await Utils.GetPlayerCitizenIdBySource(client);
     const senderPhoneNumber = await Utils.GetPhoneNumberByCitizenId(senderId);
 
     if (!senderId) {
@@ -832,7 +832,7 @@ onClientCallback('phone_message:deleteMessage', async (client, data: string) => 
 onClientCallback('phone_message:updateGroupName', async (client, data: string) => {
     try {
         const { groupId, newName } = JSON.parse(data);
-        const senderId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
+        const senderId = await Utils.GetPlayerCitizenIdBySource(client);
         const senderPhoneNumber = await Utils.GetPhoneNumberByCitizenId(senderId);
         if (!senderId) {
             return JSON.stringify({ success: false, message: 'Sender not found' });
@@ -891,7 +891,7 @@ onClientCallback('phone_message:updateGroupName', async (client, data: string) =
 onClientCallback('phone_message:updateGroupAvatar', async (client, data: string) => {
     try {
         const { groupId, newAvatar } = JSON.parse(data);
-        const senderId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
+        const senderId = await Utils.GetPlayerCitizenIdBySource(client);
         const senderPhoneNumber = await Utils.GetPhoneNumberByCitizenId(senderId);
         if (!senderId) {
             return JSON.stringify({ success: false, message: 'Sender not found' });

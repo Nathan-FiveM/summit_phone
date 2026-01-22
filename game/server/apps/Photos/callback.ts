@@ -1,10 +1,11 @@
 import { onClientCallback } from "@overextended/ox_lib/server";
 import { Logger, MongoDB } from "@server/sv_main";
 import { generateUUid } from "@shared/utils";
-import { FRAMEWORK_RESOURCE } from "../../../shared/utils"; // adjust path as needed
+import { Utils } from "@server/classes/Utils";
+import { FRAMEWORK_RESOURCE } from "../../../shared/utils";
 
 onClientCallback('savePhotoToPhotos', async (source: number, data: string) => {
-  const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source);
+  const citizenId = await Utils.GetPlayerCitizenIdBySource(source);
   const dataX = {
     _id: generateUUid(),
     citizenId,
@@ -22,13 +23,13 @@ onClientCallback('savePhotoToPhotos', async (source: number, data: string) => {
 });
 
 onClientCallback('getPhotos', async (source: number) => {
-  const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source);
+  const citizenId = await Utils.GetPlayerCitizenIdBySource(source);
   const photos = await MongoDB.findMany('phone_photos', { citizenId });
   return JSON.stringify(photos);
 });
 
 onClientCallback('deletePhoto', async (source: number, data: string) => {
-  const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source);
+  const citizenId = await Utils.GetPlayerCitizenIdBySource(source);
   const res = await MongoDB.findOne('phone_photos', { _id: data });
   await MongoDB.deleteOne('phone_photos', { _id: data, citizenId });
   Logger.AddLog({

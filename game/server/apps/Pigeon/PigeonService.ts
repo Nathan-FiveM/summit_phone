@@ -160,7 +160,7 @@ class PigeonService {
 
     public async postReply(client: number, data: string): Promise<any> {
         const { tweetId, content, email, attachments } = JSON.parse(data);
-        const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
+        const citizenId = await Utils.GetPlayerCitizenIdBySource(client);
         const user = await MongoDB.findOne("phone_pigeon_users", { email });
         const tweet: TweetData = await MongoDB.findOne("phone_pigeon_tweets", { _id: tweetId });
         if (!tweet) return { error: "Tweet not found" };
@@ -283,7 +283,7 @@ class PigeonService {
         const { tweetId, retweet, pigeonId, ogTweetId } = JSON.parse(data);
         try {
             if (retweet) {
-                const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
+                const citizenId = await Utils.GetPlayerCitizenIdBySource(client);
                 const originalTweet = await MongoDB.findOne("phone_pigeon_tweets", { _id: tweetId });
                 const retWeetuser = await MongoDB.findOne("phone_pigeon_users", { email: pigeonId });
                 if (!originalTweet) {
@@ -319,7 +319,7 @@ class PigeonService {
                 });
                 return true;
             } else if (!retweet) {
-                const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
+                const citizenId = await Utils.GetPlayerCitizenIdBySource(client);
                 const originalTweet = await MongoDB.findOne("phone_pigeon_tweets", { _id: ogTweetId });
                 const retweet = await MongoDB.findOne("phone_pigeon_tweets", { _id: tweetId });
                 if (!originalTweet || !retweet) {
@@ -356,7 +356,7 @@ class PigeonService {
         const { tweetId, retweet, pigeonId, ogTweetId } = JSON.parse(data);
         try {
             if (retweet) {
-                const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
+                const citizenId = await Utils.GetPlayerCitizenIdBySource(client);
                 const originalTweet = await MongoDB.findOne("phone_pigeon_tweets_replies", { _id: tweetId });
                 const ogTweet = await MongoDB.findOne("phone_pigeon_tweets", { _id: originalTweet.originalTweetId });
                 const retWeetuser = await MongoDB.findOne("phone_pigeon_users", { email: pigeonId });
@@ -415,7 +415,7 @@ class PigeonService {
                 });
                 return true;
             } else if (!retweet) {
-                const citizenId = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
+                const citizenId = await Utils.GetPlayerCitizenIdBySource(client);
                 const originalTweet = await MongoDB.findOne("phone_pigeon_tweets_replies", { _id: ogTweetId });
                 const retweet = await MongoDB.findOne("phone_pigeon_tweets_replies", { _id: tweetId });
                 if (!originalTweet || !retweet) {
@@ -495,14 +495,14 @@ class PigeonService {
         const { tweetId } = JSON.parse(data);
         const tweet = await MongoDB.findOne("phone_pigeon_tweets", { _id: tweetId });
         if (!tweet) return { error: "Tweet not found" };
-        tweet.repliesCount.push(await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client));
+        tweet.repliesCount.push(await Utils.GetPlayerCitizenIdBySource(client));
         await MongoDB.updateOne("phone_pigeon_tweets", { _id: tweetId }, tweet);
     }
 
     public async decreaseRepliesCount(client: number, data: string): Promise<any> {
         try {
             const { tweetId } = JSON.parse(data);
-            const cid = await exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(client);
+            const cid = await Utils.GetPlayerCitizenIdBySource(client);
 
             const tweet = await MongoDB.findOne("phone_pigeon_tweets", { _id: tweetId });
             if (!tweet) {

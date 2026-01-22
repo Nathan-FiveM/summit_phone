@@ -15,7 +15,7 @@ interface VehicleData {
 
 onClientCallback('garage:getGarageData', async (source: number) => {
     let resData: GarageData[] = [];
-    const citizenId = await global.exports[FRAMEWORK_RESOURCE].GetPlayerCitizenIdBySource(source);
+    const citizenId = await Utils.GetPlayerCitizenIdBySource(source);
     const res = await Utils.query(`SELECT vehicle,plate,garage,mods,state,depotprice FROM player_vehicles WHERE citizenid = ?`, [citizenId]) as VehicleData[];
     const vehicleData = Framework.Shared.Vehicles;
     
