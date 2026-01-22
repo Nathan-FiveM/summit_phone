@@ -3,7 +3,7 @@ import { Utils } from "./Utils";
 
 
 export class NU {
-    private timetick: any;
+    private timeInterval: any;
     private controlsLoop: any;
     private closeTimeout: any; // Add timeout reference for cleanup
     public shouldNotOpen: boolean = false;
@@ -112,21 +112,23 @@ export class NU {
     }
 
     public startTimeLoop() {
-        let lastTimeUpdate = 0;
-        this.timetick = setTick(() => {
-            const currentTime = GetGameTimer();
-            // Only update time every 30 seconds to reduce NUI calls
-            if (currentTime - lastTimeUpdate > 30000) {
-                const hours = GetClockHours();
-                const minutes = GetClockMinutes();
-                this.sendReactMessage('sendTime', `${hours}:${minutes}`);
-                lastTimeUpdate = currentTime;
-            }
-        });
+        // Clear any existing interval to prevent duplicates
+        if (this.timeInterval) {
+            clearInterval(this.timeInterval);
+        }
+
+        this.timeInterval = setInterval(() => {
+            const hours = GetClockHours();
+            const minutes = GetClockMinutes();
+            this.sendReactMessage('sendTime', `${hours}:${minutes}`);
+        }, 30000); // Run every 30 seconds
     };
 
     public stopTimeLoop() {
-        clearTick(this.timetick);
+        if (this.timeInterval) {
+            clearInterval(this.timeInterval);
+            this.timeInterval = null; // Clear the reference
+        }
     };
 
     public startDisableControlsLoop() {
